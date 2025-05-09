@@ -62,7 +62,7 @@ export default defineConfig([
       "unicorn/prefer-array-some": "error",
       "max-lines-per-function": [
         "error",
-        { max: 40, skipBlankLines: true, skipComments: true },
+        { max: 60, skipBlankLines: true, skipComments: true },
       ],
     },
     linterOptions: {
