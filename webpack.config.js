@@ -25,6 +25,7 @@ export default {
   resolve: {
     extensions: [".ts", ".js"],
     alias: {
+      "@": path.resolve(__dirname, "src"),
       img: path.join(__dirname, "src", "assets", "img"),
       svg: path.join(__dirname, "src", "assets", "svg"),
     },
@@ -96,9 +97,6 @@ export default {
     new DotenvWebpackPlugin(),
     new webpack.ProvidePlugin({
       process: "process/browser",
-    }),
-    new webpack.DefinePlugin({
-      "process.env": JSON.stringify(process.env),
     }),
   ],
   devServer: {
