@@ -1,0 +1,18 @@
+.brand-select-wrapper {
+  padding: initial;
+}
+
+.brand-select {
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 0.8rem;
+  height: fit-content;
+  padding: 0.3rem 0.5rem;
+}
+
+.brand-select:disabled {
+  background-color: var(--disables-background);
+  color: var(--disables-color);
+  cursor: not-allowed;
+  opacity: 0.3;
+}
