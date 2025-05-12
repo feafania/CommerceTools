@@ -3,6 +3,7 @@ import PageRouter from "@/router/page-router";
 import { NavType } from "@/types/interfaces";
 import authStore from "@/stores/auth-store";
 import { PageType } from "@/types/enum";
+import { SETTINGS } from "@/config/settings";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -53,19 +54,19 @@ const Header = {
 
   getNavLinks(): NavType[] {
     const isLoggedIn = Boolean(authStore.user);
+    const t = SETTINGS.label.nav;
 
-    const links: NavType[] = [
-      { label: "Sign In", page: PageType.login, visible: !isLoggedIn },
+    return [
+      { label: t.signIn, page: PageType.login, visible: !isLoggedIn },
       {
-        label: "Registration",
+        label: t.registration,
         page: PageType.registration,
         visible: !isLoggedIn,
       },
-      { label: "Main", page: PageType.main, visible: true },
-      { label: "About Us", page: PageType.about, visible: true },
-      { label: "Sign Out", page: PageType.login, visible: isLoggedIn },
+      { label: t.main, page: PageType.main, visible: true },
+      { label: t.about, page: PageType.about, visible: true },
+      { label: t.signOut, page: PageType.login, visible: isLoggedIn },
     ];
-    return links;
   },
 
   onClick(label: string, page: PageType) {
@@ -82,6 +83,33 @@ const Header = {
       }
     };
   },
+
+  // TODO
+  // renderLangSwitcher() {
+  //   // Дадаем пераключальнік мовы
+  //   const langSwitcher = document.createElement("select");
+  //   langSwitcher.className = "language-switcher";
+  //
+  //   ["en", "pl"].forEach((lang) => {
+  //     const option = document.createElement("option");
+  //     option.value = lang;
+  //     option.textContent = lang.toUpperCase();
+  //     if (lang === SETTINGS.currentLang) {
+  //       option.selected = true;
+  //     }
+  //     langSwitcher.append(option);
+  //   });
+  //
+  //   langSwitcher.addEventListener("change", (e) => {
+  //     const selectedLang = (e.target as HTMLSelectElement)
+  //       .value as LanguageCode;
+  //     SETTINGS.setLang(selectedLang);
+  //     globalThis.dispatchEvent(
+  //       new CustomEvent("languageChanged", { detail: selectedLang });
+  //     );
+  //   });
+  //
+  //   this.nav.append(ul, langSwitcher);
 };
 
 export default Header;

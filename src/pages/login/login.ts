@@ -3,6 +3,7 @@ import createInput from "@/components/input/input";
 import { VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
 import showModalMessage from "@/components/modal-window/modal-window";
+import { SETTINGS } from "@/config/settings";
 
 const LoginView = {
   async render(): Promise<HTMLElement> {
@@ -12,7 +13,7 @@ const LoginView = {
 
     const h2 = document.createElement("h2");
     h2.className = "login-title";
-    h2.textContent = "Authentication";
+    h2.textContent = SETTINGS.label.login.header;
 
     const form = document.createElement("form");
     form.className = "login-form";
@@ -30,7 +31,7 @@ const LoginView = {
   renderLogin(): HTMLElement {
     return createInput({
       type: "text",
-      label: "Login",
+      label: SETTINGS.label.login.name,
       name: "username",
       placeholder: "Enter your name...",
       id: "username",
@@ -43,7 +44,7 @@ const LoginView = {
   renderPassword(): HTMLElement {
     return createInput({
       type: "password",
-      label: "Password",
+      label: SETTINGS.label.login.password,
       name: "password",
       placeholder: "Enter your password...",
       id: "password",

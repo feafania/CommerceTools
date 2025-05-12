@@ -1,5 +1,8 @@
 import { StorageItem } from "../types/interfaces";
 
+import { SETTINGS } from "@/config/settings";
+import { LanguageCode } from "@/types/types";
+
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
 }
@@ -26,4 +29,8 @@ export async function wait(ms: number) {
 
 export function capitalizeString(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export function changeLanguage(lang: LanguageCode) {
+  SETTINGS.setLang(lang);
 }

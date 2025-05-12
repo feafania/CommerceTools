@@ -13,6 +13,9 @@ export default function initApp(root: HTMLElement) {
   const footer = createFooter();
 
   root.append(header, main, footer);
+  // globalThis.addEventListener("languageChanged", () => {
+  //   Header.renderNav();
+  // });
   PageRouter.init();
   if (authStore.user) {
     // wsClient.login(authStore.user);
