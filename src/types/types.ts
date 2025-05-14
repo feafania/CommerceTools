@@ -1,6 +1,10 @@
 import translations from "@/config/interfaces";
 
-export type ValidationType = { pattern: RegExp; message: string };
+export type ValidationType = {
+  pattern?: RegExp;
+  isValid?: (value: string) => boolean;
+  message: string;
+};
 
 export type Listener = () => void;
 

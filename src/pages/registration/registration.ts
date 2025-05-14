@@ -20,6 +20,7 @@ const RegistrationView = {
     form.append(
       this.renderFirstName(),
       this.renderLastName(),
+      this.renderBirthDay(),
       this.renderCountry(),
       this.renderCity(),
       this.renderStreet(),
@@ -47,7 +48,7 @@ const RegistrationView = {
         "Enter your " + SETTINGS.label.registration.firstName + "...",
       id: "firstname",
       class: "registration-input",
-      validation: VALIDATION.username,
+      validation: VALIDATION.firstName,
     });
   },
 
@@ -57,10 +58,36 @@ const RegistrationView = {
       label: SETTINGS.label.registration.lastName,
       name: "lastname",
       placeholder:
-        "Enter your " + SETTINGS.label.registration.lastName + " name...",
+        "Enter your " + SETTINGS.label.registration.lastName + " ...",
       id: "lastname",
       class: "registration-input",
-      validation: VALIDATION.username,
+      validation: VALIDATION.lastName,
+    });
+  },
+
+  renderBirthDay(): HTMLElement {
+    return createInput({
+      type: "text",
+      label: SETTINGS.label.registration.birthDay,
+      name: "birthday",
+      placeholder:
+        "Enter your " + SETTINGS.label.registration.birthDay + " ...",
+      id: "birthday",
+      class: "registration-input",
+      validation: VALIDATION.dateOfBirth,
+    });
+  },
+
+  renderEmail(): HTMLElement {
+    return createInput({
+      type: "text",
+      label: SETTINGS.label.registration.login,
+      name: "birthday",
+      placeholder:
+        "Enter your " + SETTINGS.label.registration.birthDay + " ...",
+      id: "birthday",
+      class: "registration-input",
+      validation: VALIDATION.dateOfBirth,
     });
   },
 
@@ -72,7 +99,7 @@ const RegistrationView = {
       placeholder: "Enter your " + SETTINGS.label.registration.country + " ...",
       id: "country",
       class: "registration-input",
-      validation: VALIDATION.username,
+      validation: VALIDATION.login,
     });
   },
 
@@ -84,7 +111,7 @@ const RegistrationView = {
       placeholder: "Enter your " + SETTINGS.label.registration.city + " ...",
       id: "city",
       class: "registration-input",
-      validation: VALIDATION.username,
+      validation: VALIDATION.login,
     });
   },
 
@@ -96,7 +123,7 @@ const RegistrationView = {
       placeholder: "Enter your " + SETTINGS.label.registration.street + " ...",
       id: "street",
       class: "registration-input",
-      validation: VALIDATION.username,
+      validation: VALIDATION.login,
     });
   },
 
@@ -109,7 +136,7 @@ const RegistrationView = {
         "Enter your " + SETTINGS.label.registration.postalCode + " ...",
       id: "postcode",
       class: "registration-input",
-      validation: VALIDATION.username,
+      validation: VALIDATION.login,
     });
   },
 
@@ -121,7 +148,7 @@ const RegistrationView = {
       placeholder: "Enter your " + SETTINGS.label.registration.login + "...",
       id: "name",
       class: "registration-input",
-      validation: VALIDATION.username,
+      validation: VALIDATION.login,
     });
   },
 
@@ -151,34 +178,61 @@ const RegistrationView = {
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    const name = (formData.get("name") as string)?.trim();
-    const password = (formData.get("password") as string)?.trim();
+    const formFields = [
+      {
+        name: "name",
+        label: SETTINGS.label.registration.login,
+        validation: VALIDATION.login,
+      },
+      {
+        name: "password",
+        label: SETTINGS.label.registration.password,
+        validation: VALIDATION.password,
+      },
+      {
+        name: "firstname",
+        label: SETTINGS.label.registration.firstName,
+        validation: VALIDATION.firstName,
+      },
+      {
+        name: "lastname",
+        label: SETTINGS.label.registration.lastName,
+        validation: VALIDATION.lastName,
+      },
+      {
+        name: "birthday",
+        label: SETTINGS.label.registration.birthDay,
+        validation: VALIDATION.dateOfBirth,
+      },
+    ];
 
-    const nameInput = form.querySelector<HTMLInputElement>("#name");
-    const passwordInput = form.querySelector<HTMLInputElement>("#password");
+    for (const field of formFields) {
+      const value = (formData.get(field.name) as string)?.trim();
+      const inputElement = form.querySelector<HTMLInputElement>(
+        `#${field.name}`,
+      );
 
-    if (!name) {
-      showModalMessage("Please enter your name.");
-      nameInput?.focus();
-      return;
-    }
+      if (!value) {
+        showModalMessage(`Please enter your ${field.label}.`);
+        inputElement?.focus();
+        return;
+      }
 
-    if (!VALIDATION.username.pattern.test(name)) {
-      showModalMessage("Name is invalid. Please follow the rules.");
-      nameInput?.focus();
-      return;
-    }
+      const validation = field.validation;
+      const isPatternValid =
+        "pattern" in validation && validation.pattern
+          ? validation.pattern.test(value)
+          : true;
+      const isValid =
+        "isValid" in validation && validation.isValid
+          ? validation.isValid(value)
+          : true;
 
-    if (!password) {
-      showModalMessage("Please enter your password.");
-      passwordInput?.focus();
-      return;
-    }
-
-    if (!VALIDATION.password.pattern.test(password)) {
-      showModalMessage("Password is invalid. Please follow the rules.");
-      passwordInput?.focus();
-      return;
+      if (!isPatternValid || !isValid) {
+        showModalMessage(validation.message);
+        inputElement?.focus();
+        return;
+      }
     }
 
     // const newUser: UserType = { name, password };

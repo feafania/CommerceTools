@@ -37,7 +37,7 @@ const LoginView = {
       id: "username",
       class: "login-input",
       // required: true,
-      validation: VALIDATION.username,
+      validation: VALIDATION.login,
     });
   },
 
@@ -68,34 +68,38 @@ const LoginView = {
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    const login = (formData.get("username") as string)?.trim();
-    const password = (formData.get("password") as string)?.trim();
+    const formFields = [
+      { name: "username", label: "Name", validation: VALIDATION.login },
+      { name: "password", label: "Password", validation: VALIDATION.password },
+    ];
 
-    const loginInput = form.querySelector<HTMLInputElement>("#username");
-    const passwordInput = form.querySelector<HTMLInputElement>("#password");
+    for (const field of formFields) {
+      const value = (formData.get(field.name) as string)?.trim();
+      const inputElement = form.querySelector<HTMLInputElement>(
+        `#${field.name}`,
+      );
 
-    if (!login) {
-      showModalMessage("Please enter your username.");
-      loginInput?.focus();
-      return;
-    }
+      if (!value) {
+        showModalMessage(`Please enter your ${field.label}.`);
+        inputElement?.focus();
+        return;
+      }
 
-    if (!VALIDATION.username.pattern.test(login)) {
-      showModalMessage("Username is invalid. Please follow the rules.");
-      loginInput?.focus();
-      return;
-    }
+      const validation = field.validation;
+      const isPatternValid =
+        "pattern" in validation && validation.pattern
+          ? validation.pattern.test(value)
+          : true;
+      const isValid =
+        "isValid" in validation && validation.isValid
+          ? validation.isValid(value)
+          : true;
 
-    if (!password) {
-      showModalMessage("Please enter your password.");
-      passwordInput?.focus();
-      return;
-    }
-
-    if (!VALIDATION.password.pattern.test(password)) {
-      showModalMessage("Password is invalid. Please follow the rules.");
-      passwordInput?.focus();
-      return;
+      if (!isPatternValid || !isValid) {
+        showModalMessage(validation.message);
+        inputElement?.focus();
+        return;
+      }
     }
 
     // const user: UserType = { login, password };
