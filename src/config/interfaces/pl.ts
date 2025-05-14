@@ -15,9 +15,16 @@ const pl: AppTranslation = {
     submit: "Podtvierdzic",
   },
   registration: {
-    name: "Login",
+    firstName: "First name",
+    lastName: "Last name",
+    birthDay: "Birth day",
+    street: "Street",
+    city: "City",
+    postalCode: "Post Code",
+    country: "Country",
+    login: "login",
     password: "Password",
-    header: "Authentication",
+    header: "Registration",
     submit: "Submit",
   },
 };

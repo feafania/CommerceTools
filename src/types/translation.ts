@@ -13,7 +13,14 @@ export interface AppTranslation {
     submit: string;
   };
   registration: {
-    name: string;
+    firstName: string;
+    lastName: string;
+    birthDay: string;
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    login: string;
     password: string;
     header: string;
     submit: string;
