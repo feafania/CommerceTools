@@ -4,6 +4,7 @@ import LoginView from "@/pages/login/login";
 import { renderAboutView } from "@/pages/about/about";
 import Header from "@/components/layout/header/header";
 import MainView from "@/pages/main/main";
+import RegistrationView from "@/pages/registration/registration";
 
 const PageRouter = {
   currentPage: PageType.login as PageType,
@@ -26,15 +27,32 @@ const PageRouter = {
 
     let page: PageType;
 
-    if (path === PageType.about) {
-      page = path;
+    // if (path === PageType.about) {
+    //   page = path;
+    // } else {
+    //   const isLoggedIn = Boolean(authStore.user);
+    //   page = isLoggedIn ? PageType.main : PageType.login;
+    //   if (!path || path !== page) {
+    //     location.replace(`/#${page}`);
+    //     return;
+    //   }
+    // }
+    const isLoggedIn = Boolean(authStore.user);
+
+    if (path) {
+      page = path as PageType;
     } else {
-      const isLoggedIn = Boolean(authStore.user);
-      page = isLoggedIn ? PageType.main : PageType.login;
-      if (!path || path !== page) {
-        location.replace(`/#${page}`);
-        return;
-      }
+      page = PageType.main;
+      location.replace(`/#${page}`);
+      return;
+    }
+
+    if (
+      isLoggedIn &&
+      (path === PageType.login || path === PageType.registration)
+    ) {
+      location.replace(`/#${PageType.main}`);
+      return;
     }
 
     this.currentPage = page;
@@ -42,10 +60,11 @@ const PageRouter = {
     const renderMap = {
       [PageType.login]: LoginView.render.bind(LoginView),
       [PageType.main]: MainView.renderChat.bind(MainView),
+      [PageType.registration]: RegistrationView.render.bind(RegistrationView),
       [PageType.about]: renderAboutView,
     };
 
-    const render = renderMap[page];
+    const render = renderMap[page as keyof typeof renderMap];
 
     if (render) {
       const element = await render();
