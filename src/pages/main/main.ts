@@ -10,8 +10,8 @@ const MainView = {
     const aside = document.createElement("aside");
     aside.className = "sidebar";
 
-    const navClone = Header.nav.cloneNode(true) as HTMLElement;
-    aside.append(navClone);
+    const nav = Header.createNav();
+    aside.append(nav);
 
     const title = document.createElement("h1");
     title.textContent = "Welcome to Gifts Shop";
