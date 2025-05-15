@@ -18,4 +18,15 @@ export interface AppTranslation {
     header: string;
     submit: string;
   };
+  errorsTypes: {
+    duplicate: string;
+    invalid: string;
+    required: string;
+    credentials: string;
+    unknown: string;
+  };
+  errors: {
+    login: string;
+    registration: string;
+  };
 }

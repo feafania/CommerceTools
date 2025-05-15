@@ -20,6 +20,17 @@ const en: AppTranslation = {
     header: "Authentication",
     submit: "Submit",
   },
+  errorsTypes: {
+    duplicate: "The value already exists",
+    invalid: "Incorrect value",
+    required: "Required field",
+    credentials: "Invalid email or password",
+    unknown: "Unknown error",
+  },
+  errors: {
+    login: "Login failed.",
+    registration: "Registration failed.",
+  },
 };
 
 export default en;
