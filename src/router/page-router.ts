@@ -7,7 +7,7 @@ import MainView from "@/pages/main/main";
 import RegistrationView from "@/pages/registration/registration";
 
 const PageRouter = {
-  currentPage: PageType.login as PageType,
+  currentPage: PageType.main as PageType,
   init() {
     globalThis.addEventListener("popstate", () => this.handleRoute());
     globalThis.addEventListener("hashchange", () => this.handleRoute());
@@ -16,7 +16,7 @@ const PageRouter = {
 
   getPathFromUrl(): string {
     const hash = location.hash.slice(1);
-    return hash || PageType.login;
+    return hash || PageType.main;
   },
 
   async handleRoute() {
@@ -42,8 +42,7 @@ const PageRouter = {
     if (path) {
       page = path as PageType;
     } else {
-      page = PageType.main;
-      location.replace(`/#${page}`);
+      this.navigateTo(PageType.main);
       return;
     }
 
@@ -59,7 +58,7 @@ const PageRouter = {
 
     const renderMap = {
       [PageType.login]: LoginView.render.bind(LoginView),
-      [PageType.main]: MainView.renderChat.bind(MainView),
+      [PageType.main]: MainView.render.bind(MainView),
       [PageType.registration]: RegistrationView.render.bind(RegistrationView),
       [PageType.about]: renderAboutView,
     };
@@ -79,6 +78,7 @@ const PageRouter = {
   },
 
   navigateTo(path: PageType) {
+    if (location.hash.slice(1) === path) return;
     location.hash = `#${path}`;
   },
 };
