@@ -1,3 +1,10 @@
+const commonModuleNameMapper = {
+  "^@/(.*)$": "<rootDir>/src/$1",
+  "^img/(.*)$": "<rootDir>/src/assets/img/$1",
+  "^svg/(.*)$": "<rootDir>/src/assets/svg/$1",
+  "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+};
+
 export default {
   verbose: true,
   collectCoverage: true,
@@ -28,11 +35,7 @@ export default {
       preset: "ts-jest",
       testEnvironment: "jsdom",
       testMatch: ["**/__tests__/unit/browser/**/*.[jt]s?(x)"],
-      moduleNameMapper: {
-        "^@/(.*)$": "<rootDir>/src/$1",
-        "^img/(.*)$": "<rootDir>/src/assets/img/$1",
-        "^svg/(.*)$": "<rootDir>/src/assets/svg/$1",
-      },
+      moduleNameMapper: commonModuleNameMapper,
     },
     {
       displayName: "node",
@@ -42,11 +45,7 @@ export default {
       },
       testMatch: ["**/__tests__/unit/node/**/*.[jt]s?(x)"],
       setupFiles: ["<rootDir>/jest.setup.ts"],
-      moduleNameMapper: {
-        "^@/(.*)$": "<rootDir>/src/$1",
-        "^img/(.*)$": "<rootDir>/src/assets/img/$1",
-        "^svg/(.*)$": "<rootDir>/src/assets/svg/$1",
-      },
+      moduleNameMapper: commonModuleNameMapper,
     },
     {
       displayName: "integration",
@@ -54,11 +53,7 @@ export default {
       testEnvironment: "node",
       testMatch: ["**/__tests__/integration/**/*.[jt]s?(x)"],
       setupFiles: ["<rootDir>/jest.setup.ts"],
-      moduleNameMapper: {
-        "^@/(.*)$": "<rootDir>/src/$1",
-        "^img/(.*)$": "<rootDir>/src/assets/img/$1",
-        "^svg/(.*)$": "<rootDir>/src/assets/svg/$1",
-      },
+      moduleNameMapper: commonModuleNameMapper,
     },
   ],
 };
