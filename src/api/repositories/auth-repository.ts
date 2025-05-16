@@ -34,11 +34,12 @@ const authRepository = {
   },
 
   toMyCustomerDraft(input: InCustomer): MyCustomerDraft {
-    const baseAddress: InAddress = input.billingAddress;
+    const addresses: InAddress[] = input.isSameAddress
+      ? [input.billingAddress]
+      : [input.billingAddress, input.shippingAddress];
 
-    const addresses = input.isSameAddress
-      ? [baseAddress]
-      : [baseAddress, input.shippingAddress];
+    const billingIndex = 0;
+    const shippingIndex = input.isSameAddress ? 0 : 1;
 
     return {
       email: input.email,
@@ -47,8 +48,12 @@ const authRepository = {
       lastName: input.lastName,
       dateOfBirth: input.dateOfBirth,
       addresses,
-      defaultBillingAddress: 0,
-      defaultShippingAddress: input.isSameAddress ? 0 : 1,
+      defaultBillingAddress: input.setBillingAsDefault
+        ? billingIndex
+        : undefined,
+      defaultShippingAddress: input.setShippingAsDefault
+        ? shippingIndex
+        : undefined,
     };
   },
 
@@ -79,6 +84,8 @@ const authRepository = {
       },
       isSameAddress:
         customer.defaultBillingAddressId === customer.defaultShippingAddressId,
+      setBillingAsDefault: Boolean(customer.defaultBillingAddressId),
+      setShippingAsDefault: Boolean(customer.defaultShippingAddressId),
     };
   },
 };
