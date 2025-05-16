@@ -21,7 +21,7 @@ const productRepository = {
     }
     return [] as InCategory[];
   },
-  async getCategory(
+  async getCategoryByKey(
     key: string,
     locale = SETTINGS.currentLang,
   ): Promise<InCategory | undefined> {
