@@ -61,4 +61,6 @@ export type InCustomer = {
   billingAddress: InAddress;
   shippingAddress: InAddress;
   isSameAddress?: boolean;
+  setBillingAsDefault?: boolean;
+  setShippingAsDefault?: boolean;
 };
