@@ -14,14 +14,14 @@ export class ApiError extends Error {
 }
 
 function localizeMessage(message: string) {
+  if (message.includes("credentials"))
+    return translations[SETTINGS.currentLang].errorsTypes.credentials;
   if (message.includes("Duplicate"))
     return translations[SETTINGS.currentLang].errorsTypes.duplicate;
   if (message.includes("Invalid"))
     return translations[SETTINGS.currentLang].errorsTypes.invalid;
   if (message.includes("Required"))
     return translations[SETTINGS.currentLang].errorsTypes.required;
-  if (message.includes("credentials"))
-    return translations[SETTINGS.currentLang].errorsTypes.credentials;
   return translations[SETTINGS.currentLang].errorsTypes.unknown;
 }
 
