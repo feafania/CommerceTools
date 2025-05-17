@@ -11,6 +11,7 @@ const authRepository = {
   ): Promise<InCustomer | undefined> {
     try {
       const response = await loginCustomer(email, password);
+      console.info(response.customer);
       if (response) {
         const customer = response.customer;
         return this.toInternalCustomer(customer);
