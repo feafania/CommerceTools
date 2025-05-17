@@ -3,10 +3,6 @@ import { ValidationType } from "../types/types";
 export const VIEW_CONTAINER_NAME = "view-container";
 
 export const VALIDATION = {
-  login: {
-    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    message: "Please enter a valid email address (e.g., example@email.com).",
-  },
   email: {
     pattern: /^(?!\s)([^\s@]+)@([^\s@]+\.[^\s@]+)(?<!\s)$/,
     message:

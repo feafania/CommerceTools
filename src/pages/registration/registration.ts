@@ -118,7 +118,7 @@ const RegistrationView = {
       placeholder: SETTINGS.label.registration.login,
       id: "name",
       class: "registration-input",
-      validation: VALIDATION.login,
+      validation: VALIDATION.email,
     });
   },
 
@@ -152,7 +152,7 @@ const RegistrationView = {
       {
         name: "name",
         label: SETTINGS.label.registration.login,
-        validation: VALIDATION.login,
+        validation: VALIDATION.email,
       },
       {
         name: "password",

@@ -56,7 +56,7 @@ const LoginView = {
 
   renderSubmit(): HTMLElement {
     return createButton({
-      name: "Submit",
+      name: SETTINGS.label.login.submit,
       id: "submit-login",
       class: "submit-login-button",
     });
@@ -69,8 +69,12 @@ const LoginView = {
     const formData = new FormData(form);
 
     const formFields = [
-      { name: "username", label: "Name", validation: VALIDATION.login },
-      { name: "password", label: "Password", validation: VALIDATION.password },
+      { name: "username", label: "Name", validation: VALIDATION.email },
+      {
+        name: "password",
+        label: "Password",
+        validation: VALIDATION.passwordLoginPage,
+      },
     ];
 
     for (const field of formFields) {
