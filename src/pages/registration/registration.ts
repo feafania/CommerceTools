@@ -21,11 +21,8 @@ const RegistrationView = {
       this.renderFirstName(),
       this.renderLastName(),
       this.renderBirthDay(),
-      this.renderCountry(),
-      this.renderCity(),
-      this.renderStreet(),
-      this.renderPostcode(),
-      this.renderName(),
+      this.renderAddress(),
+      this.renderEmail(),
       this.renderPassword(),
       this.renderSubmit(),
     );
@@ -44,8 +41,7 @@ const RegistrationView = {
       type: "text",
       label: SETTINGS.label.registration.firstName,
       name: "firstname",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.firstName + "...",
+      placeholder: SETTINGS.label.registration.firstName,
       id: "firstname",
       class: "registration-input",
       validation: VALIDATION.firstName,
@@ -57,8 +53,7 @@ const RegistrationView = {
       type: "text",
       label: SETTINGS.label.registration.lastName,
       name: "lastname",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.lastName + " ...",
+      placeholder: SETTINGS.label.registration.lastName,
       id: "lastname",
       class: "registration-input",
       validation: VALIDATION.lastName,
@@ -70,82 +65,57 @@ const RegistrationView = {
       type: "text",
       label: SETTINGS.label.registration.birthDay,
       name: "birthday",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.birthDay + " ...",
+      placeholder: SETTINGS.label.registration.birthDay,
       id: "birthday",
       class: "registration-input",
       validation: VALIDATION.dateOfBirth,
     });
+  },
+
+  renderAddress(): HTMLElement {
+    const container = document.createElement("div");
+    container.className = "registration-address-container";
+
+    // First address block
+    const address1 = document.createElement("div");
+    address1.className = "address-block";
+    address1.textContent = "Primary Address (Coming soon...)";
+
+    // Checkbox
+    const toggleWrapper = document.createElement("div");
+    toggleWrapper.className = "address-toggle";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = "show-second-address";
+
+    const label = document.createElement("label");
+    label.htmlFor = "show-second-address";
+    label.textContent = "Add secondary address";
+
+    toggleWrapper.append(checkbox, label);
+
+    // Second address block
+    const address2 = document.createElement("div");
+    address2.className = "address-block secondary-address";
+    address2.textContent = "Secondary Address (Coming soon...)";
+    address2.style.display = "none";
+
+    // Toggle logic
+    checkbox.addEventListener("change", () => {
+      address2.style.display = checkbox.checked ? "block" : "none";
+    });
+
+    container.append(address1, toggleWrapper, address2);
+    return container;
   },
 
   renderEmail(): HTMLElement {
     return createInput({
       type: "text",
       label: SETTINGS.label.registration.login,
-      name: "birthday",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.birthDay + " ...",
-      id: "birthday",
-      class: "registration-input",
-      validation: VALIDATION.dateOfBirth,
-    });
-  },
-
-  renderCountry(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.country,
-      name: "country",
-      placeholder: "Enter your " + SETTINGS.label.registration.country + " ...",
-      id: "country",
-      class: "registration-input",
-      validation: VALIDATION.login,
-    });
-  },
-
-  renderCity(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.city,
-      name: "city",
-      placeholder: "Enter your " + SETTINGS.label.registration.city + " ...",
-      id: "city",
-      class: "registration-input",
-      validation: VALIDATION.login,
-    });
-  },
-
-  renderStreet(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.street,
-      name: "street",
-      placeholder: "Enter your " + SETTINGS.label.registration.street + " ...",
-      id: "street",
-      class: "registration-input",
-      validation: VALIDATION.login,
-    });
-  },
-
-  renderPostcode(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.postalCode,
-      name: "postcode",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.postalCode + " ...",
-      id: "postcode",
-      class: "registration-input",
-      validation: VALIDATION.login,
-    });
-  },
-
-  renderName(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.login,
       name: "name",
-      placeholder: "Enter your " + SETTINGS.label.registration.login + "...",
+      placeholder: SETTINGS.label.registration.login,
       id: "name",
       class: "registration-input",
       validation: VALIDATION.login,
@@ -157,7 +127,7 @@ const RegistrationView = {
       type: "password",
       label: SETTINGS.label.registration.password,
       name: "password",
-      placeholder: "Enter your password...",
+      placeholder: SETTINGS.label.registration.password,
       id: "password",
       class: "password-input",
       validation: VALIDATION.password,
