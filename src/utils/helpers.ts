@@ -41,7 +41,7 @@ export function classesToArray(
   if (Array.isArray(classObject)) {
     return classObject.filter((cls): cls is string => typeof cls === "string");
   } else if (typeof classObject === "string") {
-    return [classObject];
+    return classObject.trim().split(/\s+/);
   }
   return [];
 }
