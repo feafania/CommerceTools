@@ -7,6 +7,12 @@ export const VALIDATION = {
     pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     message: "Please enter a valid email address (e.g., example@email.com).",
   },
+  email: {
+    pattern: /^(?!\s)([^\s@]+)@([^\s@]+\.[^\s@]+)(?<!\s)$/,
+    message:
+      "Please enter a valid email address (e.g., user@example.com). It must" +
+      " not have spaces, must include '@', and a valid domain (e.g., example.com).",
+  },
   firstName: {
     pattern: /^[A-Za-z]{1,}$/,
     message: "First name must contain only letters and at least one character.",
@@ -56,7 +62,14 @@ export const VALIDATION = {
     },
     message: "You must be at least 13 years old.",
   },
-
+  passwordLoginPage: {
+    pattern:
+      /^(?!\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])?.{8,}(?<!\s)$/,
+    message:
+      "Password must be at least 8 characters long, include uppercase and lowercase" +
+      " letters, a digit, and optionally a special character (!@#$%^&*). It must not" +
+      " have leading or trailing spaces.",
+  } as ValidationType,
   password: {
     pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
     message:

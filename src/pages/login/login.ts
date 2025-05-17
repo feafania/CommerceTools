@@ -33,11 +33,11 @@ const LoginView = {
       type: "text",
       label: SETTINGS.label.login.name,
       name: "username",
-      placeholder: "Enter your name...",
+      placeholder: SETTINGS.label.login.name,
       id: "username",
       class: "login-input",
       // required: true,
-      validation: VALIDATION.login,
+      validation: VALIDATION.email,
     });
   },
 
@@ -46,11 +46,11 @@ const LoginView = {
       type: "password",
       label: SETTINGS.label.login.password,
       name: "password",
-      placeholder: "Enter your password...",
+      placeholder: SETTINGS.label.login.password,
       id: "password",
       class: "password-input",
       // required: true,
-      validation: VALIDATION.password,
+      validation: VALIDATION.passwordLoginPage,
     });
   },
 
