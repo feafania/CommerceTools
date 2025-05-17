@@ -42,16 +42,49 @@ const LoginView = {
   },
 
   renderPassword(): HTMLElement {
-    return createInput({
+    const wrapper = document.createElement("div");
+    wrapper.className = "password-wrapper";
+
+    const passwordInput = createInput({
       type: "password",
-      label: SETTINGS.label.login.password,
+      label: SETTINGS.label.registration.password,
       name: "password",
-      placeholder: SETTINGS.label.login.password,
+      placeholder: SETTINGS.label.registration.password,
       id: "password",
       class: "password-input",
-      // required: true,
-      validation: VALIDATION.passwordLoginPage,
+      validation: VALIDATION.password,
     });
+
+    // Create eye icon
+    const eyeButton = document.createElement("button");
+    eyeButton.type = "button";
+    eyeButton.className = "toggle-password-button";
+    eyeButton.innerHTML = "👁️";
+
+    // Toggle logic
+    eyeButton.addEventListener("click", () => {
+      const input = wrapper.querySelector<HTMLInputElement>("#password");
+      if (input) {
+        const isHidden = input.type === "password";
+        input.type = isHidden ? "text" : "password";
+        eyeButton.innerHTML = isHidden ? "🙈" : "👁️";
+      }
+    });
+
+    // Append eye icon inside the wrapper
+    wrapper.append(passwordInput, eyeButton);
+
+    return wrapper;
+    // return createInput({
+    //   type: "password",
+    //   label: SETTINGS.label.login.password,
+    //   name: "password",
+    //   placeholder: SETTINGS.label.login.password,
+    //   id: "password",
+    //   class: "password-input",
+    //   // required: true,
+    //   validation: VALIDATION.passwordLoginPage,
+    // });
   },
 
   renderSubmit(): HTMLElement {
