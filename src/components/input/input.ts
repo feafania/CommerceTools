@@ -1,16 +1,22 @@
 // import "./input.css";
 import { ControlConfig } from "@/types/interfaces";
-import { getState, saveState } from "@/utils/helpers";
+import { classesToArray, getState, saveState } from "@/utils/helpers";
 import { ValidationType } from "@/types/types";
 
 export default function createInput(object: ControlConfig): HTMLDivElement {
+  const classNames = classesToArray(object.class);
+
   const wrapper = document.createElement("div");
   wrapper.id = object.id ? `${object.id}-wrapper` : "";
-  wrapper.className = object.class ? `${object.class}-wrapper` : "";
+  for (const className of classNames) {
+    if (className) {
+      wrapper.classList.add(`${className}-wrapper`);
+    }
+  }
   wrapper.classList.add("input-wrapper");
 
   if (object.label) {
-    const label = createLabel(object);
+    const label = createLabel(object, classNames);
     wrapper.append(label);
   }
 
@@ -24,7 +30,11 @@ export default function createInput(object: ControlConfig): HTMLDivElement {
   input.id = object.id ?? `input-${Date.now()}`;
   input.name = object.name || "";
   input.value = getState(input.id) || "";
-  input.className = object.class ?? "";
+  for (const className of classNames) {
+    if (className) {
+      input.classList.add(className);
+    }
+  }
   input.classList.add("input");
   input.disabled = object.disabled || false;
   input.required = object.required || false;
@@ -40,7 +50,10 @@ export default function createInput(object: ControlConfig): HTMLDivElement {
   return wrapper;
 }
 
-function createLabel(object: ControlConfig): HTMLLabelElement {
+function createLabel(
+  object: ControlConfig,
+  classNames: string[],
+): HTMLLabelElement {
   const label = document.createElement("label");
   if (object.label) {
     label.textContent = object.label;
@@ -49,7 +62,11 @@ function createLabel(object: ControlConfig): HTMLLabelElement {
     label.id = `${object.id}-label`;
     label.htmlFor = object.id;
   }
-  label.className = object.class ? `${object.class}-label` : "";
+  for (const className of classNames) {
+    if (className) {
+      label.classList.add(`${className}-label`);
+    }
+  }
   label.classList.add("input-label");
   return label;
 }
