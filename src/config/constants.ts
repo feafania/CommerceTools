@@ -63,4 +63,24 @@ export const VALIDATION = {
       "Password must be at least 8 characters long," +
       " include uppercase, lowercase letters and a number.",
   } as ValidationType,
+
+  city: {
+    pattern: /^[A-Za-z\s\-]+$/,
+    message: "City must contain only letters and spaces.",
+  },
+
+  street: {
+    pattern: /^.{1,}$/,
+    message: "Street cannot be empty.",
+  },
+
+  postalCode: {
+    isValid: (value: string) => {
+      const isPolish = /^[0-9]{2}-[0-9]{3}$/.test(value);
+      const isUK = /^[A-Z]{1,2}\d[A-Z\d]? \d[A-Z]{2}$/.test(value);
+      return isPolish || isUK;
+    },
+    message:
+      "Postal code must match format for Poland (00-000) or UK (SW1A 1AA).",
+  },
 };
