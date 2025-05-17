@@ -10,6 +10,7 @@ export interface AppTranslation {
     name: string;
     password: string;
     header: string;
+    emptyField: string;
     submit: string;
   };
   registration: {

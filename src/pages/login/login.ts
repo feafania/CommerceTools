@@ -117,7 +117,7 @@ const LoginView = {
       );
 
       if (!value) {
-        showModalMessage(`Please enter your ${field.label}.`);
+        showModalMessage(`${SETTINGS.label.login.emptyField} ${field.label}.`);
         inputElement?.focus();
         return;
       }

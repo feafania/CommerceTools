@@ -13,6 +13,7 @@ const pl: AppTranslation = {
     password: "Haslo",
     header: "Autenfikacia",
     submit: "Podtvierdzic",
+    emptyField: "Please enter",
   },
   registration: {
     firstName: "First name",

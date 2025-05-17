@@ -12,6 +12,7 @@ const en: AppTranslation = {
     name: "Login",
     password: "Password",
     header: "Authentication",
+    emptyField: "Please enter",
     submit: "Sign in",
   },
   registration: {
