@@ -4,6 +4,7 @@ import { VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { SETTINGS } from "@/config/settings";
+import { createAddressFields } from "@/components/address/address";
 
 const RegistrationView = {
   async render(): Promise<HTMLElement> {
@@ -21,10 +22,11 @@ const RegistrationView = {
       this.renderFirstName(),
       this.renderLastName(),
       this.renderBirthDay(),
-      this.renderCountry(),
-      this.renderCity(),
-      this.renderStreet(),
-      this.renderPostcode(),
+      //this.renderCountry(),
+      //this.renderCity(),
+      //this.renderStreet(),
+      //this.renderPostcode(),
+      createAddressFields(),
       this.renderName(),
       this.renderPassword(),
       this.renderSubmit(),
