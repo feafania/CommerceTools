@@ -2,13 +2,15 @@ import { ApiError } from "@/api/handle-api-error";
 import showModalMessage from "@/components/modal-window/modal-window";
 import authRepository from "@/api/repositories/auth-repository";
 import authService from "@/api/services/auth-service";
+import authStore from "@/stores/auth-store";
+import { tokenStore } from "@/stores/token-store";
 
 jest.mock("@/components/modal-window/modal-window", () => ({
   __esModule: true,
   default: jest.fn(), // mock showModalMessage as jest.fn()
 }));
 
-describe("authService", () => {
+describe("authServiceLogin", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -16,7 +18,6 @@ describe("authService", () => {
   describe("login", () => {
     it("should show login error modal", async () => {
       const mockError = new ApiError(401, "Invalid password");
-
       jest.spyOn(authRepository, "login").mockRejectedValueOnce(mockError);
 
       await authService.login("bad@example.com", "wrong");
@@ -59,6 +60,28 @@ describe("authService", () => {
       expect(
         (showModalMessage as jest.Mock).mock.calls[0][0],
       ).toMatchSnapshot();
+    });
+  });
+});
+
+describe("authServiceLogout", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("logoutCustomer", () => {
+    it("should clear user and token and return success", () => {
+      const setUserSpy = jest
+        .spyOn(authStore, "setUser")
+        .mockImplementation(() => {});
+      const clearTokenSpy = jest
+        .spyOn(tokenStore, "clearToken")
+        .mockImplementation(() => {});
+      const result = authService.logoutCustomer();
+
+      expect(setUserSpy).toHaveBeenCalledWith(undefined);
+      expect(clearTokenSpy).toHaveBeenCalled();
+      expect(result).toEqual({ success: true });
     });
   });
 });

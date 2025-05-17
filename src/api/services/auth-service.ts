@@ -5,6 +5,7 @@ import showModalMessage from "@/components/modal-window/modal-window";
 import translations from "@/config/interfaces";
 import { SETTINGS } from "@/config/settings";
 import authStore from "@/stores/auth-store";
+import { tokenStore } from "@/stores/token-store";
 
 class AuthService {
   async login(
@@ -41,6 +42,16 @@ class AuthService {
           `${translations[SETTINGS.currentLang].errors.registration}\n${error.message}`,
         );
       }
+    }
+  }
+
+  logoutCustomer() {
+    try {
+      authStore.setUser(undefined);
+      tokenStore.clearToken();
+      return { success: true };
+    } catch (error) {
+      console.error("Logout failed:", error);
     }
   }
 }
