@@ -64,6 +64,12 @@ export const VALIDATION = {
       " include uppercase, lowercase letters and a number.",
   } as ValidationType,
 
+  country: {
+    isValid: (value: string) =>
+      ["Poland", "United Kingdom", "Germany", "France"].includes(value),
+    message: "Please enter a valid country (e.g. Poland, United Kingdom).",
+  },
+
   city: {
     pattern: /^[A-Za-z\s\-]+$/,
     message: "City must contain only letters and spaces.",
