@@ -64,12 +64,6 @@ export const VALIDATION = {
       " include uppercase, lowercase letters and a number.",
   } as ValidationType,
 
-  /* country: {
-    isValid: (value: string) =>
-      ["Poland", "United Kingdom", "Germany", "France"].includes(value),
-    message: "Please enter a valid country (e.g. Poland, United Kingdom).",
-  }, */
-
   city: {
     pattern: /^[A-Za-z\s\-]+$/,
     message: "City must contain only letters and spaces.",
@@ -81,12 +75,20 @@ export const VALIDATION = {
   },
 
   postalCode: {
-    isValid: (value: string) => {
-      const isPolish = /^[0-9]{2}-[0-9]{3}$/.test(value);
-      const isUK = /^[A-Z]{1,2}\d[A-Z\d]? \d[A-Z]{2}$/.test(value);
-      return isPolish || isUK;
-    },
     message:
       "Postal code must match format for Poland (00-000) or UK (SW1A 1AA).",
+    isValid: (value: string, context?: { country?: string }) => {
+      const country = context?.country;
+
+      if (country === "Poland") {
+        return /^\d{2}-\d{3}$/.test(value); // Example: 00-123
+      }
+
+      if (country === "United Kingdom") {
+        return /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i.test(value); // Example: SW1A 1AA
+      }
+
+      return false;
+    },
   },
 };

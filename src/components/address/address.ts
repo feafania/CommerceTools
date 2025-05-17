@@ -5,14 +5,14 @@ import { VALIDATION } from "@/config/constants";
 export function createAddressFields(): DocumentFragment {
   const fragment = document.createDocumentFragment();
 
-  const countrySelect = createSelect({
+  const countrySelectWrapper = createSelect({
     label: "Country",
     name: "country",
     id: "country",
     class: "registration-input",
-    options: ["Poland", "Great Britain"],
-    //validation: VALIDATION.country,
+    options: ["Poland", "United Kingdom"],
   });
+  const countrySelect = countrySelectWrapper.querySelector("select")!;
 
   const cityInput = createInput({
     type: "text",
@@ -34,16 +34,36 @@ export function createAddressFields(): DocumentFragment {
     validation: VALIDATION.street,
   });
 
-  const postalCodeInput = createInput({
+  const postalCodeInputWrapper = createInput({
     type: "text",
     label: "Postal Code",
     name: "postalcode",
     id: "postalcode",
     placeholder: "Enter your postal code...",
     class: "registration-input",
-    validation: VALIDATION.postalCode,
+    validation: {
+      message: VALIDATION.postalCode.message,
+      isValid: (value: string) => {
+        const country = countrySelect.value;
+        return VALIDATION.postalCode.isValid(value, { country });
+      },
+    },
   });
 
-  fragment.append(countrySelect, cityInput, streetInput, postalCodeInput);
+  countrySelect.addEventListener("change", () => {
+    const inputElement = postalCodeInputWrapper.querySelector("input");
+    if (inputElement) {
+      const event = new Event("input");
+      inputElement.dispatchEvent(event);
+    }
+  });
+
+  fragment.append(
+    countrySelectWrapper,
+    cityInput,
+    streetInput,
+    postalCodeInputWrapper,
+  );
+
   return fragment;
 }
