@@ -3,18 +3,21 @@ import { Customer, MyCustomerDraft } from "@commercetools/platform-sdk";
 import { InCustomer, InAddress } from "@/types/types";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
+import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
 
 const authRepository = {
   async login(
     email: string,
     password: string,
-  ): Promise<InCustomer | undefined> {
+  ): Promise<{ customer: InCustomer; token: string } | undefined> {
     try {
       const response = await loginCustomer(email, password);
+      const tokenData = await getCustomerToken(email, password);
       console.info(response.customer);
-      if (response) {
-        const customer = response.customer;
-        return this.toInternalCustomer(customer);
+
+      if (response && tokenData?.access_token) {
+        const customer = this.toInternalCustomer(response.customer);
+        return { customer, token: tokenData.access_token };
       }
     } catch (error) {
       throw error;

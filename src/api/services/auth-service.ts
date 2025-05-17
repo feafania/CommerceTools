@@ -4,6 +4,7 @@ import { ApiError } from "@/api/handle-api-error";
 import showModalMessage from "@/components/modal-window/modal-window";
 import translations from "@/config/interfaces";
 import { SETTINGS } from "@/config/settings";
+import authStore from "@/stores/auth-store";
 
 class AuthService {
   async login(
@@ -11,11 +12,13 @@ class AuthService {
     password: string,
   ): Promise<InCustomer | undefined> {
     try {
-      const customer: InCustomer | undefined = await authRepository.login(
-        email,
-        password,
-      );
+      const result = await authRepository.login(email, password);
+      if (!result) return;
+
+      const { customer, token } = result;
       console.log(customer);
+      console.log("TOKEN:", token);
+      authStore.setUser(customer, token);
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {

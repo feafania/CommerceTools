@@ -2,6 +2,7 @@ import { MyCustomerDraft } from "@commercetools/platform-sdk";
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
+import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
 
 describe("Auth Integration", () => {
   const uniqueEmail = `test-${Date.now()}@example.com`;
@@ -48,6 +49,17 @@ describe("Auth Integration", () => {
     );
     expect(result).toBeDefined();
     expect(result.customer.email).toBe(testLoginDraft.email);
+  });
+
+  it("should obtain a valid access token after login", async () => {
+    const tokenResponse = await getCustomerToken(
+      testLoginDraft.email,
+      testLoginDraft.password,
+    );
+
+    expect(tokenResponse).toBeDefined();
+    expect(typeof tokenResponse?.access_token).toBe("string");
+    expect(tokenResponse?.access_token.length).toBeGreaterThan(0);
   });
 
   it("should fail to login with wrong password", async () => {

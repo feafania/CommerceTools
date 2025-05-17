@@ -2,6 +2,7 @@ import { CustomerSignInResult, Customer } from "@commercetools/platform-sdk";
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
+import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
 
 // Mocked functions
 export const mockedRegisterCustomer = registerCustomer as jest.MockedFunction<
@@ -10,6 +11,10 @@ export const mockedRegisterCustomer = registerCustomer as jest.MockedFunction<
 
 export const mockedLoginCustomer = loginCustomer as jest.MockedFunction<
   typeof loginCustomer
+>;
+
+export const mockedGetCustomerToken = getCustomerToken as jest.MockedFunction<
+  typeof getCustomerToken
 >;
 
 // Faked customer data
@@ -46,6 +51,8 @@ export const mockCustomer: Customer = {
   authenticationMode: "Password", // or "ExternalAuth"
 };
 
+export const mockToken = "mock-token";
+
 // Fake register response
 export const registerResponse: CustomerSignInResult = {
   customer: mockCustomer,
@@ -56,4 +63,9 @@ export const registerResponse: CustomerSignInResult = {
 export const loginResponse: CustomerSignInResult = {
   customer: mockCustomer,
   cart: undefined,
+};
+
+// Fake token response
+export const tokenResponse = {
+  ["access_token"]: mockToken,
 };

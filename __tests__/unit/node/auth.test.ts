@@ -1,15 +1,19 @@
 import {
   mockedRegisterCustomer,
   mockedLoginCustomer,
+  mockedGetCustomerToken,
   registerResponse,
   loginResponse,
   mockCustomer,
+  mockToken,
+  tokenResponse,
 } from "../__mocks__/auth.mock";
 
 import authRepository from "@/api/repositories/auth-repository";
 
 jest.mock("@/api/repositories/endpoints/customer/register-customer");
 jest.mock("@/api/repositories/endpoints/customer/login-customer");
+jest.mock("@/api/repositories/endpoints/customer/get-customer-token");
 
 const inMockCustomer = authRepository.toInternalCustomer(mockCustomer);
 
@@ -17,6 +21,7 @@ describe("authRepository", () => {
   beforeEach(() => {
     mockedRegisterCustomer.mockResolvedValue(registerResponse);
     mockedLoginCustomer.mockResolvedValue(loginResponse);
+    mockedGetCustomerToken.mockResolvedValue(tokenResponse);
   });
 
   afterEach(() => {
@@ -52,9 +57,15 @@ describe("authRepository", () => {
       const result = await authRepository.login(email, password!);
 
       expect(mockedLoginCustomer).toHaveBeenCalledWith(email, password);
-      expect(result).toEqual(
+      expect(mockedGetCustomerToken).toHaveBeenCalledWith(email, password);
+
+      expect(result).toHaveProperty("customer");
+      expect(result).toHaveProperty("token");
+
+      expect(result?.customer).toEqual(
         authRepository.toInternalCustomer(loginResponse.customer),
       );
+      expect(result?.token).toBe(mockToken);
     });
 
     it("should throw if loginCustomer fails", async () => {

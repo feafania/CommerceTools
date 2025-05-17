@@ -23,6 +23,10 @@ export function getLocalState(key: string): string | null {
   return localStorage.getItem(key);
 }
 
+export function deleteLocalState(key: string) {
+  return localStorage.removeItem(key);
+}
+
 export async function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

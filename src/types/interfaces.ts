@@ -32,9 +32,3 @@ export interface ModalOptions {
   onCancel?: () => void;
   showCancel?: boolean;
 }
-
-export interface UserType {
-  login: string;
-  password?: string;
-  isLogined?: boolean;
-}
