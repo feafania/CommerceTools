@@ -14,7 +14,12 @@ type ControlBase = {
   validation: ValidationType;
 };
 
+export interface ControlSelect extends ControlBase {
+  options: string[];
+}
+
 export type ControlConfig = Partial<ControlBase>;
+export type SelectConfig = Partial<ControlSelect>;
 
 export interface StorageItem {
   key: string;
