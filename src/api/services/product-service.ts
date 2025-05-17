@@ -8,8 +8,8 @@ class ProductService {
     return categories;
   }
 
-  async getCategory(key: string): Promise<InCategory | undefined> {
-    const category = await productRepository.getCategory(key);
+  async getCategoryByKey(key: string): Promise<InCategory | undefined> {
+    const category = await productRepository.getCategoryByKey(key);
     console.log(category);
     return category;
   }
