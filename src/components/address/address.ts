@@ -2,8 +2,13 @@ import createInput from "@/components/input/input";
 import createSelect from "@/components/select/select";
 import { VALIDATION } from "@/config/constants";
 
-export function createAddressFields(): DocumentFragment {
-  const fragment = document.createDocumentFragment();
+export function createAddressFields(title: string): HTMLDivElement {
+  const addressBlock = document.createElement("div");
+  addressBlock.classList.add("address-block");
+
+  const titleElement = document.createElement("h3");
+  titleElement.textContent = title;
+  addressBlock.append(titleElement);
 
   const countrySelectWrapper = createSelect({
     label: "Country",
@@ -50,6 +55,22 @@ export function createAddressFields(): DocumentFragment {
     },
   });
 
+  handleCountryChange(countrySelect, postalCodeInputWrapper);
+
+  addressBlock.append(
+    countrySelectWrapper,
+    cityInput,
+    streetInput,
+    postalCodeInputWrapper,
+  );
+
+  return addressBlock;
+}
+
+function handleCountryChange(
+  countrySelect: HTMLSelectElement,
+  postalCodeInputWrapper: HTMLDivElement,
+) {
   countrySelect.addEventListener("change", () => {
     const inputElement = postalCodeInputWrapper.querySelector("input");
     if (inputElement) {
@@ -57,13 +78,4 @@ export function createAddressFields(): DocumentFragment {
       inputElement.dispatchEvent(event);
     }
   });
-
-  fragment.append(
-    countrySelectWrapper,
-    cityInput,
-    streetInput,
-    postalCodeInputWrapper,
-  );
-
-  return fragment;
 }
