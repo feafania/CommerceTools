@@ -7,14 +7,15 @@ export function createAddressFields(title: string): HTMLDivElement {
   addressBlock.classList.add("address-block");
 
   const titleElement = document.createElement("h3");
-  titleElement.textContent = title;
+  titleElement.className = "address-title";
+  titleElement.textContent = `${title} Address`;
   addressBlock.append(titleElement);
 
   const countrySelectWrapper = createSelect({
     label: "Country",
     name: "country",
     id: "country",
-    class: "registration-input",
+    class: "country-input",
     options: ["Poland", "United Kingdom"],
   });
   const countrySelect = countrySelectWrapper.querySelector("select")!;
@@ -25,7 +26,7 @@ export function createAddressFields(title: string): HTMLDivElement {
     name: "city",
     id: "city",
     placeholder: "Enter your city...",
-    class: "registration-input",
+    class: "city-input",
     validation: VALIDATION.city,
   });
 
@@ -35,7 +36,7 @@ export function createAddressFields(title: string): HTMLDivElement {
     name: "street",
     id: "street",
     placeholder: "Enter your street...",
-    class: "registration-input",
+    class: "street-input",
     validation: VALIDATION.street,
   });
 
@@ -45,7 +46,7 @@ export function createAddressFields(title: string): HTMLDivElement {
     name: "postalcode",
     id: "postalcode",
     placeholder: "Enter your postal code...",
-    class: "registration-input",
+    class: "postal-code-input",
     validation: {
       message: VALIDATION.postalCode.message,
       isValid: (value: string) => {
@@ -62,6 +63,7 @@ export function createAddressFields(title: string): HTMLDivElement {
     cityInput,
     streetInput,
     postalCodeInputWrapper,
+    createDefaultAddressCheckbox(title.toLowerCase()),
   );
 
   return addressBlock;
@@ -79,3 +81,24 @@ function handleCountryChange(
     }
   });
 }
+
+function createDefaultAddressCheckbox(addressType: string): HTMLDivElement {
+  const checkboxWrapper = document.createElement("div");
+  checkboxWrapper.className = "checkbox-wrapper";
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.name = `default-${addressType.toLowerCase()}-address`;
+  checkbox.id = `default-${addressType.toLowerCase()}-address`;
+  const label = document.createElement("label");
+  label.htmlFor = checkbox.id;
+  label.textContent = `Set as default ${addressType} address`;
+
+  checkboxWrapper.append(checkbox);
+  checkboxWrapper.append(label);
+
+  return checkboxWrapper;
+}
+
+/* function capitalizeFirstLetter(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+} */

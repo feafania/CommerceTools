@@ -25,4 +25,5 @@ export interface AppTranslation {
     header: string;
     submit: string;
   };
+  //add address : {country...}
 }
