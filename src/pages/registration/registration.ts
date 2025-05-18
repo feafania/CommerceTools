@@ -8,6 +8,8 @@ import { createAddressFields } from "@/components/address/address";
 
 const RegistrationView = {
   async render(): Promise<HTMLElement> {
+    SETTINGS.setLang("pl"); //here is just test to set the language
+
     const container = document.createElement("div");
     container.id = "registration";
     container.className = "view registration-view";
@@ -26,7 +28,7 @@ const RegistrationView = {
       //this.renderCity(),
       //this.renderStreet(),
       //this.renderPostcode(),
-      createAddressFields("Billing"),
+      createAddressFields("Billing"), //here is just test to render the address block
       this.renderName(),
       this.renderPassword(),
       this.renderSubmit(),

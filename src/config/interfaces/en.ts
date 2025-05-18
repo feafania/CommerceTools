@@ -20,12 +20,22 @@ const en: AppTranslation = {
     birthDay: "Birth day",
     street: "Street",
     city: "City",
-    postalCode: "Post Code",
+    postalCode: "Postal Code",
     country: "Country",
     login: "login",
     password: "Password",
     header: "Registration",
     submit: "Submit",
+  },
+  address: {
+    billingHeader: "Billing Address",
+    shippingHeader: "Shipping Address",
+    country: "Country",
+    city: "City",
+    street: "Street",
+    postalCode: "Postal Code",
+    defaultBilling: "Set as default billing address",
+    defaultShipping: "Set as default shipping address",
   },
 };
 

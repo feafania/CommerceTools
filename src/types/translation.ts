@@ -25,5 +25,14 @@ export interface AppTranslation {
     header: string;
     submit: string;
   };
-  //add address : {country...}
+  address: {
+    billingHeader: string;
+    shippingHeader: string;
+    country: string;
+    city: string;
+    street: string;
+    postalCode: string;
+    defaultBilling: string;
+    defaultShipping: string;
+  };
 }

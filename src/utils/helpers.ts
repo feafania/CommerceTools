@@ -34,3 +34,14 @@ export function capitalizeString(string: string): string {
 export function changeLanguage(lang: LanguageCode) {
   SETTINGS.setLang(lang);
 }
+
+export function classesToArray(
+  classObject: string | string[] | undefined,
+): string[] {
+  if (Array.isArray(classObject)) {
+    return classObject.filter((cls): cls is string => typeof cls === "string");
+  } else if (typeof classObject === "string") {
+    return classObject.trim().split(/\s+/);
+  }
+  return [];
+}
