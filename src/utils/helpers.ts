@@ -2,6 +2,7 @@ import { StorageItem } from "../types/interfaces";
 
 import { SETTINGS } from "@/config/settings";
 import { LanguageCode } from "@/types/types";
+import { PageType } from "@/types/enum";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -48,4 +49,8 @@ export function classesToArray(
     return classObject.trim().split(/\s+/);
   }
   return [];
+}
+
+export function isValidPageType(path: string): path is PageType {
+  return Object.values(PageType).includes(path as PageType);
 }
