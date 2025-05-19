@@ -64,3 +64,8 @@ export type InCustomer = {
   setBillingAsDefault?: boolean;
   setShippingAsDefault?: boolean;
 };
+
+export type RouteType = {
+  canActivate: () => boolean;
+  render: () => Promise<HTMLElement>;
+};

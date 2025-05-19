@@ -1,10 +1,8 @@
 import { PageType } from "@/types/enum";
-import authStore from "@/stores/auth-store";
-import LoginView from "@/pages/login/login";
-import { renderAboutView } from "@/pages/about/about";
 import Header from "@/components/layout/header/header";
-import MainView from "@/pages/main/main";
-import NotFoundView from "@/pages/notfound/notfound";
+import routes from "@/config/routes";
+import { isValidPageType } from "@/utils/helpers";
+import { DEFAULT_PAGE, NOT_FOUND_PAGE } from "@/config/constants";
 
 const PageRouter = {
   currentPage: PageType.login as PageType,
@@ -15,8 +13,7 @@ const PageRouter = {
   },
 
   getPathFromUrl(): string {
-    const hash = location.hash.slice(1);
-    return hash || PageType.login;
+    return location.hash.slice(1);
   },
 
   async handleRoute() {
@@ -24,33 +21,19 @@ const PageRouter = {
 
     let page: PageType;
 
-    if (path === PageType.about) {
-      page = path;
-    } else if (path === PageType.login || path === PageType.main) {
-      const isLoggedIn = Boolean(authStore.user);
-      if (path === PageType.main && !isLoggedIn) {
-        location.replace(`/#${PageType.login}`);
-        return;
-      }
+    if (isValidPageType(path)) {
       page = path;
     } else if (path) {
-      page = PageType.notfound;
+      page = NOT_FOUND_PAGE;
     } else {
-      page = authStore.user ? PageType.main : PageType.login;
+      page = DEFAULT_PAGE;
       location.replace(`/#${page}`);
       return;
     }
 
     this.currentPage = page;
 
-    const renderMap = {
-      [PageType.login]: LoginView.render.bind(LoginView),
-      [PageType.main]: MainView.renderChat.bind(MainView),
-      [PageType.about]: renderAboutView,
-      [PageType.notfound]: NotFoundView.render.bind(NotFoundView),
-    };
-
-    const render = renderMap[page];
+    const render = routes[page]?.render;
 
     if (render) {
       const element = await render();
