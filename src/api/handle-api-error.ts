@@ -1,5 +1,4 @@
 import { CTApiError, CTErrorObject } from "@/types/types";
-import translations from "@/config/interfaces";
 import { SETTINGS } from "@/config/settings";
 
 export class ApiError extends Error {
@@ -15,22 +14,19 @@ export class ApiError extends Error {
 
 function localizeMessage(message: string) {
   if (message.includes("credentials"))
-    return translations[SETTINGS.currentLang].errorsTypes.credentials;
+    return SETTINGS.label.errorsTypes.credentials;
   if (message.includes("Duplicate"))
-    return translations[SETTINGS.currentLang].errorsTypes.duplicate;
-  if (message.includes("Invalid"))
-    return translations[SETTINGS.currentLang].errorsTypes.invalid;
-  if (message.includes("Required"))
-    return translations[SETTINGS.currentLang].errorsTypes.required;
-  return translations[SETTINGS.currentLang].errorsTypes.unknown;
+    return SETTINGS.label.errorsTypes.duplicate;
+  if (message.includes("Invalid")) return SETTINGS.label.errorsTypes.invalid;
+  if (message.includes("Required")) return SETTINGS.label.errorsTypes.required;
+  return SETTINGS.label.errorsTypes.unknown;
 }
 
 export function handleApiError(error: unknown): never {
   const error_ = error as CTApiError;
   const statusCode = error_?.body?.statusCode ?? 500;
   const fallbackMessage =
-    error_?.body?.message ??
-    translations[SETTINGS.currentLang].errorsTypes.unknown;
+    error_?.body?.message ?? SETTINGS.label.errorsTypes.unknown;
   const errors = (error_?.body?.errors ?? []) as CTErrorObject[];
 
   const fields: string[] = [];
