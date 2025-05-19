@@ -26,4 +26,12 @@ export interface AppTranslation {
     header: string;
     submit: string;
   };
+  validation: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    passwordLoginPage: string;
+    password: string;
+  };
 }

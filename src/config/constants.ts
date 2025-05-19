@@ -1,21 +1,21 @@
 import { ValidationType } from "../types/types";
 
+import { SETTINGS } from "./settings";
+
 export const VIEW_CONTAINER_NAME = "view-container";
 
 export const VALIDATION = {
   email: {
     pattern: /^(?!\s)([^\s@]+)@([^\s@]+\.[^\s@]+)(?<!\s)$/,
-    message:
-      "Please enter a valid email address (e.g., user@example.com). It must" +
-      " not have spaces, must include '@', and a valid domain (e.g., example.com).",
+    message: SETTINGS.label.validation.email,
   },
   firstName: {
     pattern: /^[A-Za-z]{1,}$/,
-    message: "First name must contain only letters and at least one character.",
+    message: SETTINGS.label.validation.firstName,
   },
   lastName: {
     pattern: /^[A-Za-z]{1,}$/,
-    message: "Last name must contain only letters and at least one character.",
+    message: SETTINGS.label.validation.lastName,
   },
   dateOfBirth: {
     isValid: (value: string) => {
@@ -56,20 +56,15 @@ export const VALIDATION = {
 
       return age >= 13;
     },
-    message: "You must be at least 13 years old.",
+    message: SETTINGS.label.validation.dateOfBirth,
   },
   passwordLoginPage: {
     pattern:
       /^(?!\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])?.{8,}(?<!\s)$/,
-    message:
-      "Password must be at least 8 characters long, include uppercase and lowercase" +
-      " letters, a digit, and optionally a special character (!@#$%^&*). It must not" +
-      " have leading or trailing spaces.",
+    message: SETTINGS.label.validation.passwordLoginPage,
   } as ValidationType,
   password: {
     pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
-    message:
-      "Password must be at least 8 characters long," +
-      " include uppercase, lowercase letters and a number.",
+    message: SETTINGS.label.validation.password,
   } as ValidationType,
 };
