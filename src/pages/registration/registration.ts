@@ -77,9 +77,7 @@ const RegistrationView = {
     container.className = "registration-address-container";
 
     // First address block
-    const address1 = document.createElement("div");
-    address1.className = "address-block";
-    address1.textContent = "Primary Address (Coming soon...)"; // just title
+    // const address1 = createAddressFields("Shipping");
 
     // Checkbox
     const toggleWrapper = document.createElement("div");
@@ -87,26 +85,34 @@ const RegistrationView = {
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.id = "show-second-address";
+    checkbox.id = "show-billing-address";
 
     const label = document.createElement("label");
-    label.htmlFor = "show-second-address";
-    label.textContent = "Add secondary address";
+    label.htmlFor = "show-billing-address";
 
     toggleWrapper.append(checkbox, label);
+    container.append(toggleWrapper);
 
     // Second address block
-    const address2 = document.createElement("div");
-    address2.className = "address-block secondary-address";
-    address2.textContent = "Secondary Address (Coming soon...)"; // just title
-    address2.style.display = "none";
+    //const address2 = createAddressFields("Billing");
+    // address2.className = "address-block secondary-address";
+    // address2.style.display = "none";
 
-    // Toggle logic
-    checkbox.addEventListener("change", () => {
-      address2.style.display = checkbox.checked ? "block" : "none";
-    });
+    // Placeholder for billing address
+    // let billingAddress: HTMLDivElement | null = null;
 
-    container.append(address1, toggleWrapper, address2);
+    // checkbox.addEventListener("change", () => {
+    //   if (checkbox.checked) {
+    //     billingAddress = createAddressFields("Billing");
+    //     container.appendChild(billingAddress);
+    //   } else {
+    //     if (billingAddress && container.contains(billingAddress)) {
+    //       container.removeChild(billingAddress);
+    //       billingAddress = null;
+    //     }
+    //   }
+    // });
+
     return container;
   },
 
