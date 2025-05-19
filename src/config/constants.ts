@@ -10,11 +10,11 @@ export const VALIDATION = {
     message: SETTINGS.label.validation.email,
   },
   firstName: {
-    pattern: /^[A-Za-z]{1,}$/,
+    pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
     message: SETTINGS.label.validation.firstName,
   },
   lastName: {
-    pattern: /^[A-Za-z]{1,}$/,
+    pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
     message: SETTINGS.label.validation.lastName,
   },
   dateOfBirth: {
