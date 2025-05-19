@@ -8,7 +8,7 @@ import { createAddressFields } from "@/components/address/address";
 
 const RegistrationView = {
   async render(): Promise<HTMLElement> {
-    SETTINGS.setLang("pl"); //here is just test to set the language
+    //SETTINGS.setLang("pl"); //here is just test to set the language
 
     const container = document.createElement("div");
     container.id = "registration";

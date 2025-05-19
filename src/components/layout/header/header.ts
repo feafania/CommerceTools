@@ -4,6 +4,7 @@ import { NavType } from "@/types/interfaces";
 import authStore from "@/stores/auth-store";
 import { PageType } from "@/types/enum";
 import { SETTINGS } from "@/config/settings";
+import { LanguageCode } from "@/types/types";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -22,6 +23,7 @@ const Header = {
 
     header.append(title, username, this.nav);
     this.renderNav();
+    this.renderLangSwitcher();
 
     return header;
   },
@@ -50,6 +52,7 @@ const Header = {
       ul.append(li);
     }
     this.nav.append(ul);
+    ul.append(this.renderLangSwitcher());
   },
 
   getNavLinks(): NavType[] {
@@ -84,32 +87,31 @@ const Header = {
     };
   },
 
-  // TODO
-  // renderLangSwitcher() {
-  //   // Дадаем пераключальнік мовы
-  //   const langSwitcher = document.createElement("select");
-  //   langSwitcher.className = "language-switcher";
-  //
-  //   ["en", "pl"].forEach((lang) => {
-  //     const option = document.createElement("option");
-  //     option.value = lang;
-  //     option.textContent = lang.toUpperCase();
-  //     if (lang === SETTINGS.currentLang) {
-  //       option.selected = true;
-  //     }
-  //     langSwitcher.append(option);
-  //   });
-  //
-  //   langSwitcher.addEventListener("change", (e) => {
-  //     const selectedLang = (e.target as HTMLSelectElement)
-  //       .value as LanguageCode;
-  //     SETTINGS.setLang(selectedLang);
-  //     globalThis.dispatchEvent(
-  //       new CustomEvent("languageChanged", { detail: selectedLang });
-  //     );
-  //   });
-  //
-  //   this.nav.append(ul, langSwitcher);
+  renderLangSwitcher(): HTMLElement {
+    const langSwitcher = document.createElement("select");
+    langSwitcher.className = "language-switcher";
+
+    for (const lang of ["en", "pl"]) {
+      const option = document.createElement("option");
+      option.value = lang;
+      option.textContent = lang.toUpperCase();
+      if (lang === SETTINGS.currentLang) {
+        option.selected = true;
+      }
+      langSwitcher.append(option);
+    }
+
+    langSwitcher.addEventListener("change", (event) => {
+      const selectedLang = (event.target as HTMLSelectElement)
+        .value as LanguageCode;
+      SETTINGS.setLang(selectedLang);
+      globalThis.dispatchEvent(
+        new CustomEvent("languageChanged", { detail: selectedLang }),
+      );
+    });
+
+    return langSwitcher;
+  },
 };
 
 export default Header;

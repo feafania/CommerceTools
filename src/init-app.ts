@@ -16,6 +16,29 @@ export default function initApp(root: HTMLElement) {
   // globalThis.addEventListener("languageChanged", () => {
   //   Header.renderNav();
   // });
+
+  globalThis.addEventListener("languageChanged", () => {
+    const newHeader = Header.create();
+    const newMain = createMain();
+    const newFooter = createFooter();
+
+    const oldHeader = document.querySelector("header");
+    const oldMain = document.querySelector("main");
+    const oldFooter = document.querySelector("footer");
+
+    if (oldHeader && oldHeader.parentNode) {
+      oldHeader.parentNode.replaceChild(newHeader, oldHeader);
+    }
+
+    if (oldMain && oldMain.parentNode) {
+      oldMain.parentNode.replaceChild(newMain, oldMain);
+    }
+
+    if (oldFooter && oldFooter.parentNode) {
+      oldFooter.parentNode.replaceChild(newFooter, oldFooter);
+    }
+  });
+
   PageRouter.init();
   if (authStore.user) {
     // wsClient.login(authStore.user);
