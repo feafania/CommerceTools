@@ -21,7 +21,7 @@ const RegistrationView = {
       this.renderFirstName(),
       this.renderLastName(),
       this.renderBirthDay(),
-      this.renderAddress(),
+      this.renderAddresses(),
       this.renderEmail(),
       this.renderPassword(),
       this.renderSubmit(),
@@ -72,14 +72,14 @@ const RegistrationView = {
     });
   },
 
-  renderAddress(): HTMLElement {
+  renderAddresses(): HTMLElement {
     const container = document.createElement("div");
     container.className = "registration-address-container";
 
     // First address block
     const address1 = document.createElement("div");
     address1.className = "address-block";
-    address1.textContent = "Primary Address (Coming soon...)";
+    address1.textContent = "Primary Address (Coming soon...)"; // just title
 
     // Checkbox
     const toggleWrapper = document.createElement("div");
@@ -98,7 +98,7 @@ const RegistrationView = {
     // Second address block
     const address2 = document.createElement("div");
     address2.className = "address-block secondary-address";
-    address2.textContent = "Secondary Address (Coming soon...)";
+    address2.textContent = "Secondary Address (Coming soon...)"; // just title
     address2.style.display = "none";
 
     // Toggle logic
@@ -183,7 +183,7 @@ const RegistrationView = {
       );
 
       if (!value) {
-        showModalMessage(`Please enter your ${field.label}.`);
+        showModalMessage(`${SETTINGS.label.login.emptyField} ${field.label}.`);
         inputElement?.focus();
         return;
       }
