@@ -34,5 +34,7 @@ export interface AppTranslation {
     postalCode: string;
     defaultBilling: string;
     defaultShipping: string;
+    countryPl: string;
+    countryEn: string;
   };
 }

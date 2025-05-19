@@ -36,6 +36,8 @@ const en: AppTranslation = {
     postalCode: "Postal Code",
     defaultBilling: "Set as default billing address",
     defaultShipping: "Set as default shipping address",
+    countryPl: "Poland",
+    countryEn: "United Kingdom",
   },
 };
 

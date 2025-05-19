@@ -7,7 +7,7 @@ import { SETTINGS } from "@/config/settings";
 function createAddressHeader(title: string): HTMLHeadingElement {
   const currentLang = SETTINGS.label.address;
   const titleElement = document.createElement("h3");
-  titleElement.className = `address-${title.toLowerCase()}-header`;
+  titleElement.className = `address-header`;
   const titleKey =
     title.toLowerCase() === "billing" ? "billingHeader" : "shippingHeader";
   titleElement.textContent = currentLang[titleKey as keyof typeof currentLang];
@@ -73,7 +73,10 @@ export function createAddressFields(title: string): HTMLDivElement {
     name: "country",
     id: "country",
     class: "country-input",
-    options: ["Poland", "United Kingdom"],
+    options: [
+      SETTINGS.label.address.countryPl,
+      SETTINGS.label.address.countryEn,
+    ],
   });
   const countrySelect = countrySelectWrapper.querySelector("select")!;
   addressBlock.append(countrySelectWrapper);
