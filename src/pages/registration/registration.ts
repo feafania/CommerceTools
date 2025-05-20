@@ -4,6 +4,7 @@ import { VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { SETTINGS } from "@/config/settings";
+import { registrationFormFields } from "@/config/form-fields";
 
 const RegistrationView = {
   async render(): Promise<HTMLElement> {
@@ -154,33 +155,7 @@ const RegistrationView = {
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    const formFields = [
-      {
-        name: "name",
-        label: SETTINGS.label.registration.login,
-        validation: VALIDATION.email,
-      },
-      {
-        name: "password",
-        label: SETTINGS.label.registration.password,
-        validation: VALIDATION.password,
-      },
-      {
-        name: "firstname",
-        label: SETTINGS.label.registration.firstName,
-        validation: VALIDATION.firstName,
-      },
-      {
-        name: "lastname",
-        label: SETTINGS.label.registration.lastName,
-        validation: VALIDATION.lastName,
-      },
-      {
-        name: "birthday",
-        label: SETTINGS.label.registration.birthDay,
-        validation: VALIDATION.dateOfBirth,
-      },
-    ];
+    const formFields = registrationFormFields;
 
     for (const field of formFields) {
       const value = (formData.get(field.name) as string)?.trim();
