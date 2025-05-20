@@ -1,0 +1,57 @@
+:root {
+  --main-color: #282c34;
+  --main-color-hover: #7e8385;
+  --main-background: #ffffff;
+  --disables-color: #656464;
+  --disables-background: #dad8d8;
+  --border-color: black;
+  --form-background: #f9f9f9;
+  --validation-message: red;
+  --spinner-border: #cccccc;
+  --spinner-border-top: #100f0f;
+
+  --primary-color: #333333;
+  --light-gray: #f0f0f0;
+  --dark-gray: #333333;
+  --accent-color: #007bff;
+  --accent-color-selected: #f2f5f6;
+  --notice: #999999;
+  --auth-message: #d8fbd8;
+  --status: #777777;
+  --cancel-batton: #888888;
+}
+
+html {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  height: 100vh;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  border: none;
+  margin: 0;
+  padding: 0;
+  /*border: 1px solid red;*/
+}
+
+body {
+  min-height: 100vh;
+  height: 100vh;
+  background: var(--main-background);
+  font-family: sans-serif;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100vh;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1rem;
+  overflow: hidden;
+}
