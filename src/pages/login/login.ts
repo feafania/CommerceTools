@@ -4,6 +4,7 @@ import { VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { SETTINGS } from "@/config/settings";
+import { loginFormFields } from "@/config/form-fields";
 
 const LoginView = {
   async render(): Promise<HTMLElement> {
@@ -47,9 +48,9 @@ const LoginView = {
 
     const passwordInput = createInput({
       type: "password",
-      label: SETTINGS.label.registration.password,
+      label: SETTINGS.label.login.password,
       name: "password",
-      placeholder: SETTINGS.label.registration.password,
+      placeholder: SETTINGS.label.login.password,
       id: "password",
       class: "password-input",
       validation: VALIDATION.password,
@@ -59,7 +60,9 @@ const LoginView = {
     const eyeButton = document.createElement("button");
     eyeButton.type = "button";
     eyeButton.className = "toggle-password-button";
-    eyeButton.innerHTML = "👁️";
+    eyeButton.setAttribute("aria-label", "Show password");
+    eyeButton.innerHTML = `<img src="/public/assets/eye-svgrepo-com.svg"
+    width="20" height="20" alt="Show password" />`;
 
     // Toggle logic
     eyeButton.addEventListener("click", () => {
@@ -67,7 +70,18 @@ const LoginView = {
       if (input) {
         const isHidden = input.type === "password";
         input.type = isHidden ? "text" : "password";
-        eyeButton.innerHTML = isHidden ? "🙈" : "👁️";
+        eyeButton.setAttribute(
+          "aria-label",
+          isHidden ? "Hide password" : "Show password",
+        );
+        eyeButton.innerHTML = isHidden
+          ? `
+            <img src="/public/assets/eye-password-hide.svg"
+            width="20" height="20" alt="Show password" />
+          `
+          : (eyeButton.innerHTML = `<img src="/public/assets/eye-svgrepo-com.svg"
+            width="20" height="20" alt="Show password" />
+          `);
       }
     });
 
@@ -75,16 +89,6 @@ const LoginView = {
     wrapper.append(passwordInput, eyeButton);
 
     return wrapper;
-    // return createInput({
-    //   type: "password",
-    //   label: SETTINGS.label.login.password,
-    //   name: "password",
-    //   placeholder: SETTINGS.label.login.password,
-    //   id: "password",
-    //   class: "password-input",
-    //   // required: true,
-    //   validation: VALIDATION.passwordLoginPage,
-    // });
   },
 
   renderSubmit(): HTMLElement {
@@ -101,14 +105,7 @@ const LoginView = {
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    const formFields = [
-      { name: "username", label: "Name", validation: VALIDATION.email },
-      {
-        name: "password",
-        label: "Password",
-        validation: VALIDATION.passwordLoginPage,
-      },
-    ];
+    const formFields = loginFormFields;
 
     for (const field of formFields) {
       const value = (formData.get(field.name) as string)?.trim();

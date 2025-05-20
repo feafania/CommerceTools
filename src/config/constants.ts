@@ -4,6 +4,8 @@ import { SETTINGS } from "./settings";
 
 export const VIEW_CONTAINER_NAME = "view-container";
 
+export const MINIMUM_AGE = 13;
+
 export const VALIDATION = {
   email: {
     pattern: /^(?!\s)([^\s@]+)@([^\s@]+\.[^\s@]+)(?<!\s)$/,
@@ -54,7 +56,7 @@ export const VALIDATION = {
         age--;
       }
 
-      return age >= 13;
+      return age >= MINIMUM_AGE;
     },
     message: SETTINGS.label.validation.dateOfBirth,
   },
