@@ -26,7 +26,7 @@ function createAddressInputs(
   const cityInput = createInput({
     type: "text",
     label: currentLang.city,
-    name: "city",
+    name: `${title.toLowerCase()}-city`,
     id: `${title.toLowerCase()}-city`,
     placeholder: `${currentLang.city}...`,
     class: "city-input",
@@ -36,7 +36,7 @@ function createAddressInputs(
   const streetInput = createInput({
     type: "text",
     label: currentLang.street,
-    name: "street",
+    name: `${title.toLowerCase()}-street`,
     id: `${title.toLowerCase()}-street`,
     placeholder: `${currentLang.street}...`,
     class: "street-input",
@@ -46,7 +46,7 @@ function createAddressInputs(
   const postalCodeInputWrapper = createInput({
     type: "text",
     label: currentLang.postalCode,
-    name: "postalcode",
+    name: `${title.toLowerCase()}-postalcode`,
     id: `${title.toLowerCase()}-postalcode`,
     placeholder: `${currentLang.postalCode}...`,
     class: "postal-code-input",
@@ -75,7 +75,7 @@ export function createAddressFields(title: string): HTMLDivElement {
 
   const countrySelectWrapper = createSelect({
     label: currentLang.country,
-    name: "country",
+    name: `${title.toLowerCase()}-country`,
     id: `${title.toLowerCase()}-country`,
     class: "country-input",
     options: countryOptions,
