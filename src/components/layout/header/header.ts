@@ -5,6 +5,7 @@ import authStore from "@/stores/auth-store";
 import { PageType } from "@/types/enum";
 import { SETTINGS } from "@/config/settings";
 import { LanguageCode } from "@/types/types";
+import { AVAILABLE_LANGUAGES } from "@/config/constants";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -91,7 +92,7 @@ const Header = {
     const langSwitcher = document.createElement("select");
     langSwitcher.className = "language-switcher";
 
-    for (const lang of ["en", "pl"]) {
+    for (const lang of AVAILABLE_LANGUAGES) {
       const option = document.createElement("option");
       option.value = lang;
       option.textContent = lang.toUpperCase();

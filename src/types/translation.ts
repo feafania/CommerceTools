@@ -37,4 +37,19 @@ export interface AppTranslation {
     countryPl: string;
     countryEn: string;
   };
+  validation: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    passwordLoginPage: string;
+    password: string;
+    city: string;
+    street: string;
+    postalCodePoland: string;
+    postalCodeUK: string;
+    postalCodeGeneric: string;
+    countryPoland: string;
+    countryUnitedKingdom: string;
+  };
 }

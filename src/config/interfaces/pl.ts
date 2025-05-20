@@ -39,6 +39,33 @@ const pl: AppTranslation = {
     countryPl: "Polska",
     countryEn: "Wielka Brytania",
   },
+  validation: {
+    email:
+      "Proszę podać prawidłowy adres e-mail (np. uzytkownik@przyklad.com). Nie może" +
+      " zawierać spacji, musi zawierać znak '@' oraz poprawną domenę (np. przyklad.com).",
+    firstName:
+      "Imię musi zawierać tylko litery i składać się z co najmniej jednego znaku.",
+    lastName:
+      "Nazwisko musi zawierać tylko litery i składać się z co najmniej jednego znaku.",
+    dateOfBirth: "Musisz mieć co najmniej 13 lat.",
+    passwordLoginPage:
+      "Hasło musi mieć co najmniej 8 znaków, zawierać duże i małe litery" +
+      " cyfrę oraz opcjonalnie znak specjalny (!@#$%^&*). Nie może" +
+      " zawierać spacji na początku ani na końcu.",
+    password:
+      "Hasło musi mieć co najmniej 8 znaków," +
+      " zawierać duże i małe litery oraz cyfrę.",
+    city: "Miasto musi zawierać tylko litery i spacje.",
+    street: "Nie może być puste",
+    postalCodePoland:
+      "Kod pocztowy musi być zgodny z formatem obowiązującym w Polsce (00-000).",
+    postalCodeUK:
+      "Kod pocztowy musi być zgodny z formatem obowiązującym w Wielkiej Brytanii (SW1A 1AA).",
+    postalCodeGeneric:
+      "Kod pocztowy musi być zgodny z formatem PL (00-000) lub UK (SW1A 1AA).",
+    countryPoland: "Polska",
+    countryUnitedKingdom: "Wielka Brytania",
+  },
 };
 
 export default pl;

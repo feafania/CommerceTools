@@ -1,6 +1,9 @@
 import { ValidationType } from "../types/types";
 
+import { SETTINGS } from "./settings";
+
 import { AppTranslation } from "@/types/translation";
+import translations from "@/config/interfaces/index";
 
 export const VIEW_CONTAINER_NAME = "view-container";
 
@@ -10,8 +13,8 @@ export const VALIDATION = {
     message: "Please enter a valid email address (e.g., example@email.com).",
   },
   firstName: {
-    pattern: /^[A-Za-z]{1,}$/,
-    message: "First name must contain only letters and at least one character.",
+    pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
+    message: SETTINGS.label.validation.firstName,
   },
   lastName: {
     pattern: /^[A-Za-z]{1,}$/,
@@ -67,27 +70,34 @@ export const VALIDATION = {
   } as ValidationType,
 
   city: {
-    pattern: /^[A-Za-z\s\-]+$/,
-    message: "City must contain only letters and spaces.",
+    pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$/,
+    message: SETTINGS.label.validation.city,
   },
 
   street: {
     pattern: /^.{1,}$/,
-    message: "Street cannot be empty.",
+    message: SETTINGS.label.validation.street,
   },
 
   postalCode: {
-    message:
-      "Postal code must match format for Poland (00-000) or UK (SW1A 1AA).",
+    message: SETTINGS.label.validation.postalCodeGeneric,
     isValid: (value: string, context?: { country?: string }) => {
-      const country = context?.country;
+      const selectedCountryLocalizedName = context?.country;
+      const countryLocalizedMap: Record<string, string> = {};
 
-      if (country === "Poland") {
-        return /^\d{2}-\d{3}$/.test(value); // Example: 00-123
+      if (SETTINGS.label.address.countryPl) {
+        countryLocalizedMap[SETTINGS.label.address.countryPl] = "PL";
+      }
+      if (SETTINGS.label.address.countryEn) {
+        countryLocalizedMap[SETTINGS.label.address.countryEn] = "UK";
       }
 
-      if (country === "United Kingdom") {
-        return /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i.test(value); // Example: SW1A 1AA
+      const countryCode = selectedCountryLocalizedName
+        ? countryLocalizedMap[selectedCountryLocalizedName]
+        : undefined;
+
+      if (countryCode && POSTAL_CODE_PATTERNS[countryCode]) {
+        return POSTAL_CODE_PATTERNS[countryCode].test(value.trim());
       }
 
       return false;
@@ -99,4 +109,11 @@ export const COUNTRY_OPTIONS = (
   settingsLabelAddress: AppTranslation["address"],
 ): string[] => {
   return [settingsLabelAddress.countryPl, settingsLabelAddress.countryEn];
+};
+
+export const AVAILABLE_LANGUAGES = Object.keys(translations);
+
+const POSTAL_CODE_PATTERNS: Record<string, RegExp> = {
+  PL: /^\d{2}-\d{3}$/,
+  UK: /^[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}$/i,
 };
