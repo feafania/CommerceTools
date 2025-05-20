@@ -15,7 +15,10 @@ function createAddressHeader(title: string): HTMLHeadingElement {
   return titleElement;
 }
 
-function createAddressInputs(currentLang: typeof SETTINGS.label.address): {
+function createAddressInputs(
+  currentLang: typeof SETTINGS.label.address,
+  title: string,
+): {
   cityInput: HTMLDivElement;
   streetInput: HTMLDivElement;
   postalCodeInputWrapper: HTMLDivElement;
@@ -24,7 +27,7 @@ function createAddressInputs(currentLang: typeof SETTINGS.label.address): {
     type: "text",
     label: currentLang.city,
     name: "city",
-    id: "city",
+    id: `${title.toLowerCase()}-city`,
     placeholder: `${currentLang.city}...`,
     class: "city-input",
     validation: VALIDATION.city,
@@ -34,7 +37,7 @@ function createAddressInputs(currentLang: typeof SETTINGS.label.address): {
     type: "text",
     label: currentLang.street,
     name: "street",
-    id: "street",
+    id: `${title.toLowerCase()}-street`,
     placeholder: `${currentLang.street}...`,
     class: "street-input",
     validation: VALIDATION.street,
@@ -44,7 +47,7 @@ function createAddressInputs(currentLang: typeof SETTINGS.label.address): {
     type: "text",
     label: currentLang.postalCode,
     name: "postalcode",
-    id: "postalcode",
+    id: `${title.toLowerCase()}-postalcode`,
     placeholder: `${currentLang.postalCode}...`,
     class: "postal-code-input",
     validation: {
@@ -73,7 +76,7 @@ export function createAddressFields(title: string): HTMLDivElement {
   const countrySelectWrapper = createSelect({
     label: currentLang.country,
     name: "country",
-    id: "country",
+    id: `${title.toLowerCase()}-country`,
     class: "country-input",
     options: countryOptions,
   });
@@ -81,7 +84,7 @@ export function createAddressFields(title: string): HTMLDivElement {
   addressBlock.append(countrySelectWrapper);
 
   const { cityInput, streetInput, postalCodeInputWrapper } =
-    createAddressInputs(currentLang);
+    createAddressInputs(currentLang, title);
   addressBlock.append(cityInput, streetInput, postalCodeInputWrapper);
 
   const defaultCheckbox = createDefaultAddressCheckbox(

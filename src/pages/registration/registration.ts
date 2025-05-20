@@ -29,6 +29,7 @@ const RegistrationView = {
       //this.renderStreet(),
       //this.renderPostcode(),
       createAddressFields("Billing"), //here is just test to render the address block
+      createAddressFields("Shipping"), //here is just test to render the address block
       this.renderName(),
       this.renderPassword(),
       this.renderSubmit(),

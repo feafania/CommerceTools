@@ -18,13 +18,8 @@ const Header = {
     title.className = "title";
     title.textContent = "Gifts shop";
 
-    const username = document.createElement("h1");
-    username.className = "header-username";
-    this.nav.className = "nav";
-
-    header.append(title, username, this.nav);
+    header.append(title, this.nav);
     this.renderNav();
-    this.renderLangSwitcher();
 
     return header;
   },
