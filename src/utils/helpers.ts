@@ -1,4 +1,4 @@
-import { StorageItem } from "../types/interfaces";
+import { StorageItem, ValidationRule } from "../types/interfaces";
 
 import { SETTINGS } from "@/config/settings";
 import { LanguageCode } from "@/types/types";
@@ -33,4 +33,13 @@ export function capitalizeString(string: string): string {
 
 export function changeLanguage(lang: LanguageCode) {
   SETTINGS.setLang(lang);
+}
+
+export function validateField(
+  value: string,
+  validation: ValidationRule,
+): boolean {
+  const isPatternValid = validation.pattern?.test(value) ?? true;
+  const isValid = validation.isValid?.(value) ?? true;
+  return isPatternValid && isValid;
 }

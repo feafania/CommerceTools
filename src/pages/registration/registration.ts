@@ -5,6 +5,7 @@ import createButton from "@/components/button/button";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { SETTINGS } from "@/config/settings";
 import { registrationFormFields } from "@/config/form-fields";
+import { validateField } from "@/utils/helpers";
 
 const RegistrationView = {
   async render(): Promise<HTMLElement> {
@@ -170,16 +171,8 @@ const RegistrationView = {
       }
 
       const validation = field.validation;
-      const isPatternValid =
-        "pattern" in validation && validation.pattern
-          ? validation.pattern.test(value)
-          : true;
-      const isValid =
-        "isValid" in validation && validation.isValid
-          ? validation.isValid(value)
-          : true;
 
-      if (!isPatternValid || !isValid) {
+      if (!validateField(value, validation)) {
         showModalMessage(validation.message);
         inputElement?.focus();
         return;

@@ -38,3 +38,9 @@ export interface UserType {
   password?: string;
   isLogined?: boolean;
 }
+
+export interface ValidationRule {
+  pattern?: RegExp;
+  isValid?: (value: string) => boolean;
+  message?: string;
+}
