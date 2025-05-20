@@ -13,9 +13,12 @@ export default function initApp(root: HTMLElement) {
   const footer = createFooter();
 
   root.append(header, main, footer);
-  // globalThis.addEventListener("languageChanged", () => {
-  //   Header.renderNav();
-  // });
+  globalThis.addEventListener("languageChanged", () => {
+    Header.renderNav();
+    //page which is active now, at that moment
+    //maybe at router - ask chatGPT //how to detect an opened page
+    //try it 1) getPathFromUrl => 2)navigateTo it should work.
+  });
 
   globalThis.addEventListener("languageChanged", () => {
     const newHeader = Header.create();

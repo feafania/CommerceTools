@@ -1,5 +1,7 @@
 import { ValidationType } from "../types/types";
 
+import { AppTranslation } from "@/types/translation";
+
 export const VIEW_CONTAINER_NAME = "view-container";
 
 export const VALIDATION = {
@@ -91,4 +93,10 @@ export const VALIDATION = {
       return false;
     },
   },
+};
+
+export const COUNTRY_OPTIONS = (
+  settingsLabelAddress: AppTranslation["address"],
+): string[] => {
+  return [settingsLabelAddress.countryPl, settingsLabelAddress.countryEn];
 };
