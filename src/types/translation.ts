@@ -5,6 +5,7 @@ export interface AppTranslation {
     main: string;
     about: string;
     signOut: string;
+    appTitle: string;
   };
   login: {
     name: string;

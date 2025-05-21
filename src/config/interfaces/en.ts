@@ -7,6 +7,7 @@ const en: AppTranslation = {
     main: "Main",
     about: "About Us",
     signOut: "Sign Out",
+    appTitle: "Gifts shop",
   },
   login: {
     name: "Login",

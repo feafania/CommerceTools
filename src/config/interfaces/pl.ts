@@ -4,9 +4,10 @@ const pl: AppTranslation = {
   nav: {
     signIn: "Zaloguj się",
     registration: "Załóż konto",
-    main: "Strona główna", //Główna
+    main: "Strona główna",
     about: "O nas",
     signOut: "Wyloguj się",
+    appTitle: "Prezenty",
   },
   login: {
     name: "Login",

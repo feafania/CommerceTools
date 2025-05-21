@@ -9,19 +9,23 @@ import { AVAILABLE_LANGUAGES } from "@/config/constants";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
+  title: document.createElement("h1"),
 
   create(): HTMLElement {
     const header = document.createElement("header");
     header.className = "header";
 
-    const title = document.createElement("h1");
-    title.className = "title";
-    title.textContent = "Gifts shop";
+    this.title.className = "title";
+    this.title.textContent = SETTINGS.label.nav.appTitle;
 
-    header.append(title, this.nav);
+    header.append(this.title, this.nav);
     this.renderNav();
 
     return header;
+  },
+
+  updateTitle() {
+    this.title.textContent = SETTINGS.label.nav.appTitle;
   },
 
   createNavList(): HTMLElement {
@@ -75,7 +79,7 @@ const Header = {
 
   onClick(label: string, page: PageType) {
     return async () => {
-      if (label === "Sign Out" && authStore.user) {
+      if (label === SETTINGS.label.nav.signOut && authStore.user) {
         try {
           // await wsClient.logout(authStore.user);
         } catch (error) {
