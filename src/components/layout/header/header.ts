@@ -26,13 +26,13 @@ const Header = {
     return header;
   },
 
-  renderNav() {
-    this.nav.innerHTML = "";
-    const links = this.getNavLinks();
+  // devided to createNav and renderNav to hangle eventListeners in left menu main
+  createNav(): HTMLElement {
+    const nav = document.createElement("nav");
     const ul = document.createElement("ul");
     ul.className = "nav-list";
 
-    for (const { label, page, visible } of links) {
+    for (const { label, page, visible } of this.getNavLinks()) {
       if (!visible) continue;
       const li = document.createElement("li");
       const link = document.createElement("a");
@@ -46,10 +46,17 @@ const Header = {
       } else {
         link.addEventListener("click", this.onClick(label, page));
       }
+
       li.append(link);
       ul.append(li);
     }
-    this.nav.append(ul);
+    nav.append(ul);
+    return nav;
+  },
+
+  renderNav() {
+    this.nav.innerHTML = ""; // clear old
+    this.nav.append(this.createNav()); // insert fresh nav
   },
 
   getNavLinks(): NavType[] {

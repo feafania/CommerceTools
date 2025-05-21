@@ -28,6 +28,9 @@ const en: AppTranslation = {
     header: "Registration",
     submit: "Submit",
   },
+  main: {
+    title: "Welcome to Gifts Shop",
+  },
   validation: {
     email:
       "Please enter a valid email address (e.g., user@example.com). It must" +

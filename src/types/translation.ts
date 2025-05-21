@@ -26,6 +26,9 @@ export interface AppTranslation {
     header: string;
     submit: string;
   };
+  main: {
+    title: string;
+  };
   validation: {
     email: string;
     firstName: string;
