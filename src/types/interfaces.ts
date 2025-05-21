@@ -8,7 +8,7 @@ type ControlBase = {
   name: string;
   placeholder: string;
   id: string;
-  class: string;
+  class: string | string[];
   disabled: boolean;
   required: boolean;
   validation: ValidationType;

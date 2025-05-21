@@ -1,4 +1,5 @@
-import { ValidationType } from "../types/types";
+import { ValidationType } from "@/types/types";
+import { PageType } from "@/types/enum";
 
 import { SETTINGS } from "./settings";
 
@@ -70,3 +71,6 @@ export const VALIDATION = {
     message: SETTINGS.label.validation.password,
   } as ValidationType,
 };
+
+export const DEFAULT_PAGE = PageType.main;
+export const NOT_FOUND_PAGE = PageType.notfound;

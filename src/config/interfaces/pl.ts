@@ -44,6 +44,17 @@ const pl: AppTranslation = {
       "Password must be at least 8 characters long," +
       " include uppercase, lowercase letters and a number.",
   },
+  errorsTypes: {
+    duplicate: "Wartość już istnieje",
+    invalid: "Nieprawidłowa wartość",
+    required: "Pole obowiązkowe",
+    credentials: "Nieprawidłowy adres e-mail lub hasło",
+    unknown: "Nieznany błąd",
+  },
+  errors: {
+    login: "Logowanie nie powiodło się.",
+    registration: "Rejestracja nie powiodła się.",
+  },
 };
 
 export default pl;

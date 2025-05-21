@@ -34,4 +34,15 @@ export interface AppTranslation {
     passwordLoginPage: string;
     password: string;
   };
+  errorsTypes: {
+    duplicate: string;
+    invalid: string;
+    required: string;
+    credentials: string;
+    unknown: string;
+  };
+  errors: {
+    login: string;
+    registration: string;
+  };
 }

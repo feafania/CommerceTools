@@ -71,7 +71,7 @@ const Header = {
 
   onClick(label: string, page: PageType) {
     return async () => {
-      if (label === "Sign Out" && authStore.user) {
+      if (label === SETTINGS.label.nav.signOut && authStore.user) {
         try {
           // await wsClient.logout(authStore.user);
         } catch (error) {
