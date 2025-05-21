@@ -27,6 +27,9 @@ const pl: AppTranslation = {
     header: "Registration",
     submit: "Submit",
   },
+  main: {
+    title: "Welcome to Gifts Shop",
+  },
 };
 
 export default pl;

@@ -1,3 +1,4 @@
+import { SETTINGS } from "@/config/settings";
 import "./main.css";
 import Header from "@/components/layout/header/header";
 
@@ -14,7 +15,7 @@ const MainView = {
     aside.append(nav);
 
     const title = document.createElement("h1");
-    title.textContent = "Welcome to Gifts Shop";
+    title.textContent = SETTINGS.label.main.title;
 
     container.append(aside, title);
 

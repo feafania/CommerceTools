@@ -25,4 +25,7 @@ export interface AppTranslation {
     header: string;
     submit: string;
   };
+  main: {
+    title: string;
+  };
 }
