@@ -4,20 +4,25 @@ import createSelect from "@/components/select/select";
 import { VALIDATION } from "@/config/constants";
 import { SETTINGS } from "@/config/settings";
 import { COUNTRY_OPTIONS } from "@/config/constants";
+import { AddressType } from "@/config/constants";
 
-function createAddressHeader(title: string): HTMLHeadingElement {
+function createAddressHeader(type: AddressType): HTMLHeadingElement {
   const currentLang = SETTINGS.label.address;
   const titleElement = document.createElement("h3");
   titleElement.className = `address-header`;
-  const titleKey =
-    title.toLowerCase() === "billing" ? "billingHeader" : "shippingHeader";
-  titleElement.textContent = currentLang[titleKey as keyof typeof currentLang];
+
+  const titleMap = {
+    [AddressType.Billing]: currentLang.billingHeader,
+    [AddressType.Shipping]: currentLang.shippingHeader,
+  };
+
+  titleElement.textContent = titleMap[type];
   return titleElement;
 }
 
 function createAddressInputs(
   currentLang: typeof SETTINGS.label.address,
-  title: string,
+  type: AddressType,
 ): {
   cityInput: HTMLDivElement;
   streetInput: HTMLDivElement;
@@ -26,8 +31,8 @@ function createAddressInputs(
   const cityInput = createInput({
     type: "text",
     label: currentLang.city,
-    name: `${title.toLowerCase()}-city`,
-    id: `${title.toLowerCase()}-city`,
+    name: `${type}-city`,
+    id: `${type}-city`,
     placeholder: `${currentLang.city}...`,
     class: "city-input",
     validation: VALIDATION.city,
@@ -36,8 +41,8 @@ function createAddressInputs(
   const streetInput = createInput({
     type: "text",
     label: currentLang.street,
-    name: `${title.toLowerCase()}-street`,
-    id: `${title.toLowerCase()}-street`,
+    name: `${type}-street`,
+    id: `${type}-street`,
     placeholder: `${currentLang.street}...`,
     class: "street-input",
     validation: VALIDATION.street,
@@ -46,15 +51,20 @@ function createAddressInputs(
   const postalCodeInputWrapper = createInput({
     type: "text",
     label: currentLang.postalCode,
-    name: `${title.toLowerCase()}-postalcode`,
-    id: `${title.toLowerCase()}-postalcode`,
+    name: `${type}-postalcode`,
+    id: `${type}-postalcode`,
     placeholder: `${currentLang.postalCode}...`,
     class: "postal-code-input",
     validation: {
-      message: VALIDATION.postalCode.message,
+      message: (() => {
+        const country = (
+          document.querySelector(`#${type}-country`) as HTMLSelectElement
+        )?.value;
+        return VALIDATION.postalCode.getSpecificMessage({ country });
+      })(),
       isValid: (value: string) => {
         const country = (
-          document.querySelector("#country") as HTMLSelectElement
+          document.querySelector(`#${type}-country`) as HTMLSelectElement
         )?.value;
         return VALIDATION.postalCode.isValid(value, { country });
       },
@@ -64,19 +74,20 @@ function createAddressInputs(
   return { cityInput, streetInput, postalCodeInputWrapper };
 }
 
-export function createAddressFields(title: string): HTMLDivElement {
+export function createAddressFields(type: AddressType): HTMLDivElement {
   const addressBlock = document.createElement("div");
   addressBlock.classList.add("address-block");
   const currentLang = SETTINGS.label.address;
 
-  const header = createAddressHeader(title);
+  const header = createAddressHeader(type);
   addressBlock.append(header);
+
   const countryOptions = COUNTRY_OPTIONS(SETTINGS.label.address);
 
   const countrySelectWrapper = createSelect({
     label: currentLang.country,
-    name: `${title.toLowerCase()}-country`,
-    id: `${title.toLowerCase()}-country`,
+    name: `${type}-country`,
+    id: `${type}-country`,
     class: "country-input",
     options: countryOptions,
   });
@@ -84,13 +95,10 @@ export function createAddressFields(title: string): HTMLDivElement {
   addressBlock.append(countrySelectWrapper);
 
   const { cityInput, streetInput, postalCodeInputWrapper } =
-    createAddressInputs(currentLang, title);
+    createAddressInputs(currentLang, type);
   addressBlock.append(cityInput, streetInput, postalCodeInputWrapper);
 
-  const defaultCheckbox = createDefaultAddressCheckbox(
-    title.toLowerCase(),
-    currentLang,
-  );
+  const defaultCheckbox = createDefaultAddressCheckbox(type, currentLang);
   addressBlock.append(defaultCheckbox);
 
   countrySelect.addEventListener("change", () => {
@@ -104,22 +112,22 @@ export function createAddressFields(title: string): HTMLDivElement {
 }
 
 function createDefaultAddressCheckbox(
-  addressType: string,
+  type: AddressType,
   translations: typeof SETTINGS.label.address,
 ): HTMLDivElement {
   const checkboxWrapper = document.createElement("div");
   checkboxWrapper.className = "checkbox-wrapper";
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
-  checkbox.name = `default-${addressType.toLowerCase()}-address`;
-  checkbox.id = `default-${addressType.toLowerCase()}-address`;
+  checkbox.name = `default-${type}-address`;
+  checkbox.id = `default-${type}-address`;
   const label = document.createElement("label");
   label.htmlFor = checkbox.id;
   const labelKey =
-    addressType.toLowerCase() === "billing"
-      ? "defaultBilling"
-      : "defaultShipping";
-  label.textContent = translations[labelKey as keyof typeof translations];
+    type === AddressType.Billing
+      ? translations.defaultBilling
+      : translations.defaultShipping;
+  label.textContent = labelKey;
 
   checkboxWrapper.append(checkbox);
   checkboxWrapper.append(label);

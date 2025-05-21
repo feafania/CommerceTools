@@ -4,6 +4,7 @@ import { ValidationType } from "@/types/types";
 
 export default function createSelect(object: SelectConfig): HTMLDivElement {
   const wrapper = document.createElement("div");
+  const id = object.id ?? `select-${Date.now()}`;
   wrapper.id = object.id ? `${object.id}-wrapper` : "";
   wrapper.className = object.class ? `${object.class}-wrapper` : "";
   wrapper.classList.add("input-wrapper");
@@ -11,9 +12,7 @@ export default function createSelect(object: SelectConfig): HTMLDivElement {
   if (object.label) {
     const label = document.createElement("label");
     label.textContent = object.label;
-    if (object.id) {
-      label.htmlFor = object.id;
-    }
+    label.htmlFor = id;
     label.className = object.class ? `${object.class}-label` : "";
     label.classList.add("input-label");
     wrapper.append(label);
@@ -23,7 +22,7 @@ export default function createSelect(object: SelectConfig): HTMLDivElement {
   if (object.name) {
     select.name = object.name;
   }
-  select.id = object.id ?? `select-${Date.now()}`;
+  select.id = id;
   select.className = object.class ?? "";
   select.classList.add("input");
   select.value = getState(select.id) || "";

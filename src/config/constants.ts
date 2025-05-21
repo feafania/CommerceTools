@@ -102,6 +102,22 @@ export const VALIDATION = {
 
       return false;
     },
+
+    getSpecificMessage: (context?: { country?: string }) => {
+      const country = context?.country;
+      const validationMessages = SETTINGS.label.validation;
+
+      const countryPlLocalized = validationMessages.countryPoland;
+      const countryUKLocalized = validationMessages.countryUnitedKingdom;
+
+      if (country === countryPlLocalized) {
+        return validationMessages.postalCodePoland;
+      }
+      if (country === countryUKLocalized) {
+        return validationMessages.postalCodeUK;
+      }
+      return validationMessages.postalCodeGeneric;
+    },
   },
 };
 
@@ -117,3 +133,10 @@ const POSTAL_CODE_PATTERNS: Record<string, RegExp> = {
   PL: /^\d{2}-\d{3}$/,
   UK: /^[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}$/i,
 };
+
+// src/types/enums.ts (или constants.ts)
+
+export enum AddressType {
+  Billing = "billing",
+  Shipping = "shipping",
+}

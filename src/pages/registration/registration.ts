@@ -5,6 +5,7 @@ import createButton from "@/components/button/button";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { SETTINGS } from "@/config/settings";
 import { createAddressFields } from "@/components/address/address";
+import { AddressType } from "@/config/constants";
 
 const RegistrationView = {
   async render(): Promise<HTMLElement> {
@@ -28,8 +29,7 @@ const RegistrationView = {
       //this.renderCity(),
       //this.renderStreet(),
       //this.renderPostcode(),
-      createAddressFields("Billing"), //here is just test to render the address block
-      createAddressFields("Shipping"), //here is just test to render the address block
+      createAddressFields(AddressType.Billing), //here is just test to render the address block
       this.renderName(),
       this.renderPassword(),
       this.renderSubmit(),
