@@ -13,6 +13,7 @@ const en: AppTranslation = {
     name: "Login",
     password: "Password",
     header: "Authentication",
+    emptyField: "Please enter",
     submit: "Sign in",
   },
   registration: {
@@ -21,7 +22,7 @@ const en: AppTranslation = {
     birthDay: "Birth day",
     street: "Street",
     city: "City",
-    postalCode: "Postal Code",
+    postalCode: "Post Code",
     country: "Country",
     login: "login",
     password: "Password",
@@ -63,6 +64,17 @@ const en: AppTranslation = {
       "Postal code must match format for Poland (00-000) or UK (SW1A 1AA).",
     countryPoland: "Poland",
     countryUnitedKingdom: "United Kingdom",
+  },
+  errorsTypes: {
+    duplicate: "The value already exists",
+    invalid: "Incorrect value",
+    required: "Required field",
+    credentials: "Invalid email or password",
+    unknown: "Unknown error",
+  },
+  errors: {
+    login: "Login failed.",
+    registration: "Registration failed.",
   },
 };
 

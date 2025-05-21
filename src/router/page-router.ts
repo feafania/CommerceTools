@@ -1,10 +1,8 @@
 import { PageType } from "@/types/enum";
-import authStore from "@/stores/auth-store";
-import LoginView from "@/pages/login/login";
-import { renderAboutView } from "@/pages/about/about";
 import Header from "@/components/layout/header/header";
-import MainView from "@/pages/main/main";
-import RegistrationView from "@/pages/registration/registration";
+import routes from "@/config/routes";
+import { DEFAULT_PAGE, NOT_FOUND_PAGE } from "@/config/constants";
+import { isValidPageType } from "@/utils/validation";
 
 const PageRouter = {
   currentPage: PageType.login as PageType,
@@ -15,56 +13,27 @@ const PageRouter = {
   },
 
   getPathFromUrl(): string {
-    const hash = location.hash.slice(1);
-    return hash || PageType.login;
+    return location.hash.slice(1);
   },
 
   async handleRoute() {
-    const rawPath = this.getPathFromUrl();
-
-    const isValidPage = (Object.values(PageType) as string[]).includes(rawPath);
-    const path = isValidPage ? (rawPath as PageType) : undefined;
+    const path = this.getPathFromUrl();
 
     let page: PageType;
 
-    // if (path === PageType.about) {
-    //   page = path;
-    // } else {
-    //   const isLoggedIn = Boolean(authStore.user);
-    //   page = isLoggedIn ? PageType.main : PageType.login;
-    //   if (!path || path !== page) {
-    //     location.replace(`/#${page}`);
-    //     return;
-    //   }
-    // }
-    const isLoggedIn = Boolean(authStore.user);
-
-    if (path) {
-      page = path as PageType;
+    if (isValidPageType(path)) {
+      page = path;
+    } else if (path) {
+      page = NOT_FOUND_PAGE;
     } else {
-      page = PageType.main;
+      page = DEFAULT_PAGE;
       location.replace(`/#${page}`);
-      return;
-    }
-
-    if (
-      isLoggedIn &&
-      (path === PageType.login || path === PageType.registration)
-    ) {
-      location.replace(`/#${PageType.main}`);
       return;
     }
 
     this.currentPage = page;
 
-    const renderMap = {
-      [PageType.login]: LoginView.render.bind(LoginView),
-      [PageType.main]: MainView.renderChat.bind(MainView),
-      [PageType.registration]: RegistrationView.render.bind(RegistrationView),
-      [PageType.about]: renderAboutView,
-    };
-
-    const render = renderMap[page as keyof typeof renderMap];
+    const render = routes[page]?.render;
 
     if (render) {
       const element = await render();

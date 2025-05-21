@@ -2,8 +2,9 @@ import "./login.css";
 import createInput from "@/components/input/input";
 import { VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
-import showModalMessage from "@/components/modal-window/modal-window";
 import { SETTINGS } from "@/config/settings";
+import { handleOnSubmit } from "@/utils/validation";
+import AuthService from "@/api/services/auth-service";
 
 const LoginView = {
   async render(): Promise<HTMLElement> {
@@ -33,77 +34,81 @@ const LoginView = {
       type: "text",
       label: SETTINGS.label.login.name,
       name: "username",
-      placeholder: "Enter your name...",
+      placeholder: SETTINGS.label.login.name,
       id: "username",
       class: "login-input",
       // required: true,
-      validation: VALIDATION.login,
+      validation: VALIDATION.email,
     });
   },
 
   renderPassword(): HTMLElement {
-    return createInput({
+    const wrapper = document.createElement("div");
+    wrapper.className = "password-wrapper";
+
+    const passwordInput = createInput({
       type: "password",
       label: SETTINGS.label.login.password,
       name: "password",
-      placeholder: "Enter your password...",
+      placeholder: SETTINGS.label.login.password,
       id: "password",
       class: "password-input",
-      // required: true,
       validation: VALIDATION.password,
     });
+
+    // Create eye icon
+    const eyeButton = document.createElement("button");
+    eyeButton.type = "button";
+    eyeButton.className = "toggle-password-button";
+    eyeButton.setAttribute("aria-label", "Show password");
+    eyeButton.innerHTML = `<img src="/public/assets/eye-svgrepo-com.svg"
+    width="20" height="20" alt="Show password" />`;
+
+    // Toggle logic
+    eyeButton.addEventListener("click", () => {
+      const input = wrapper.querySelector<HTMLInputElement>("#password");
+      if (input) {
+        const isHidden = input.type === "password";
+        input.type = isHidden ? "text" : "password";
+        eyeButton.setAttribute(
+          "aria-label",
+          isHidden ? "Hide password" : "Show password",
+        );
+        eyeButton.innerHTML = isHidden
+          ? `
+            <img src="/public/assets/eye-password-hide.svg"
+            width="20" height="20" alt="Show password" />
+          `
+          : (eyeButton.innerHTML = `<img src="/public/assets/eye-svgrepo-com.svg"
+            width="20" height="20" alt="Show password" />
+          `);
+      }
+    });
+
+    // Append eye icon inside the wrapper
+    wrapper.append(passwordInput, eyeButton);
+
+    return wrapper;
   },
 
   renderSubmit(): HTMLElement {
     return createButton({
-      name: "Submit",
+      name: SETTINGS.label.login.submit,
       id: "submit-login",
       class: "submit-login-button",
     });
   },
 
   async onSubmit(event: SubmitEvent) {
-    console.log("Login form submitted");
-
+    event.preventDefault();
     const form = event.target as HTMLFormElement;
+    const isValid = await handleOnSubmit(form, "registration");
+    if (!isValid) return;
+
     const formData = new FormData(form);
-
-    const formFields = [
-      { name: "username", label: "Name", validation: VALIDATION.login },
-      { name: "password", label: "Password", validation: VALIDATION.password },
-    ];
-
-    for (const field of formFields) {
-      const value = (formData.get(field.name) as string)?.trim();
-      const inputElement = form.querySelector<HTMLInputElement>(
-        `#${field.name}`,
-      );
-
-      if (!value) {
-        showModalMessage(`Please enter your ${field.label}.`);
-        inputElement?.focus();
-        return;
-      }
-
-      const validation = field.validation;
-      const isPatternValid =
-        "pattern" in validation && validation.pattern
-          ? validation.pattern.test(value)
-          : true;
-      const isValid =
-        "isValid" in validation && validation.isValid
-          ? validation.isValid(value)
-          : true;
-
-      if (!isPatternValid || !isValid) {
-        showModalMessage(validation.message);
-        inputElement?.focus();
-        return;
-      }
-    }
-
-    // const user: UserType = { login, password };
-    // await wsClient.login(user);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    await AuthService.login(email, password);
   },
 };
 

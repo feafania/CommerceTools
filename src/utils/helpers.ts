@@ -1,7 +1,6 @@
-import { StorageItem } from "../types/interfaces";
-
 import { SETTINGS } from "@/config/settings";
 import { LanguageCode } from "@/types/types";
+import { StorageItem } from "@/types/interfaces";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -21,6 +20,10 @@ export function saveLocalState(object: StorageItem) {
 
 export function getLocalState(key: string): string | null {
   return localStorage.getItem(key);
+}
+
+export function deleteLocalState(key: string) {
+  return localStorage.removeItem(key);
 }
 
 export async function wait(ms: number) {

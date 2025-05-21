@@ -14,6 +14,7 @@ const pl: AppTranslation = {
     password: "Hasło",
     header: "Logowanie",
     submit: "Zaloguj się",
+    emptyField: "Please enter",
   },
   registration: {
     firstName: "Imię",
@@ -66,6 +67,17 @@ const pl: AppTranslation = {
       "Kod pocztowy musi być zgodny z formatem PL (00-000) lub UK (SW1A 1AA).",
     countryPoland: "Polska",
     countryUnitedKingdom: "Wielka Brytania",
+  },
+  errorsTypes: {
+    duplicate: "Wartość już istnieje",
+    invalid: "Nieprawidłowa wartość",
+    required: "Pole obowiązkowe",
+    credentials: "Nieprawidłowy adres e-mail lub hasło",
+    unknown: "Nieznany błąd",
+  },
+  errors: {
+    login: "Logowanie nie powiodło się.",
+    registration: "Rejestracja nie powiodła się.",
   },
 };
 

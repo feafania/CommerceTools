@@ -3,7 +3,6 @@ import Header from "@/components/layout/header/header";
 import createMain from "@/components/layout/main/main";
 import createFooter from "@/components/layout/footer/footer";
 import PageRouter from "@/router/page-router";
-import authStore from "@/stores/auth-store";
 
 export default function initApp(root: HTMLElement) {
   root.innerHTML = "";
@@ -21,7 +20,4 @@ export default function initApp(root: HTMLElement) {
   });
 
   PageRouter.init();
-  if (authStore.user) {
-    // wsClient.login(authStore.user);
-  }
 }

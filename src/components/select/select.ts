@@ -1,19 +1,28 @@
 import { SelectConfig } from "@/types/interfaces";
-import { getState, saveState } from "@/utils/helpers";
+import { classesToArray, getState, saveState } from "@/utils/helpers";
 import { ValidationType } from "@/types/types";
 
 export default function createSelect(object: SelectConfig): HTMLDivElement {
+  const classNames = classesToArray(object.class);
   const wrapper = document.createElement("div");
   const id = object.id ?? `select-${Date.now()}`;
   wrapper.id = object.id ? `${object.id}-wrapper` : "";
-  wrapper.className = object.class ? `${object.class}-wrapper` : "";
+  for (const className of classNames) {
+    if (className) {
+      wrapper.classList.add(`${className}-wrapper`);
+    }
+  }
   wrapper.classList.add("input-wrapper");
 
   if (object.label) {
     const label = document.createElement("label");
     label.textContent = object.label;
     label.htmlFor = id;
-    label.className = object.class ? `${object.class}-label` : "";
+    for (const className of classNames) {
+      if (className) {
+        label.classList.add(`${className}-label`);
+      }
+    }
     label.classList.add("input-label");
     wrapper.append(label);
   }
@@ -23,7 +32,16 @@ export default function createSelect(object: SelectConfig): HTMLDivElement {
     select.name = object.name;
   }
   select.id = id;
-  select.className = object.class ?? "";
+  for (const className of classNames) {
+    if (className) {
+      wrapper.classList.add(`${className}-wrapper`);
+    }
+  }
+  for (const className of classNames) {
+    if (className) {
+      select.classList.add(className);
+    }
+  }
   select.classList.add("input");
   select.value = getState(select.id) || "";
 

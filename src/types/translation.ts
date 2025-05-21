@@ -11,6 +11,7 @@ export interface AppTranslation {
     name: string;
     password: string;
     header: string;
+    emptyField: string;
     submit: string;
   };
   registration: {
@@ -52,5 +53,16 @@ export interface AppTranslation {
     postalCodeGeneric: string;
     countryPoland: string;
     countryUnitedKingdom: string;
+  };
+  errorsTypes: {
+    duplicate: string;
+    invalid: string;
+    required: string;
+    credentials: string;
+    unknown: string;
+  };
+  errors: {
+    login: string;
+    registration: string;
   };
 }

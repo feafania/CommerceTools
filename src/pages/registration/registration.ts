@@ -1,16 +1,14 @@
 import "./registration.css";
 import createInput from "@/components/input/input";
-import { VALIDATION } from "@/config/constants";
+import { AddressType, VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
-import showModalMessage from "@/components/modal-window/modal-window";
 import { SETTINGS } from "@/config/settings";
+import { handleOnSubmit } from "@/utils/validation";
+import AuthService from "@/api/services/auth-service";
 import { createAddressFields } from "@/components/address/address";
-import { AddressType } from "@/config/constants";
 
 const RegistrationView = {
   async render(): Promise<HTMLElement> {
-    //SETTINGS.setLang("pl"); //here is just test to set the language
-
     const container = document.createElement("div");
     container.id = "registration";
     container.className = "view registration-view";
@@ -25,12 +23,8 @@ const RegistrationView = {
       this.renderFirstName(),
       this.renderLastName(),
       this.renderBirthDay(),
-      //this.renderCountry(),
-      //this.renderCity(),
-      //this.renderStreet(),
-      //this.renderPostcode(),
-      createAddressFields(AddressType.Billing), //here is just test to render the address block
-      this.renderName(),
+      this.renderAddresses(),
+      this.renderEmail(),
       this.renderPassword(),
       this.renderSubmit(),
     );
@@ -49,8 +43,7 @@ const RegistrationView = {
       type: "text",
       label: SETTINGS.label.registration.firstName,
       name: "firstname",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.firstName + "...",
+      placeholder: SETTINGS.label.registration.firstName,
       id: "firstname",
       class: "registration-input",
       validation: VALIDATION.firstName,
@@ -62,8 +55,7 @@ const RegistrationView = {
       type: "text",
       label: SETTINGS.label.registration.lastName,
       name: "lastname",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.lastName + " ...",
+      placeholder: SETTINGS.label.registration.lastName,
       id: "lastname",
       class: "registration-input",
       validation: VALIDATION.lastName,
@@ -75,85 +67,68 @@ const RegistrationView = {
       type: "text",
       label: SETTINGS.label.registration.birthDay,
       name: "birthday",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.birthDay + " ...",
+      placeholder: SETTINGS.label.registration.birthDay,
       id: "birthday",
       class: "registration-input",
       validation: VALIDATION.dateOfBirth,
     });
+  },
+
+  renderAddresses(): HTMLElement {
+    const container = document.createElement("div");
+    container.className = "registration-address-container";
+
+    // First address block
+    const address1 = createAddressFields(AddressType.Shipping);
+    container.append(address1);
+
+    // Checkbox
+    const toggleWrapper = document.createElement("div");
+    toggleWrapper.className = "address-toggle";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = "show-billing-address";
+
+    const label = document.createElement("label");
+    label.htmlFor = "show-billing-address";
+
+    toggleWrapper.append(checkbox, label);
+    container.append(toggleWrapper);
+
+    // Second address block
+    const address2 = createAddressFields(AddressType.Billing);
+    address2.className = "address-block secondary-address";
+    address2.style.display = "none";
+    container.append(address2);
+
+    // Placeholder for billing address
+    let billingAddress: HTMLDivElement | undefined = undefined;
+
+    checkbox.addEventListener("change", () => {
+      if (checkbox.checked) {
+        billingAddress = createAddressFields(AddressType.Billing);
+        container.append(billingAddress);
+      } else {
+        if (billingAddress && container.contains(billingAddress)) {
+          billingAddress.remove();
+          billingAddress = undefined;
+        }
+      }
+    });
+
+    return container;
   },
 
   renderEmail(): HTMLElement {
     return createInput({
       type: "text",
       label: SETTINGS.label.registration.login,
-      name: "birthday",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.birthDay + " ...",
-      id: "birthday",
+      name: "email",
+      placeholder: SETTINGS.label.registration.login,
+      id: "email",
       class: "registration-input",
-      validation: VALIDATION.dateOfBirth,
-    });
-  },
-
-  renderCountry(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.country,
-      name: "country",
-      placeholder: "Enter your " + SETTINGS.label.registration.country + " ...",
-      id: "country",
-      class: "registration-input",
-      validation: VALIDATION.login,
-    });
-  },
-
-  renderCity(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.city,
-      name: "city",
-      placeholder: "Enter your " + SETTINGS.label.registration.city + " ...",
-      id: "city",
-      class: "registration-input",
-      validation: VALIDATION.login,
-    });
-  },
-
-  renderStreet(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.street,
-      name: "street",
-      placeholder: "Enter your " + SETTINGS.label.registration.street + " ...",
-      id: "street",
-      class: "registration-input",
-      validation: VALIDATION.login,
-    });
-  },
-
-  renderPostcode(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.postalCode,
-      name: "postcode",
-      placeholder:
-        "Enter your " + SETTINGS.label.registration.postalCode + " ...",
-      id: "postcode",
-      class: "registration-input",
-      validation: VALIDATION.login,
-    });
-  },
-
-  renderName(): HTMLElement {
-    return createInput({
-      type: "text",
-      label: SETTINGS.label.registration.login,
-      name: "name",
-      placeholder: "Enter your " + SETTINGS.label.registration.login + "...",
-      id: "name",
-      class: "registration-input",
-      validation: VALIDATION.login,
+      validation: VALIDATION.email,
     });
   },
 
@@ -162,7 +137,7 @@ const RegistrationView = {
       type: "password",
       label: SETTINGS.label.registration.password,
       name: "password",
-      placeholder: "Enter your password...",
+      placeholder: SETTINGS.label.registration.password,
       id: "password",
       class: "password-input",
       validation: VALIDATION.password,
@@ -178,70 +153,50 @@ const RegistrationView = {
   },
 
   async onSubmit(event: SubmitEvent) {
-    console.log("Registration form submitted");
-
+    event.preventDefault();
     const form = event.target as HTMLFormElement;
+
+    const isValid = await handleOnSubmit(form, "registration");
+    if (!isValid) return;
+
     const formData = new FormData(form);
 
-    const formFields = [
-      {
-        name: "name",
-        label: SETTINGS.label.registration.login,
-        validation: VALIDATION.login,
+    const customer = {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      firstName: formData.get("firstname") as string,
+      lastName: formData.get("lastname") as string,
+      dateOfBirth: formData.get("birthday") as string,
+      isSameAddress: !(formData.get("show-billing-address") === "on"),
+      shippingAddress: {
+        streetName: formData.get("shipping-street") as string,
+        streetNumber: formData.get("shipping-number") as string,
+        postalCode: formData.get("shipping-zip") as string,
+        city: formData.get("shipping-city") as string,
+        country: formData.get("shipping-country") as string,
       },
-      {
-        name: "password",
-        label: SETTINGS.label.registration.password,
-        validation: VALIDATION.password,
+      billingAddress: {
+        streetName:
+          (formData.get("billing-street") as string) ||
+          (formData.get("shipping-street") as string),
+        streetNumber:
+          (formData.get("billing-number") as string) ||
+          (formData.get("shipping-number") as string),
+        postalCode:
+          (formData.get("billing-zip") as string) ||
+          (formData.get("shipping-zip") as string),
+        city:
+          (formData.get("billing-city") as string) ||
+          (formData.get("shipping-city") as string),
+        country:
+          (formData.get("billing-country") as string) ||
+          (formData.get("shipping-country") as string),
       },
-      {
-        name: "firstname",
-        label: SETTINGS.label.registration.firstName,
-        validation: VALIDATION.firstName,
-      },
-      {
-        name: "lastname",
-        label: SETTINGS.label.registration.lastName,
-        validation: VALIDATION.lastName,
-      },
-      {
-        name: "birthday",
-        label: SETTINGS.label.registration.birthDay,
-        validation: VALIDATION.dateOfBirth,
-      },
-    ];
+      setBillingAsDefault: true,
+      setShippingAsDefault: true,
+    };
 
-    for (const field of formFields) {
-      const value = (formData.get(field.name) as string)?.trim();
-      const inputElement = form.querySelector<HTMLInputElement>(
-        `#${field.name}`,
-      );
-
-      if (!value) {
-        showModalMessage(`Please enter your ${field.label}.`);
-        inputElement?.focus();
-        return;
-      }
-
-      const validation = field.validation;
-      const isPatternValid =
-        "pattern" in validation && validation.pattern
-          ? validation.pattern.test(value)
-          : true;
-      const isValid =
-        "isValid" in validation && validation.isValid
-          ? validation.isValid(value)
-          : true;
-
-      if (!isPatternValid || !isValid) {
-        showModalMessage(validation.message);
-        inputElement?.focus();
-        return;
-      }
-    }
-
-    // const newUser: UserType = { name, password };
-    // await apiClient.register(newUser);
+    await AuthService.register(customer);
   },
 };
 
