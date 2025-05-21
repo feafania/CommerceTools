@@ -6,8 +6,6 @@ import {
   type AuthMiddlewareOptions, // Required for auth
   type HttpMiddlewareOptions, // Required for sending HTTP requests
 } from "@commercetools/ts-client";
-import dotenv from "dotenv";
-dotenv.config();
 
 const projectKey = process.env.CTP_PROJECT_KEY!;
 const scopes = [process.env.CTP_SCOPES!];

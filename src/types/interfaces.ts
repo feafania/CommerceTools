@@ -32,3 +32,9 @@ export interface ModalOptions {
   onCancel?: () => void;
   showCancel?: boolean;
 }
+
+export interface ValidationRule {
+  pattern?: RegExp;
+  isValid?: (value: string) => boolean;
+  message?: string;
+}

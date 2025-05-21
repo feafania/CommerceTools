@@ -74,7 +74,15 @@ function createLabel(
 function validateInput(wrapper: HTMLElement, validation: ValidationType) {
   const input = wrapper.querySelector("input");
   const value = input?.value || "";
-  const isValid = validation.pattern.test(value);
+
+  let isValid = true;
+
+  if (validation.pattern) {
+    isValid = validation.pattern.test(value);
+  } else if (validation.isValid) {
+    isValid = validation.isValid(value);
+  }
+
   let errorDiv = wrapper.querySelector("#input-error");
 
   if (isValid) {

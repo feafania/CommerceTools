@@ -1,8 +1,8 @@
 import { PageType } from "@/types/enum";
 import Header from "@/components/layout/header/header";
 import routes from "@/config/routes";
-import { isValidPageType } from "@/utils/helpers";
 import { DEFAULT_PAGE, NOT_FOUND_PAGE } from "@/config/constants";
+import { isValidPageType } from "@/utils/validation";
 
 const PageRouter = {
   currentPage: PageType.login as PageType,
