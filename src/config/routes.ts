@@ -5,6 +5,7 @@ import LoginView from "@/pages/login/login";
 import MainView from "@/pages/main/main";
 import renderAboutView from "@/pages/about/about";
 import NotFoundView from "@/pages/notfound/notfound";
+import RegistrationView from "@/pages/registration/registration";
 
 const routes: Partial<Record<PageType, RouteType>> = {
   [PageType.login]: {
@@ -13,7 +14,7 @@ const routes: Partial<Record<PageType, RouteType>> = {
   },
   [PageType.registration]: {
     canActivate: () => !authStore.user,
-    render: LoginView.render.bind(LoginView),
+    render: RegistrationView.render.bind(RegistrationView),
   },
   [PageType.main]: {
     canActivate: () => Boolean(authStore.user),

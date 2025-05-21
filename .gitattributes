@@ -1,1 +1,12 @@
+# provide LF in any OS => LF (\n) is the line break style used in Linux/macOS.
 * text=auto
+
+# Force LF for specific files
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

@@ -7,6 +7,7 @@ const en: AppTranslation = {
     main: "Main",
     about: "About Us",
     signOut: "Sign Out",
+    appTitle: "Gifts shop",
   },
   login: {
     name: "Login",
@@ -19,10 +20,6 @@ const en: AppTranslation = {
     firstName: "First name",
     lastName: "Last name",
     birthDay: "Birth day",
-    street: "Street",
-    city: "City",
-    postalCode: "Post Code",
-    country: "Country",
     login: "login",
     password: "Password",
     header: "Registration",
@@ -30,6 +27,18 @@ const en: AppTranslation = {
   },
   main: {
     title: "Welcome to Gifts Shop",
+  },
+  address: {
+    billingHeader: "Billing Address",
+    shippingHeader: "Shipping Address",
+    country: "Country",
+    city: "City",
+    street: "Street",
+    postalCode: "Postal Code",
+    defaultBilling: "Set as default billing address",
+    defaultShipping: "Set as default shipping address",
+    countryPl: "Poland",
+    countryEn: "United Kingdom",
   },
   validation: {
     email:
@@ -46,6 +55,14 @@ const en: AppTranslation = {
     password:
       "Password must be at least 8 characters long," +
       " include uppercase, lowercase letters and a number.",
+    city: "City must contain only letters and spaces.",
+    street: "Street cannot be empty.",
+    postalCodePoland: "Postal code must match format for Poland (00-000).",
+    postalCodeUK: "Postal code must match format for UK (SW1A 1AA).",
+    postalCodeGeneric:
+      "Postal code must match format for Poland (00-000) or UK (SW1A 1AA).",
+    countryPoland: "Poland",
+    countryUnitedKingdom: "United Kingdom",
   },
   errorsTypes: {
     duplicate: "The value already exists",

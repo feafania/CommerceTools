@@ -2,50 +2,70 @@ import { AppTranslation } from "@/types/translation";
 
 const pl: AppTranslation = {
   nav: {
-    signIn: "Sign In",
-    registration: "Registration",
-    main: "Main",
-    about: "About Us",
-    signOut: "Sign Out",
+    signIn: "Zaloguj się",
+    registration: "Załóż konto",
+    main: "Strona główna",
+    about: "O nas",
+    signOut: "Wyloguj się",
+    appTitle: "Prezenty",
   },
   login: {
     name: "Login",
-    password: "Haslo",
-    header: "Autenfikacia",
-    submit: "Podtvierdzic",
-    emptyField: "Please enter",
+    password: "Hasło",
+    header: "Logowanie",
+    submit: "Zaloguj się",
+    emptyField: "Proszę wpisać",
   },
   registration: {
-    firstName: "First name",
-    lastName: "Last name",
-    birthDay: "Birth day",
-    street: "Street",
-    city: "City",
-    postalCode: "Post Code",
-    country: "Country",
-    login: "login",
-    password: "Password",
-    header: "Registration",
-    submit: "Submit",
+    firstName: "Imię",
+    lastName: "Nazwisko",
+    birthDay: "Data urodzenia",
+    login: "Login",
+    password: "Hasło",
+    header: "Rejestracja",
+    submit: "Zarejestruj się",
   },
   main: {
-    title: "Welcome to Gifts Shop",
+    title: "Witamy w sklepie z prezentami",
+  },
+  address: {
+    billingHeader: "Adres do faktury",
+    shippingHeader: "Adres dostawy",
+    country: "Kraj",
+    city: "Miasto",
+    street: "Ulica",
+    postalCode: "Kod pocztowy",
+    defaultBilling: "Ustaw jako domyślny adres do faktury",
+    defaultShipping: "Ustaw jako domyślny adres dostawy",
+    countryPl: "Polska",
+    countryEn: "Wielka Brytania",
   },
   validation: {
     email:
-      "Please enter a valid email address (e.g., user@example.com). It must" +
-      " not have spaces, must include '@', and a valid domain (e.g., example.com).",
+      "Proszę podać prawidłowy adres e-mail (np. uzytkownik@przyklad.com). Nie może" +
+      " zawierać spacji, musi zawierać znak '@' oraz poprawną domenę (np. przyklad.com).",
     firstName:
-      "First name must contain only letters and at least one character.",
-    lastName: "Last name must contain only letters and at least one character.",
-    dateOfBirth: "You must be at least 13 years old.",
+      "Imię musi zawierać tylko litery i składać się z co najmniej jednego znaku.",
+    lastName:
+      "Nazwisko musi zawierać tylko litery i składać się z co najmniej jednego znaku.",
+    dateOfBirth: "Musisz mieć co najmniej 13 lat.",
     passwordLoginPage:
-      "Password must be at least 8 characters long, include uppercase and lowercase" +
-      " letters, a digit, and optionally a special character (!@#$%^&*). It must not" +
-      " have leading or trailing spaces.",
+      "Hasło musi mieć co najmniej 8 znaków, zawierać duże i małe litery" +
+      " cyfrę oraz opcjonalnie znak specjalny (!@#$%^&*). Nie może" +
+      " zawierać spacji na początku ani na końcu.",
     password:
-      "Password must be at least 8 characters long," +
-      " include uppercase, lowercase letters and a number.",
+      "Hasło musi mieć co najmniej 8 znaków," +
+      " zawierać duże i małe litery oraz cyfrę.",
+    city: "Miasto musi zawierać tylko litery i spacje.",
+    street: "Nie może być puste",
+    postalCodePoland:
+      "Kod pocztowy musi być zgodny z formatem obowiązującym w Polsce (00-000).",
+    postalCodeUK:
+      "Kod pocztowy musi być zgodny z formatem obowiązującym w Wielkiej Brytanii (SW1A 1AA).",
+    postalCodeGeneric:
+      "Kod pocztowy musi być zgodny z formatem PL (00-000) lub UK (SW1A 1AA).",
+    countryPoland: "Polska",
+    countryUnitedKingdom: "Wielka Brytania",
   },
   errorsTypes: {
     duplicate: "Wartość już istnieje",

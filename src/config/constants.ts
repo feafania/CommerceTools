@@ -2,6 +2,8 @@ import { SETTINGS } from "./settings";
 
 import { ValidationType } from "@/types/types";
 import { PageType } from "@/types/enum";
+import { AppTranslation } from "@/types/translation";
+import translations from "@/config/interfaces/index";
 
 export const VIEW_CONTAINER_NAME = "view-container";
 
@@ -70,7 +72,78 @@ export const VALIDATION = {
     pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
     message: SETTINGS.label.validation.password,
   } as ValidationType,
+
+  city: {
+    pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$/,
+    message: SETTINGS.label.validation.city,
+  },
+
+  street: {
+    pattern: /^.{1,}$/,
+    message: SETTINGS.label.validation.street,
+  },
+
+  postalCode: {
+    message: SETTINGS.label.validation.postalCodeGeneric,
+    isValid: (value: string, context?: { country?: string }) => {
+      const selectedCountryLocalizedName = context?.country;
+      const countryLocalizedMap: Record<string, string> = {};
+
+      if (SETTINGS.label.address.countryPl) {
+        countryLocalizedMap[SETTINGS.label.address.countryPl] = "PL";
+      }
+      if (SETTINGS.label.address.countryEn) {
+        countryLocalizedMap[SETTINGS.label.address.countryEn] = "UK";
+      }
+
+      const countryCode = selectedCountryLocalizedName
+        ? countryLocalizedMap[selectedCountryLocalizedName]
+        : undefined;
+
+      if (countryCode && POSTAL_CODE_PATTERNS[countryCode]) {
+        return POSTAL_CODE_PATTERNS[countryCode].test(value.trim());
+      }
+
+      return false;
+    },
+
+    getSpecificMessage: (context?: { country?: string }) => {
+      const country = context?.country;
+      const validationMessages = SETTINGS.label.validation;
+
+      const countryPlLocalized = validationMessages.countryPoland;
+      const countryUKLocalized = validationMessages.countryUnitedKingdom;
+
+      if (country === countryPlLocalized) {
+        return validationMessages.postalCodePoland;
+      }
+      if (country === countryUKLocalized) {
+        return validationMessages.postalCodeUK;
+      }
+      return validationMessages.postalCodeGeneric;
+    },
+  },
+};
+
+export const COUNTRY_OPTIONS = (
+  settingsLabelAddress: AppTranslation["address"],
+): string[] => {
+  return [settingsLabelAddress.countryPl, settingsLabelAddress.countryEn];
 };
 
 export const DEFAULT_PAGE = PageType.main;
 export const NOT_FOUND_PAGE = PageType.notfound;
+
+export const AVAILABLE_LANGUAGES = Object.keys(translations);
+
+const POSTAL_CODE_PATTERNS: Record<string, RegExp> = {
+  PL: /^\d{2}-\d{3}$/,
+  UK: /^[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}$/i,
+};
+
+// src/types/enums.ts (или constants.ts)
+
+export enum AddressType {
+  Billing = "billing",
+  Shipping = "shipping",
+}
