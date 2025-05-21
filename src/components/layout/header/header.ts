@@ -24,14 +24,13 @@ const Header = {
     return header;
   },
 
-  renderNav() {
-    this.nav.innerHTML = "";
-    const links = this.getNavLinks();
+  createNavList(): HTMLElement {
     const ul = document.createElement("ul");
     ul.className = "nav-list";
 
-    for (const { label, page, visible } of links) {
+    for (const { label, page, visible } of this.getNavLinks()) {
       if (!visible) continue;
+
       const li = document.createElement("li");
       const link = document.createElement("a");
       link.textContent = label;
@@ -44,11 +43,17 @@ const Header = {
       } else {
         link.addEventListener("click", this.onClick(label, page));
       }
+
       li.append(link);
       ul.append(li);
     }
-    this.nav.append(ul);
+
     ul.append(this.renderLangSwitcher());
+    return ul;
+  },
+
+  renderNav() {
+    this.nav.replaceChildren(this.createNavList());
   },
 
   getNavLinks(): NavType[] {
