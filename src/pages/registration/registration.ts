@@ -2,10 +2,8 @@ import "./registration.css";
 import createInput from "@/components/input/input";
 import { VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
-import showModalMessage from "@/components/modal-window/modal-window";
 import { SETTINGS } from "@/config/settings";
-import { registrationFormFields } from "@/config/form-fields";
-import { validateField } from "@/utils/helpers";
+import { handleOnSubmit } from "@/utils/validation";
 
 const RegistrationView = {
   async render(): Promise<HTMLElement> {
@@ -149,38 +147,10 @@ const RegistrationView = {
       class: "submit-registration-button",
     });
   },
-
   async onSubmit(event: SubmitEvent) {
-    console.log("Registration form submitted");
-
+    event.preventDefault();
     const form = event.target as HTMLFormElement;
-    const formData = new FormData(form);
-
-    const formFields = registrationFormFields;
-
-    for (const field of formFields) {
-      const value = (formData.get(field.name) as string)?.trim();
-      const inputElement = form.querySelector<HTMLInputElement>(
-        `#${field.name}`,
-      );
-
-      if (!value) {
-        showModalMessage(`${SETTINGS.label.login.emptyField} ${field.label}.`);
-        inputElement?.focus();
-        return;
-      }
-
-      const validation = field.validation;
-
-      if (!validateField(value, validation)) {
-        showModalMessage(validation.message);
-        inputElement?.focus();
-        return;
-      }
-    }
-
-    // const newUser: UserType = { name, password };
-    // await apiClient.register(newUser);
+    await handleOnSubmit(form, "registration");
   },
 };
 
