@@ -8,7 +8,7 @@ type ControlBase = {
   name: string;
   placeholder: string;
   id: string;
-  class: string;
+  class: string | string[];
   disabled: boolean;
   required: boolean;
   validation: ValidationType;
@@ -33,8 +33,8 @@ export interface ModalOptions {
   showCancel?: boolean;
 }
 
-export interface UserType {
-  login: string;
-  password?: string;
-  isLogined?: boolean;
+export interface ValidationRule {
+  pattern?: RegExp;
+  isValid?: (value: string) => boolean;
+  message?: string;
 }

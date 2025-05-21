@@ -73,4 +73,11 @@ export default defineConfig([
   {
     ignores: ["**/*.config.js"],
   },
+  {
+    files: ["**/*.test.ts", "**/__tests__/**/*.ts"],
+    rules: {
+      "no-console": "off",
+      "max-lines-per-function": "off",
+    },
+  },
 ]);

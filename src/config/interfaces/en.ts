@@ -12,6 +12,7 @@ const en: AppTranslation = {
     name: "Login",
     password: "Password",
     header: "Authentication",
+    emptyField: "Please enter",
     submit: "Sign in",
   },
   registration: {
@@ -29,6 +30,33 @@ const en: AppTranslation = {
   },
   main: {
     title: "Welcome to Gifts Shop",
+  },
+  validation: {
+    email:
+      "Please enter a valid email address (e.g., user@example.com). It must" +
+      " not have spaces, must include '@', and a valid domain (e.g., example.com).",
+    firstName:
+      "First name must contain only letters and at least one character.",
+    lastName: "Last name must contain only letters and at least one character.",
+    dateOfBirth: "You must be at least 13 years old.",
+    passwordLoginPage:
+      "Password must be at least 8 characters long, include uppercase and lowercase" +
+      " letters, a digit, and optionally a special character (!@#$%^&*). It must not" +
+      " have leading or trailing spaces.",
+    password:
+      "Password must be at least 8 characters long," +
+      " include uppercase, lowercase letters and a number.",
+  },
+  errorsTypes: {
+    duplicate: "The value already exists",
+    invalid: "Incorrect value",
+    required: "Required field",
+    credentials: "Invalid email or password",
+    unknown: "Unknown error",
+  },
+  errors: {
+    login: "Login failed.",
+    registration: "Registration failed.",
   },
 };
 

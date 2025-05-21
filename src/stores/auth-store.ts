@@ -1,32 +1,33 @@
-import { UserType } from "../types/interfaces";
-import { deleteState, getState, saveState } from "../utils/helpers";
+import { deleteLocalState, getLocalState, saveState } from "@/utils/helpers";
+import { tokenStore } from "@/stores/token-store";
+import { InCustomer } from "@/types/types";
 
 export class AuthStore {
-  private _user: UserType | undefined = undefined;
+  private _user: InCustomer | undefined = undefined;
 
   constructor() {
     this._user = AuthStore.restoreUser();
-    // renderHeaderUsername();
   }
 
   get user() {
     return this._user;
   }
 
-  static restoreUser(): UserType | undefined {
-    const storedUser = getState("user");
+  static restoreUser(): InCustomer | undefined {
+    const storedUser = getLocalState("user");
     if (storedUser) {
       return JSON.parse(storedUser);
     }
   }
 
-  setUser(user: UserType | undefined) {
+  setUser(user: InCustomer | undefined, token?: string) {
     this._user = user;
-    // renderHeaderUsername();
     if (user) {
       saveState({ key: "user", value: JSON.stringify(user) });
+      if (token) tokenStore.setToken(token);
     } else {
-      deleteState("user");
+      deleteLocalState("user");
+      tokenStore.clearToken();
     }
   }
 }

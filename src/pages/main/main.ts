@@ -3,7 +3,7 @@ import "./main.css";
 import Header from "@/components/layout/header/header";
 
 const MainView = {
-  render() {
+  async render() {
     const container = document.createElement("section");
 
     container.className = "view main-view";

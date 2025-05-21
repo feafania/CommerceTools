@@ -7,4 +7,5 @@ export enum PageType {
   profile = "user",
   basket = "basket",
   about = "about",
+  notfound = "notfound",
 }

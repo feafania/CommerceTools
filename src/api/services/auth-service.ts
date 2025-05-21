@@ -1,0 +1,59 @@
+import authRepository from "@/api/repositories/auth-repository";
+import { InCustomer } from "@/types/types";
+import { ApiError } from "@/api/handle-api-error";
+import showModalMessage from "@/components/modal-window/modal-window";
+import { SETTINGS } from "@/config/settings";
+import authStore from "@/stores/auth-store";
+import { tokenStore } from "@/stores/token-store";
+
+class AuthService {
+  async login(
+    email: string,
+    password: string,
+  ): Promise<InCustomer | string[] | undefined> {
+    try {
+      const result = await authRepository.login(email, password);
+      if (!result) return;
+
+      const { customer, token } = result;
+      console.log(customer);
+      console.log("TOKEN:", token);
+      authStore.setUser(customer, token);
+      return customer;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
+        return error.invalidFields;
+      }
+    }
+  }
+
+  async register(data: InCustomer): Promise<InCustomer | string[] | undefined> {
+    try {
+      const customer: InCustomer | undefined =
+        await authRepository.register(data);
+      console.log(customer);
+      return customer;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showModalMessage(
+          `${SETTINGS.label.errors.registration}\n${error.message}`,
+        );
+        return error.invalidFields;
+      }
+    }
+  }
+
+  logoutCustomer() {
+    try {
+      authStore.setUser(undefined);
+      tokenStore.clearToken();
+      return { success: true };
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  }
+}
+
+const authService = new AuthService();
+export default authService;

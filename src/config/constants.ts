@@ -1,19 +1,24 @@
-import { ValidationType } from "../types/types";
+import { SETTINGS } from "./settings";
+
+import { ValidationType } from "@/types/types";
+import { PageType } from "@/types/enum";
 
 export const VIEW_CONTAINER_NAME = "view-container";
 
+export const MINIMUM_AGE = 13;
+
 export const VALIDATION = {
-  login: {
-    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    message: "Please enter a valid email address (e.g., example@email.com).",
+  email: {
+    pattern: /^(?!\s)([^\s@]+)@([^\s@]+\.[^\s@]+)(?<!\s)$/,
+    message: SETTINGS.label.validation.email,
   },
   firstName: {
-    pattern: /^[A-Za-z]{1,}$/,
-    message: "First name must contain only letters and at least one character.",
+    pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
+    message: SETTINGS.label.validation.firstName,
   },
   lastName: {
-    pattern: /^[A-Za-z]{1,}$/,
-    message: "Last name must contain only letters and at least one character.",
+    pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
+    message: SETTINGS.label.validation.lastName,
   },
   dateOfBirth: {
     isValid: (value: string) => {
@@ -52,15 +57,20 @@ export const VALIDATION = {
         age--;
       }
 
-      return age >= 13;
+      return age >= MINIMUM_AGE;
     },
-    message: "You must be at least 13 years old.",
+    message: SETTINGS.label.validation.dateOfBirth,
   },
-
+  passwordLoginPage: {
+    pattern:
+      /^(?!\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])?.{8,}(?<!\s)$/,
+    message: SETTINGS.label.validation.passwordLoginPage,
+  } as ValidationType,
   password: {
     pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
-    message:
-      "Password must be at least 8 characters long," +
-      " include uppercase, lowercase letters and a number.",
+    message: SETTINGS.label.validation.password,
   } as ValidationType,
 };
+
+export const DEFAULT_PAGE = PageType.main;
+export const NOT_FOUND_PAGE = PageType.notfound;

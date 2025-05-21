@@ -1,6 +1,6 @@
 import "./about.css";
 
-export async function renderAboutView(): Promise<HTMLElement> {
+export default async function renderAboutView(): Promise<HTMLElement> {
   const container = document.createElement("section");
   container.id = "about";
   container.className = "view about-view";
