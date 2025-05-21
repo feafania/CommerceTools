@@ -11,7 +11,7 @@ const MainView = {
     const aside = document.createElement("aside");
     aside.className = "sidebar";
 
-    const nav = Header.createNav();
+    const nav = Header.createNavList();
     aside.append(nav);
 
     const title = document.createElement("h1");

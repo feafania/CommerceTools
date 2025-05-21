@@ -1,10 +1,11 @@
 import "./registration.css";
 import createInput from "@/components/input/input";
-import { VALIDATION } from "@/config/constants";
+import { AddressType, VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
 import { SETTINGS } from "@/config/settings";
 import { handleOnSubmit } from "@/utils/validation";
 import AuthService from "@/api/services/auth-service";
+import { createAddressFields } from "@/components/address/address";
 
 const RegistrationView = {
   async render(): Promise<HTMLElement> {
@@ -78,7 +79,8 @@ const RegistrationView = {
     container.className = "registration-address-container";
 
     // First address block
-    // const address1 = createAddressFields("Shipping");
+    const address1 = createAddressFields(AddressType.Shipping);
+    container.append(address1);
 
     // Checkbox
     const toggleWrapper = document.createElement("div");
@@ -95,24 +97,25 @@ const RegistrationView = {
     container.append(toggleWrapper);
 
     // Second address block
-    //const address2 = createAddressFields("Billing");
-    // address2.className = "address-block secondary-address";
-    // address2.style.display = "none";
+    const address2 = createAddressFields(AddressType.Billing);
+    address2.className = "address-block secondary-address";
+    address2.style.display = "none";
+    container.append(address2);
 
     // Placeholder for billing address
-    // let billingAddress: HTMLDivElement | null = null;
+    let billingAddress: HTMLDivElement | undefined = undefined;
 
-    // checkbox.addEventListener("change", () => {
-    //   if (checkbox.checked) {
-    //     billingAddress = createAddressFields("Billing");
-    //     container.appendChild(billingAddress);
-    //   } else {
-    //     if (billingAddress && container.contains(billingAddress)) {
-    //       container.removeChild(billingAddress);
-    //       billingAddress = null;
-    //     }
-    //   }
-    // });
+    checkbox.addEventListener("change", () => {
+      if (checkbox.checked) {
+        billingAddress = createAddressFields(AddressType.Billing);
+        container.append(billingAddress);
+      } else {
+        if (billingAddress && container.contains(billingAddress)) {
+          billingAddress.remove();
+          billingAddress = undefined;
+        }
+      }
+    });
 
     return container;
   },
@@ -148,6 +151,7 @@ const RegistrationView = {
       class: "submit-registration-button",
     });
   },
+
   async onSubmit(event: SubmitEvent) {
     event.preventDefault();
     const form = event.target as HTMLFormElement;

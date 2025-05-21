@@ -5,6 +5,7 @@ export interface AppTranslation {
     main: string;
     about: string;
     signOut: string;
+    appTitle: string;
   };
   login: {
     name: string;
@@ -17,14 +18,22 @@ export interface AppTranslation {
     firstName: string;
     lastName: string;
     birthDay: string;
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
     login: string;
     password: string;
     header: string;
     submit: string;
+  };
+  address: {
+    billingHeader: string;
+    shippingHeader: string;
+    country: string;
+    city: string;
+    street: string;
+    postalCode: string;
+    defaultBilling: string;
+    defaultShipping: string;
+    countryPl: string;
+    countryEn: string;
   };
   main: {
     title: string;
@@ -36,6 +45,13 @@ export interface AppTranslation {
     dateOfBirth: string;
     passwordLoginPage: string;
     password: string;
+    city: string;
+    street: string;
+    postalCodePoland: string;
+    postalCodeUK: string;
+    postalCodeGeneric: string;
+    countryPoland: string;
+    countryUnitedKingdom: string;
   };
   errorsTypes: {
     duplicate: string;

@@ -12,8 +12,12 @@ export default function initApp(root: HTMLElement) {
   const footer = createFooter();
 
   root.append(header, main, footer);
-  // globalThis.addEventListener("languageChanged", () => {
-  //   Header.renderNav();
-  // });
+
+  globalThis.addEventListener("languageChanged", () => {
+    Header.updateTitle();
+    Header.renderNav();
+    PageRouter.handleRoute();
+  });
+
   PageRouter.init();
 }
