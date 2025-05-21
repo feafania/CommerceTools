@@ -13,33 +13,10 @@ export default function initApp(root: HTMLElement) {
   const footer = createFooter();
 
   root.append(header, main, footer);
+
   globalThis.addEventListener("languageChanged", () => {
     Header.renderNav();
-    //page which is active now, at that moment
-    //maybe at router - ask chatGPT //how to detect an opened page
-    //try it 1) getPathFromUrl => 2)navigateTo it should work.
-  });
-
-  globalThis.addEventListener("languageChanged", () => {
-    const newHeader = Header.create();
-    const newMain = createMain();
-    const newFooter = createFooter();
-
-    const oldHeader = document.querySelector("header");
-    const oldMain = document.querySelector("main");
-    const oldFooter = document.querySelector("footer");
-
-    if (oldHeader && oldHeader.parentNode) {
-      oldHeader.parentNode.replaceChild(newHeader, oldHeader);
-    }
-
-    if (oldMain && oldMain.parentNode) {
-      oldMain.parentNode.replaceChild(newMain, oldMain);
-    }
-
-    if (oldFooter && oldFooter.parentNode) {
-      oldFooter.parentNode.replaceChild(newFooter, oldFooter);
-    }
+    PageRouter.handleRoute();
   });
 
   PageRouter.init();
