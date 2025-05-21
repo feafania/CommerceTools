@@ -1,10 +1,23 @@
+import { SETTINGS } from "@/config/settings";
 import "./main.css";
+import Header from "@/components/layout/header/header";
 
 const MainView = {
   async render() {
     const container = document.createElement("section");
-    container.id = "main";
+
     container.className = "view main-view";
+
+    const aside = document.createElement("aside");
+    aside.className = "sidebar";
+
+    const nav = Header.createNavList();
+    aside.append(nav);
+
+    const title = document.createElement("h1");
+    title.textContent = SETTINGS.label.main.title;
+
+    container.append(aside, title);
 
     return container;
   },

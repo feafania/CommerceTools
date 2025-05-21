@@ -20,6 +20,7 @@ const Header = {
 
     header.append(this.title, this.nav);
     this.renderNav();
+    header.append(this.renderLangSwitcher());
 
     return header;
   },
@@ -52,7 +53,6 @@ const Header = {
       ul.append(li);
     }
 
-    ul.append(this.renderLangSwitcher());
     return ul;
   },
 

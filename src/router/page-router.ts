@@ -5,7 +5,7 @@ import { DEFAULT_PAGE, NOT_FOUND_PAGE } from "@/config/constants";
 import { isValidPageType } from "@/utils/validation";
 
 const PageRouter = {
-  currentPage: PageType.login as PageType,
+  currentPage: PageType.main as PageType,
   init() {
     globalThis.addEventListener("popstate", () => this.handleRoute());
     globalThis.addEventListener("hashchange", () => this.handleRoute());
@@ -48,6 +48,7 @@ const PageRouter = {
   },
 
   navigateTo(path: PageType) {
+    if (location.hash.slice(1) === path) return;
     location.hash = `#${path}`;
   },
 };

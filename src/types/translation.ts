@@ -18,10 +18,6 @@ export interface AppTranslation {
     firstName: string;
     lastName: string;
     birthDay: string;
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
     login: string;
     password: string;
     header: string;
@@ -38,6 +34,9 @@ export interface AppTranslation {
     defaultShipping: string;
     countryPl: string;
     countryEn: string;
+  };
+  main: {
+    title: string;
   };
   validation: {
     email: string;

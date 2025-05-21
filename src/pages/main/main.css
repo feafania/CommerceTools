@@ -1,5 +1,6 @@
 .main-view {
   display: flex;
+  gap: 20px;
   flex-grow: 1;
   overflow-y: auto;
   width: 100%;
