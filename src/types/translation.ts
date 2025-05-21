@@ -10,13 +10,29 @@ export interface AppTranslation {
     name: string;
     password: string;
     header: string;
+    emptyField: string;
     submit: string;
   };
   registration: {
-    name: string;
+    firstName: string;
+    lastName: string;
+    birthDay: string;
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    login: string;
     password: string;
     header: string;
     submit: string;
+  };
+  validation: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    passwordLoginPage: string;
+    password: string;
   };
   errorsTypes: {
     duplicate: string;
