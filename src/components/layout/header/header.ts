@@ -1,4 +1,5 @@
 import "./header.css";
+import "@/pages/pages.css";
 import PageRouter from "@/router/page-router";
 import { NavType } from "@/types/interfaces";
 import authStore from "@/stores/auth-store";
