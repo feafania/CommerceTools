@@ -21,6 +21,7 @@ export interface AppTranslation {
     login: string;
     password: string;
     header: string;
+    openBillingAddress: string;
     submit: string;
   };
   address: {

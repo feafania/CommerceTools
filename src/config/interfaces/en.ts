@@ -23,6 +23,7 @@ const en: AppTranslation = {
     login: "login",
     password: "Password",
     header: "Registration",
+    openBillingAddress: "Are the billing and shipping addresses different?",
     submit: "Submit",
   },
   main: {
