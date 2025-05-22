@@ -1,4 +1,3 @@
-import "./login.css";
 import createInput from "@/components/input/input";
 import { VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";

@@ -1,4 +1,3 @@
-import "./registration.css";
 import createInput from "@/components/input/input";
 import { AddressType, VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
