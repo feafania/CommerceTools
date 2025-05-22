@@ -20,11 +20,12 @@
   width: 100%;
   left: 0;
   background: #ffffffa8;
-}
-.category-title p {
-  height: 100%;
   line-height: 22px;
   padding: 5px 10px;
+}
+
+.main-page-content {
+  width: 100%;
 }
 
 /* Forms */
