@@ -1,4 +1,4 @@
-.header {
+.header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -8,6 +8,15 @@
   font-size: 1rem;
   border-bottom: 2px solid var(--border-color);
   flex-wrap: wrap;
+}
+
+.header-actions {
+  display: flex;
+  gap: 20px;
+}
+
+.language-switcher {
+  width: 70px;
 }
 
 .title {
