@@ -1,4 +1,7 @@
 .address-block {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   padding: 20px;
   border-radius: 0.75rem;
   background-color: var(--form-background);
@@ -23,5 +26,4 @@
   color: #333;
   cursor: pointer;
   user-select: none;
-  margin-bottom: 0px;
 }

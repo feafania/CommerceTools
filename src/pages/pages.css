@@ -74,13 +74,6 @@
   width: 100%;
 }
 
-.address-block {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 15px;
-}
-
 .address-block .input-label {
   margin-bottom: 0px;
 }
@@ -88,7 +81,7 @@
 .input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.2rem;
 }
 
 .input-label {
@@ -124,12 +117,22 @@
   background: none;
   position: absolute;
   right: 0;
-  top: 35px;
+  top: 40px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .form .btn {
   margin-left: auto;
   margin-right: auto;
+}
+
+.input-wrapper {
+  margin-bottom: 15px;
+}
+
+.toggle-password-button:hover {
+  background-color: unset;
 }
 
 /* FORM END */
