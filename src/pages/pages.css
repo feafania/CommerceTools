@@ -43,6 +43,12 @@
   box-shadow: 0 0px 12px rgb(0 0 0 / 37%);
 }
 
+.form.registration-form {
+  flex-direction: unset;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 .view {
   max-width: 500px;
   width: 100%;
@@ -52,6 +58,31 @@
   align-items: center;
   font-size: 1rem;
   padding: 2rem;
+}
+
+.view.registration-view {
+  max-width: 900px;
+}
+
+.form-group,
+.address-block .input-wrapper {
+  width: 47%;
+}
+
+.registration-address-container,
+.address-header {
+  width: 100%;
+}
+
+.address-block {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.address-block .input-label {
+  margin-bottom: 0px;
 }
 
 .input-wrapper {
@@ -94,6 +125,11 @@
   position: absolute;
   right: 0;
   top: 35px;
+}
+
+.form .btn {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* FORM END */
