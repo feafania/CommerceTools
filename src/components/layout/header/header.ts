@@ -10,6 +10,7 @@ import { AVAILABLE_LANGUAGES } from "@/config/constants";
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
   title: document.createElement("h1"),
+  logo: document.createElement("img"),
 
   create(): HTMLElement {
     const header = document.createElement("header");
@@ -18,8 +19,10 @@ const Header = {
     const container = document.createElement("div");
     container.className = "container";
 
-    this.title.className = "title";
-    this.title.textContent = SETTINGS.label.nav.appTitle;
+    this.logo.className = "header-logo logo";
+    this.logo.src = "/public/assets/img/logo.png";
+    this.logo.alt = SETTINGS.label.nav.appTitle;
+    this.logo.title = SETTINGS.label.nav.appTitle;
 
     const headerActions = document.createElement("div");
     headerActions.className = "header-actions";
@@ -27,8 +30,17 @@ const Header = {
     this.renderNav();
     headerActions.append(this.nav, this.renderLangSwitcher());
 
-    container.append(this.title, headerActions);
+    container.append(this.logo, headerActions);
     header.append(container);
+
+    if (PageRouter.currentPage !== PageType.main) {
+      const containerTitle = document.createElement("div");
+      containerTitle.className = "container";
+      this.title.className = "title";
+      this.title.textContent = SETTINGS.label.nav.appTitle;
+      containerTitle.append(this.title);
+      header.append(containerTitle);
+    }
 
     return header;
   },
