@@ -15,12 +15,20 @@ const Header = {
     const header = document.createElement("header");
     header.className = "header";
 
+    const container = document.createElement("div");
+    container.className = "container";
+
     this.title.className = "title";
     this.title.textContent = SETTINGS.label.nav.appTitle;
 
-    header.append(this.title, this.nav);
+    const headerActions = document.createElement("div");
+    headerActions.className = "header-actions";
+
     this.renderNav();
-    header.append(this.renderLangSwitcher());
+    headerActions.append(this.nav, this.renderLangSwitcher());
+
+    container.append(this.title, headerActions);
+    header.append(container);
 
     return header;
   },

@@ -16,8 +16,6 @@ function createRSSchoolLink() {
   const rsschoolDocument = parser.parseFromString(logoInline, "image/svg+xml");
 
   const rsschoolImg = rsschoolDocument.documentElement;
-  rsschoolImg.setAttribute("width", "100%");
-  rsschoolImg.setAttribute("height", "auto");
   rsschoolImg.classList.add("rsschool-logo");
   rsschoolImg.setAttribute("title", "RS School");
 
@@ -33,11 +31,14 @@ export default function createFooter(): HTMLElement {
   const footer = document.createElement("footer");
   footer.className = "footer";
 
+  const container = document.createElement("div");
+  container.className = "container";
+
   const text = document.createElement("p");
   text.textContent = "2025";
-  footer.append(text);
+  container.append(text);
+  container.append(createRSSchoolLink());
 
-  footer.append(createRSSchoolLink());
-
+  footer.append(container);
   return footer;
 }
