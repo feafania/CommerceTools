@@ -17,7 +17,7 @@ const LoginView = {
     h2.textContent = SETTINGS.label.login.header;
 
     const form = document.createElement("form");
-    form.className = "login-form";
+    form.className = "login-form form";
     form.append(this.renderLogin(), this.renderPassword(), this.renderSubmit());
 
     form.addEventListener("submit", (event) => {
@@ -95,7 +95,7 @@ const LoginView = {
     return createButton({
       name: SETTINGS.label.login.submit,
       id: "submit-login",
-      class: "submit-login-button",
+      class: "submit-login-button btn",
     });
   },
 

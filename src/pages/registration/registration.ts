@@ -18,7 +18,7 @@ const RegistrationView = {
     h2.textContent = SETTINGS.label.registration.header;
 
     const form = document.createElement("form");
-    form.className = "registration-form";
+    form.className = "registration-form form";
     form.append(
       this.renderFirstName(),
       this.renderLastName(),
@@ -148,7 +148,7 @@ const RegistrationView = {
     return createButton({
       name: SETTINGS.label.registration.submit,
       id: "submit-registration",
-      class: "submit-registration-button",
+      class: "submit-registration-button btn",
     });
   },
 
