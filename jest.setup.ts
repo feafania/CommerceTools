@@ -1,5 +1,9 @@
 import { TextEncoder as NodeTextEncoder } from "node:util";
 
+import dotenv from "dotenv";
+
+dotenv.config();
+
 process.removeAllListeners("warning");
 process.on("warning", (warning) => {
   if (

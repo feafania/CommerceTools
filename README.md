@@ -26,19 +26,21 @@ This project is an online gift shop developed as the final task for the **RS Sch
 
 You can run the following scripts using `npm run <script-name>`:
 
-| Script          | Description                                            |
-| --------------- | ------------------------------------------------------ |
-| `start`         | Runs the project in development mode with live reload  |
-| `build`         | Builds the project for production                      |
-| `test`          | Runs Jest tests                                        |
-| `test:watch`    | Runs Jest in watch mode                                |
-| `test:coverage` | Runs Jest and generates a code coverage report         |
-| `test:ci`       | Runs Jest in CI mode (with coverage and silent output) |
-| `lint`          | Runs ESLint to check JS/TS files for issues            |
-| `lint:fix`      | Automatically fixes linting issues                     |
-| `format`        | Formats code using Prettier                            |
-| `ci:format`     | Checks formatting (for CI purposes)                    |
-| `prepare`       | Initializes Husky (for Git hooks)                      |
+| Script             | Description                                                       |
+| ------------------ | ----------------------------------------------------------------- |
+| `start`            | Runs the project in development mode with live reload             |
+| `build`            | Builds the project for production                                 |
+| `test`             | Runs Jest tests                                                   |
+| `test:watch`       | Runs Jest in watch mode                                           |
+| `test:coverage`    | Runs Jest and generates a code coverage report                    |
+| `test:ci`          | Runs Jest in CI mode (with coverage and silent output)            |
+| `test:unit`        | Runs only unit tests (ignores **tests**/integration folder)       |
+| `test:integration` | Runs only integration tests (inside **tests**/integration folder) |
+| `lint`             | Runs ESLint to check JS/TS files for issues                       |
+| `lint:fix`         | Automatically fixes linting issues                                |
+| `format`           | Formats code using Prettier                                       |
+| `ci:format`        | Checks formatting (for CI purposes)                               |
+| `prepare`          | Initializes Husky (for Git hooks)                                 |
 
 ---
 
