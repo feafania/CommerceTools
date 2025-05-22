@@ -16,15 +16,24 @@ const RegistrationView = {
     h2.className = "registration-title";
     h2.textContent = SETTINGS.label.registration.header;
 
-    const form = document.createElement("form");
-    form.className = "registration-form form";
-    form.append(
+    const loginDataContainer = document.createElement("div");
+    loginDataContainer.className = "form-group";
+    loginDataContainer.append(this.renderEmail(), this.renderPassword());
+
+    const userDataContainer = document.createElement("div");
+    userDataContainer.className = "form-group";
+    userDataContainer.append(
       this.renderFirstName(),
       this.renderLastName(),
       this.renderBirthDay(),
+    );
+
+    const form = document.createElement("form");
+    form.className = "registration-form form";
+    form.append(
+      loginDataContainer,
+      userDataContainer,
       this.renderAddresses(),
-      this.renderEmail(),
-      this.renderPassword(),
       this.renderSubmit(),
     );
 
@@ -83,7 +92,7 @@ const RegistrationView = {
 
     // Checkbox
     const toggleWrapper = document.createElement("div");
-    toggleWrapper.className = "address-toggle";
+    toggleWrapper.className = "address-toggle checkbox-wrapper";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -91,6 +100,7 @@ const RegistrationView = {
 
     const label = document.createElement("label");
     label.htmlFor = "show-billing-address";
+    label.textContent = SETTINGS.label.registration.openBillingAddress;
 
     toggleWrapper.append(checkbox, label);
     container.append(toggleWrapper);
