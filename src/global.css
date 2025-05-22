@@ -2,9 +2,11 @@
   --border-color: #7e7e7e;
   --form-background: #ffffff42;
   --main-background: #f9f9f9;
+  --text-color: #1b1b1b;
   --main-color: #d4ac89;
-  --main-color-hover: #95765a;
+  --main-color-hover: #bd9979;
   --validation-message: #e63946;
+  --nav-active-color: #e3cab4;
 }
 
 * {
@@ -197,7 +199,7 @@ label {
 
 .input-label {
   font-weight: 500;
-  color: var(--main-color);
+  color: var(--text-color);
 }
 
 .input {
@@ -206,7 +208,7 @@ label {
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   background-color: var(--main-background);
-  color: var(--main-color);
+  color: var(--text-color);
   max-width: 100%;
 }
 
@@ -218,6 +220,17 @@ label {
   color: var(--validation-message);
   font-size: 0.9rem;
   margin-top: 0.2rem;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password-button {
+  background: none;
+  position: absolute;
+  right: 0;
+  top: 35px;
 }
 
 /* FORM END */

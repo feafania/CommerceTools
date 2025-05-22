@@ -6,7 +6,6 @@
   padding: 1.5rem 0;
   color: var(--main-color);
   font-size: 1rem;
-  border-bottom: 2px solid var(--border-color);
   flex-wrap: wrap;
 }
 
@@ -25,10 +24,8 @@
 }
 
 .nav-link.active {
-  background: #e3cab4;
-  padding-right: 10px;
-  padding-left: 10px;
-  border-radius: 10px;
+  background: var(--nav-active-color);
+  cursor: default;
 }
 
 .header-username {
@@ -61,21 +58,21 @@
   border: none;
   background: none;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 5px 10px!important;
+  border-radius: 10px;
 }
 
 .nav-link:hover:not(.active) {
-  color: var(--main-color-hover);
-}
-
-.nav-link.active {
-  border-bottom: 2px solid var(--main-color);
-  cursor: default;
+  background-color: var(--nav-active-color);
 }
 
 .nav-link:active:not(.active) {
-  transform: scale(0.97);
   opacity: 0.8;
+}
+
+.nav-link:hover {
+  text-decoration: none;
+  text-transform: none;
 }
 
 @media (max-width: 600px) {
