@@ -138,7 +138,138 @@
 
 /* FORM END */
 
+/* mobile menu */
+.burger {
+  display: none;
+}
+
+/* Hide mobile menu by default */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #fff;
+  padding: 16px;
+}
+
+.burger-menu,
+.burger-menu-close {
+  position: absolute;
+  right: 20px;
+}
+
+.burger-menu::before {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url("/public/assets/img/burger-menu.png");
+}
+
+.burger-menu-close::before {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url("/public/assets/img/burger-menu-close.png");
+}
+
 /* Responsive */
+@media (max-width: 991.98px) {
+  .header .container {
+    justify-content: center;
+    padding-bottom: 0px;
+  }
+  .sidebar {
+    display: none;
+  }
+  .categories .category-item {
+    width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .view.registration-view {
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .form {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .burger {
+    display: block;
+  }
+  .burger-menu-close {
+    top: 25px;
+  }
+  .header-actions {
+    display: none;
+  }
+  .header-actions.active {
+    display: block;
+    position: absolute;
+    background: #fff;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+    font-size: 25px;
+    z-index: 100;
+  }
+  .language-switcher {
+    width: 60px;
+    height: 60px;
+    font-size: 25px;
+  }
+  .nav-list {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .nav-link {
+    display: block;
+    padding: 8px 0;
+  }
+  .language-switcher {
+    margin-top: 20px;
+  }
+  .categories .category-item {
+    width: 100%;
+  }
+  .main-view,
+  .main {
+    padding: 0px !important;
+  }
+  .header .container {
+    justify-content: start;
+    padding: 20px 20px 0 !important;
+  }
+  .header-logo {
+    width: 75%;
+  }
+  .form-group,
+  .address-block .input-wrapper {
+    width: 100%;
+  }
+  .form.registration-form {
+    gap: 0;
+  }
+  .registration-address-container {
+    margin-top: 20px;
+  }
+  .form .btn {
+    margin-top: 20px;
+  }
+}
+
 @media (max-width: 380px) {
   .view {
     gap: 1rem;
