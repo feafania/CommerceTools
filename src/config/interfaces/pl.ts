@@ -33,6 +33,7 @@ const pl: AppTranslation = {
     email: "Adres e-mail",
     password: "Hasło",
     header: "Rejestracja",
+    openBillingAddress: "Czy adres rozliczeniowy i adres wysyłki są różne?",
     submit: "Zarejestruj się",
   },
   main: {

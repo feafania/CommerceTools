@@ -24,15 +24,24 @@ const LoginRegistrationView = {
     h2.className = "registration-title";
     h2.textContent = SETTINGS.label.registration.header;
 
-    const form = document.createElement("form");
-    form.className = "registration-form";
-    form.append(
+    const loginDataContainer = document.createElement("div");
+    loginDataContainer.className = "form-group";
+    loginDataContainer.append(this.renderEmail(), this.renderPassword());
+
+    const userDataContainer = document.createElement("div");
+    userDataContainer.className = "form-group";
+    userDataContainer.append(
       this.renderFirstName(),
       this.renderLastName(),
       this.renderBirthDay(),
+    );
+
+    const form = document.createElement("form");
+    form.className = "registration-form form";
+    form.append(
+      loginDataContainer,
+      userDataContainer,
       this.renderAddresses(),
-      this.renderEmail(),
-      this.renderPassword(),
       this.renderSubmit(SETTINGS.label.registration.submit),
     );
 
@@ -56,7 +65,7 @@ const LoginRegistrationView = {
     h2.textContent = SETTINGS.label.login.header;
 
     const form = document.createElement("form");
-    form.className = "login-form";
+    form.className = "login-form form";
     form.append(
       this.renderEmail(),
       this.renderPassword(),
@@ -120,7 +129,7 @@ const LoginRegistrationView = {
 
     // Checkbox
     const toggleWrapper = document.createElement("div");
-    toggleWrapper.className = "address-toggle";
+    toggleWrapper.className = "address-toggle checkbox-wrapper";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -221,7 +230,7 @@ const LoginRegistrationView = {
       type: "submit",
       name: submitName,
       id: "submit-registration-login",
-      class: "submit-registration-login-button",
+      class: "submit-registration-login-button submit",
     });
   },
 
