@@ -10,6 +10,14 @@ const pl: AppTranslation = {
     main: "Strona główna",
     about: "O nas",
     signOut: "Wyloguj się",
+    directions: {
+      toSignIn: "Masz już konto?",
+      toSignUp: "Nie masz konta?",
+    },
+    directionsLabels: {
+      toSignIn: "Zaloguj się",
+      toSignUp: "Załóż konto",
+    },
   },
   login: {
     email: "Adres e-mail",
@@ -51,6 +59,9 @@ const pl: AppTranslation = {
       DE: "Niemcy",
       FR: "Francja",
       ES: "Hiszpania",
+    },
+    placeholders: {
+      country: "Wybierz kraj",
     },
   },
   validation: {

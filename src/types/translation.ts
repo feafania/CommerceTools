@@ -10,6 +10,14 @@ export interface AppTranslation {
     main: string;
     about: string;
     signOut: string;
+    directions: {
+      toSignIn: string;
+      toSignUp: string;
+    };
+    directionsLabels: {
+      toSignIn: string;
+      toSignUp: string;
+    };
   };
   login: {
     email: string;
@@ -36,6 +44,9 @@ export interface AppTranslation {
     default: AdressTypeMap;
     isSameAddress: string;
     countryNames: CountryCodeMap;
+    placeholders: {
+      country: string;
+    };
   };
   main: {
     title: string;

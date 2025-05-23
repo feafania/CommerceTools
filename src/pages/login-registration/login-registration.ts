@@ -36,10 +36,11 @@ const LoginRegistrationView = {
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
+      event.stopPropagation();
       this.onRegistrationSubmit(event);
     });
 
-    container.append(h2, form);
+    container.append(h2, form, this.renderRedirectText(FormType.REGISTRATION));
     return container;
   },
 
@@ -62,10 +63,11 @@ const LoginRegistrationView = {
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
+      event.stopPropagation();
       this.onLoginSubmit(event);
     });
 
-    container.append(h2, form);
+    container.append(h2, form, this.renderRedirectText(FormType.LOGIN));
     return container;
   },
 
@@ -95,10 +97,10 @@ const LoginRegistrationView = {
 
   renderBirthDay(): HTMLElement {
     return createInput({
-      type: "text",
+      type: "date",
       label: SETTINGS.label.registration.birthDay,
       name: "birthday",
-      placeholder: `${SETTINGS.label.registration.birthDay}...`,
+      // placeholder: `${SETTINGS.label.registration.birthDay}...`,
       id: "birthday",
       class: "birthday-input",
       validationName: "dateOfBirth",
@@ -182,6 +184,36 @@ const LoginRegistrationView = {
     return wrapper;
   },
 
+  renderRedirectText(type: FormType): HTMLElement {
+    const wrapper = document.createElement("div");
+    wrapper.className = "redirect-wrapper";
+
+    const text = document.createElement("span");
+    const link = document.createElement("a");
+    link.className = "redirect-link";
+
+    let navigatedPage;
+    if (type === FormType.LOGIN) {
+      text.textContent = SETTINGS.label.nav.directions.toSignUp;
+      link.textContent = SETTINGS.label.nav.directionsLabels.toSignUp;
+      navigatedPage = PageType.registration;
+    } else {
+      text.textContent = SETTINGS.label.nav.directions.toSignIn;
+      link.textContent = SETTINGS.label.nav.directionsLabels.toSignIn;
+      navigatedPage = PageType.login;
+    }
+    link.href = `#${navigatedPage}`;
+    link.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      PageRouter.navigateTo(navigatedPage);
+    });
+
+    text.append(link);
+    wrapper.append(text);
+    return wrapper;
+  },
+
   renderSubmit(submitName: string): HTMLElement {
     return createButton({
       type: "submit",
@@ -238,6 +270,7 @@ const LoginRegistrationView = {
 
     await AuthService.register(customer);
   },
+
   async onLoginSubmit(event: SubmitEvent) {
     event.preventDefault();
     const form = event.target as HTMLFormElement;

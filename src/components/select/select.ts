@@ -1,6 +1,7 @@
+// import "./select.css";
 import { SelectConfig } from "@/types/interfaces";
-import { classesToArray, getState, saveState } from "@/utils/helpers";
-import { validateElement } from "@/utils/validation";
+import { classesToArray, getState } from "@/utils/helpers";
+import { createValidationBlock } from "@/utils/validation";
 import { createLabel } from "@/components/label/label";
 
 export default function createSelect(object: SelectConfig): HTMLDivElement {
@@ -39,6 +40,15 @@ export default function createSelect(object: SelectConfig): HTMLDivElement {
   }
 
   if (Array.isArray(object.options)) {
+    if (object.placeholder) {
+      const placeholderOption = document.createElement("option");
+      placeholderOption.value = "";
+      placeholderOption.textContent = object.placeholder;
+      placeholderOption.disabled = true;
+      placeholderOption.selected = true;
+      select.append(placeholderOption);
+    }
+
     for (const optionValue of object.options) {
       const option = document.createElement("option");
       option.value = optionValue;
@@ -52,11 +62,7 @@ export default function createSelect(object: SelectConfig): HTMLDivElement {
     }
   }
 
-  select.addEventListener("input", () => {
-    saveState({ key: select.id, value: select.value });
-    validateElement(select);
-  });
-
   wrapper.append(select);
+  createValidationBlock(select, wrapper);
   return wrapper;
 }

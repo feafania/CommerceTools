@@ -55,8 +55,7 @@
   margin-top: 0.2rem;
 }
 
-#submit-registration,
-#submit-login {
+#submit-registration-login {
   padding: 0.8rem 1rem;
   font-size: 1rem;
   background-color: var(--main-color);
@@ -71,15 +70,29 @@
   align-self: center;
 }
 
-#submit-registration:hover,
-#submit-login:hover {
+#submit-registration-login:hover {
   background-color: var(--main-color-hover);
   transform: scale(1.05);
 }
 
-#submit-registration:active,
-#submit-login:active {
+#submit-registration-login:active {
   transform: scale(0.95);
+}
+
+.redirect-wrapper {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.redirect-link {
+  color: var(--accent-color);
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.redirect-link:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 380px) {
@@ -102,7 +115,7 @@
     font-size: 0.6rem;
   }
 
-  #submit-registration {
+  #submit-registration-login {
     width: 100%;
   }
 }

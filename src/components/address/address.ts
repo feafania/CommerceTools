@@ -91,6 +91,7 @@ export default class AddressElement {
       name: `${this.#type}-country`,
       id: `${this.#type}-country`,
       class: "country-input",
+      placeholder: `${SETTINGS.label.address.placeholders.country}...`,
       options: getCountriesOptions(countryOptions),
       validationName: "country",
     });

@@ -1,7 +1,7 @@
 // import "./input.css";
 import { ControlConfig } from "@/types/interfaces";
-import { classesToArray, getState, saveState } from "@/utils/helpers";
-import { validateElement } from "@/utils/validation";
+import { classesToArray, getState } from "@/utils/helpers";
+import { createValidationBlock } from "@/utils/validation";
 import { createLabel } from "@/components/label/label";
 
 export default function createInput(object: ControlConfig): HTMLDivElement {
@@ -49,12 +49,7 @@ export default function createInput(object: ControlConfig): HTMLDivElement {
       input.classList.add(className);
     }
   }
-
-  input.addEventListener("input", () => {
-    saveState({ key: input.id, value: input.value });
-    validateElement(input);
-  });
-
   wrapper.append(input);
+  createValidationBlock(input, wrapper);
   return wrapper;
 }

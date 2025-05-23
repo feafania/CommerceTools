@@ -4,7 +4,7 @@ import { CountryCode, FormType, PageType } from "@/types/enum";
 import { CountryValueType, FormField } from "@/types/types";
 import { FORM_FIELDS } from "@/config/form-fields";
 import { VALIDATION } from "@/config/validation";
-import { getCountryCode } from "@/utils/helpers";
+import { getCountryCode, saveState } from "@/utils/helpers";
 import { ValidationRule } from "@/types/interfaces";
 
 export async function handleOnSubmit(
@@ -46,16 +46,44 @@ export function isValidPageType(path: string): path is PageType {
   return Object.values(PageType).includes(path as PageType);
 }
 
-export function validateElement(
-  element: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
-): boolean {
-  const value = element.value.trim();
-  return validateFormField(element, value);
+export function createValidationBlock(
+  input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+  wrapper: HTMLDivElement,
+) {
+  const errorMessage = document.createElement("div");
+  errorMessage.className = "input-error error-message";
+  errorMessage.style.display = "none";
+  wrapper.append(errorMessage);
+
+  input.addEventListener("input", () => {
+    saveState({ key: input.id, value: input.value });
+
+    const isValid = validateFormField(input, input.value.trim(), false);
+    if (isValid) {
+      errorMessage.style.display = "none";
+      errorMessage.textContent = "";
+    }
+  });
+
+  input.addEventListener("blur", () => {
+    const isValid = validateFormField(input, input.value.trim(), true);
+
+    if (isValid) {
+      errorMessage.style.display = "none";
+      errorMessage.textContent = "";
+    } else {
+      const errorFromDOM = input.parentElement?.querySelector(".input-error");
+      if (errorFromDOM instanceof HTMLElement) {
+        errorFromDOM.style.display = "block";
+      }
+    }
+  });
 }
 
 function validateFormField(
   element: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
   value: string,
+  shouldFocus: boolean = true,
 ): boolean {
   const form = element.closest("form");
 
@@ -84,7 +112,9 @@ function validateFormField(
       element.after(newError);
     }
 
-    element?.focus();
+    if (shouldFocus) {
+      element?.focus();
+    }
   }
 
   return isValid;

@@ -10,6 +10,14 @@ const en: AppTranslation = {
     main: "Main",
     about: "About Us",
     signOut: "Sign Out",
+    directions: {
+      toSignIn: "Already have an account?",
+      toSignUp: "Don't have an account?",
+    },
+    directionsLabels: {
+      toSignIn: "Sign In",
+      toSignUp: "Sign Up",
+    },
   },
   login: {
     email: "Email Address",
@@ -25,7 +33,7 @@ const en: AppTranslation = {
     email: "Email Address",
     password: "Password",
     header: "Registration",
-    submit: "Submit",
+    submit: "Sign up",
   },
   main: {
     title: "Welcome to Gifts Shop",
@@ -50,6 +58,9 @@ const en: AppTranslation = {
       DE: "Germany",
       FR: "France",
       ES: "Spain",
+    },
+    placeholders: {
+      country: "Select a country",
     },
   },
   validation: {
