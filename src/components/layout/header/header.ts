@@ -25,13 +25,38 @@ const Header = {
     this.logo.alt = SETTINGS.label.nav.appTitle;
     this.logo.title = SETTINGS.label.nav.appTitle;
 
+    const menuBurgerButton = document.createElement("div");
+    menuBurgerButton.className = "burger burger-menu";
+    menuBurgerButton.addEventListener("click", () => {
+      headerActions.classList.add("active");
+      document.body.classList.add("no-scroll");
+    });
+
+    const menuBurgerButtonClose = document.createElement("div");
+    menuBurgerButtonClose.className = "burger burger-menu-close";
+    menuBurgerButtonClose.addEventListener("click", () => {
+      headerActions.classList.remove("active");
+      document.body.classList.remove("no-scroll");
+    });
+
+    this.nav.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.classList.contains("nav-link")) {
+        headerActions.classList.remove("active");
+      }
+    });
+
     const headerActions = document.createElement("div");
     headerActions.className = "header-actions";
 
     this.renderNav();
-    headerActions.append(this.nav, this.renderLangSwitcher());
+    headerActions.append(
+      this.nav,
+      this.renderLangSwitcher(),
+      menuBurgerButtonClose,
+    );
 
-    container.append(this.logo, headerActions);
+    container.append(this.logo, menuBurgerButton, headerActions);
     header.append(container);
 
     if (PageRouter.currentPage !== PageType.main) {
