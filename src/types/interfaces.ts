@@ -1,6 +1,6 @@
-import { ValidationType } from "./types";
+import { CountryValueType } from "./types";
 
-import { PageType } from "@/types/enum";
+import { CountryCode, PageType } from "@/types/enum";
 
 type ControlBase = {
   type: string;
@@ -11,7 +11,8 @@ type ControlBase = {
   class: string | string[];
   disabled: boolean;
   required: boolean;
-  validation: ValidationType;
+  validationName?: string;
+  relatedCountryField?: string;
 };
 
 export interface ControlSelect extends ControlBase {
@@ -40,6 +41,7 @@ export interface ModalOptions {
 
 export interface ValidationRule {
   pattern?: RegExp;
-  isValid?: (value: string) => boolean;
+  isValid?: (value: string | CountryValueType) => boolean;
   message?: string;
+  getValidationMessage?: (code: CountryCode) => string;
 }

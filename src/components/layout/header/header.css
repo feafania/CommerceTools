@@ -3,7 +3,8 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 1.5rem 0;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
   color: var(--main-color);
   font-size: 1rem;
   flex-wrap: wrap;
@@ -40,6 +41,12 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   transition: width 0.1s ease;
+}
+
+.nav-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
 }
 
 .nav-list {

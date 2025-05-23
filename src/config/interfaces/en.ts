@@ -1,16 +1,26 @@
 import { AppTranslation } from "@/types/translation";
 
 const en: AppTranslation = {
+  header: {
+    appTitle: "Gifts shop",
+  },
   nav: {
     signIn: "Sign In",
     registration: "Registration",
     main: "Main",
     about: "About Us",
     signOut: "Sign Out",
-    appTitle: "Gifts shop",
+    directions: {
+      toSignIn: "Already have an account?",
+      toSignUp: "Don't have an account?",
+    },
+    directionsLabels: {
+      toSignIn: "Sign In",
+      toSignUp: "Sign Up",
+    },
   },
   login: {
-    name: "Login",
+    email: "Email Address",
     password: "Password",
     header: "Authentication",
     emptyField: "Please enter",
@@ -20,26 +30,39 @@ const en: AppTranslation = {
     firstName: "First name",
     lastName: "Last name",
     birthDay: "Birth day",
-    login: "login",
+    email: "Email Address",
     password: "Password",
     header: "Registration",
     openBillingAddress: "Are the billing and shipping addresses different?",
-    submit: "Submit",
+    submit: "Sign up",
   },
   main: {
     title: "Welcome to Gifts Shop",
   },
   address: {
-    billingHeader: "Billing Address",
-    shippingHeader: "Shipping Address",
+    headers: {
+      billing: "Billing address",
+      shipping: "Shipping address",
+    },
     country: "Country",
     city: "City",
     street: "Street",
     postalCode: "Postal Code",
-    defaultBilling: "Set as default billing address",
-    defaultShipping: "Set as default shipping address",
-    countryPl: "Poland",
-    countryEn: "United Kingdom",
+    default: {
+      billing: "Set as default billing address",
+      shipping: "Set as default shipping address",
+    },
+    isSameAddress: "My billing address is not the same as my shipping address.",
+    countryNames: {
+      PL: "Poland",
+      UK: "United Kingdom",
+      DE: "Germany",
+      FR: "France",
+      ES: "Spain",
+    },
+    placeholders: {
+      country: "Select a country",
+    },
   },
   validation: {
     email:
@@ -58,12 +81,14 @@ const en: AppTranslation = {
       " include uppercase, lowercase letters and a number.",
     city: "City must contain only letters and spaces.",
     street: "Street cannot be empty.",
-    postalCodePoland: "Postal code must match format for Poland (00-000).",
-    postalCodeUK: "Postal code must match format for UK (SW1A 1AA).",
-    postalCodeGeneric:
-      "Postal code must match format for Poland (00-000) or UK (SW1A 1AA).",
-    countryPoland: "Poland",
-    countryUnitedKingdom: "United Kingdom",
+    postalCode: {
+      PL: "Postal code must match format for Poland (00-000).",
+      UK: "Postal code must match format for UK (SW1A 1AA).",
+      DE: "Postal code must match format for Germany (12345).",
+      FR: "Postal code must match format for France (75000).",
+      ES: "Postal code must match format for Spain (28001).",
+    },
+    commonError: "Validation error.",
   },
   errorsTypes: {
     duplicate: "The value already exists",

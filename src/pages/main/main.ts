@@ -1,5 +1,6 @@
-import { SETTINGS } from "@/config/settings";
 import "./main.css";
+
+import { SETTINGS } from "@/config/settings";
 import Header from "@/components/layout/header/header";
 import productService from "@/api/services/product-service";
 

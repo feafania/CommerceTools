@@ -28,122 +28,11 @@
   width: 100%;
 }
 
-/* Forms */
-.view-container .view input {
-  border: 1px solid var(--border-color);
-}
-
-.form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 2rem;
-  border-radius: 0.75rem;
-  background-color: var(--form-background);
-  box-shadow: 0 0px 12px rgb(0 0 0 / 37%);
-}
-
-.form.registration-form {
-  flex-direction: unset;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
-.view {
-  max-width: 500px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: 1rem;
-  padding: 2rem;
-}
-
-.view.registration-view {
-  max-width: 900px;
-}
-
-.form-group,
-.address-block .input-wrapper {
-  width: 47%;
-}
-
-.registration-address-container,
-.address-header {
-  width: 100%;
-}
-
-.address-block .input-label {
-  margin-bottom: 0px;
-}
-
-.input-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.input-label {
-  font-weight: 500;
-  color: var(--text-color);
-}
-
-.input {
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  background-color: var(--main-background);
-  color: var(--text-color);
-  max-width: 100%;
-}
-
-.input:focus {
-  outline: 2px solid var(--main-color-hover);
-}
-
-.error-message {
-  color: var(--validation-message);
-  font-size: 0.9rem;
-  margin-top: 0.2rem;
-}
-
-.password-wrapper {
-  position: relative;
-}
-
-.toggle-password-button {
-  background: none;
-  position: absolute;
-  right: 0;
-  top: 40px;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.form .btn {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.input-wrapper {
-  margin-bottom: 15px;
-}
-
-.toggle-password-button:hover {
-  background-color: unset;
-}
-
-/* FORM END */
-
 /* mobile menu */
 .burger {
   display: none;
 }
 
-/* Hide mobile menu by default */
 .mobile-menu {
   display: none;
   flex-direction: column;
@@ -189,17 +78,6 @@
   }
   .categories .category-item {
     width: calc(50% - 20px);
-  }
-}
-
-@media (max-width: 767.98px) {
-  .view.registration-view {
-    max-width: none;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  .form {
-    padding: 20px;
   }
 }
 
@@ -254,19 +132,6 @@
   }
   .header-logo {
     width: 75%;
-  }
-  .form-group,
-  .address-block .input-wrapper {
-    width: 100%;
-  }
-  .form.registration-form {
-    gap: 0;
-  }
-  .registration-address-container {
-    margin-top: 20px;
-  }
-  .form .btn {
-    margin-top: 20px;
   }
 }
 
