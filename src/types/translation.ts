@@ -1,14 +1,18 @@
+import { AdressTypeMap, CountryCodeMap } from "@/types/types";
+
 export interface AppTranslation {
+  header: {
+    appTitle: string;
+  };
   nav: {
     signIn: string;
     registration: string;
     main: string;
     about: string;
     signOut: string;
-    appTitle: string;
   };
   login: {
-    name: string;
+    email: string;
     password: string;
     header: string;
     emptyField: string;
@@ -18,22 +22,20 @@ export interface AppTranslation {
     firstName: string;
     lastName: string;
     birthDay: string;
-    login: string;
+    email: string;
     password: string;
     header: string;
     submit: string;
   };
   address: {
-    billingHeader: string;
-    shippingHeader: string;
+    headers: AdressTypeMap;
     country: string;
     city: string;
     street: string;
     postalCode: string;
-    defaultBilling: string;
-    defaultShipping: string;
-    countryPl: string;
-    countryEn: string;
+    default: AdressTypeMap;
+    isSameAddress: string;
+    countryNames: CountryCodeMap;
   };
   main: {
     title: string;
@@ -47,11 +49,8 @@ export interface AppTranslation {
     password: string;
     city: string;
     street: string;
-    postalCodePoland: string;
-    postalCodeUK: string;
-    postalCodeGeneric: string;
-    countryPoland: string;
-    countryUnitedKingdom: string;
+    postalCode: CountryCodeMap;
+    commonError: string;
   };
   errorsTypes: {
     duplicate: string;

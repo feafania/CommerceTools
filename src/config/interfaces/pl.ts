@@ -1,16 +1,18 @@
 import { AppTranslation } from "@/types/translation";
 
 const pl: AppTranslation = {
+  header: {
+    appTitle: "Prezenty",
+  },
   nav: {
     signIn: "Zaloguj się",
     registration: "Załóż konto",
     main: "Strona główna",
     about: "O nas",
     signOut: "Wyloguj się",
-    appTitle: "Prezenty",
   },
   login: {
-    name: "Login",
+    email: "Adres e-mail",
     password: "Hasło",
     header: "Logowanie",
     submit: "Zaloguj się",
@@ -20,7 +22,7 @@ const pl: AppTranslation = {
     firstName: "Imię",
     lastName: "Nazwisko",
     birthDay: "Data urodzenia",
-    login: "Login",
+    email: "Adres e-mail",
     password: "Hasło",
     header: "Rejestracja",
     submit: "Zarejestruj się",
@@ -29,16 +31,27 @@ const pl: AppTranslation = {
     title: "Witamy w sklepie z prezentami",
   },
   address: {
-    billingHeader: "Adres do faktury",
-    shippingHeader: "Adres dostawy",
+    headers: {
+      billing: "Adres do faktury",
+      shipping: "Adres dostawy",
+    },
     country: "Kraj",
     city: "Miasto",
     street: "Ulica",
     postalCode: "Kod pocztowy",
-    defaultBilling: "Ustaw jako domyślny adres do faktury",
-    defaultShipping: "Ustaw jako domyślny adres dostawy",
-    countryPl: "Polska",
-    countryEn: "Wielka Brytania",
+    default: {
+      billing: "Ustaw jako domyślny adres do faktury",
+      shipping: "Ustaw jako domyślny adres dostawy",
+    },
+    isSameAddress:
+      "Mój adres rozliczeniowy nie jest taki sam jak adres dostawy.",
+    countryNames: {
+      PL: "Polska",
+      UK: "Wielka Brytania",
+      DE: "Niemcy",
+      FR: "Francja",
+      ES: "Hiszpania",
+    },
   },
   validation: {
     email:
@@ -58,14 +71,14 @@ const pl: AppTranslation = {
       " zawierać duże i małe litery oraz cyfrę.",
     city: "Miasto musi zawierać tylko litery i spacje.",
     street: "Nie może być puste",
-    postalCodePoland:
-      "Kod pocztowy musi być zgodny z formatem obowiązującym w Polsce (00-000).",
-    postalCodeUK:
-      "Kod pocztowy musi być zgodny z formatem obowiązującym w Wielkiej Brytanii (SW1A 1AA).",
-    postalCodeGeneric:
-      "Kod pocztowy musi być zgodny z formatem PL (00-000) lub UK (SW1A 1AA).",
-    countryPoland: "Polska",
-    countryUnitedKingdom: "Wielka Brytania",
+    postalCode: {
+      PL: "Kod pocztowy musi być zgodny z formatem obowiązującym w Polsce (00-000).",
+      UK: "Kod pocztowy musi być zgodny z formatem obowiązującym w Wielkiej Brytanii (SW1A 1AA).",
+      DE: "Kod pocztowy musi być zgodny z formatem obowiązującym w Niemczech  (12345).",
+      FR: "Kod pocztowy musi być zgodny z formatem obowiązującym we Francji  (75000).",
+      ES: "Kod pocztowy musi być zgodny z formatem obowiązującym w Hiszpanii  (28001).",
+    },
+    commonError: "Błąd walidacji.",
   },
   errorsTypes: {
     duplicate: "Wartość już istnieje",

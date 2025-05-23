@@ -1,32 +1,48 @@
 import "./header.css";
+
 import PageRouter from "@/router/page-router";
 import { NavType } from "@/types/interfaces";
+import authService from "@/api/services/auth-service";
 import authStore from "@/stores/auth-store";
 import { PageType } from "@/types/enum";
 import { SETTINGS } from "@/config/settings";
 import { LanguageCode } from "@/types/types";
-import { AVAILABLE_LANGUAGES } from "@/config/constants";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
   title: document.createElement("h1"),
+  username: document.createElement("span"),
 
   create(): HTMLElement {
     const header = document.createElement("header");
     header.className = "header";
 
     this.title.className = "title";
-    this.title.textContent = SETTINGS.label.nav.appTitle;
+    this.title.textContent = SETTINGS.label.header.appTitle;
 
-    header.append(this.title, this.nav);
+    header.append(this.title);
     this.renderNav();
-    header.append(this.renderLangSwitcher());
+
+    this.username.className = "header-username";
+    header.append(this.username);
+    this.setUsername();
+
+    const navWrapper = document.createElement("div");
+    navWrapper.className = "nav-wrapper";
+    navWrapper.append(this.nav, this.renderLangSwitcher());
+    header.append(navWrapper);
 
     return header;
   },
 
-  updateTitle() {
-    this.title.textContent = SETTINGS.label.nav.appTitle;
+  setUsername() {
+    this.username.textContent = authStore.user
+      ? `👤 ${authStore.user.firstName}`
+      : "";
+  },
+
+  setTitle() {
+    this.title.textContent = SETTINGS.label.header.appTitle;
   },
 
   createNavList(): HTMLElement {
@@ -61,31 +77,38 @@ const Header = {
   },
 
   getNavLinks(): NavType[] {
-    const isLoggedIn = Boolean(authStore.user);
+    // const isLoggedIn = Boolean(authStore.user);
     const t = SETTINGS.label.nav;
 
     return [
-      { label: t.signIn, page: PageType.login, visible: !isLoggedIn },
+      { label: t.main, page: PageType.main, visible: true },
+      { label: t.signIn, page: PageType.login, visible: true },
       {
         label: t.registration,
         page: PageType.registration,
-        visible: !isLoggedIn,
+        visible: true,
       },
-      { label: t.main, page: PageType.main, visible: true },
-      { label: t.about, page: PageType.about, visible: true },
-      { label: t.signOut, page: PageType.login, visible: isLoggedIn },
+      { label: t.about, page: PageType.about, visible: false },
+      { label: t.signOut, page: PageType.notfound, visible: true },
     ];
   },
 
   onClick(label: string, page: PageType) {
     return async () => {
-      if (label === SETTINGS.label.nav.signOut && authStore.user) {
-        try {
-          // await wsClient.logout(authStore.user);
-        } catch (error) {
-          // wsClient.close();
-          console.error("Logout error:", error);
+      const isLoggedIn = Boolean(authStore.user);
+      const { signOut, signIn, registration } = SETTINGS.label.nav;
+
+      if (label === signOut) {
+        if (isLoggedIn) {
+          try {
+            await authService.logout();
+          } catch (error) {
+            console.error("Logout error:", error);
+          }
         }
+        PageRouter.navigateTo(PageType.main);
+      } else if ((label === signIn || label === registration) && isLoggedIn) {
+        PageRouter.navigateTo(PageType.main);
       } else {
         PageRouter.navigateTo(page);
       }
@@ -96,7 +119,7 @@ const Header = {
     const langSwitcher = document.createElement("select");
     langSwitcher.className = "language-switcher";
 
-    for (const lang of AVAILABLE_LANGUAGES) {
+    for (const lang of SETTINGS.availableLanguages) {
       const option = document.createElement("option");
       option.value = lang;
       option.textContent = lang.toUpperCase();

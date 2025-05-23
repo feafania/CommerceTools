@@ -22,13 +22,6 @@
   color: var(--main-color-hover);
 }
 
-.github-link {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
-
 .rsschool {
   display: flex;
   flex-direction: row;
@@ -65,7 +58,7 @@
   .rsschool-logo {
     width: 60px;
   }
-  .github-link,
+
   .footer p {
     display: inline-block;
     font-size: clamp(0.7rem, 3.2vw, 1rem);

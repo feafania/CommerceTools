@@ -26,6 +26,12 @@
   transition: width 0.1s ease;
 }
 
+.nav-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+}
+
 .nav-list {
   list-style: none;
   display: flex;

@@ -1,14 +1,19 @@
-import "./registration.css";
+import "./login-registration.css";
 import createInput from "@/components/input/input";
-import { AddressType, VALIDATION } from "@/config/constants";
 import createButton from "@/components/button/button";
 import { SETTINGS } from "@/config/settings";
 import { handleOnSubmit } from "@/utils/validation";
 import AuthService from "@/api/services/auth-service";
-import { createAddressFields } from "@/components/address/address";
+import { AddressType, FormType, PageType } from "@/types/enum";
+import AddressElement from "@/components/address/address";
+import { createLabel } from "@/components/label/label";
+import { formatDateForCommercetools } from "@/utils/helpers";
+import createEyeButton from "@/components/eye-button/eye-button";
+import Header from "@/components/layout/header/header";
+import PageRouter from "@/router/page-router";
 
-const RegistrationView = {
-  async render(): Promise<HTMLElement> {
+const LoginRegistrationView = {
+  async renderRegistrationForm(): Promise<HTMLElement> {
     const container = document.createElement("div");
     container.id = "registration";
     container.className = "view registration-view";
@@ -26,12 +31,38 @@ const RegistrationView = {
       this.renderAddresses(),
       this.renderEmail(),
       this.renderPassword(),
-      this.renderSubmit(),
+      this.renderSubmit(SETTINGS.label.registration.submit),
     );
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
-      this.onSubmit(event);
+      this.onRegistrationSubmit(event);
+    });
+
+    container.append(h2, form);
+    return container;
+  },
+
+  async renderLoginForm(): Promise<HTMLElement> {
+    const container = document.createElement("div");
+    container.id = "login";
+    container.className = "view login-view";
+
+    const h2 = document.createElement("h2");
+    h2.className = "login-title";
+    h2.textContent = SETTINGS.label.login.header;
+
+    const form = document.createElement("form");
+    form.className = "login-form";
+    form.append(
+      this.renderEmail(),
+      this.renderPassword(),
+      this.renderSubmit(SETTINGS.label.login.submit),
+    );
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      this.onLoginSubmit(event);
     });
 
     container.append(h2, form);
@@ -43,10 +74,10 @@ const RegistrationView = {
       type: "text",
       label: SETTINGS.label.registration.firstName,
       name: "firstname",
-      placeholder: SETTINGS.label.registration.firstName,
+      placeholder: `${SETTINGS.label.registration.firstName}...`,
       id: "firstname",
-      class: "registration-input",
-      validation: VALIDATION.firstName,
+      class: "firstname-input",
+      validationName: "firstName",
     });
   },
 
@@ -55,10 +86,10 @@ const RegistrationView = {
       type: "text",
       label: SETTINGS.label.registration.lastName,
       name: "lastname",
-      placeholder: SETTINGS.label.registration.lastName,
+      placeholder: `${SETTINGS.label.registration.lastName}...`,
       id: "lastname",
-      class: "registration-input",
-      validation: VALIDATION.lastName,
+      class: "lastname-input",
+      validationName: "lastName",
     });
   },
 
@@ -67,10 +98,10 @@ const RegistrationView = {
       type: "text",
       label: SETTINGS.label.registration.birthDay,
       name: "birthday",
-      placeholder: SETTINGS.label.registration.birthDay,
+      placeholder: `${SETTINGS.label.registration.birthDay}...`,
       id: "birthday",
-      class: "registration-input",
-      validation: VALIDATION.dateOfBirth,
+      class: "birthday-input",
+      validationName: "dateOfBirth",
     });
   },
 
@@ -79,8 +110,9 @@ const RegistrationView = {
     container.className = "registration-address-container";
 
     // First address block
-    const address1 = createAddressFields(AddressType.Shipping);
-    container.append(address1);
+    const address1 = new AddressElement(AddressType.Shipping);
+    address1.render();
+    container.append(address1.element);
 
     // Checkbox
     const toggleWrapper = document.createElement("div");
@@ -89,31 +121,31 @@ const RegistrationView = {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.id = "show-billing-address";
+    checkbox.name = checkbox.id;
 
-    const label = document.createElement("label");
-    label.htmlFor = "show-billing-address";
+    const label = createLabel({
+      label: SETTINGS.label.address.isSameAddress,
+      id: checkbox.id,
+      class: `is-same-address`,
+    });
 
     toggleWrapper.append(checkbox, label);
     container.append(toggleWrapper);
 
     // Second address block
-    const address2 = createAddressFields(AddressType.Billing);
-    address2.className = "address-block secondary-address";
-    address2.style.display = "none";
-    container.append(address2);
-
-    // Placeholder for billing address
-    let billingAddress: HTMLDivElement | undefined = undefined;
+    let address2: AddressElement | undefined = undefined;
 
     checkbox.addEventListener("change", () => {
-      if (checkbox.checked) {
-        billingAddress = createAddressFields(AddressType.Billing);
-        container.append(billingAddress);
-      } else {
-        if (billingAddress && container.contains(billingAddress)) {
-          billingAddress.remove();
-          billingAddress = undefined;
-        }
+      const showBilling = checkbox.checked;
+
+      if (showBilling && !address2) {
+        address2 = new AddressElement(AddressType.Billing);
+        address2.render();
+        address2.element.classList.add("secondary-address");
+        container.append(address2.element);
+      } else if (!showBilling && address2) {
+        address2.element.remove();
+        address2 = undefined;
       }
     });
 
@@ -123,40 +155,46 @@ const RegistrationView = {
   renderEmail(): HTMLElement {
     return createInput({
       type: "text",
-      label: SETTINGS.label.registration.login,
+      label: SETTINGS.label.registration.email,
       name: "email",
-      placeholder: SETTINGS.label.registration.login,
+      placeholder: `${SETTINGS.label.registration.email}...`,
       id: "email",
-      class: "registration-input",
-      validation: VALIDATION.email,
+      class: "email-input",
     });
   },
 
   renderPassword(): HTMLElement {
-    return createInput({
+    const wrapper = document.createElement("div");
+    wrapper.className = "password-wrapper";
+
+    const passwordInput = createInput({
       type: "password",
-      label: SETTINGS.label.registration.password,
+      label: SETTINGS.label.login.password,
       name: "password",
-      placeholder: SETTINGS.label.registration.password,
+      placeholder: `${SETTINGS.label.login.password}...`,
       id: "password",
       class: "password-input",
-      validation: VALIDATION.password,
     });
+
+    const eyeButton = createEyeButton();
+    wrapper.append(passwordInput, eyeButton);
+
+    return wrapper;
   },
 
-  renderSubmit(): HTMLElement {
+  renderSubmit(submitName: string): HTMLElement {
     return createButton({
-      name: SETTINGS.label.registration.submit,
-      id: "submit-registration",
-      class: "submit-registration-button",
+      type: "submit",
+      name: submitName,
+      id: "submit-registration-login",
+      class: "submit-registration-login-button",
     });
   },
 
-  async onSubmit(event: SubmitEvent) {
-    event.preventDefault();
+  async onRegistrationSubmit(event: SubmitEvent) {
     const form = event.target as HTMLFormElement;
 
-    const isValid = await handleOnSubmit(form, "registration");
+    const isValid = await handleOnSubmit(form, FormType.REGISTRATION);
     if (!isValid) return;
 
     const formData = new FormData(form);
@@ -166,7 +204,9 @@ const RegistrationView = {
       password: formData.get("password") as string,
       firstName: formData.get("firstname") as string,
       lastName: formData.get("lastname") as string,
-      dateOfBirth: formData.get("birthday") as string,
+      dateOfBirth: formatDateForCommercetools(
+        formData.get("birthday") as string,
+      ),
       isSameAddress: !(formData.get("show-billing-address") === "on"),
       shippingAddress: {
         streetName: formData.get("shipping-street") as string,
@@ -198,6 +238,21 @@ const RegistrationView = {
 
     await AuthService.register(customer);
   },
+  async onLoginSubmit(event: SubmitEvent) {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    const isValid = await handleOnSubmit(form, FormType.LOGIN);
+    if (!isValid) return;
+
+    const formData = new FormData(form);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const user = await AuthService.login(email, password);
+    if (user && "email" in user) {
+      Header.setUsername();
+      PageRouter.navigateTo(PageType.main);
+    }
+  },
 };
 
-export default RegistrationView;
+export default LoginRegistrationView;

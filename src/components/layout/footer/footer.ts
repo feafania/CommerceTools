@@ -33,6 +33,10 @@ export default function createFooter(): HTMLElement {
   const footer = document.createElement("footer");
   footer.className = "footer";
 
+  const teamName = document.createElement("p");
+  teamName.textContent = "Dragonflies";
+  footer.append(teamName);
+
   const text = document.createElement("p");
   text.textContent = "2025";
   footer.append(text);

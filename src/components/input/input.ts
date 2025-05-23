@@ -1,22 +1,20 @@
 // import "./input.css";
 import { ControlConfig } from "@/types/interfaces";
 import { classesToArray, getState, saveState } from "@/utils/helpers";
-import { ValidationType } from "@/types/types";
+import { validateElement } from "@/utils/validation";
+import { createLabel } from "@/components/label/label";
 
 export default function createInput(object: ControlConfig): HTMLDivElement {
   const classNames = classesToArray(object.class);
 
   const wrapper = document.createElement("div");
-  wrapper.id = object.id ? `${object.id}-wrapper` : "";
-  for (const className of classNames) {
-    if (className) {
-      wrapper.classList.add(`${className}-wrapper`);
-    }
+  if (object.id) {
+    wrapper.id = `${object.id}-wrapper`;
   }
   wrapper.classList.add("input-wrapper");
 
   if (object.label) {
-    const label = createLabel(object, classNames);
+    const label = createLabel(object);
     wrapper.append(label);
   }
 
@@ -29,71 +27,34 @@ export default function createInput(object: ControlConfig): HTMLDivElement {
   input.placeholder = object.placeholder || "";
   input.id = object.id ?? `input-${Date.now()}`;
   input.name = object.name || "";
-  input.value = getState(input.id) || "";
-  for (const className of classNames) {
-    if (className) {
-      input.classList.add(className);
-    }
-  }
   input.classList.add("input");
   input.disabled = object.disabled || false;
   input.required = object.required || false;
 
+  const savedValue = getState(input.id);
+  if (typeof savedValue === "string") {
+    input.value = savedValue;
+  }
+
+  if (object.validationName) {
+    input.dataset.validationName = object.validationName;
+  }
+  if (object.relatedCountryField) {
+    input.dataset.relatedCountryField = object.relatedCountryField;
+  }
+
+  for (const className of classNames) {
+    if (className) {
+      wrapper.classList.add(`${className}-wrapper`);
+      input.classList.add(className);
+    }
+  }
+
   input.addEventListener("input", () => {
     saveState({ key: input.id, value: input.value });
-    if (object.validation) {
-      validateInput(wrapper, object.validation);
-    }
+    validateElement(input);
   });
 
   wrapper.append(input);
   return wrapper;
-}
-
-function createLabel(
-  object: ControlConfig,
-  classNames: string[],
-): HTMLLabelElement {
-  const label = document.createElement("label");
-  if (object.label) {
-    label.textContent = object.label;
-  }
-  if (object.id) {
-    label.id = `${object.id}-label`;
-    label.htmlFor = object.id;
-  }
-  for (const className of classNames) {
-    if (className) {
-      label.classList.add(`${className}-label`);
-    }
-  }
-  label.classList.add("input-label");
-  return label;
-}
-
-function validateInput(wrapper: HTMLElement, validation: ValidationType) {
-  const input = wrapper.querySelector("input");
-  const value = input?.value || "";
-
-  let isValid = true;
-
-  if (validation.pattern) {
-    isValid = validation.pattern.test(value);
-  } else if (validation.isValid) {
-    isValid = validation.isValid(value);
-  }
-
-  let errorDiv = wrapper.querySelector("#input-error");
-
-  if (isValid) {
-    errorDiv?.remove();
-  } else {
-    if (!errorDiv) {
-      errorDiv = document.createElement("div");
-      errorDiv.id = "input-error";
-      errorDiv.className = "error-message";
-      errorDiv.textContent = validation.message;
-      input?.after(errorDiv);
-    }
-  }
 }

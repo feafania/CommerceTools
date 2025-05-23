@@ -109,7 +109,7 @@ describe("authServiceLogout", () => {
       const clearTokenSpy = jest
         .spyOn(tokenStore, "clearToken")
         .mockImplementation(() => {});
-      const result = authService.logoutCustomer();
+      const result = authService.logout();
 
       expect(setUserSpy).toHaveBeenCalledWith(undefined);
       expect(clearTokenSpy).toHaveBeenCalled();
