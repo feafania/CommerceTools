@@ -102,6 +102,7 @@ const en: AppTranslation = {
   errors: {
     login: "Login failed.",
     registration: "Registration failed.",
+    categories: "Failed to load categories.",
   },
   messages: {
     onSignIn: "You have successfully signed in.",

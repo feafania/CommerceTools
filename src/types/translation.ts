@@ -76,6 +76,7 @@ export interface AppTranslation {
   errors: {
     login: string;
     registration: string;
+    categories: string;
   };
   messages: {
     onSignIn: string;

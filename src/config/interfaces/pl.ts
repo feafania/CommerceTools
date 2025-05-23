@@ -104,6 +104,7 @@ const pl: AppTranslation = {
   errors: {
     login: "Logowanie nie powiodło się.",
     registration: "Rejestracja nie powiodła się.",
+    categories: "Nie udało się załadować kategorii.",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",

@@ -1,5 +1,5 @@
 import "./header.css";
-
+import "@/pages/pages.css";
 import PageRouter from "@/router/page-router";
 import { NavType } from "@/types/interfaces";
 import authService from "@/api/services/auth-service";
@@ -12,14 +12,64 @@ import showModalMessage from "@/components/modal-window/modal-window";
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
   title: document.createElement("h1"),
+  logo: document.createElement("img"),
   username: document.createElement("span"),
 
   create(): HTMLElement {
     const header = document.createElement("header");
     header.className = "header";
 
-    this.title.className = "title";
-    this.title.textContent = SETTINGS.label.header.appTitle;
+    const container = document.createElement("div");
+    container.className = "container";
+
+    this.logo.className = "header-logo logo";
+    this.logo.src = "/assets/img/logo.png";
+    this.logo.alt = SETTINGS.label.header.appTitle;
+    this.logo.title = SETTINGS.label.header.appTitle;
+
+    const menuBurgerButton = document.createElement("div");
+    menuBurgerButton.className = "burger burger-menu";
+    menuBurgerButton.addEventListener("click", () => {
+      headerActions.classList.add("active");
+      document.body.classList.add("no-scroll");
+    });
+
+    const menuBurgerButtonClose = document.createElement("div");
+    menuBurgerButtonClose.className = "burger burger-menu-close";
+    menuBurgerButtonClose.addEventListener("click", () => {
+      headerActions.classList.remove("active");
+      document.body.classList.remove("no-scroll");
+    });
+
+    this.nav.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.classList.contains("nav-link")) {
+        headerActions.classList.remove("active");
+        document.body.classList.remove("no-scroll");
+      }
+    });
+
+    const headerActions = document.createElement("div");
+    headerActions.className = "header-actions";
+
+    this.renderNav();
+    headerActions.append(
+      this.nav,
+      this.renderLangSwitcher(),
+      menuBurgerButtonClose,
+    );
+
+    container.append(this.logo, menuBurgerButton, headerActions);
+    header.append(container);
+
+    if (PageRouter.currentPage !== PageType.main) {
+      const containerTitle = document.createElement("div");
+      containerTitle.className = "container";
+      this.title.className = "title";
+      this.title.textContent = SETTINGS.label.header.appTitle;
+      containerTitle.append(this.title);
+      header.append(containerTitle);
+    }
 
     header.append(this.title);
     this.renderNav();
@@ -27,11 +77,6 @@ const Header = {
     this.username.className = "header-username";
     header.append(this.username);
     this.setUsername();
-
-    const navWrapper = document.createElement("div");
-    navWrapper.className = "nav-wrapper";
-    navWrapper.append(this.nav, this.renderLangSwitcher());
-    header.append(navWrapper);
 
     return header;
   },

@@ -1,9 +1,14 @@
 .main-view {
-  display: flex;
+  display: flex !important;
   gap: 20px;
   flex-grow: 1;
   overflow-y: auto;
-  width: 100%;
+  width: 100% !important;
   height: 100%;
-  border-bottom: 2px solid var(--border-color);
+  flex-direction: unset !important;
+  justify-content: flex-start !important;
+  max-width: none !important;
+  align-items: baseline !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
 }
