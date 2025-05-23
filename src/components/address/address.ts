@@ -1,136 +1,130 @@
 import "./address.css";
 import createInput from "@/components/input/input";
 import createSelect from "@/components/select/select";
-import { VALIDATION } from "@/config/constants";
 import { SETTINGS } from "@/config/settings";
-import { COUNTRY_OPTIONS } from "@/config/constants";
-import { AddressType } from "@/config/constants";
+import { AddressType } from "@/types/enum";
+import { createLabel } from "@/components/label/label";
+import { getCountriesOptions } from "@/utils/helpers";
 
-function createAddressHeader(type: AddressType): HTMLHeadingElement {
-  const currentLang = SETTINGS.label.address;
-  const titleElement = document.createElement("h3");
-  titleElement.className = `address-header`;
+export default class AddressElement {
+  #addressBlock: HTMLDivElement;
+  #type: AddressType;
 
-  const titleMap = {
-    [AddressType.Billing]: currentLang.billingHeader,
-    [AddressType.Shipping]: currentLang.shippingHeader,
-  };
+  constructor(type: AddressType) {
+    this.#type = type;
+    this.#addressBlock = document.createElement("div");
+    this.#addressBlock.className = "address-block";
+    this.#addressBlock.id = `${type}-address`;
+  }
 
-  titleElement.textContent = titleMap[type];
-  return titleElement;
-}
+  get element(): HTMLDivElement {
+    return this.#addressBlock;
+  }
 
-function createAddressInputs(
-  currentLang: typeof SETTINGS.label.address,
-  type: AddressType,
-): {
-  cityInput: HTMLDivElement;
-  streetInput: HTMLDivElement;
-  postalCodeInputWrapper: HTMLDivElement;
-} {
-  const cityInput = createInput({
-    type: "text",
-    label: currentLang.city,
-    name: `${type}-city`,
-    id: `${type}-city`,
-    placeholder: `${currentLang.city}...`,
-    class: "city-input",
-    validation: VALIDATION.city,
-  });
+  get type(): AddressType {
+    return this.#type;
+  }
 
-  const streetInput = createInput({
-    type: "text",
-    label: currentLang.street,
-    name: `${type}-street`,
-    id: `${type}-street`,
-    placeholder: `${currentLang.street}...`,
-    class: "street-input",
-    validation: VALIDATION.street,
-  });
-
-  const postalCodeInputWrapper = createInput({
-    type: "text",
-    label: currentLang.postalCode,
-    name: `${type}-postalcode`,
-    id: `${type}-postalcode`,
-    placeholder: `${currentLang.postalCode}...`,
-    class: "postal-code-input",
-    validation: {
-      message: (() => {
-        const country = (
-          document.querySelector(`#${type}-country`) as HTMLSelectElement
-        )?.value;
-        return VALIDATION.postalCode.getSpecificMessage({ country });
-      })(),
-      isValid: (value: string) => {
-        const country = (
-          document.querySelector(`#${type}-country`) as HTMLSelectElement
-        )?.value;
-        return VALIDATION.postalCode.isValid(value, { country });
-      },
-    },
-  });
-
-  return { cityInput, streetInput, postalCodeInputWrapper };
-}
-
-export function createAddressFields(type: AddressType): HTMLDivElement {
-  const addressBlock = document.createElement("div");
-  addressBlock.classList.add("address-block");
-  const currentLang = SETTINGS.label.address;
-
-  const header = createAddressHeader(type);
-  addressBlock.append(header);
-
-  const countryOptions = COUNTRY_OPTIONS(SETTINGS.label.address);
-
-  const countrySelectWrapper = createSelect({
-    label: currentLang.country,
-    name: `${type}-country`,
-    id: `${type}-country`,
-    class: "country-input",
-    options: countryOptions,
-  });
-  const countrySelect = countrySelectWrapper.querySelector("select")!;
-  addressBlock.append(countrySelectWrapper);
-
-  const { cityInput, streetInput, postalCodeInputWrapper } =
-    createAddressInputs(currentLang, type);
-  addressBlock.append(cityInput, streetInput, postalCodeInputWrapper);
-
-  const defaultCheckbox = createDefaultAddressCheckbox(type, currentLang);
-  addressBlock.append(defaultCheckbox);
-
-  countrySelect.addEventListener("change", () => {
-    const postalCodeInput = postalCodeInputWrapper.querySelector("input");
-    if (postalCodeInput) {
-      postalCodeInput.dispatchEvent(new Event("input"));
+  render() {
+    for (const element of this.#addressBlock.childNodes) {
+      element.remove();
     }
-  });
+    this.#addressBlock.append(this.createHeader());
+    this.#addressBlock.append(this.createCountry());
+    this.#addressBlock.append(this.createCity());
+    this.#addressBlock.append(this.createStreet());
+    this.#addressBlock.append(this.createPostalCode());
+    this.#addressBlock.append(this.createDefaultAddress());
+  }
 
-  return addressBlock;
-}
+  private createHeader(): HTMLHeadingElement {
+    const titleElement = document.createElement("h3");
+    titleElement.className = `address-header`;
+    titleElement.textContent = SETTINGS.label.address.headers[this.#type];
+    return titleElement;
+  }
 
-function createDefaultAddressCheckbox(
-  type: AddressType,
-  translations: typeof SETTINGS.label.address,
-): HTMLDivElement {
-  const checkboxWrapper = document.createElement("div");
-  checkboxWrapper.className = "checkbox-wrapper";
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.name = `default-${type}-address`;
-  checkbox.id = `default-${type}-address`;
-  const label = document.createElement("label");
-  label.htmlFor = checkbox.id;
-  const labelKey =
-    type === AddressType.Billing
-      ? translations.defaultBilling
-      : translations.defaultShipping;
-  label.textContent = labelKey;
+  private createCity(): HTMLDivElement {
+    return createInput({
+      type: "text",
+      label: SETTINGS.label.address.city,
+      name: `${this.#type}-city`,
+      id: `${this.#type}-city`,
+      placeholder: `${SETTINGS.label.address.city}...`,
+      class: "city-input",
+      validationName: "city",
+      required: true,
+    });
+  }
 
-  checkboxWrapper.append(checkbox);
-  checkboxWrapper.append(label);
+  private createStreet(): HTMLDivElement {
+    return createInput({
+      type: "text",
+      label: SETTINGS.label.address.street,
+      name: `${this.#type}-street`,
+      id: `${this.#type}-street`,
+      placeholder: `${SETTINGS.label.address.street}...`,
+      class: "street-input",
+      validationName: "street",
+      required: true,
+    });
+  }
 
-  return checkboxWrapper;
+  private createPostalCode(): HTMLDivElement {
+    return createInput({
+      type: "text",
+      label: SETTINGS.label.address.postalCode,
+      name: `${this.#type}-postalcode`,
+      id: `${this.#type}-postalcode`,
+      placeholder: `${SETTINGS.label.address.postalCode}...`,
+      class: "postal-code-input",
+      validationName: "postalCode",
+      relatedCountryField: `${this.#type}-country`,
+      required: true,
+    });
+  }
+
+  private createCountry(): HTMLDivElement {
+    const countryOptions = SETTINGS.label.address.countryNames;
+    const countrySelectWrapper = createSelect({
+      label: SETTINGS.label.address.country,
+      name: `${this.#type}-country`,
+      id: `${this.#type}-country`,
+      class: "country-input",
+      placeholder: `${SETTINGS.label.address.placeholders.country}...`,
+      options: getCountriesOptions(countryOptions),
+      validationName: "country",
+    });
+    const countrySelect = countrySelectWrapper.querySelector("select")!;
+
+    countrySelect.addEventListener("change", () => {
+      const postalInput = this.#addressBlock.querySelector(
+        `#${this.#type}-postalcode`,
+      );
+      if (postalInput) {
+        postalInput.dispatchEvent(new Event("input"));
+      }
+    });
+
+    return countrySelectWrapper;
+  }
+
+  private createDefaultAddress(): HTMLDivElement {
+    const checkboxWrapper = document.createElement("div");
+    checkboxWrapper.className = "checkbox-wrapper";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = `default-${this.#type}-address`;
+    checkbox.id = `default-${this.#type}-address`;
+
+    const label = createLabel({
+      label: SETTINGS.label.address.default[this.#type],
+      id: checkbox.id,
+      class: `default-${this.#type}-address`,
+    });
+
+    checkboxWrapper.append(checkbox, label);
+    return checkboxWrapper;
+  }
 }

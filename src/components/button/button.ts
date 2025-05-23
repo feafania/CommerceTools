@@ -9,6 +9,9 @@ export default function createButton(
   const classNames = classesToArray(object.class);
 
   const control = document.createElement("button");
+  if (object.type) {
+    control.type = object.type as "button" | "submit" | "reset";
+  }
   if (object.name) {
     control.textContent = object.name;
   }

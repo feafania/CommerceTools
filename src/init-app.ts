@@ -14,7 +14,7 @@ export default function initApp(root: HTMLElement) {
   root.append(header, main, footer);
 
   globalThis.addEventListener("languageChanged", () => {
-    Header.updateTitle();
+    Header.setTitle();
     Header.renderNav();
     PageRouter.handleRoute();
   });

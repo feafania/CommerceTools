@@ -1,20 +1,21 @@
 import { RouteType } from "@/types/types";
 import { PageType } from "@/types/enum";
 import authStore from "@/stores/auth-store";
-import LoginView from "@/pages/login/login";
 import MainView from "@/pages/main/main";
 import renderAboutView from "@/pages/about/about";
 import NotFoundView from "@/pages/notfound/notfound";
-import RegistrationView from "@/pages/registration/registration";
+import LoginRegistrationView from "@/pages/login-registration/login-registration";
 
 const routes: Partial<Record<PageType, RouteType>> = {
   [PageType.login]: {
     canActivate: () => !authStore.user,
-    render: LoginView.render.bind(LoginView),
+    render: LoginRegistrationView.renderLoginForm.bind(LoginRegistrationView),
   },
   [PageType.registration]: {
     canActivate: () => !authStore.user,
-    render: RegistrationView.render.bind(RegistrationView),
+    render: LoginRegistrationView.renderRegistrationForm.bind(
+      LoginRegistrationView,
+    ),
   },
   [PageType.main]: {
     canActivate: () => Boolean(authStore.user),

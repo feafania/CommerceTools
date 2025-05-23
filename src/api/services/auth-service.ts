@@ -44,7 +44,7 @@ class AuthService {
     }
   }
 
-  logoutCustomer() {
+  logout() {
     try {
       authStore.setUser(undefined);
       tokenStore.clearToken();

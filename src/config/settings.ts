@@ -7,6 +7,7 @@ const defaultLang: LanguageCode =
 
 export const SETTINGS = {
   currentLang: defaultLang,
+  availableLanguages: Object.keys(translations),
   get label() {
     return translations[this.currentLang];
   },

@@ -34,6 +34,10 @@ export default function createFooter(): HTMLElement {
   const container = document.createElement("div");
   container.className = "container";
 
+  const teamName = document.createElement("p");
+  teamName.textContent = "Dragonflies";
+  container.append(teamName);
+
   const text = document.createElement("p");
   text.textContent = "2025";
   container.append(text);

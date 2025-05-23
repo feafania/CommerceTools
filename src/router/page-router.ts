@@ -7,7 +7,6 @@ import { isValidPageType } from "@/utils/validation";
 const PageRouter = {
   currentPage: PageType.main as PageType,
   init() {
-    globalThis.addEventListener("popstate", () => this.handleRoute());
     globalThis.addEventListener("hashchange", () => this.handleRoute());
     this.handleRoute();
   },
@@ -18,7 +17,6 @@ const PageRouter = {
 
   async handleRoute() {
     const path = this.getPathFromUrl();
-
     let page: PageType;
 
     if (isValidPageType(path)) {
@@ -32,9 +30,7 @@ const PageRouter = {
     }
 
     this.currentPage = page;
-
     const render = routes[page]?.render;
-
     if (render) {
       const element = await render();
       const container = document.querySelector("#view-container");
