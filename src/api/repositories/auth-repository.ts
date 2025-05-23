@@ -12,7 +12,7 @@ const authRepository = {
   ): Promise<{ customer: InCustomer; token: string } | undefined> {
     try {
       const response = await loginCustomer(email, password);
-      const tokenData = await getCustomerToken(email, password);
+      const tokenData = await getCustomerToken(email, password); //{ ["access_token"]: "asd" };
       console.info(response.customer);
 
       if (response && tokenData?.access_token) {

@@ -3,6 +3,7 @@ import { CustomerSignInResult, Customer } from "@commercetools/platform-sdk";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
 import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
+import { TokenResponse } from "@/types/interfaces";
 
 // Mocked functions
 export const mockedRegisterCustomer = registerCustomer as jest.MockedFunction<
@@ -51,8 +52,6 @@ export const mockCustomer: Customer = {
   authenticationMode: "Password", // or "ExternalAuth"
 };
 
-export const mockToken = "mock-token";
-
 // Fake register response
 export const registerResponse: CustomerSignInResult = {
   customer: mockCustomer,
@@ -66,6 +65,12 @@ export const loginResponse: CustomerSignInResult = {
 };
 
 // Fake token response
-export const tokenResponse = {
-  ["access_token"]: mockToken,
+export const tokenResponse: TokenResponse = {
+  ["access_token"]: "mock-access-token",
+  ["expires_in"]: 172_800,
+  scope:
+    "view_published_products:your-project-key manage_my_orders:your-project-key manage_my_profile" +
+    ":your-project-key customer:mock-customer-id",
+  ["refresh_token"]: "your-project-key:mock-refresh-token",
+  ["token_type"]: "Bearer",
 };

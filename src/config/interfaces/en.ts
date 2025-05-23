@@ -84,21 +84,29 @@ const en: AppTranslation = {
       PL: "Postal code must match format for Poland (00-000).",
       UK: "Postal code must match format for UK (SW1A 1AA).",
       DE: "Postal code must match format for Germany (12345).",
-      FR: "Postal code must match format for France (75000).",
+      FR: "Postal code must match format for France (75000 or 75 000).",
       ES: "Postal code must match format for Spain (28001).",
     },
     commonError: "Validation error.",
   },
   errorsTypes: {
     duplicate: "The value already exists",
-    invalid: "Incorrect value",
     required: "Required field",
     credentials: "Invalid email or password",
+    invalid: "Incorrect value",
+    invalidPostalCode: "Incorrect postal code",
+    invalidEmail: "Incorrect email",
+    invalidPhoneNumber: "Incorrect phone number",
     unknown: "Unknown error",
   },
   errors: {
     login: "Login failed.",
     registration: "Registration failed.",
+  },
+  messages: {
+    onSignIn: "You have successfully signed in.",
+    onSignUp: "Your account has been created.",
+    onSignOut: "You have been signed out.",
   },
 };
 

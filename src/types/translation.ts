@@ -65,13 +65,21 @@ export interface AppTranslation {
   };
   errorsTypes: {
     duplicate: string;
-    invalid: string;
     required: string;
     credentials: string;
+    invalid: string;
+    invalidPostalCode: string;
+    invalidEmail: string;
+    invalidPhoneNumber: string;
     unknown: string;
   };
   errors: {
     login: string;
     registration: string;
+  };
+  messages: {
+    onSignIn: string;
+    onSignUp: string;
+    onSignOut: string;
   };
 }

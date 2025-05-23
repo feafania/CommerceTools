@@ -7,19 +7,26 @@ export type Listener = () => void;
 
 export type LanguageCode = keyof typeof translations;
 
-export type CTApiError = {
-  body?: {
-    statusCode?: number;
-    message?: string;
-    errors?: Array<{ code: string; message: string }>;
-  };
-};
-
 export type CTErrorObject = {
   code: string;
   message: string;
+  detailedErrorMessage?: string;
   field?: string;
   [key: string]: unknown;
+};
+
+export type CTApiError = {
+  statusCode?: number;
+  message?: string;
+  body?: {
+    statusCode?: number;
+    message?: string;
+    errors?: CTErrorObject[];
+  };
+  error?: {
+    message?: string;
+    errors?: CTErrorObject[];
+  };
 };
 
 export type InCategory = {

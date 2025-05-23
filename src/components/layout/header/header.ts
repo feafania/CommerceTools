@@ -7,6 +7,7 @@ import authStore from "@/stores/auth-store";
 import { PageType } from "@/types/enum";
 import { SETTINGS } from "@/config/settings";
 import { LanguageCode } from "@/types/types";
+import showModalMessage from "@/components/modal-window/modal-window";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -102,6 +103,8 @@ const Header = {
         if (isLoggedIn) {
           try {
             await authService.logout();
+            this.setUsername();
+            showModalMessage(SETTINGS.label.messages.onSignOut);
           } catch (error) {
             console.error("Logout error:", error);
           }

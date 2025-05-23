@@ -7,10 +7,12 @@ import AuthService from "@/api/services/auth-service";
 import { AddressType, FormType, PageType } from "@/types/enum";
 import AddressElement from "@/components/address/address";
 import { createLabel } from "@/components/label/label";
-import { formatDateForCommercetools } from "@/utils/helpers";
+// import { formatDateForCommercetools } from "@/utils/helpers";
 import createEyeButton from "@/components/eye-button/eye-button";
 import Header from "@/components/layout/header/header";
 import PageRouter from "@/router/page-router";
+import showModalMessage from "@/components/modal-window/modal-window";
+import { getCountryCode } from "@/utils/helpers";
 
 const LoginRegistrationView = {
   async renderRegistrationForm(): Promise<HTMLElement> {
@@ -194,11 +196,11 @@ const LoginRegistrationView = {
 
     let navigatedPage;
     if (type === FormType.LOGIN) {
-      text.textContent = SETTINGS.label.nav.directions.toSignUp;
+      text.textContent = SETTINGS.label.nav.directions.toSignUp + " ";
       link.textContent = SETTINGS.label.nav.directionsLabels.toSignUp;
       navigatedPage = PageType.registration;
     } else {
-      text.textContent = SETTINGS.label.nav.directions.toSignIn;
+      text.textContent = SETTINGS.label.nav.directions.toSignIn + " ";
       link.textContent = SETTINGS.label.nav.directionsLabels.toSignIn;
       navigatedPage = PageType.login;
     }
@@ -236,16 +238,18 @@ const LoginRegistrationView = {
       password: formData.get("password") as string,
       firstName: formData.get("firstname") as string,
       lastName: formData.get("lastname") as string,
-      dateOfBirth: formatDateForCommercetools(
-        formData.get("birthday") as string,
-      ),
+      dateOfBirth: formData.get("birthday") as string,
+      // formatDateForCommercetools(
+      //   formData.get("birthday")),
       isSameAddress: !(formData.get("show-billing-address") === "on"),
       shippingAddress: {
         streetName: formData.get("shipping-street") as string,
         streetNumber: formData.get("shipping-number") as string,
         postalCode: formData.get("shipping-zip") as string,
         city: formData.get("shipping-city") as string,
-        country: formData.get("shipping-country") as string,
+        country: getCountryCode(
+          formData.get("shipping-country") as string,
+        ) as string,
       },
       billingAddress: {
         streetName:
@@ -261,14 +265,22 @@ const LoginRegistrationView = {
           (formData.get("billing-city") as string) ||
           (formData.get("shipping-city") as string),
         country:
-          (formData.get("billing-country") as string) ||
-          (formData.get("shipping-country") as string),
+          (getCountryCode(
+            formData.get("billing-country") as string,
+          ) as string) ||
+          (getCountryCode(
+            formData.get("shipping-country") as string,
+          ) as string),
       },
       setBillingAsDefault: true,
       setShippingAsDefault: true,
     };
 
-    await AuthService.register(customer);
+    const user = await AuthService.register(customer);
+    if (user && "email" in user) {
+      PageRouter.navigateTo(PageType.login);
+      showModalMessage(SETTINGS.label.messages.onSignUp);
+    }
   },
 
   async onLoginSubmit(event: SubmitEvent) {
@@ -284,6 +296,7 @@ const LoginRegistrationView = {
     if (user && "email" in user) {
       Header.setUsername();
       PageRouter.navigateTo(PageType.main);
+      showModalMessage(SETTINGS.label.messages.onSignIn);
     }
   },
 };

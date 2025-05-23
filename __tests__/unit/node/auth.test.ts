@@ -5,7 +5,6 @@ import {
   registerResponse,
   loginResponse,
   mockCustomer,
-  mockToken,
   tokenResponse,
 } from "../__mocks__/auth.mock";
 
@@ -65,7 +64,7 @@ describe("authRepository", () => {
       expect(result?.customer).toEqual(
         authRepository.toInternalCustomer(loginResponse.customer),
       );
-      expect(result?.token).toBe(mockToken);
+      expect(result?.token).toBe(tokenResponse.access_token);
     });
 
     it("should throw if loginCustomer fails", async () => {

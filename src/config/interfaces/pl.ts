@@ -86,21 +86,29 @@ const pl: AppTranslation = {
       PL: "Kod pocztowy musi być zgodny z formatem obowiązującym w Polsce (00-000).",
       UK: "Kod pocztowy musi być zgodny z formatem obowiązującym w Wielkiej Brytanii (SW1A 1AA).",
       DE: "Kod pocztowy musi być zgodny z formatem obowiązującym w Niemczech  (12345).",
-      FR: "Kod pocztowy musi być zgodny z formatem obowiązującym we Francji  (75000).",
+      FR: "Kod pocztowy musi być zgodny z formatem obowiązującym we Francji  (75000 lub 75 000).",
       ES: "Kod pocztowy musi być zgodny z formatem obowiązującym w Hiszpanii  (28001).",
     },
     commonError: "Błąd walidacji.",
   },
   errorsTypes: {
     duplicate: "Wartość już istnieje",
-    invalid: "Nieprawidłowa wartość",
     required: "Pole obowiązkowe",
     credentials: "Nieprawidłowy adres e-mail lub hasło",
+    invalid: "Nieprawidłowa wartość",
+    invalidPostalCode: "Nieprawidłowy kod pocztowy",
+    invalidEmail: "Nieprawidłowy e-mail",
+    invalidPhoneNumber: "Nieprawidłowy numer telefonu",
     unknown: "Nieznany błąd",
   },
   errors: {
     login: "Logowanie nie powiodło się.",
     registration: "Rejestracja nie powiodła się.",
+  },
+  messages: {
+    onSignIn: "Zostałeś pomyślnie zalogowany.",
+    onSignUp: "Twoje konto zostało utworzone.",
+    onSignOut: "Zostałeś wylogowany.",
   },
 };
 
