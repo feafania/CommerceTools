@@ -69,16 +69,12 @@ const Header = {
     container.append(this.logo, menuBurgerButton, headerActions);
     header.append(container);
 
-    if (PageRouter.currentPage !== PageType.main) {
-      const containerTitle = document.createElement("div");
-      containerTitle.className = "container";
-      this.title.className = "title";
-      this.title.textContent = SETTINGS.label.header.appTitle;
-      containerTitle.append(this.title);
-      header.append(containerTitle);
-    }
-
-    header.append(this.title);
+    const containerTitle = document.createElement("div");
+    containerTitle.className = "container";
+    this.title.className = "title";
+    this.title.textContent = SETTINGS.label.header.appTitle;
+    containerTitle.append(this.title);
+    header.append(containerTitle);
     this.renderNav();
 
     this.username.className = "header-username";
