@@ -6,6 +6,7 @@
 }
 .categories .category-item {
   width: calc(25% - 20px);
+  aspect-ratio: 9 / 9;
   position: relative;
   border-radius: 15px;
   overflow: hidden;
@@ -15,7 +16,7 @@
 }
 .category-title {
   position: absolute;
-  bottom: 5px;
+  bottom: 0px;
   min-height: 55px;
   width: 100%;
   left: 0;

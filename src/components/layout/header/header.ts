@@ -59,10 +59,6 @@ const Header = {
     const headerActions = document.createElement("div");
     headerActions.className = "header-actions";
 
-    this.username.className = "header-username";
-    headerActions.append(this.username);
-    this.setUsername();
-
     this.renderNav();
     headerActions.append(
       this.nav,
@@ -77,7 +73,10 @@ const Header = {
     containerTitle.className = "container";
     this.title.className = "title";
     this.title.textContent = SETTINGS.label.header.appTitle;
-    containerTitle.append(this.title);
+
+    this.username.className = "header-username";
+    containerTitle.append(this.title, this.username);
+    this.setUsername();
     header.append(containerTitle);
     this.renderNav();
 
