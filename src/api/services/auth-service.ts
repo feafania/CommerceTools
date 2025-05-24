@@ -17,9 +17,28 @@ class AuthService {
 
       const { customer, token } = result;
       console.log(customer);
-      console.log("TOKEN:", token);
+      console.info("TOKEN:", token.access_token);
+      // console.info("REFRESH TOKEN:", token.refresh_token);
       authStore.setUser(customer, token);
       return customer;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
+        return error.invalidFields;
+      }
+    }
+  }
+
+  async refreshToken() {
+    try {
+      if (tokenStore.isTokenExpired()) {
+        const token = await authRepository.refreshToken();
+        if (!token) return;
+
+        console.info("TOKEN:", token.access_token);
+        // console.info("REFRESH TOKEN:", token.refresh_token);
+        tokenStore.setToken(token);
+      }
     } catch (error) {
       if (error instanceof ApiError) {
         showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
@@ -47,7 +66,6 @@ class AuthService {
   logout() {
     try {
       authStore.setUser(undefined);
-      tokenStore.clearToken();
       return { success: true };
     } catch (error) {
       console.error("Logout failed:", error);

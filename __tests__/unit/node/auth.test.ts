@@ -6,6 +6,8 @@ import {
   loginResponse,
   mockCustomer,
   tokenResponse,
+  token,
+  mockDate,
 } from "../__mocks__/auth.mock";
 
 import authRepository from "@/api/repositories/auth-repository";
@@ -51,6 +53,12 @@ describe("authRepository", () => {
   });
 
   describe("login", () => {
+    beforeAll(() => {
+      jest.spyOn(Date, "now").mockImplementation(() => mockDate);
+    });
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
     it("should call loginCustomer and return a transformed customer", async () => {
       const { email, password } = inMockCustomer;
       const result = await authRepository.login(email, password!);
@@ -64,7 +72,7 @@ describe("authRepository", () => {
       expect(result?.customer).toEqual(
         authRepository.toInternalCustomer(loginResponse.customer),
       );
-      expect(result?.token).toBe(tokenResponse.access_token);
+      expect(result?.token).toStrictEqual(token);
     });
 
     it("should throw if loginCustomer fails", async () => {

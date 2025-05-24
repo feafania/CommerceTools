@@ -3,7 +3,7 @@ import { CustomerSignInResult, Customer } from "@commercetools/platform-sdk";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
 import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
-import { TokenResponse } from "@/types/interfaces";
+import { TokenResponse, TokenType } from "@/types/interfaces";
 
 // Mocked functions
 export const mockedRegisterCustomer = registerCustomer as jest.MockedFunction<
@@ -65,12 +65,20 @@ export const loginResponse: CustomerSignInResult = {
 };
 
 // Fake token response
+export const mockDate = new Date("2025-05-25T00:00:00Z").getTime();
 export const tokenResponse: TokenResponse = {
   ["access_token"]: "mock-access-token",
-  ["expires_in"]: 172_800,
+  ["expires_in"]: 3600,
   scope:
     "view_published_products:your-project-key manage_my_orders:your-project-key manage_my_profile" +
     ":your-project-key customer:mock-customer-id",
   ["refresh_token"]: "your-project-key:mock-refresh-token",
   ["token_type"]: "Bearer",
+};
+export const token: TokenType = {
+  ["access_token"]: tokenResponse.access_token,
+  ["token_expires_in"]: new Date(
+    mockDate + tokenResponse.expires_in * 1000,
+  ).toISOString(),
+  ["refresh_token"]: tokenResponse.refresh_token,
 };

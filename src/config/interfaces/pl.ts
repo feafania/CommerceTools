@@ -73,13 +73,10 @@ const pl: AppTranslation = {
     lastName:
       "Nazwisko musi zawierać tylko litery i składać się z co najmniej jednego znaku.",
     dateOfBirth: "Musisz mieć co najmniej 13 lat.",
-    passwordLoginPage:
+    password:
       "Hasło musi mieć co najmniej 8 znaków, zawierać duże i małe litery" +
       " cyfrę oraz opcjonalnie znak specjalny (!@#$%^&*). Nie może" +
       " zawierać spacji na początku ani na końcu.",
-    password:
-      "Hasło musi mieć co najmniej 8 znaków," +
-      " zawierać duże i małe litery oraz cyfrę.",
     city: "Miasto musi zawierać tylko litery i spacje.",
     street: "Nie może być puste",
     postalCode: {

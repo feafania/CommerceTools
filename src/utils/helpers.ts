@@ -106,3 +106,8 @@ export function formatDateForCommercetools(inputDate: string | null): string {
   const formattedMonth = String(month).padStart(2, "0");
   return `${year}-${formattedMonth}-${formattedDay}`;
 }
+
+export function calculateTokenExpiry(expiresIn: number): string {
+  const expiryTimestamp = Date.now() + expiresIn * 1000;
+  return new Date(expiryTimestamp).toISOString();
+}

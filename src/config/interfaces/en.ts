@@ -71,13 +71,10 @@ const en: AppTranslation = {
       "First name must contain only letters and at least one character.",
     lastName: "Last name must contain only letters and at least one character.",
     dateOfBirth: "You must be at least 13 years old.",
-    passwordLoginPage:
+    password:
       "Password must be at least 8 characters long, include uppercase and lowercase" +
       " letters, a digit, and optionally a special character (!@#$%^&*). It must not" +
       " have leading or trailing spaces.",
-    password:
-      "Password must be at least 8 characters long," +
-      " include uppercase, lowercase letters and a number.",
     city: "City must contain only letters and spaces.",
     street: "Street cannot be empty.",
     postalCode: {

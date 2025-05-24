@@ -56,7 +56,6 @@ export interface AppTranslation {
     firstName: string;
     lastName: string;
     dateOfBirth: string;
-    passwordLoginPage: string;
     password: string;
     city: string;
     street: string;

@@ -40,7 +40,7 @@ function localizeMessage(message: string) {
 }
 
 export function handleApiError(error: unknown): never {
-  console.error("handleApiError got:", error);
+  // console.error("handleApiError got:", error);
   const error_ = error as CTApiError;
 
   const statusCode = error_?.statusCode ?? error_?.body?.statusCode ?? 500;

@@ -46,10 +46,14 @@ export interface ValidationRule {
   getValidationMessage?: (code: CountryCode) => string;
 }
 
-export interface TokenResponse {
+export interface TokenType {
   access_token: string;
+  token_expires_in: string;
+  refresh_token: string;
+}
+
+export interface TokenResponse extends Omit<TokenType, "token_expires_in"> {
   expires_in: number;
   scope: string;
-  refresh_token: string;
   token_type: "Bearer";
 }

@@ -8,15 +8,21 @@ const MINIMUM_AGE = 13;
 export const VALIDATION: ValidationType = {
   email: {
     pattern: /^(?!\s)([^\s@]+)@([^\s@]+\.[^\s@]+)(?<!\s)$/,
-    message: SETTINGS.label.validation.email,
+    get message() {
+      return SETTINGS.label.validation.email;
+    },
   },
   firstName: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
-    message: SETTINGS.label.validation.firstName,
+    get message() {
+      return SETTINGS.label.validation.firstName;
+    },
   },
   lastName: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
-    message: SETTINGS.label.validation.lastName,
+    get message() {
+      return SETTINGS.label.validation.lastName;
+    },
   },
   dateOfBirth: {
     isValid: (value) => {
@@ -75,26 +81,30 @@ export const VALIDATION: ValidationType = {
 
       return age >= MINIMUM_AGE;
     },
-    message: SETTINGS.label.validation.dateOfBirth,
+    get message() {
+      return SETTINGS.label.validation.dateOfBirth;
+    },
   },
-  passwordLoginPage: {
+  password: {
     pattern:
       /^(?!\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])?.{8,}(?<!\s)$/,
-    message: SETTINGS.label.validation.passwordLoginPage,
-  } as ValidationType,
-  password: {
-    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
-    message: SETTINGS.label.validation.password,
+    get message() {
+      return SETTINGS.label.validation.password;
+    },
   } as ValidationType,
 
   city: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$/,
-    message: SETTINGS.label.validation.city,
+    get message() {
+      return SETTINGS.label.validation.city;
+    },
   },
 
   street: {
     pattern: /^.{1,}$/,
-    message: SETTINGS.label.validation.street,
+    get message() {
+      return SETTINGS.label.validation.street;
+    },
   },
 
   postalCode: {
