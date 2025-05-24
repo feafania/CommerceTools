@@ -26,7 +26,21 @@
   align-items: center;
 }
 
-.main-page-content {
+.main-page-content,
+.not-found-content {
+  width: 100%;
+  padding: 2rem 0px;
+}
+
+.not-found-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.not-found-content p {
+  font-size: 20px;
+  margin: 10px 0;
   width: 100%;
 }
 
@@ -116,7 +130,7 @@
   }
   .nav-link {
     display: block;
-    padding: 8px!important;
+    padding: 8px !important;
   }
   .header-username {
     padding: 8px 8px 16px;
