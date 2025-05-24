@@ -16,12 +16,14 @@
 .category-title {
   position: absolute;
   bottom: 5px;
-  height: 40px;
+  min-height: 55px;
   width: 100%;
   left: 0;
   background: #ffffffa8;
   line-height: 22px;
   padding: 5px 10px;
+  display: flex;
+  align-items: center;
 }
 
 .main-page-content {
