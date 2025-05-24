@@ -3,6 +3,17 @@ import "./main.css";
 import { SETTINGS } from "@/config/settings";
 import Header from "@/components/layout/header/header";
 import productService from "@/api/services/product-service";
+import categorydsh from "@/assets/img/categories/dsh.png";
+import categorydso from "@/assets/img/categories/dso.png";
+import categorygc from "@/assets/img/categories/gc.png";
+import categoryrwd from "@/assets/img/categories/rwd.png";
+
+const categoryImages: Record<string, string> = {
+  dsh: categorydsh,
+  dso: categorydso,
+  gc: categorygc,
+  rwd: categoryrwd,
+};
 
 const MainView = {
   async render() {
@@ -36,7 +47,9 @@ const MainView = {
         liPicture.className = "category-pic";
 
         const picture = document.createElement("img");
-        picture.src = "/public/assets/img/categories/" + cat.key + ".png";
+        if (cat.key && categoryImages[cat.key]) {
+          picture.src = categoryImages[cat.key];
+        }
 
         liPicture.append(picture);
         li.append(liPicture, liTtile);

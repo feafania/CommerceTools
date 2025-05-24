@@ -54,7 +54,7 @@
   height: 40px;
   background-size: contain;
   background-repeat: no-repeat;
-  background-image: url("/public/assets/img/burger-menu.png");
+  background-image: var(--burger-icon);
 }
 
 .burger-menu-close::before {
@@ -64,7 +64,7 @@
   height: 40px;
   background-size: contain;
   background-repeat: no-repeat;
-  background-image: url("/public/assets/img/burger-menu-close.png");
+  background-image: var(--burger-icon-close);
 }
 
 /* Responsive */

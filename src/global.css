@@ -132,7 +132,6 @@ label {
 }
 
 #root {
-  background-image: url("/public/assets/img/body_bg_new.jpg") !important;
   min-width: 320px;
   width: 100%;
   position: relative;
