@@ -39,7 +39,7 @@ const Header = {
 
     const menuBurgerButtonClose = document.createElement("div");
     menuBurgerButtonClose.className = "burger burger-menu-close";
-    menuBurgerButton.style.setProperty(
+    menuBurgerButtonClose.style.setProperty(
       "--burger-icon-close",
       `url(${burgerCloseIcon})`,
     );
@@ -59,6 +59,10 @@ const Header = {
     const headerActions = document.createElement("div");
     headerActions.className = "header-actions";
 
+    this.username.className = "header-username";
+    headerActions.append(this.username);
+    this.setUsername();
+
     this.renderNav();
     headerActions.append(
       this.nav,
@@ -76,10 +80,6 @@ const Header = {
     containerTitle.append(this.title);
     header.append(containerTitle);
     this.renderNav();
-
-    this.username.className = "header-username";
-    header.append(this.username);
-    this.setUsername();
 
     return header;
   },
