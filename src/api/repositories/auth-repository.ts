@@ -1,6 +1,6 @@
 import { Customer, MyCustomerDraft } from "@commercetools/platform-sdk";
 
-import { InCustomer, InAddress } from "@/types/types";
+import { InCustomer, InAddress } from "@/types/interfaces";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
 import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
@@ -104,12 +104,14 @@ const authRepository = {
       lastName: customer.lastName ?? "",
       dateOfBirth: customer.dateOfBirth ?? "",
       billingAddress: {
+        id: billing?.id ?? "",
         streetName: billing?.streetName ?? "",
         postalCode: billing?.postalCode ?? "",
         city: billing?.city ?? "",
         country: billing?.country ?? "",
       },
       shippingAddress: {
+        id: shipping?.id ?? "",
         streetName: shipping?.streetName ?? "",
         postalCode: shipping?.postalCode ?? "",
         city: shipping?.city ?? "",

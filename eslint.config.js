@@ -80,4 +80,10 @@ export default defineConfig([
       "max-lines-per-function": "off",
     },
   },
+  {
+    files: ["src/config/interfaces/*.ts", "src/types/translations.ts"],
+    rules: {
+      "max-len": "off",
+    },
+  },
 ]);

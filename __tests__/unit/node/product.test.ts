@@ -5,7 +5,7 @@ import {
   mockedGetCategoryByKey,
 } from "../__mocks__/product.mock";
 
-import { InCategory } from "@/types/types";
+import { InCategory } from "@/types/interfaces";
 import productRepository from "@/api/repositories/product-repository";
 
 jest.mock("@/api/repositories/endpoints/product/get-categories");

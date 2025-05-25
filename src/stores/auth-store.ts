@@ -1,6 +1,6 @@
 import { deleteLocalState, getLocalState, saveState } from "@/utils/helpers";
 import { tokenStore } from "@/stores/token-store";
-import { InCustomer } from "@/types/types";
+import { InCustomer } from "@/types/interfaces";
 import { TokenType } from "@/types/interfaces";
 
 export class AuthStore {

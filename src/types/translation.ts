@@ -57,6 +57,7 @@ export interface AppTranslation {
     lastName: string;
     dateOfBirth: string;
     password: string;
+    country: string;
     city: string;
     street: string;
     postalCode: CountryCodeMap;
@@ -71,6 +72,24 @@ export interface AppTranslation {
     invalidEmail: string;
     invalidPhoneNumber: string;
     unknown: string;
+    emailExist: string;
+    invalidJson: string;
+    invalidQueryParam: string;
+    invalidPathParam: string;
+    fieldValueNotFound: string;
+    authError: string;
+    authzError: string;
+    resourceNotFound: string;
+    concurrent: string;
+    gitError: string;
+    badGateway: string;
+    serverError: string;
+    general: string;
+    connectorCertified: string;
+    connectorNotFound: string;
+    connectorFileNotFound: string;
+    connectorFileNotValid: string;
+    connectorInCertification: string;
   };
   errors: {
     login: string;
