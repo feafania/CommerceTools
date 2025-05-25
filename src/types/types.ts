@@ -1,0 +1,44 @@
+import translations from "@/config/interfaces";
+import { ValidationRule } from "@/types/interfaces";
+import { AddressType, CountryCode, FormType } from "@/types/enum";
+import { VALIDATION } from "@/config/validation";
+
+export type Listener = () => void;
+
+export type LanguageCode = keyof typeof translations;
+
+export type RouteType = {
+  canActivate: () => boolean;
+  render: () => Promise<HTMLElement>;
+};
+
+export type ValidationType = Record<string, ValidationRule>;
+export type ValidationKey = keyof typeof VALIDATION;
+
+export type CountryConfig = {
+  postalCodePattern: RegExp;
+};
+
+export type CountryCodeMap = {
+  [key in CountryCode]: string;
+};
+
+export type AdressTypeMap = {
+  [key in AddressType]: string;
+};
+
+export type CountryValueType = { value: string; countryCode?: CountryCode };
+
+export type FormField = {
+  name: string;
+  label: string;
+  validation: ValidationRule;
+};
+
+export type FormFieldsMap = {
+  [key in FormType]: FormField[];
+};
+
+export type FieldErrorType = { field: string; message: string };
+
+export type TokenKeys = "access_token" | "refresh_token";

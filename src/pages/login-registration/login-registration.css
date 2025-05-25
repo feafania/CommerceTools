@@ -1,0 +1,245 @@
+.view-container .view input {
+  border: 1px solid var(--border-color);
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  background-color: var(--form-background);
+  box-shadow: 0 0 12px rgb(0 0 0 / 37%);
+}
+
+.form.registration-form {
+  flex-direction: unset;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.view {
+  max-width: 500px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  padding: 2rem;
+}
+
+.view.registration-view {
+  max-width: 900px;
+}
+
+.form-group,
+.address-block .input-wrapper {
+  width: 47%;
+}
+
+.registration-address-container,
+.address-header {
+  width: 100%;
+}
+
+.address-block .input-label {
+  margin-bottom: 0;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.input-label {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.input {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--main-background);
+  color: var(--text-color);
+  max-width: 100%;
+}
+
+.input:focus {
+  outline: 2px solid var(--main-color-hover);
+}
+
+.error-message {
+  color: var(--validation-message);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password-button {
+  background: none;
+  position: absolute;
+  right: 0;
+  top: 43px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.form .submit {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.input-wrapper {
+  margin-bottom: 15px;
+}
+
+.toggle-password-button:hover {
+  background-color: unset;
+}
+
+.registration-form,
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 2px solid var(--border-color);
+  border-radius: 0.75rem;
+  background-color: var(--form-background);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.input {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--main-background);
+  color: var(--text-color);
+  max-width: 100%;
+}
+
+.input:focus {
+  outline: 2px solid var(--main-color-hover);
+}
+
+.error-message {
+  color: var(--validation-message);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+#submit-registration-login {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  background-color: var(--main-color);
+  color: var(--main-background);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+  max-width: 200px;
+  align-self: center;
+}
+
+#submit-registration-login:hover {
+  background-color: var(--main-color-hover);
+  transform: scale(1.05);
+}
+
+#submit-registration-login:active {
+  transform: scale(0.95);
+}
+
+.redirect-wrapper {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+.redirect-link {
+  font-weight: 600;
+  color: var(--accent-color);
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.redirect-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 767.98px) {
+  .view.registration-view {
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .form {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .form-group,
+  .address-block .input-wrapper {
+    width: 100%;
+  }
+  .form.registration-form {
+    gap: 0;
+  }
+  .registration-address-container {
+    margin-top: 20px;
+  }
+  .form .submit {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .registration-view,
+  .login-view {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .form {
+    padding: 1rem;
+  }
+
+  .input {
+    font-size: 0.7rem;
+  }
+
+  .error-message {
+    font-size: 0.6rem;
+  }
+
+  #submit-registration-login {
+    width: 100%;
+  }
+
+  .error-message {
+    font-size: 0.6rem;
+  }
+
+  .submit {
+    width: 100%;
+  }
+}

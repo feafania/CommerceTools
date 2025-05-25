@@ -1,3 +1,6 @@
+# Webstorm
+.idea
+
 # Logs
 logs
 *.log
@@ -24,6 +27,7 @@ coverage
 
 # nyc test coverage
 .nyc_output
+**/__snapshots__/
 
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
@@ -102,3 +106,4 @@ dist
 
 # TernJS port file
 .tern-port
+/.vscode/launch.json

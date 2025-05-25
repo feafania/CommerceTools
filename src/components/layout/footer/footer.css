@@ -1,0 +1,86 @@
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 5vh;
+  width: 100%;
+  height: fit-content;
+  padding-top: 1rem;
+  color: var(--text-color);
+  text-align: center;
+  margin-top: 0.5rem;
+  padding-bottom: 20px;
+}
+
+.footer .container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer a {
+  text-decoration: none;
+  color: var(--text-color);
+  transition: color 0.3s;
+}
+
+.footer a:hover {
+  color: var(--main-color-hover);
+}
+
+.rsschool {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.rsschool-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  gap: 6px;
+}
+
+.rsschool-logo {
+  width: 70px;
+}
+
+.rsschool-logo:hover {
+  transform: scale(1.15);
+}
+
+.rsschool-name {
+  display: inline-block;
+  font-size: 0.7rem;
+}
+
+@media (max-width: 500px) {
+  .footer {
+    padding: 1rem 0.2rem 0;
+  }
+  .rsschool-logo {
+    width: 60px;
+  }
+
+  .footer p {
+    display: inline-block;
+    font-size: clamp(0.7rem, 3.2vw, 1rem);
+  }
+  .github-logo {
+    margin-right: 3px;
+  }
+}
+
+@media (max-width: 380px) {
+  .footer {
+    min-height: auto;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .footer p {
+    margin: 0 auto;
+  }
+}
