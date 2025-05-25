@@ -49,15 +49,15 @@ export default function createSelect(object: SelectConfig): HTMLDivElement {
       select.append(placeholderOption);
     }
 
-    for (const optionValue of object.options) {
+    for (const { label, code } of object.options) {
       const option = document.createElement("option");
-      option.value = optionValue;
-      option.textContent = optionValue;
+      option.value = code;
+      option.textContent = label;
       select.append(option);
     }
 
     const savedValue = getState(select.id);
-    if (savedValue && object.options.includes(savedValue)) {
+    if (savedValue && object.options.some((opt) => opt.code === savedValue)) {
       select.value = savedValue;
     }
   }

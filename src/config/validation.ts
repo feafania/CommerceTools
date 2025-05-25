@@ -49,13 +49,11 @@ export const VALIDATION: ValidationType = {
       let day: number, month: number, year: number;
 
       if (/^\d{4}-\d{2}-\d{2}$/.test(stringValue)) {
-        // ISO формат: YYYY-MM-DD
         const parts = stringValue.split("-");
         year = Number.parseInt(parts[0], 10);
         month = Number.parseInt(parts[1], 10) - 1;
         day = Number.parseInt(parts[2], 10);
       } else {
-        // Старый формат: DD.MM.YYYY или DD/MM/YYYY
         const normalized = stringValue.replaceAll("/", ".").trim();
         const parts = normalized.split(".");
         if (parts.length !== 3) return false;

@@ -4,7 +4,7 @@ import { CountryCode, FormType, PageType } from "@/types/enum";
 import { CountryValueType, FormField } from "@/types/types";
 import { FORM_FIELDS } from "@/config/form-fields";
 import { VALIDATION } from "@/config/validation";
-import { getCountryCode, saveState } from "@/utils/helpers";
+import { saveState } from "@/utils/helpers";
 import { ValidationRule } from "@/types/interfaces";
 
 export async function handleOnSubmit(
@@ -146,7 +146,7 @@ function defineValidation(
     >(`[name="${relatedCountryField}"], #${relatedCountryField}`);
     const countryValue = countryElement?.value.trim() || "";
     if (countryValue) {
-      countryCode = getCountryCode(countryValue);
+      countryCode = countryValue as CountryCode;
     }
   }
   return {

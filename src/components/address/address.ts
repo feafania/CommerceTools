@@ -3,8 +3,8 @@ import createInput from "@/components/input/input";
 import createSelect from "@/components/select/select";
 import { SETTINGS } from "@/config/settings";
 import { AddressType } from "@/types/enum";
-import { createLabel } from "@/components/label/label";
 import { getCountriesOptions } from "@/utils/helpers";
+import createCheckbox from "@/components/checkbox/checkbox";
 
 export default class AddressElement {
   #addressBlock: HTMLDivElement;
@@ -107,21 +107,11 @@ export default class AddressElement {
   }
 
   private createDefaultAddress(): HTMLDivElement {
-    const checkboxWrapper = document.createElement("div");
-    checkboxWrapper.className = "checkbox-wrapper";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.name = `default-${this.#type}-address`;
-    checkbox.id = `default-${this.#type}-address`;
-
-    const label = createLabel({
+    return createCheckbox({
       label: SETTINGS.label.address.default[this.#type],
-      id: checkbox.id,
-      class: `default-${this.#type}-address`,
+      name: `default-${this.#type}-address`,
+      id: `default-${this.#type}-address`,
+      relatedCountryField: `${this.#type}-country`,
     });
-
-    checkboxWrapper.append(checkbox, label);
-    return checkboxWrapper;
   }
 }

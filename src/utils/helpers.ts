@@ -1,6 +1,6 @@
 import { SETTINGS } from "@/config/settings";
 import { CountryCodeMap, LanguageCode } from "@/types/types";
-import { StorageItem } from "@/types/interfaces";
+import { SelectType, StorageItem } from "@/types/interfaces";
 import { CountryCode } from "@/types/enum";
 
 export function saveState(object: StorageItem) {
@@ -63,8 +63,11 @@ export function getCountryCode(countryLabel: string): CountryCode | undefined {
   ).find(([, label]) => label === countryLabel)?.[0];
 }
 
-export function getCountriesOptions(countries: CountryCodeMap) {
-  return Object.entries(countries).map(([, name]) => name);
+export function getCountriesOptions(countries: CountryCodeMap): SelectType[] {
+  return Object.entries(countries).map(([code, label]) => ({
+    label,
+    code,
+  }));
 }
 
 export function formatDateForCommercetools(inputDate: string | null): string {

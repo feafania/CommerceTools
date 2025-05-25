@@ -105,6 +105,7 @@ const authRepository = {
       dateOfBirth: customer.dateOfBirth ?? "",
       billingAddress: {
         id: billing?.id ?? "",
+        key: billing?.key ?? "",
         streetName: billing?.streetName ?? "",
         postalCode: billing?.postalCode ?? "",
         city: billing?.city ?? "",
@@ -112,6 +113,7 @@ const authRepository = {
       },
       shippingAddress: {
         id: shipping?.id ?? "",
+        key: shipping?.key ?? "",
         streetName: shipping?.streetName ?? "",
         postalCode: shipping?.postalCode ?? "",
         city: shipping?.city ?? "",
