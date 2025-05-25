@@ -93,6 +93,7 @@ export interface AppTranslation {
   };
   errors: {
     login: string;
+    logout: string;
     registration: string;
     categories: string;
   };

@@ -8,10 +8,9 @@ export default async function getCustomerToken(): Promise<
   const authUrl = process.env.CTP_AUTH_URL!;
   const clientID = process.env.CTP_CLIENT_ID!;
   const clientSecret = process.env.CTP_CLIENT_SECRET!;
-
-  const credentials = `${clientID}:${clientSecret}`;
   const isBrowser = typeof document !== "undefined";
 
+  const credentials = `${clientID}:${clientSecret}`;
   const basicAuth = isBrowser
     ? btoa(credentials)
     : Buffer.from(credentials).toString("base64");

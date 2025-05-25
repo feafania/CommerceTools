@@ -126,6 +126,8 @@ const pl: AppTranslation = {
   },
   errors: {
     login: "Logowanie nie powiodło się.",
+    logout:
+      "Wylogowanie nie powiodło się. Być może już zostałeś wylogowany. Spróbuj ponownie.",
     registration: "Rejestracja nie powiodła się.",
     categories: "Nie udało się załadować kategorii.",
   },

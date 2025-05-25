@@ -138,11 +138,13 @@ const Header = {
       if (label === SETTINGS.label.nav.signOut) {
         if (isLoggedIn) {
           try {
-            await authService.logout();
-            this.setUsername();
-            showModalMessage(SETTINGS.label.messages.onSignOut);
-            this.renderNav();
-            PageRouter.navigateTo(PageType.main);
+            const logoutResponse = await authService.logout();
+            if (logoutResponse) {
+              this.setUsername();
+              showModalMessage(SETTINGS.label.messages.onSignOut);
+              this.renderNav();
+              PageRouter.navigateTo(PageType.main);
+            }
           } catch (error) {
             console.error("Logout error:", error);
           }

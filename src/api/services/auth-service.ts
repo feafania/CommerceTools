@@ -30,24 +30,6 @@ class AuthService {
     }
   }
 
-  async refreshToken() {
-    try {
-      if (tokenStore.isTokenExpired()) {
-        const token = await authRepository.refreshToken();
-        if (!token) return;
-
-        console.info("TOKEN:", token.access_token);
-        // console.log("REFRESH TOKEN:", token.refresh_token);
-        tokenStore.setToken(token);
-      }
-    } catch (error) {
-      if (error instanceof ApiError) {
-        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
-        return error.invalidFields;
-      }
-    }
-  }
-
   async register(
     data: InCustomer,
   ): Promise<InCustomer | FieldErrorType[] | undefined> {
@@ -66,13 +48,66 @@ class AuthService {
     }
   }
 
-  logout() {
+  async logout(): Promise<boolean> {
     try {
-      authStore.setUser(undefined);
-      return { success: true };
+      const revokeToken = await this.revokeToken();
+      if (revokeToken) {
+        authStore.setUser(undefined);
+        return true;
+      }
     } catch (error) {
       console.error("Logout failed:", error);
     }
+    showModalMessage(`${SETTINGS.label.errors.logout}`);
+    return false;
+  }
+
+  async refreshToken() {
+    try {
+      if (
+        tokenStore &&
+        tokenStore.isTokenExpired() &&
+        tokenStore.refreshToken
+      ) {
+        const token = await authRepository.refreshToken(
+          tokenStore.refreshToken,
+        );
+        if (!token) return;
+
+        console.info("TOKEN:", token.access_token);
+        // console.log("REFRESH TOKEN:", token.refresh_token);
+        tokenStore.setToken(token);
+      }
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
+        return error.invalidFields;
+      }
+    }
+  }
+
+  async revokeToken(): Promise<boolean> {
+    try {
+      let accessRevoked = false;
+      if (tokenStore && tokenStore.accessToken) {
+        accessRevoked = await authRepository.revokeToken(
+          tokenStore.accessToken,
+          "access_token",
+        );
+        if (!accessRevoked) return false;
+      }
+      if (tokenStore && tokenStore.refreshToken) {
+        await authRepository.revokeToken(
+          tokenStore.refreshToken,
+          "refresh_token",
+        );
+      }
+      return accessRevoked;
+    } catch (error) {
+      console.error("Token revocation failed:", error);
+      return false;
+    }
+    return false;
   }
 }
 

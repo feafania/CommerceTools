@@ -40,3 +40,5 @@ export type FormFieldsMap = {
 };
 
 export type FieldErrorType = { field: string; message: string };
+
+export type TokenKeys = "access_token" | "refresh_token";

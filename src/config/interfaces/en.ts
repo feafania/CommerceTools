@@ -123,6 +123,7 @@ const en: AppTranslation = {
   },
   errors: {
     login: "Login failed.",
+    logout: "Logout failed. You may already be logged out. Please try again.",
     registration: "Registration failed.",
     categories: "Failed to load categories.",
   },

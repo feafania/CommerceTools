@@ -1,13 +1,14 @@
 import { Customer, MyCustomerDraft } from "@commercetools/platform-sdk";
 
 import { InCustomer, InAddress } from "@/types/interfaces";
+import { TokenType } from "@/types/interfaces";
+import { TokenKeys } from "@/types/types";
+import { calculateTokenExpiry } from "@/utils/helpers";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
 import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
-import { TokenType } from "@/types/interfaces";
-import { tokenStore } from "@/stores/token-store";
-import refreshToken from "@/api/repositories/endpoints/customer/refresh-token";
-import { calculateTokenExpiry } from "@/utils/helpers";
+import refreshCustomerToken from "@/api/repositories/endpoints/customer/refresh-token";
+import revokeCustomerToken from "@/api/repositories/endpoints/customer/revoke-token";
 
 const authRepository = {
   async login(
@@ -48,9 +49,9 @@ const authRepository = {
     }
   },
 
-  async refreshToken(): Promise<TokenType | undefined> {
+  async refreshToken(token: string): Promise<TokenType | undefined> {
     try {
-      const newTokens = await refreshToken(tokenStore.refreshToken!);
+      const newTokens = await refreshCustomerToken(token);
 
       if (newTokens?.access_token) {
         return {
@@ -61,6 +62,17 @@ const authRepository = {
           ),
         };
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async revokeToken(
+    token: string,
+    tokenTypeHint?: TokenKeys,
+  ): Promise<boolean> {
+    try {
+      return await revokeCustomerToken(token, tokenTypeHint);
     } catch (error) {
       throw error;
     }

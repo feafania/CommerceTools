@@ -1,17 +1,16 @@
 import { TokenResponse } from "@/types/interfaces";
 import { handleApiError } from "@/api/handle-api-error";
 
-export default async function refreshToken(
+export default async function refreshCustomerToken(
   token: string,
 ): Promise<TokenResponse> {
   const projectKey = process.env.CTP_PROJECT_KEY!;
   const authUrl = process.env.CTP_AUTH_URL!;
   const clientID = process.env.CTP_CLIENT_ID!;
   const clientSecret = process.env.CTP_CLIENT_SECRET!;
-
-  const credentials = `${clientID}:${clientSecret}`;
   const isBrowser = typeof document !== "undefined";
 
+  const credentials = `${clientID}:${clientSecret}`;
   const basicAuth = isBrowser
     ? btoa(credentials)
     : Buffer.from(credentials).toString("base64");
