@@ -197,15 +197,6 @@ body.no-scroll {
   .container {
     max-width: 720px;
   }
-  .header .container {
-    justify-content: center;
-  }
-  .sidebar {
-    display: none;
-  }
-  .categories .category-item {
-    width: calc(50% - 20px);
-  }
 }
 
 @media (max-width: 767.98px) {
@@ -222,7 +213,11 @@ body.no-scroll {
     max-width: 100%;
     padding: 0 20px;
   }
-  .categories .category-item {
-    width: 100%;
+}
+
+@media (max-width: 380px) {
+  .view {
+    gap: 1rem;
+    padding: 1rem;
   }
 }

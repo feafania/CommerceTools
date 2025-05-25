@@ -219,8 +219,7 @@
     padding: 1rem;
   }
 
-  .registration-form,
-  .login-form {
+  .form {
     padding: 1rem;
   }
 
@@ -233,6 +232,14 @@
   }
 
   #submit-registration-login {
+    width: 100%;
+  }
+
+  .error-message {
+    font-size: 0.6rem;
+  }
+
+  .submit {
     width: 100%;
   }
 }

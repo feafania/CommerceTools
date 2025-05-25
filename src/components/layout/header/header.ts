@@ -1,5 +1,4 @@
 import "./header.css";
-import "@/pages/pages.css";
 import PageRouter from "@/router/page-router";
 import { NavType } from "@/types/interfaces";
 import authService from "@/api/services/auth-service";
@@ -7,9 +6,6 @@ import authStore from "@/stores/auth-store";
 import { PageType } from "@/types/enum";
 import { SETTINGS } from "@/config/settings";
 import { LanguageCode } from "@/types/types";
-import burgerIcon from "@/assets/img/burger-menu.png";
-import burgerCloseIcon from "@/assets/img/burger-menu-close.png";
-import logo from "@/assets/img/logo.png";
 import showModalMessage from "@/components/modal-window/modal-window";
 
 const Header = {
@@ -32,7 +28,6 @@ const Header = {
 
     const menuBurgerButton = document.createElement("div");
     menuBurgerButton.className = "burger burger-menu";
-    menuBurgerButton.style.setProperty("--burger-icon", `url(${burgerIcon})`);
     menuBurgerButton.addEventListener("click", () => {
       headerActions.classList.add("active");
       document.body.classList.add("no-scroll");
@@ -40,10 +35,6 @@ const Header = {
 
     const menuBurgerButtonClose = document.createElement("div");
     menuBurgerButtonClose.className = "burger burger-menu-close";
-    menuBurgerButtonClose.style.setProperty(
-      "--burger-icon-close",
-      `url(${burgerCloseIcon})`,
-    );
     menuBurgerButtonClose.addEventListener("click", () => {
       headerActions.classList.remove("active");
       document.body.classList.remove("no-scroll");
@@ -166,7 +157,7 @@ const Header = {
 
   renderLogo() {
     this.logo.className = "header-logo logo";
-    this.logo.src = logo;
+    this.logo.src = "assets/img/logo.png";
     this.logo.alt = SETTINGS.label.header.appTitle;
     this.logo.title = SETTINGS.label.header.appTitle;
 
