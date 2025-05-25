@@ -4,6 +4,7 @@ import registerCustomer from "@/api/repositories/endpoints/customer/register-cus
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
 import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
 import { TokenResponse, TokenType } from "@/types/interfaces";
+import revokeCustomerToken from "@/api/repositories/endpoints/customer/revoke-token";
 
 // Mocked functions
 export const mockedRegisterCustomer = registerCustomer as jest.MockedFunction<
@@ -17,6 +18,9 @@ export const mockedLoginCustomer = loginCustomer as jest.MockedFunction<
 export const mockedGetCustomerToken = getCustomerToken as jest.MockedFunction<
   typeof getCustomerToken
 >;
+
+export const mockedRevokeCustomerToken =
+  revokeCustomerToken as jest.MockedFunction<typeof revokeCustomerToken>;
 
 // Faked customer data
 export const mockCustomer: Customer = {
