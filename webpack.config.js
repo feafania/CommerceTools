@@ -57,8 +57,9 @@ export default {
       {
         test: /\.(png|jpe?g|gif)$/i,
         type: "asset/resource",
+        include: path.resolve(__dirname, "src/assets/img"),
         generator: {
-          filename: "assets/img/[folder]/[name][ext]",
+          filename: "assets/img/[path][name][ext]",
         },
       },
       {

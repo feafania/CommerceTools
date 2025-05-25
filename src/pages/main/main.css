@@ -12,3 +12,56 @@
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
+
+.categories {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.categories .category-item {
+  width: calc(25% - 20px);
+  aspect-ratio: 9 / 9;
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.category-pic img {
+  width: 100%;
+}
+.category-title {
+  position: absolute;
+  bottom: 0px;
+  min-height: 55px;
+  width: 100%;
+  left: 0;
+  background: #ffffffa8;
+  line-height: 22px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+}
+
+.main-page-content {
+  width: 100%;
+  padding: 2rem 0px;
+}
+
+@media (max-width: 991.98px) {
+  .categories .category-item {
+    width: calc(50% - 20px);
+  }
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .categories .category-item {
+    width: 100%;
+  }
+  .main-view,
+  .main {
+    padding: 0px !important;
+  }
+}
