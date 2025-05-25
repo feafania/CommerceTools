@@ -10,7 +10,7 @@
   padding: 2rem;
   border-radius: 0.75rem;
   background-color: var(--form-background);
-  box-shadow: 0 0px 12px rgb(0 0 0 / 37%);
+  box-shadow: 0 0 12px rgb(0 0 0 / 37%);
 }
 
 .form.registration-form {
@@ -45,7 +45,7 @@
 }
 
 .address-block .input-label {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .input-wrapper {

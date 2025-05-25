@@ -131,7 +131,7 @@
 @media (max-width: 991.98px) {
   .header .container {
     justify-content: center;
-    padding-bottom: 0px;
+    padding-bottom: 0;
   }
 }
 
