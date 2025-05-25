@@ -77,6 +77,7 @@ const pl: AppTranslation = {
       "Hasło musi mieć co najmniej 8 znaków, zawierać duże i małe litery" +
       " cyfrę oraz opcjonalnie znak specjalny (!@#$%^&*). Nie może" +
       " zawierać spacji na początku ani na końcu.",
+    country: "Kraj musi zawierać tylko litery i spacje.",
     city: "Miasto musi zawierać tylko litery i spacje.",
     street: "Nie może być puste",
     postalCode: {
@@ -89,14 +90,39 @@ const pl: AppTranslation = {
     commonError: "Błąd walidacji.",
   },
   errorsTypes: {
-    duplicate: "Wartość już istnieje",
-    required: "Pole obowiązkowe",
+    duplicate: "Wartość już istnieje w systemie.",
+    required: "Pole jest wymagane.",
     credentials: "Nieprawidłowy adres e-mail lub hasło",
-    invalid: "Nieprawidłowa wartość",
-    invalidPostalCode: "Nieprawidłowy kod pocztowy",
-    invalidEmail: "Nieprawidłowy e-mail",
-    invalidPhoneNumber: "Nieprawidłowy numer telefonu",
-    unknown: "Nieznany błąd",
+    invalid: "Nieprawidłowa wartość.",
+    invalidPostalCode: "Nieprawidłowy format kodu pocztowego.",
+    invalidEmail: "Podaj poprawny adres e-mail.",
+    invalidPhoneNumber: "Nieprawidłowy numer telefonu.",
+    unknown: "Wystąpił nieznany błąd. Spróbuj ponownie.",
+    emailExist:
+      "Konto z tym adresem e-mail już istnieje. Zaloguj się lub użyj innego adresu.",
+    invalidJson:
+      "Niepoprawne dane żądania. Skontaktuj się z pomocą techniczną.",
+    invalidQueryParam: "Nieprawidłowy parametr URL.",
+    invalidPathParam: "Nieprawidłowa ścieżka żądania.",
+    fieldValueNotFound: "Nie znaleziono wskazanej wartości.",
+    authError: "Błąd uwierzytelniania. Zaloguj się ponownie.",
+    authzError: "Nie masz uprawnień do wykonania tej czynności.",
+    resourceNotFound: "Nie znaleziono żądanego zasobu.",
+    concurrent: "Konflikt aktualizacji. Odśwież i spróbuj ponownie.",
+    gitError: "Repozytorium Git jest niedostępne.",
+    badGateway: "Serwer jest przeciążony. Spróbuj ponownie później.",
+    serverError: "Wystąpił błąd serwera. Spróbuj ponownie później.",
+    general: "Trwa aktualizacja systemu. Spróbuj ponownie za kilka minut.",
+    connectorCertified:
+      "Ten konektor jest już certyfikowany i gotowy do użycia.",
+    connectorNotFound:
+      "Nie znaleziono konektora ‘$identifier’ w wersji $version. Sprawdź identyfikator i wersję.",
+    connectorFileNotFound:
+      "Nie znaleziono pliku connect.yaml pod adresem $url (tag: $tag). Zweryfikuj adres i tag.",
+    connectorFileNotValid:
+      "Plik connect.yaml pod adresem $url (tag: $tag) jest nieprawidłowy. Sprawdź format lub zawartość.",
+    connectorInCertification:
+      "Ten konektor jest w trakcie procesu certyfikacji. Będzie dostępny po jego zakończeniu.",
   },
   errors: {
     login: "Logowanie nie powiodło się.",

@@ -1,8 +1,9 @@
 import { PageType } from "@/types/enum";
-import Header from "@/components/layout/header/header";
 import routes from "@/config/routes";
 import { DEFAULT_PAGE, NOT_FOUND_PAGE } from "@/config/constants";
 import { isValidPageType } from "@/utils/validation";
+import authStore from "@/stores/auth-store";
+import Header from "@/components/layout/header/header";
 
 const PageRouter = {
   currentPage: PageType.main as PageType,
@@ -41,6 +42,13 @@ const PageRouter = {
     }
 
     Header.renderNav();
+
+    if (
+      (PageType.login === page || PageType.registration === page) &&
+      Boolean(authStore.user)
+    ) {
+      setTimeout(() => PageRouter.navigateTo(PageType.main), 100);
+    }
   },
 
   navigateTo(path: PageType) {

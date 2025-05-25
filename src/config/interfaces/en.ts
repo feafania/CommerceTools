@@ -75,6 +75,7 @@ const en: AppTranslation = {
       "Password must be at least 8 characters long, include uppercase and lowercase" +
       " letters, a digit, and optionally a special character (!@#$%^&*). It must not" +
       " have leading or trailing spaces.",
+    country: "Country must contain only letters and spaces.",
     city: "City must contain only letters and spaces.",
     street: "Street cannot be empty.",
     postalCode: {
@@ -87,14 +88,38 @@ const en: AppTranslation = {
     commonError: "Validation error.",
   },
   errorsTypes: {
-    duplicate: "The value already exists",
-    required: "Required field",
+    duplicate: "The value already exists in the system.",
+    required: "The field is required.",
     credentials: "Invalid email or password",
-    invalid: "Incorrect value",
-    invalidPostalCode: "Incorrect postal code",
-    invalidEmail: "Incorrect email",
-    invalidPhoneNumber: "Incorrect phone number",
-    unknown: "Unknown error",
+    invalid: "Incorrect value.",
+    invalidPostalCode: "Invalid postal code format.",
+    invalidEmail: "Please enter a valid email address.",
+    invalidPhoneNumber: "Invalid phone number format.",
+    unknown: "An unknown error occurred. Please try again later.",
+    emailExist:
+      "An account with this email already exists. Try logging in instead.",
+    invalidJson: "Malformed request data. Please contact support.",
+    invalidQueryParam: "Invalid URL parameter provided.",
+    invalidPathParam: "Invalid path provided.",
+    fieldValueNotFound: "Referenced value not found.",
+    authError: "Authentication failed. Please login again.",
+    authzError: "You don’t have permission to perform this action.",
+    resourceNotFound: "Requested resource could not be found.",
+    concurrent: "Update conflict. Please reload and try again.",
+    gitError: "Git repository is unreachable.",
+    badGateway: "Server is temporarily overloaded. Please retry.",
+    serverError: "Something went wrong on our end. Please try again.",
+    general:
+      "We’re updating the system right now. Please try again in a few minutes.",
+    connectorCertified: "This connector is already certified and ready to use.",
+    connectorNotFound:
+      "We couldn’t find the connector. Please check the ID and version.",
+    connectorFileNotFound:
+      "The connection file at could not be found. Please verify the link and tag.",
+    connectorFileNotValid:
+      "The connector file at isn’t valid. Please check the format or content.",
+    connectorInCertification:
+      "This connector is currently in certification. You’ll be able to use it once the process is complete.",
   },
   errors: {
     login: "Login failed.",

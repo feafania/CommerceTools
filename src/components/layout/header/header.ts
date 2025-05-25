@@ -1,5 +1,4 @@
 import "./header.css";
-import "@/pages/pages.css";
 import PageRouter from "@/router/page-router";
 import { NavType } from "@/types/interfaces";
 import authService from "@/api/services/auth-service";
@@ -22,10 +21,10 @@ const Header = {
     const container = document.createElement("div");
     container.className = "container";
 
-    this.logo.className = "header-logo logo";
-    this.logo.src = "/assets/img/logo.png";
-    this.logo.alt = SETTINGS.label.header.appTitle;
-    this.logo.title = SETTINGS.label.header.appTitle;
+    this.renderLogo();
+
+    const headerActions = document.createElement("div");
+    headerActions.className = "header-actions";
 
     const menuBurgerButton = document.createElement("div");
     menuBurgerButton.className = "burger burger-menu";
@@ -49,9 +48,6 @@ const Header = {
       }
     });
 
-    const headerActions = document.createElement("div");
-    headerActions.className = "header-actions";
-
     this.renderNav();
     headerActions.append(
       this.nav,
@@ -62,21 +58,16 @@ const Header = {
     container.append(this.logo, menuBurgerButton, headerActions);
     header.append(container);
 
-    if (PageRouter.currentPage !== PageType.main) {
-      const containerTitle = document.createElement("div");
-      containerTitle.className = "container";
-      this.title.className = "title";
-      this.title.textContent = SETTINGS.label.header.appTitle;
-      containerTitle.append(this.title);
-      header.append(containerTitle);
-    }
-
-    header.append(this.title);
-    this.renderNav();
+    const containerTitle = document.createElement("div");
+    containerTitle.className = "container";
+    this.title.className = "title";
+    this.title.textContent = SETTINGS.label.header.appTitle;
 
     this.username.className = "header-username";
-    header.append(this.username);
+    containerTitle.append(this.title, this.username);
     this.setUsername();
+    header.append(containerTitle);
+    this.renderNav();
 
     return header;
   },
@@ -123,7 +114,7 @@ const Header = {
   },
 
   getNavLinks(): NavType[] {
-    // const isLoggedIn = Boolean(authStore.user);
+    const isLoggedIn = Boolean(authStore.user);
     const t = SETTINGS.label.nav;
 
     return [
@@ -135,32 +126,45 @@ const Header = {
         visible: true,
       },
       { label: t.about, page: PageType.about, visible: false },
-      { label: t.signOut, page: PageType.notfound, visible: true },
+      { label: t.signOut, page: PageType.notfound, visible: isLoggedIn },
     ];
   },
 
   onClick(label: string, page: PageType) {
     return async () => {
       const isLoggedIn = Boolean(authStore.user);
-      const { signOut, signIn, registration } = SETTINGS.label.nav;
+      // const { signOut, signIn, registration } = SETTINGS.label.nav;
 
-      if (label === signOut) {
+      if (label === SETTINGS.label.nav.signOut) {
         if (isLoggedIn) {
           try {
             await authService.logout();
             this.setUsername();
             showModalMessage(SETTINGS.label.messages.onSignOut);
+            this.renderNav();
+            PageRouter.navigateTo(PageType.main);
           } catch (error) {
             console.error("Logout error:", error);
           }
         }
-        PageRouter.navigateTo(PageType.main);
-      } else if ((label === signIn || label === registration) && isLoggedIn) {
-        PageRouter.navigateTo(PageType.main);
+        // } else if ((label === signIn || label === registration) && isLoggedIn) {
+        //   PageRouter.navigateTo(PageType.main);
       } else {
         PageRouter.navigateTo(page);
       }
     };
+  },
+
+  renderLogo() {
+    this.logo.className = "header-logo logo";
+    this.logo.src = "assets/img/logo.png";
+    this.logo.alt = SETTINGS.label.header.appTitle;
+    this.logo.title = SETTINGS.label.header.appTitle;
+
+    this.logo.style.cursor = "pointer";
+    this.logo.addEventListener("click", () => {
+      PageRouter.navigateTo(PageType.main);
+    });
   },
 
   renderLangSwitcher(): HTMLElement {

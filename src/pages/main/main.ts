@@ -36,7 +36,7 @@ const MainView = {
         liPicture.className = "category-pic";
 
         const picture = document.createElement("img");
-        picture.src = "/assets/img/categories/" + cat.key + ".png";
+        picture.src = "assets/img/categories/" + cat.key + ".png";
         picture.alt = cat.name;
 
         liPicture.append(picture);

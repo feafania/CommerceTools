@@ -21,6 +21,7 @@ export default function showModalMessage(
   okButton.textContent = "OK";
   okButton.addEventListener("click", () => {
     overlay.remove();
+    document.removeEventListener("keydown", handleKeydown);
     options?.onOk?.();
   });
   buttonsContainer.append(okButton);
@@ -31,6 +32,8 @@ export default function showModalMessage(
     cancelButton.textContent = "Cancel";
     cancelButton.addEventListener("click", () => {
       overlay.remove();
+      document.removeEventListener("keydown", handleKeydown);
+
       options.onCancel?.();
     });
     buttonsContainer.append(cancelButton);
@@ -39,4 +42,13 @@ export default function showModalMessage(
   modal.append(text, buttonsContainer);
   overlay.append(modal);
   document.body.append(overlay);
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      okButton.click();
+    }
+  }
+
+  document.addEventListener("keydown", handleKeydown);
 }

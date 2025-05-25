@@ -1,12 +1,13 @@
 :root {
   --border-color: #7e7e7e;
-  --form-background: #ffffff42;
+  --form-background: #ffffff37;
   --main-background: #f9f9f9;
   --text-color: #1b1b1b;
   --main-color: #d4ac89;
   --main-color-hover: #bd9979;
   --validation-message: #e63946;
   --nav-active-color: #e3cab4;
+  --accent-color: #a78a70;
 }
 
 * {
@@ -132,7 +133,6 @@ label {
 }
 
 #root {
-  background-image: url("~@/assets/img/body_bg_new.jpg") !important;
   min-width: 320px;
   width: 100%;
   position: relative;
@@ -197,15 +197,6 @@ body.no-scroll {
   .container {
     max-width: 720px;
   }
-  .header .container {
-    justify-content: center;
-  }
-  .sidebar {
-    display: none;
-  }
-  .categories .category-item {
-    width: calc(50% - 20px);
-  }
 }
 
 @media (max-width: 767.98px) {
@@ -222,7 +213,11 @@ body.no-scroll {
     max-width: 100%;
     padding: 0 20px;
   }
-  .categories .category-item {
-    width: 100%;
+}
+
+@media (max-width: 380px) {
+  .view {
+    gap: 1rem;
+    padding: 1rem;
   }
 }

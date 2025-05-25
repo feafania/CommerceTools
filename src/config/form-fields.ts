@@ -28,19 +28,59 @@ export const FORM_FIELDS: FormFieldsMap = {
       validation: VALIDATION.password,
     },
     {
-      name: "firstName",
+      name: "firstname",
       label: SETTINGS.label.registration.firstName,
       validation: VALIDATION.firstName,
     },
     {
-      name: "lastName",
+      name: "lastname",
       label: SETTINGS.label.registration.lastName,
       validation: VALIDATION.lastName,
     },
     {
-      name: "dateOfBirth",
-      label: SETTINGS.label.registration.birthDay,
+      name: "birthday",
+      label: SETTINGS.label.address.country,
       validation: VALIDATION.dateOfBirth,
+    },
+    {
+      name: "billing-country",
+      label: SETTINGS.label.address.country,
+      validation: VALIDATION.country,
+    },
+    {
+      name: "billing-city",
+      label: SETTINGS.label.address.city,
+      validation: VALIDATION.city,
+    },
+    {
+      name: "billing-street",
+      label: SETTINGS.label.address.street,
+      validation: VALIDATION.street,
+    },
+    {
+      name: "billing-zip",
+      label: SETTINGS.label.address.postalCode,
+      validation: VALIDATION.postalCode,
+    },
+    {
+      name: "shipping-country",
+      label: SETTINGS.label.address.country,
+      validation: VALIDATION.country,
+    },
+    {
+      name: "shipping-city",
+      label: SETTINGS.label.address.city,
+      validation: VALIDATION.city,
+    },
+    {
+      name: "shipping-street",
+      label: SETTINGS.label.address.street,
+      validation: VALIDATION.street,
+    },
+    {
+      name: "shipping-postalcode",
+      label: SETTINGS.label.address.postalCode,
+      validation: VALIDATION.postalCode,
     },
   ],
 };

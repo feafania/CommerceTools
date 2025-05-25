@@ -1,5 +1,5 @@
 import productRepository from "@/api/repositories/product-repository";
-import { InCategory } from "@/types/types";
+import { InCategory } from "@/types/interfaces";
 
 class ProductService {
   async getCategories(): Promise<InCategory[]> {

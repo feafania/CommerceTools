@@ -13,6 +13,7 @@ export async function handleOnSubmit(
 ): Promise<boolean> {
   const formData = new FormData(form);
   const formFields: FormField[] = FORM_FIELDS[type];
+  let result = true;
 
   for (const field of formFields) {
     const rawValue = formData.get(field.name);
@@ -22,24 +23,32 @@ export async function handleOnSubmit(
     if (!element || element.offsetParent === null || element.disabled) {
       continue;
     }
+    if (rawValue) {
+      const value = rawValue.toString();
+      const isValid = element ? validateFormField(element, value) : true;
 
-    if (!rawValue) {
-      showModalMessage(`${SETTINGS.label.login.emptyField} ${field.label}.`);
-      element?.focus();
-      return false;
-    }
-
-    const value = rawValue.toString().trim();
-    const isValid = element ? validateFormField(element, value) : true;
-
-    if (!isValid && element) {
-      const { validationRule, countryCode } = defineValidation(element, form);
-      showModalMessage(getValidationMessage(validationRule, countryCode));
-      return false;
+      if (!isValid && element) {
+        if (result) {
+          const { validationRule, countryCode } = defineValidation(
+            element,
+            form,
+          );
+          showModalMessage(getValidationMessage(validationRule, countryCode));
+        }
+        result = false;
+      }
+    } else {
+      if (result) {
+        await showModalMessage(
+          `${SETTINGS.label.login.emptyField} ${field.label}.`,
+        );
+        element?.focus();
+      }
+      result = false;
     }
   }
 
-  return true;
+  return result;
 }
 
 export function isValidPageType(path: string): path is PageType {
@@ -58,7 +67,7 @@ export function createValidationBlock(
   input.addEventListener("input", () => {
     saveState({ key: input.id, value: input.value });
 
-    const isValid = validateFormField(input, input.value.trim(), false);
+    const isValid = validateFormField(input, input.value, false);
     if (isValid) {
       errorMessage.style.display = "none";
       errorMessage.textContent = "";
@@ -66,7 +75,7 @@ export function createValidationBlock(
   });
 
   input.addEventListener("blur", () => {
-    const isValid = validateFormField(input, input.value.trim(), true);
+    const isValid = validateFormField(input, input.value, true);
 
     if (isValid) {
       errorMessage.style.display = "none";

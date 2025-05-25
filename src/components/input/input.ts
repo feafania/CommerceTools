@@ -1,4 +1,4 @@
-// import "./input.css";
+import "./input.css";
 import { ControlConfig } from "@/types/interfaces";
 import { classesToArray, getState } from "@/utils/helpers";
 import { createValidationBlock } from "@/utils/validation";

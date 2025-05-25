@@ -62,7 +62,7 @@ describe("authServiceLogin", () => {
   describe("register", () => {
     it("should show registration error modal with correct ApiError message", async () => {
       const mockError = new ApiError(409, "The user has already exists", [
-        "email",
+        { field: "email", message: "The user has already exists" },
       ]);
       jest.spyOn(authRepository, "register").mockRejectedValueOnce(mockError);
 

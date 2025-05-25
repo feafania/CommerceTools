@@ -13,6 +13,7 @@ import Header from "@/components/layout/header/header";
 import PageRouter from "@/router/page-router";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { getCountryCode } from "@/utils/helpers";
+import { isInCustomer } from "@/utils/type-guards";
 
 const LoginRegistrationView = {
   async renderRegistrationForm(): Promise<HTMLElement> {
@@ -241,10 +242,12 @@ const LoginRegistrationView = {
     if (!isValid) return;
 
     const formData = new FormData(form);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
     const customer = {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
+      email,
+      password,
       firstName: formData.get("firstname") as string,
       lastName: formData.get("lastname") as string,
       dateOfBirth: formData.get("birthday") as string,
@@ -254,7 +257,7 @@ const LoginRegistrationView = {
       shippingAddress: {
         streetName: formData.get("shipping-street") as string,
         streetNumber: formData.get("shipping-number") as string,
-        postalCode: formData.get("shipping-zip") as string,
+        postalCode: formData.get("shipping-postalcode") as string,
         city: formData.get("shipping-city") as string,
         country: getCountryCode(
           formData.get("shipping-country") as string,
@@ -268,8 +271,8 @@ const LoginRegistrationView = {
           (formData.get("billing-number") as string) ||
           (formData.get("shipping-number") as string),
         postalCode:
-          (formData.get("billing-zip") as string) ||
-          (formData.get("shipping-zip") as string),
+          (formData.get("billing-postalcode") as string) ||
+          (formData.get("shipping-postalcode") as string),
         city:
           (formData.get("billing-city") as string) ||
           (formData.get("shipping-city") as string),
@@ -281,13 +284,19 @@ const LoginRegistrationView = {
             formData.get("shipping-country") as string,
           ) as string),
       },
-      setBillingAsDefault: true,
-      setShippingAsDefault: true,
+      setBillingAsDefault: formData.get("default-billing-address") === "on",
+      setShippingAsDefault: formData.get("default-shipping-address") === "on",
     };
-
     const user = await AuthService.register(customer);
-    if (user && "email" in user) {
-      PageRouter.navigateTo(PageType.login);
+    if (user && isInCustomer(user)) {
+      const response = await AuthService.login(email, password);
+      if (response && "email" in response) {
+        PageRouter.navigateTo(PageType.main);
+      } else {
+        // error
+        PageRouter.navigateTo(PageType.login);
+      }
+      Header.setUsername();
       showModalMessage(SETTINGS.label.messages.onSignUp);
     }
   },
@@ -302,7 +311,7 @@ const LoginRegistrationView = {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const user = await AuthService.login(email, password);
-    if (user && "email" in user) {
+    if (user && isInCustomer(user)) {
       Header.setUsername();
       PageRouter.navigateTo(PageType.main);
       showModalMessage(SETTINGS.label.messages.onSignIn);

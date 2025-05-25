@@ -12,18 +12,29 @@ export const VALIDATION: ValidationType = {
       return SETTINGS.label.validation.email;
     },
   },
+
+  password: {
+    pattern:
+      /^(?!\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])?.{8,}(?<!\s)$/,
+    get message() {
+      return SETTINGS.label.validation.password;
+    },
+  } as ValidationType,
+
   firstName: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
     get message() {
       return SETTINGS.label.validation.firstName;
     },
   },
+
   lastName: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
     get message() {
       return SETTINGS.label.validation.lastName;
     },
   },
+
   dateOfBirth: {
     isValid: (value) => {
       let stringValue = "";
@@ -85,13 +96,13 @@ export const VALIDATION: ValidationType = {
       return SETTINGS.label.validation.dateOfBirth;
     },
   },
-  password: {
-    pattern:
-      /^(?!\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])?.{8,}(?<!\s)$/,
+
+  country: {
+    pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$/,
     get message() {
-      return SETTINGS.label.validation.password;
+      return SETTINGS.label.validation.country;
     },
-  } as ValidationType,
+  },
 
   city: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$/,
