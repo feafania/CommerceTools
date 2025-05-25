@@ -4,7 +4,6 @@ import createInput from "@/components/input/input";
 import createSelect from "@/components/select/select";
 import { createLabel } from "@/components/label/label";
 import { getCountriesOptions } from "@/utils/helpers";
-//import { SETTINGS } from "@/config/settings";
 
 const mockSettingsLabelAddress = {
   headers: {
@@ -73,6 +72,15 @@ jest.mock("@/utils/helpers", () => ({
   getCountriesOptions: jest.fn(() => mockCountryOptions),
   getLocalState: jest.fn(),
   saveLocalState: jest.fn(),
+  classesToArray: jest.fn((classObject) => {
+    if (Array.isArray(classObject)) {
+      return classObject.filter((cls) => typeof cls === "string");
+    } else if (typeof classObject === "string") {
+      return classObject.trim().split(/\s+/);
+    }
+    return [];
+  }),
+  getState: jest.fn(() => {}),
 }));
 
 jest.mock("@/types/enum", () => {
@@ -156,13 +164,14 @@ describe("AddressElement", () => {
   describe("createDefaultAddress (private method tested via render or direct call)", () => {
     it("should create a default address checkbox wrapper for Billing type", () => {
       addressElement = new AddressElement(AddressType.Billing);
-      addressElement.render(); // Render calls createDefaultAddress
-      const checkboxWrapper = [...addressElement.element.childNodes].find(
-        (node) => (node as HTMLElement).className === "checkbox-wrapper",
+      addressElement.render();
+      const checkboxWrapper = addressElement.element.querySelector(
+        ".checkbox-wrapper.custom-checkbox",
       ) as HTMLDivElement;
 
       expect(checkboxWrapper).toBeInstanceOf(HTMLDivElement);
-      expect(checkboxWrapper.className).toBe("checkbox-wrapper");
+      expect(checkboxWrapper.classList.contains("checkbox-wrapper")).toBe(true);
+      expect(checkboxWrapper.classList.contains("custom-checkbox")).toBe(true);
 
       const checkbox = checkboxWrapper.querySelector('input[type="checkbox"]');
       expect(checkbox).toBeInstanceOf(HTMLInputElement);
@@ -173,23 +182,25 @@ describe("AddressElement", () => {
         `default-${AddressType.Billing}-address`,
       );
 
-      expect(createLabel).toHaveBeenCalledWith({
-        label: mockSettingsLabelAddress.default[AddressType.Billing],
-        id: `default-${AddressType.Billing}-address`,
-        class: `default-${AddressType.Billing}-address`,
-      });
+      expect(createLabel).toHaveBeenCalledWith(
+        expect.objectContaining({
+          label: mockSettingsLabelAddress.default[AddressType.Billing],
+          id: `default-${AddressType.Billing}-address`,
+        }),
+      );
       expect(checkboxWrapper.querySelector(".mock-label")).not.toBeNull();
     });
 
     it("should create a default address checkbox wrapper for Shipping type", () => {
       addressElement = new AddressElement(AddressType.Shipping);
       addressElement.render();
-      const checkboxWrapper = [...addressElement.element.childNodes].find(
-        (node) => (node as HTMLElement).className === "checkbox-wrapper",
+      const checkboxWrapper = addressElement.element.querySelector(
+        ".checkbox-wrapper.custom-checkbox",
       ) as HTMLDivElement;
 
       expect(checkboxWrapper).toBeInstanceOf(HTMLDivElement);
-      expect(checkboxWrapper.className).toBe("checkbox-wrapper");
+      expect(checkboxWrapper.classList.contains("checkbox-wrapper")).toBe(true);
+      expect(checkboxWrapper.classList.contains("custom-checkbox")).toBe(true);
 
       const checkbox = checkboxWrapper.querySelector('input[type="checkbox"]');
       expect(checkbox).toBeInstanceOf(HTMLInputElement);
@@ -200,11 +211,12 @@ describe("AddressElement", () => {
         `default-${AddressType.Shipping}-address`,
       );
 
-      expect(createLabel).toHaveBeenCalledWith({
-        label: mockSettingsLabelAddress.default[AddressType.Shipping],
-        id: `default-${AddressType.Shipping}-address`,
-        class: `default-${AddressType.Shipping}-address`,
-      });
+      expect(createLabel).toHaveBeenCalledWith(
+        expect.objectContaining({
+          label: mockSettingsLabelAddress.default[AddressType.Shipping],
+          id: `default-${AddressType.Shipping}-address`,
+        }),
+      );
       expect(checkboxWrapper.querySelector(".mock-label")).not.toBeNull();
     });
   });
@@ -278,16 +290,6 @@ describe("AddressElement", () => {
       expect(countrySelectInput).not.toBeNull();
       if (!countrySelectInput) return;
 
-      /* const postalInputWrapper = [...addressElement.element.childNodes].find(
-        (node, index) =>
-          index === 4 &&
-          (node as HTMLElement).classList.contains("mock-input-wrapper"),
-      ) as HTMLDivElement | undefined; */
-
-      /* const addEventListenerSpy = jest.spyOn(
-        countrySelectInput,
-        "addEventListener",
-      ); */
       countrySelectInput.dispatchEvent(new Event("change"));
 
       addressElement = new AddressElement(AddressType.Billing);
@@ -296,11 +298,6 @@ describe("AddressElement", () => {
         ".mock-select-wrapper select",
       );
       if (newCountrySelectInput) {
-        /* const eventListenerSpy = jest.spyOn(
-          newCountrySelectInput,
-          "addEventListener",
-        ); */
-
         const postalInputQuerySelectorSpy = jest.spyOn(
           addressElement.element,
           "querySelector",
