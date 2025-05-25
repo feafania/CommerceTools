@@ -53,7 +53,6 @@ export default class AddressElement {
       placeholder: `${SETTINGS.label.address.city}...`,
       class: "city-input",
       validationName: "city",
-      required: true,
     });
   }
 
@@ -66,7 +65,6 @@ export default class AddressElement {
       placeholder: `${SETTINGS.label.address.street}...`,
       class: "street-input",
       validationName: "street",
-      required: true,
     });
   }
 
@@ -80,7 +78,6 @@ export default class AddressElement {
       class: "postal-code-input",
       validationName: "postalCode",
       relatedCountryField: `${this.#type}-country`,
-      required: true,
     });
   }
 

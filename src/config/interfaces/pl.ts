@@ -33,7 +33,6 @@ const pl: AppTranslation = {
     email: "Adres e-mail",
     password: "Hasło",
     header: "Rejestracja",
-    openBillingAddress: "Czy adres rozliczeniowy i adres wysyłki są różne?",
     submit: "Zarejestruj się",
   },
   main: {
@@ -74,34 +73,66 @@ const pl: AppTranslation = {
     lastName:
       "Nazwisko musi zawierać tylko litery i składać się z co najmniej jednego znaku.",
     dateOfBirth: "Musisz mieć co najmniej 13 lat.",
-    passwordLoginPage:
+    password:
       "Hasło musi mieć co najmniej 8 znaków, zawierać duże i małe litery" +
       " cyfrę oraz opcjonalnie znak specjalny (!@#$%^&*). Nie może" +
       " zawierać spacji na początku ani na końcu.",
-    password:
-      "Hasło musi mieć co najmniej 8 znaków," +
-      " zawierać duże i małe litery oraz cyfrę.",
+    country: "Kraj musi zawierać tylko litery i spacje.",
     city: "Miasto musi zawierać tylko litery i spacje.",
     street: "Nie może być puste",
     postalCode: {
       PL: "Kod pocztowy musi być zgodny z formatem obowiązującym w Polsce (00-000).",
       UK: "Kod pocztowy musi być zgodny z formatem obowiązującym w Wielkiej Brytanii (SW1A 1AA).",
       DE: "Kod pocztowy musi być zgodny z formatem obowiązującym w Niemczech  (12345).",
-      FR: "Kod pocztowy musi być zgodny z formatem obowiązującym we Francji  (75000).",
+      FR: "Kod pocztowy musi być zgodny z formatem obowiązującym we Francji  (75000 lub 75 000).",
       ES: "Kod pocztowy musi być zgodny z formatem obowiązującym w Hiszpanii  (28001).",
     },
     commonError: "Błąd walidacji.",
   },
   errorsTypes: {
-    duplicate: "Wartość już istnieje",
-    invalid: "Nieprawidłowa wartość",
-    required: "Pole obowiązkowe",
+    duplicate: "Wartość już istnieje w systemie.",
+    required: "Pole jest wymagane.",
     credentials: "Nieprawidłowy adres e-mail lub hasło",
-    unknown: "Nieznany błąd",
+    invalid: "Nieprawidłowa wartość.",
+    invalidPostalCode: "Nieprawidłowy format kodu pocztowego.",
+    invalidEmail: "Podaj poprawny adres e-mail.",
+    invalidPhoneNumber: "Nieprawidłowy numer telefonu.",
+    unknown: "Wystąpił nieznany błąd. Spróbuj ponownie.",
+    emailExist:
+      "Konto z tym adresem e-mail już istnieje. Zaloguj się lub użyj innego adresu.",
+    invalidJson:
+      "Niepoprawne dane żądania. Skontaktuj się z pomocą techniczną.",
+    invalidQueryParam: "Nieprawidłowy parametr URL.",
+    invalidPathParam: "Nieprawidłowa ścieżka żądania.",
+    fieldValueNotFound: "Nie znaleziono wskazanej wartości.",
+    authError: "Błąd uwierzytelniania. Zaloguj się ponownie.",
+    authzError: "Nie masz uprawnień do wykonania tej czynności.",
+    resourceNotFound: "Nie znaleziono żądanego zasobu.",
+    concurrent: "Konflikt aktualizacji. Odśwież i spróbuj ponownie.",
+    gitError: "Repozytorium Git jest niedostępne.",
+    badGateway: "Serwer jest przeciążony. Spróbuj ponownie później.",
+    serverError: "Wystąpił błąd serwera. Spróbuj ponownie później.",
+    general: "Trwa aktualizacja systemu. Spróbuj ponownie za kilka minut.",
+    connectorCertified:
+      "Ten konektor jest już certyfikowany i gotowy do użycia.",
+    connectorNotFound:
+      "Nie znaleziono konektora ‘$identifier’ w wersji $version. Sprawdź identyfikator i wersję.",
+    connectorFileNotFound:
+      "Nie znaleziono pliku connect.yaml pod adresem $url (tag: $tag). Zweryfikuj adres i tag.",
+    connectorFileNotValid:
+      "Plik connect.yaml pod adresem $url (tag: $tag) jest nieprawidłowy. Sprawdź format lub zawartość.",
+    connectorInCertification:
+      "Ten konektor jest w trakcie procesu certyfikacji. Będzie dostępny po jego zakończeniu.",
   },
   errors: {
     login: "Logowanie nie powiodło się.",
     registration: "Rejestracja nie powiodła się.",
+    categories: "Nie udało się załadować kategorii.",
+  },
+  messages: {
+    onSignIn: "Zostałeś pomyślnie zalogowany.",
+    onSignUp: "Twoje konto zostało utworzone.",
+    onSignOut: "Zostałeś wylogowany.",
   },
 };
 

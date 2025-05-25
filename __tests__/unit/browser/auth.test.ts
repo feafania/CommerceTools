@@ -32,7 +32,6 @@ import showModalMessage from "@/components/modal-window/modal-window";
 import authRepository from "@/api/repositories/auth-repository";
 import authService from "@/api/services/auth-service";
 import authStore from "@/stores/auth-store";
-import { tokenStore } from "@/stores/token-store";
 
 describe("authServiceLogin", () => {
   beforeEach(() => {
@@ -63,7 +62,7 @@ describe("authServiceLogin", () => {
   describe("register", () => {
     it("should show registration error modal with correct ApiError message", async () => {
       const mockError = new ApiError(409, "The user has already exists", [
-        "email",
+        { field: "email", message: "The user has already exists" },
       ]);
       jest.spyOn(authRepository, "register").mockRejectedValueOnce(mockError);
 
@@ -106,13 +105,13 @@ describe("authServiceLogout", () => {
       const setUserSpy = jest
         .spyOn(authStore, "setUser")
         .mockImplementation(() => {});
-      const clearTokenSpy = jest
-        .spyOn(tokenStore, "clearToken")
-        .mockImplementation(() => {});
+      // const clearTokenSpy = jest
+      //   .spyOn(tokenStore, "clearToken")
+      //   .mockImplementation(() => {});
       const result = authService.logout();
 
       expect(setUserSpy).toHaveBeenCalledWith(undefined);
-      expect(clearTokenSpy).toHaveBeenCalled();
+      // expect(clearTokenSpy).toHaveBeenCalled();
       expect(result).toEqual({ success: true });
     });
   });

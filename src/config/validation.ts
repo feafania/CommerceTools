@@ -8,16 +8,33 @@ const MINIMUM_AGE = 13;
 export const VALIDATION: ValidationType = {
   email: {
     pattern: /^(?!\s)([^\s@]+)@([^\s@]+\.[^\s@]+)(?<!\s)$/,
-    message: SETTINGS.label.validation.email,
+    get message() {
+      return SETTINGS.label.validation.email;
+    },
   },
+
+  password: {
+    pattern:
+      /^(?!\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])?.{8,}(?<!\s)$/,
+    get message() {
+      return SETTINGS.label.validation.password;
+    },
+  } as ValidationType,
+
   firstName: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
-    message: SETTINGS.label.validation.firstName,
+    get message() {
+      return SETTINGS.label.validation.firstName;
+    },
   },
+
   lastName: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]{1,}$/,
-    message: SETTINGS.label.validation.lastName,
+    get message() {
+      return SETTINGS.label.validation.lastName;
+    },
   },
+
   dateOfBirth: {
     isValid: (value) => {
       let stringValue = "";
@@ -29,16 +46,28 @@ export const VALIDATION: ValidationType = {
 
       if (!stringValue) return false;
 
-      const normalized = stringValue.replaceAll("/", ".");
-      const parts = normalized.split(".");
-      if (parts.length !== 3) return false;
+      let day: number, month: number, year: number;
 
-      const day = Number.parseInt(parts[0], 10);
-      const month = Number.parseInt(parts[1], 10) - 1;
-      const year = Number.parseInt(parts[2], 10);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(stringValue)) {
+        // ISO формат: YYYY-MM-DD
+        const parts = stringValue.split("-");
+        year = Number.parseInt(parts[0], 10);
+        month = Number.parseInt(parts[1], 10) - 1;
+        day = Number.parseInt(parts[2], 10);
+      } else {
+        // Старый формат: DD.MM.YYYY или DD/MM/YYYY
+        const normalized = stringValue.replaceAll("/", ".").trim();
+        const parts = normalized.split(".");
+        if (parts.length !== 3) return false;
 
-      if (Number.isNaN(day) || Number.isNaN(month) || Number.isNaN(year))
+        day = Number.parseInt(parts[0], 10);
+        month = Number.parseInt(parts[1], 10) - 1;
+        year = Number.parseInt(parts[2], 10);
+      }
+
+      if (Number.isNaN(day) || Number.isNaN(month) || Number.isNaN(year)) {
         return false;
+      }
 
       const inputDate = new Date(year, month, day);
       if (
@@ -63,26 +92,30 @@ export const VALIDATION: ValidationType = {
 
       return age >= MINIMUM_AGE;
     },
-    message: SETTINGS.label.validation.dateOfBirth,
+    get message() {
+      return SETTINGS.label.validation.dateOfBirth;
+    },
   },
-  passwordLoginPage: {
-    pattern:
-      /^(?!\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])?.{8,}(?<!\s)$/,
-    message: SETTINGS.label.validation.passwordLoginPage,
-  } as ValidationType,
-  password: {
-    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
-    message: SETTINGS.label.validation.password,
-  } as ValidationType,
+
+  country: {
+    pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$/,
+    get message() {
+      return SETTINGS.label.validation.country;
+    },
+  },
 
   city: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$/,
-    message: SETTINGS.label.validation.city,
+    get message() {
+      return SETTINGS.label.validation.city;
+    },
   },
 
   street: {
     pattern: /^.{1,}$/,
-    message: SETTINGS.label.validation.street,
+    get message() {
+      return SETTINGS.label.validation.street;
+    },
   },
 
   postalCode: {

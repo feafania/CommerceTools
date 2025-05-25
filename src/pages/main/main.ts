@@ -39,9 +39,9 @@ const MainView = {
         const li = document.createElement("div");
         li.className = "category-item";
 
-        const liTtile = document.createElement("div");
-        liTtile.className = "category-title";
-        liTtile.textContent = cat.name;
+        const liTitle = document.createElement("div");
+        liTitle.className = "category-title";
+        liTitle.textContent = cat.name;
 
         const liPicture = document.createElement("div");
         liPicture.className = "category-pic";
@@ -52,14 +52,14 @@ const MainView = {
         }
 
         liPicture.append(picture);
-        li.append(liPicture, liTtile);
+        li.append(liPicture, liTitle);
         categoryList.append(li);
         console.log(cat);
       }
     } catch (error) {
       console.error("Error loading categories:", error);
       const errorMessage = document.createElement("p");
-      errorMessage.textContent = "Failed to load categories.";
+      errorMessage.textContent = SETTINGS.label.errors.categories;
       categoryList.append(errorMessage);
     }
 

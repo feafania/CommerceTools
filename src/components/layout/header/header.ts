@@ -10,6 +10,7 @@ import { LanguageCode } from "@/types/types";
 import burgerIcon from "@/assets/img/burger-menu.png";
 import burgerCloseIcon from "@/assets/img/burger-menu-close.png";
 import logo from "@/assets/img/logo.png";
+import showModalMessage from "@/components/modal-window/modal-window";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -24,10 +25,10 @@ const Header = {
     const container = document.createElement("div");
     container.className = "container";
 
-    this.logo.className = "header-logo logo";
-    this.logo.src = logo;
-    this.logo.alt = SETTINGS.label.header.appTitle;
-    this.logo.title = SETTINGS.label.header.appTitle;
+    this.renderLogo();
+
+    const headerActions = document.createElement("div");
+    headerActions.className = "header-actions";
 
     const menuBurgerButton = document.createElement("div");
     menuBurgerButton.className = "burger burger-menu";
@@ -55,9 +56,6 @@ const Header = {
         document.body.classList.remove("no-scroll");
       }
     });
-
-    const headerActions = document.createElement("div");
-    headerActions.className = "header-actions";
 
     this.renderNav();
     headerActions.append(
@@ -125,7 +123,7 @@ const Header = {
   },
 
   getNavLinks(): NavType[] {
-    // const isLoggedIn = Boolean(authStore.user);
+    const isLoggedIn = Boolean(authStore.user);
     const t = SETTINGS.label.nav;
 
     return [
@@ -137,30 +135,45 @@ const Header = {
         visible: true,
       },
       { label: t.about, page: PageType.about, visible: false },
-      { label: t.signOut, page: PageType.notfound, visible: true },
+      { label: t.signOut, page: PageType.notfound, visible: isLoggedIn },
     ];
   },
 
   onClick(label: string, page: PageType) {
     return async () => {
       const isLoggedIn = Boolean(authStore.user);
-      const { signOut, signIn, registration } = SETTINGS.label.nav;
+      // const { signOut, signIn, registration } = SETTINGS.label.nav;
 
-      if (label === signOut) {
+      if (label === SETTINGS.label.nav.signOut) {
         if (isLoggedIn) {
           try {
             await authService.logout();
+            this.setUsername();
+            showModalMessage(SETTINGS.label.messages.onSignOut);
+            this.renderNav();
+            PageRouter.navigateTo(PageType.main);
           } catch (error) {
             console.error("Logout error:", error);
           }
         }
-        PageRouter.navigateTo(PageType.main);
-      } else if ((label === signIn || label === registration) && isLoggedIn) {
-        PageRouter.navigateTo(PageType.main);
+        // } else if ((label === signIn || label === registration) && isLoggedIn) {
+        //   PageRouter.navigateTo(PageType.main);
       } else {
         PageRouter.navigateTo(page);
       }
     };
+  },
+
+  renderLogo() {
+    this.logo.className = "header-logo logo";
+    this.logo.src = logo;
+    this.logo.alt = SETTINGS.label.header.appTitle;
+    this.logo.title = SETTINGS.label.header.appTitle;
+
+    this.logo.style.cursor = "pointer";
+    this.logo.addEventListener("click", () => {
+      PageRouter.navigateTo(PageType.main);
+    });
   },
 
   renderLangSwitcher(): HTMLElement {

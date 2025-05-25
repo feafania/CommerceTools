@@ -33,7 +33,6 @@ export interface AppTranslation {
     email: string;
     password: string;
     header: string;
-    openBillingAddress: string;
     submit: string;
   };
   address: {
@@ -57,8 +56,8 @@ export interface AppTranslation {
     firstName: string;
     lastName: string;
     dateOfBirth: string;
-    passwordLoginPage: string;
     password: string;
+    country: string;
     city: string;
     street: string;
     postalCode: CountryCodeMap;
@@ -66,13 +65,40 @@ export interface AppTranslation {
   };
   errorsTypes: {
     duplicate: string;
-    invalid: string;
     required: string;
     credentials: string;
+    invalid: string;
+    invalidPostalCode: string;
+    invalidEmail: string;
+    invalidPhoneNumber: string;
     unknown: string;
+    emailExist: string;
+    invalidJson: string;
+    invalidQueryParam: string;
+    invalidPathParam: string;
+    fieldValueNotFound: string;
+    authError: string;
+    authzError: string;
+    resourceNotFound: string;
+    concurrent: string;
+    gitError: string;
+    badGateway: string;
+    serverError: string;
+    general: string;
+    connectorCertified: string;
+    connectorNotFound: string;
+    connectorFileNotFound: string;
+    connectorFileNotValid: string;
+    connectorInCertification: string;
   };
   errors: {
     login: string;
     registration: string;
+    categories: string;
+  };
+  messages: {
+    onSignIn: string;
+    onSignUp: string;
+    onSignOut: string;
   };
 }

@@ -22,7 +22,7 @@ export const COUNTRY_CONFIG: Record<CountryCode, CountryConfig> = {
     postalCodePattern: /^\d{5}$/,
   },
   FR: {
-    postalCodePattern: /^\d{5}$/,
+    postalCodePattern: /^\d{2} ?\d{3}$/,
   },
   ES: {
     postalCodePattern: /^\d{5}$/,

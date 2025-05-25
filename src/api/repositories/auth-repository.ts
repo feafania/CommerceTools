@@ -1,15 +1,19 @@
 import { Customer, MyCustomerDraft } from "@commercetools/platform-sdk";
 
-import { InCustomer, InAddress } from "@/types/types";
+import { InCustomer, InAddress } from "@/types/interfaces";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
 import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
+import { TokenType } from "@/types/interfaces";
+import { tokenStore } from "@/stores/token-store";
+import refreshToken from "@/api/repositories/endpoints/customer/refresh-token";
+import { calculateTokenExpiry } from "@/utils/helpers";
 
 const authRepository = {
   async login(
     email: string,
     password: string,
-  ): Promise<{ customer: InCustomer; token: string } | undefined> {
+  ): Promise<{ customer: InCustomer; token: TokenType } | undefined> {
     try {
       const response = await loginCustomer(email, password);
       const tokenData = await getCustomerToken(email, password);
@@ -17,7 +21,14 @@ const authRepository = {
 
       if (response && tokenData?.access_token) {
         const customer = this.toInternalCustomer(response.customer);
-        return { customer, token: tokenData.access_token };
+        return {
+          customer,
+          token: {
+            ["access_token"]: tokenData.access_token,
+            ["refresh_token"]: tokenData.refresh_token,
+            ["token_expires_in"]: calculateTokenExpiry(tokenData.expires_in),
+          },
+        };
       }
     } catch (error) {
       throw error;
@@ -31,6 +42,24 @@ const authRepository = {
       if (response) {
         const customer = response.customer;
         return this.toInternalCustomer(customer);
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async refreshToken(): Promise<TokenType | undefined> {
+    try {
+      const newTokens = await refreshToken(tokenStore.refreshToken!);
+
+      if (newTokens?.access_token) {
+        return {
+          ["access_token"]: newTokens.access_token,
+          ["refresh_token"]: newTokens.refresh_token,
+          ["token_expires_in"]: String(
+            Date.now() + newTokens.expires_in * 1000,
+          ),
+        };
       }
     } catch (error) {
       throw error;
@@ -75,12 +104,14 @@ const authRepository = {
       lastName: customer.lastName ?? "",
       dateOfBirth: customer.dateOfBirth ?? "",
       billingAddress: {
+        id: billing?.id ?? "",
         streetName: billing?.streetName ?? "",
         postalCode: billing?.postalCode ?? "",
         city: billing?.city ?? "",
         country: billing?.country ?? "",
       },
       shippingAddress: {
+        id: shipping?.id ?? "",
         streetName: shipping?.streetName ?? "",
         postalCode: shipping?.postalCode ?? "",
         city: shipping?.city ?? "",
