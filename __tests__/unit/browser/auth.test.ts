@@ -1,3 +1,5 @@
+import { SETTINGS } from "@/config/settings";
+
 jest.mock("@/api/repositories/api-client", () => ({
   __esModule: true,
   default: {
@@ -100,19 +102,44 @@ describe("authServiceLogout", () => {
     jest.clearAllMocks();
   });
 
-  describe("logoutCustomer", () => {
-    it("should clear user and token and return success", () => {
-      const setUserSpy = jest
-        .spyOn(authStore, "setUser")
-        .mockImplementation(() => {});
-      // const clearTokenSpy = jest
-      //   .spyOn(tokenStore, "clearToken")
-      //   .mockImplementation(() => {});
-      const result = authService.logout();
+  describe("authServiceLogout", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
 
-      expect(setUserSpy).toHaveBeenCalledWith(undefined);
-      // expect(clearTokenSpy).toHaveBeenCalled();
-      expect(result).toEqual({ success: true });
+    describe("logoutCustomer", () => {
+      it("should revoke token, clear user and return true", async () => {
+        const setUserSpy = jest
+          .spyOn(authStore, "setUser")
+          .mockImplementation(() => {});
+        const revokeTokenSpy = jest
+          .spyOn(authService, "revokeToken")
+          .mockResolvedValue(true);
+
+        const result = await authService.logout();
+
+        expect(revokeTokenSpy).toHaveBeenCalled();
+        expect(setUserSpy).toHaveBeenCalledWith(undefined);
+        expect(result).toEqual(true);
+      });
+
+      it("should show error modal and return false on failure", async () => {
+        const revokeTokenSpy = jest
+          .spyOn(authService, "revokeToken")
+          .mockRejectedValue(new Error("Oops"));
+
+        const setUserSpy = jest.spyOn(authStore, "setUser");
+        const showModalSpy = showModalMessage as jest.Mock;
+
+        const result = await authService.logout();
+
+        expect(revokeTokenSpy).toHaveBeenCalled();
+        expect(setUserSpy).not.toHaveBeenCalled();
+        expect(showModalSpy).toHaveBeenCalledWith(
+          expect.stringMatching(SETTINGS.label.errors.logout),
+        );
+        expect(result).toBe(false);
+      });
     });
   });
 });
