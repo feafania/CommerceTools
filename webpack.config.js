@@ -57,9 +57,9 @@ export default {
       {
         test: /\.(png|jpe?g|gif)$/i,
         type: "asset/resource",
+        include: path.resolve(__dirname, "src/assets/img"),
         generator: {
-          // filename: 'assets/img/[name][hash][ext]',
-          filename: "assets/img/[name][ext]",
+          filename: "assets/img/[path][name][ext]",
         },
       },
       {
@@ -87,7 +87,14 @@ export default {
           from: path.resolve(__dirname, "public/404.html"),
           to: path.resolve(__dirname, "dist/404.html"),
         },
-        // { from: path.resolve(__dirname, "src/assets"), to: path.resolve(__dirname, "dist/assets") },
+        {
+          from: path.resolve(__dirname, "src/assets/img"),
+          to: path.resolve(__dirname, "dist/assets/img"),
+          globOptions: {
+            ignore: ["**/*.DS_Store"],
+          },
+          noErrorOnMissing: true,
+        },
       ],
     }),
     new ESLintPlugin({

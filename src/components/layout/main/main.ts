@@ -16,11 +16,15 @@ export default function createMain(): HTMLElement {
   const main = document.createElement("main");
   main.className = "main";
 
+  const container = document.createElement("div");
+  container.className = "container";
+
   const viewContainer = document.createElement("div");
   viewContainer.className = VIEW_CONTAINER_NAME;
   viewContainer.id = VIEW_CONTAINER_NAME;
 
-  main.append(viewContainer);
+  container.append(viewContainer);
+  main.append(container);
   // layout.append(aside, main);
   return main;
 }

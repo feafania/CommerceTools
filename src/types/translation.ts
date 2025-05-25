@@ -1,14 +1,26 @@
+import { AdressTypeMap, CountryCodeMap } from "@/types/types";
+
 export interface AppTranslation {
+  header: {
+    appTitle: string;
+  };
   nav: {
     signIn: string;
     registration: string;
     main: string;
     about: string;
     signOut: string;
-    appTitle: string;
+    directions: {
+      toSignIn: string;
+      toSignUp: string;
+    };
+    directionsLabels: {
+      toSignIn: string;
+      toSignUp: string;
+    };
   };
   login: {
-    name: string;
+    email: string;
     password: string;
     header: string;
     emptyField: string;
@@ -18,22 +30,23 @@ export interface AppTranslation {
     firstName: string;
     lastName: string;
     birthDay: string;
-    login: string;
+    email: string;
     password: string;
     header: string;
     submit: string;
   };
   address: {
-    billingHeader: string;
-    shippingHeader: string;
+    headers: AdressTypeMap;
     country: string;
     city: string;
     street: string;
     postalCode: string;
-    defaultBilling: string;
-    defaultShipping: string;
-    countryPl: string;
-    countryEn: string;
+    default: AdressTypeMap;
+    isSameAddress: string;
+    countryNames: CountryCodeMap;
+    placeholders: {
+      country: string;
+    };
   };
   main: {
     title: string;
@@ -43,25 +56,50 @@ export interface AppTranslation {
     firstName: string;
     lastName: string;
     dateOfBirth: string;
-    passwordLoginPage: string;
     password: string;
+    country: string;
     city: string;
     street: string;
-    postalCodePoland: string;
-    postalCodeUK: string;
-    postalCodeGeneric: string;
-    countryPoland: string;
-    countryUnitedKingdom: string;
+    postalCode: CountryCodeMap;
+    commonError: string;
   };
   errorsTypes: {
     duplicate: string;
-    invalid: string;
     required: string;
     credentials: string;
+    invalid: string;
+    invalidPostalCode: string;
+    invalidEmail: string;
+    invalidPhoneNumber: string;
     unknown: string;
+    emailExist: string;
+    invalidJson: string;
+    invalidQueryParam: string;
+    invalidPathParam: string;
+    fieldValueNotFound: string;
+    authError: string;
+    authzError: string;
+    resourceNotFound: string;
+    concurrent: string;
+    gitError: string;
+    badGateway: string;
+    serverError: string;
+    general: string;
+    connectorCertified: string;
+    connectorNotFound: string;
+    connectorFileNotFound: string;
+    connectorFileNotValid: string;
+    connectorInCertification: string;
   };
   errors: {
     login: string;
+    logout: string;
     registration: string;
+    categories: string;
+  };
+  messages: {
+    onSignIn: string;
+    onSignUp: string;
+    onSignOut: string;
   };
 }

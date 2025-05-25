@@ -1,3 +1,4 @@
+import "./notfound.css";
 import { PageType } from "@/types/enum";
 import PageRouter from "@/router/page-router";
 
@@ -18,6 +19,12 @@ const NotFoundView = {
     container.querySelector("button")?.addEventListener("click", () => {
       PageRouter.navigateTo(PageType.main);
     });
+
+    for (const element of container.querySelectorAll(".fade-in")) {
+      requestAnimationFrame(() => {
+        element.classList.add("animate");
+      });
+    }
 
     return container;
   },

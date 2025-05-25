@@ -5,8 +5,10 @@ import {
   registerResponse,
   loginResponse,
   mockCustomer,
-  mockToken,
   tokenResponse,
+  token,
+  mockDate,
+  mockedRevokeCustomerToken,
 } from "../__mocks__/auth.mock";
 
 import authRepository from "@/api/repositories/auth-repository";
@@ -14,6 +16,7 @@ import authRepository from "@/api/repositories/auth-repository";
 jest.mock("@/api/repositories/endpoints/customer/register-customer");
 jest.mock("@/api/repositories/endpoints/customer/login-customer");
 jest.mock("@/api/repositories/endpoints/customer/get-customer-token");
+jest.mock("@/api/repositories/endpoints/customer/revoke-token");
 
 const inMockCustomer = authRepository.toInternalCustomer(mockCustomer);
 
@@ -52,6 +55,12 @@ describe("authRepository", () => {
   });
 
   describe("login", () => {
+    beforeAll(() => {
+      jest.spyOn(Date, "now").mockImplementation(() => mockDate);
+    });
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
     it("should call loginCustomer and return a transformed customer", async () => {
       const { email, password } = inMockCustomer;
       const result = await authRepository.login(email, password!);
@@ -65,7 +74,7 @@ describe("authRepository", () => {
       expect(result?.customer).toEqual(
         authRepository.toInternalCustomer(loginResponse.customer),
       );
-      expect(result?.token).toBe(mockToken);
+      expect(result?.token).toStrictEqual(token);
     });
 
     it("should throw if loginCustomer fails", async () => {
@@ -74,6 +83,33 @@ describe("authRepository", () => {
       await expect(
         authRepository.login(mockCustomer.email, mockCustomer.password!),
       ).rejects.toThrow("Login failed");
+    });
+  });
+
+  describe("revokeToken", () => {
+    it("should call revokeCustomerToken and return true", async () => {
+      mockedRevokeCustomerToken.mockResolvedValueOnce(true);
+
+      const result = await authRepository.revokeToken(
+        "mock-token",
+        "refresh_token",
+      );
+
+      expect(mockedRevokeCustomerToken).toHaveBeenCalledWith(
+        "mock-token",
+        "refresh_token",
+      );
+      expect(result).toBe(true);
+    });
+
+    it("should throw if revokeCustomerToken fails", async () => {
+      mockedRevokeCustomerToken.mockRejectedValueOnce(
+        new Error("Token revoke failed"),
+      );
+
+      await expect(
+        authRepository.revokeToken("mock-token", "refresh_token"),
+      ).rejects.toThrow("Token revoke failed");
     });
   });
 });

@@ -1,29 +1,20 @@
+// import "./select.css";
 import { SelectConfig } from "@/types/interfaces";
-import { classesToArray, getState, saveState } from "@/utils/helpers";
-import { ValidationType } from "@/types/types";
+import { classesToArray, getState } from "@/utils/helpers";
+import { createValidationBlock } from "@/utils/validation";
+import { createLabel } from "@/components/label/label";
 
 export default function createSelect(object: SelectConfig): HTMLDivElement {
   const classNames = classesToArray(object.class);
   const wrapper = document.createElement("div");
   const id = object.id ?? `select-${Date.now()}`;
-  wrapper.id = object.id ? `${object.id}-wrapper` : "";
-  for (const className of classNames) {
-    if (className) {
-      wrapper.classList.add(`${className}-wrapper`);
-    }
+  if (object.id) {
+    wrapper.id = `${object.id}-wrapper`;
   }
   wrapper.classList.add("input-wrapper");
 
   if (object.label) {
-    const label = document.createElement("label");
-    label.textContent = object.label;
-    label.htmlFor = id;
-    for (const className of classNames) {
-      if (className) {
-        label.classList.add(`${className}-label`);
-      }
-    }
-    label.classList.add("input-label");
+    const label = createLabel(object, classNames);
     wrapper.append(label);
   }
 
@@ -32,61 +23,46 @@ export default function createSelect(object: SelectConfig): HTMLDivElement {
     select.name = object.name;
   }
   select.id = id;
+  select.classList.add("input");
+
+  if (object.validationName) {
+    select.dataset.validationName = object.validationName;
+  }
+  if (object.relatedCountryField) {
+    select.dataset.relatedCountryField = object.relatedCountryField;
+  }
+
   for (const className of classNames) {
     if (className) {
       wrapper.classList.add(`${className}-wrapper`);
-    }
-  }
-  for (const className of classNames) {
-    if (className) {
       select.classList.add(className);
     }
   }
-  select.classList.add("input");
-  select.value = getState(select.id) || "";
 
   if (Array.isArray(object.options)) {
-    for (const optionValue of object.options) {
+    if (object.placeholder) {
+      const placeholderOption = document.createElement("option");
+      placeholderOption.value = "";
+      placeholderOption.textContent = object.placeholder;
+      placeholderOption.disabled = true;
+      placeholderOption.selected = true;
+      select.append(placeholderOption);
+    }
+
+    for (const { label, code } of object.options) {
       const option = document.createElement("option");
-      option.value = optionValue;
-      option.textContent = optionValue;
+      option.value = code;
+      option.textContent = label;
       select.append(option);
     }
+
+    const savedValue = getState(select.id);
+    if (savedValue && object.options.some((opt) => opt.code === savedValue)) {
+      select.value = savedValue;
+    }
   }
 
-  select.addEventListener("input", () => {
-    saveState({ key: select.id, value: select.value });
-    if (object.validation) {
-      validateSelect(wrapper, object.validation);
-    }
-  });
   wrapper.append(select);
+  createValidationBlock(select, wrapper);
   return wrapper;
-}
-
-function validateSelect(wrapper: HTMLElement, validation: ValidationType) {
-  const select = wrapper.querySelector("select");
-  const value = select?.value || "";
-
-  let isValid = true;
-
-  if (validation.pattern) {
-    isValid = validation.pattern.test(value);
-  } else if (validation.isValid) {
-    isValid = validation.isValid(value);
-  }
-
-  let errorDiv = wrapper.querySelector("#input-error");
-
-  if (isValid) {
-    errorDiv?.remove();
-  } else {
-    if (!errorDiv) {
-      errorDiv = document.createElement("div");
-      errorDiv.id = "input-error";
-      errorDiv.className = "error-message";
-      errorDiv.textContent = validation.message;
-      select?.after(errorDiv);
-    }
-  }
 }

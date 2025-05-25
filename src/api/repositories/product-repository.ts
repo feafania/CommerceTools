@@ -2,7 +2,7 @@ import { Asset, Category } from "@commercetools/platform-sdk";
 
 import getCategories from "@/api/repositories/endpoints/product/get-categories";
 import getCategoryByKey from "@/api/repositories/endpoints/product/get-category-by-key";
-import { InCategory } from "@/types/types";
+import { InCategory } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
 
 const fallbackLang = "en";
