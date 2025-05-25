@@ -1,3 +1,4 @@
+import "./checkbox.css";
 import { ControlConfig } from "@/types/interfaces";
 import { classesToArray, getState, saveState } from "@/utils/helpers";
 import { createLabel } from "@/components/label/label";
@@ -9,7 +10,7 @@ export default function createCheckbox(object: ControlConfig): HTMLDivElement {
   if (object.id) {
     wrapper.id = `${object.id}-wrapper`;
   }
-  wrapper.classList.add("checkbox-wrapper");
+  wrapper.classList.add("checkbox-wrapper", "custom-checkbox");
 
   if (object.label) {
     const label = createLabel(object);

@@ -1,0 +1,27 @@
+.custom-checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: 2px solid var(--accent-color, #00bfff);
+  width: 1.2em;
+  height: 1.2em;
+  cursor: pointer;
+  position: relative;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox input[type="checkbox"]::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -52%);
+  font-size: 1em;
+  color: var(--accent-color, #00bfff);
+  display: none;
+}
+
+.custom-checkbox input[type="checkbox"]:checked::after {
+  display: block;
+}
