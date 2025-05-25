@@ -87,7 +87,7 @@
   background: none;
   position: absolute;
   right: 0;
-  top: 40px;
+  top: 43px;
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -171,10 +171,11 @@
 .redirect-wrapper {
   text-align: center;
   margin-top: 1rem;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
 }
 
 .redirect-link {
+  font-weight: 600;
   color: var(--accent-color);
   text-decoration: none;
   margin-left: 4px;

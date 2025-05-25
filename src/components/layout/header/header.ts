@@ -7,6 +7,9 @@ import authStore from "@/stores/auth-store";
 import { PageType } from "@/types/enum";
 import { SETTINGS } from "@/config/settings";
 import { LanguageCode } from "@/types/types";
+import burgerIcon from "@/assets/img/burger-menu.png";
+import burgerCloseIcon from "@/assets/img/burger-menu-close.png";
+import logo from "@/assets/img/logo.png";
 import showModalMessage from "@/components/modal-window/modal-window";
 
 const Header = {
@@ -29,6 +32,7 @@ const Header = {
 
     const menuBurgerButton = document.createElement("div");
     menuBurgerButton.className = "burger burger-menu";
+    menuBurgerButton.style.setProperty("--burger-icon", `url(${burgerIcon})`);
     menuBurgerButton.addEventListener("click", () => {
       headerActions.classList.add("active");
       document.body.classList.add("no-scroll");
@@ -36,6 +40,10 @@ const Header = {
 
     const menuBurgerButtonClose = document.createElement("div");
     menuBurgerButtonClose.className = "burger burger-menu-close";
+    menuBurgerButtonClose.style.setProperty(
+      "--burger-icon-close",
+      `url(${burgerCloseIcon})`,
+    );
     menuBurgerButtonClose.addEventListener("click", () => {
       headerActions.classList.remove("active");
       document.body.classList.remove("no-scroll");
@@ -59,21 +67,16 @@ const Header = {
     container.append(this.logo, menuBurgerButton, headerActions);
     header.append(container);
 
-    if (PageRouter.currentPage !== PageType.main) {
-      const containerTitle = document.createElement("div");
-      containerTitle.className = "container";
-      this.title.className = "title";
-      this.title.textContent = SETTINGS.label.header.appTitle;
-      containerTitle.append(this.title);
-      header.append(containerTitle);
-    }
-
-    header.append(this.title);
-    this.renderNav();
+    const containerTitle = document.createElement("div");
+    containerTitle.className = "container";
+    this.title.className = "title";
+    this.title.textContent = SETTINGS.label.header.appTitle;
 
     this.username.className = "header-username";
-    header.append(this.username);
+    containerTitle.append(this.title, this.username);
     this.setUsername();
+    header.append(containerTitle);
+    this.renderNav();
 
     return header;
   },
@@ -91,6 +94,7 @@ const Header = {
   createNavList(): HTMLElement {
     const ul = document.createElement("ul");
     ul.className = "nav-list";
+
     for (const { label, page, visible } of this.getNavLinks()) {
       if (!visible) continue;
 
@@ -162,7 +166,7 @@ const Header = {
 
   renderLogo() {
     this.logo.className = "header-logo logo";
-    this.logo.src = "/assets/img/logo.png";
+    this.logo.src = logo;
     this.logo.alt = SETTINGS.label.header.appTitle;
     this.logo.title = SETTINGS.label.header.appTitle;
 
