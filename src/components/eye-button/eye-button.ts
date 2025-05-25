@@ -30,7 +30,7 @@ export default function createEyeButton(): HTMLButtonElement {
     const isHidden = input.type === "password";
     input.type = isHidden ? "text" : "password";
 
-    eyeButton.innerHTML = ""; // выдаляем усе
+    eyeButton.innerHTML = "";
     if (isHidden) {
       eyeButton.setAttribute("aria-label", "Hide password");
       eyeButton.append(eyeHideSvg);

@@ -19,67 +19,93 @@ export const FORM_FIELDS: FormFieldsMap = {
   [FormType.REGISTRATION]: [
     {
       name: "email",
-      label: SETTINGS.label.registration.email,
+      get label() {
+        return SETTINGS.label.registration.email;
+      },
       validation: VALIDATION.email,
     },
     {
       name: "password",
-      label: SETTINGS.label.registration.password,
+      get label() {
+        return SETTINGS.label.registration.password;
+      },
       validation: VALIDATION.password,
     },
     {
       name: "firstname",
-      label: SETTINGS.label.registration.firstName,
+      get label() {
+        return SETTINGS.label.registration.firstName;
+      },
       validation: VALIDATION.firstName,
     },
     {
       name: "lastname",
-      label: SETTINGS.label.registration.lastName,
+      get label() {
+        return SETTINGS.label.registration.lastName;
+      },
       validation: VALIDATION.lastName,
     },
     {
       name: "birthday",
-      label: SETTINGS.label.address.country,
+      get label() {
+        return SETTINGS.label.address.country;
+      },
       validation: VALIDATION.dateOfBirth,
     },
     {
       name: "billing-country",
-      label: SETTINGS.label.address.country,
+      get label() {
+        return SETTINGS.label.address.country;
+      },
       validation: VALIDATION.country,
     },
     {
       name: "billing-city",
-      label: SETTINGS.label.address.city,
+      get label() {
+        return SETTINGS.label.address.city;
+      },
       validation: VALIDATION.city,
     },
     {
       name: "billing-street",
-      label: SETTINGS.label.address.street,
+      get label() {
+        return SETTINGS.label.address.street;
+      },
       validation: VALIDATION.street,
     },
     {
       name: "billing-zip",
-      label: SETTINGS.label.address.postalCode,
+      get label() {
+        return SETTINGS.label.address.postalCode;
+      },
       validation: VALIDATION.postalCode,
     },
     {
       name: "shipping-country",
-      label: SETTINGS.label.address.country,
+      get label() {
+        return SETTINGS.label.address.country;
+      },
       validation: VALIDATION.country,
     },
     {
       name: "shipping-city",
-      label: SETTINGS.label.address.city,
+      get label() {
+        return SETTINGS.label.address.city;
+      },
       validation: VALIDATION.city,
     },
     {
       name: "shipping-street",
-      label: SETTINGS.label.address.street,
+      get label() {
+        return SETTINGS.label.address.street;
+      },
       validation: VALIDATION.street,
     },
     {
       name: "shipping-postalcode",
-      label: SETTINGS.label.address.postalCode,
+      get label() {
+        return SETTINGS.label.address.postalCode;
+      },
       validation: VALIDATION.postalCode,
     },
   ],

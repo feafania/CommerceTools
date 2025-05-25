@@ -16,7 +16,12 @@ type ControlBase = {
 };
 
 export interface ControlSelect extends ControlBase {
-  options: string[];
+  options: SelectType[];
+}
+
+export interface SelectType {
+  label: string;
+  code: string;
 }
 
 export type ControlConfig = Partial<ControlBase>;
@@ -58,7 +63,7 @@ export interface TokenResponse extends Omit<TokenType, "token_expires_in"> {
   token_type: "Bearer";
 }
 
-export type CTErrorObject = {
+export interface CTErrorObject {
   code: string;
   message: string;
   detailedErrorMessage?: string;
@@ -66,9 +71,9 @@ export type CTErrorObject = {
   value?: string;
   duplicateValue?: string;
   [key: string]: unknown;
-};
+}
 
-export type CTApiError = {
+export interface CTApiError {
   statusCode?: number;
   message?: string;
   body?: {
@@ -80,40 +85,42 @@ export type CTApiError = {
     message?: string;
     errors?: CTErrorObject[];
   };
-};
+}
 
-export type InCategory = {
+export interface InCategory {
   id: string;
   key?: string;
   name: string;
   description?: string;
   assets: InAsset[];
-};
+}
 
-export type InAssetSource = {
+export interface InAssetSource {
   key?: string;
   uri: string;
   dimensions?: { w: number; h: number };
   contentType?: string;
-};
+}
 
-export type InAsset = {
+export interface InAsset {
   id: string;
   key?: string;
   sources: InAssetSource[];
   name: string;
   description?: string;
-};
+}
 
-export type InAddress = {
+export interface InAddress {
   id?: string;
+  key?: string;
   streetName: string;
+  streetNumber?: string;
   postalCode: string;
   city: string;
   country: string;
-};
+}
 
-export type InCustomer = {
+export interface InCustomer {
   id?: string;
   email: string;
   password?: string;
@@ -125,4 +132,4 @@ export type InCustomer = {
   isSameAddress?: boolean;
   setBillingAsDefault?: boolean;
   setShippingAsDefault?: boolean;
-};
+}
