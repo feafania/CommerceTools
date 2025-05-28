@@ -48,7 +48,7 @@ export interface ValidationRule {
   pattern?: RegExp;
   isValid?: (value: string | CountryValueType) => boolean;
   message?: string;
-  getValidationMessage?: (code: CountryCode) => string;
+  getValidationMessage?: (code: CountryCode | undefined) => string;
 }
 
 export interface TokenType {

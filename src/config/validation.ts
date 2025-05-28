@@ -97,9 +97,13 @@ export const VALIDATION: ValidationType = {
 
   country: {
     pattern: /^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$/,
-    get message() {
-      return SETTINGS.label.validation.country;
+    getValidationMessage: (code: CountryCode | undefined) => {
+      if (code) return SETTINGS.label.validation.country;
+      return SETTINGS.label.validation.selectCountry;
     },
+    // get message() {
+    //   return SETTINGS.label.validation.country;
+    // },
   },
 
   city: {
@@ -120,19 +124,22 @@ export const VALIDATION: ValidationType = {
     isValid: (input) => {
       if (typeof input === "string") {
         return Object.values(COUNTRY_CONFIG).some((config) =>
-          config.postalCodePattern.test(input.trim()),
+          config.postalCodePattern.test(input),
         );
       }
 
       const { value, countryCode } = input;
+      console.log(value, countryCode);
       if (!countryCode || !value) return false;
 
       if (!countryCode) return false;
 
       const pattern = COUNTRY_CONFIG[countryCode]?.postalCodePattern;
-      return pattern ? pattern.test(value.trim()) : false;
+      return pattern ? pattern.test(value) : false;
     },
-    getValidationMessage: (code: CountryCode) =>
-      SETTINGS.label.validation.postalCode[code],
+    getValidationMessage: (code: CountryCode | undefined) => {
+      if (code) return SETTINGS.label.validation.postalCode[code];
+      return SETTINGS.label.validation.selectCountry;
+    },
   },
 };

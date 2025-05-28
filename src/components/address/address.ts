@@ -91,6 +91,7 @@ export default class AddressElement {
       placeholder: `${SETTINGS.label.address.placeholders.country}...`,
       options: getCountriesOptions(countryOptions),
       validationName: "country",
+      relatedCountryField: "country",
     });
     const countrySelect = countrySelectWrapper.querySelector("select")!;
 

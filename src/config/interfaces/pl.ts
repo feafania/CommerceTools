@@ -88,6 +88,7 @@ const pl: AppTranslation = {
       ES: "Kod pocztowy musi być zgodny z formatem obowiązującym w Hiszpanii  (28001).",
     },
     commonError: "Błąd walidacji.",
+    selectCountry: "Proszę wybrać kraj",
   },
   errorsTypes: {
     duplicate: "Wartość już istnieje w systemie.",

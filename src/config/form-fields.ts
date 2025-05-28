@@ -74,7 +74,7 @@ export const FORM_FIELDS: FormFieldsMap = {
       validation: VALIDATION.street,
     },
     {
-      name: "billing-zip",
+      name: "billing-postalcode",
       get label() {
         return SETTINGS.label.address.postalCode;
       },

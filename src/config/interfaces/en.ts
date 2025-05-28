@@ -86,6 +86,7 @@ const en: AppTranslation = {
       ES: "Postal code must match format for Spain (28001).",
     },
     commonError: "Validation error.",
+    selectCountry: "Please select a country",
   },
   errorsTypes: {
     duplicate: "The value already exists in the system.",

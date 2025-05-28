@@ -194,7 +194,7 @@ function getValidationMessage(
     return SETTINGS.label.validation.commonError;
   }
 
-  if (validationRule.getValidationMessage && countryCode) {
+  if (validationRule.getValidationMessage) {
     return validationRule.getValidationMessage(countryCode);
   }
 

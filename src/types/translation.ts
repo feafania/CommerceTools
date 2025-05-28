@@ -62,6 +62,7 @@ export interface AppTranslation {
     street: string;
     postalCode: CountryCodeMap;
     commonError: string;
+    selectCountry: string;
   };
   errorsTypes: {
     duplicate: string;
