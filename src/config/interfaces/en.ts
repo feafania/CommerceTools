@@ -18,6 +18,7 @@ const en: AppTranslation = {
       toSignIn: "Sign In",
       toSignUp: "Sign Up",
     },
+    userProfile: "User Profile",
   },
   login: {
     email: "Email Address",
@@ -131,6 +132,14 @@ const en: AppTranslation = {
     onSignIn: "You have successfully signed in.",
     onSignUp: "Your account has been created.",
     onSignOut: "You have been signed out.",
+  },
+  userProfile: {
+    firstName: "First name",
+    lastName: "Last name",
+    birthDay: "Birth day",
+    email: "Email Address",
+    password: "Password",
+    header: "Registration",
   },
 };
 

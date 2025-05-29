@@ -18,6 +18,7 @@ const pl: AppTranslation = {
       toSignIn: "Zaloguj się",
       toSignUp: "Załóż konto",
     },
+    userProfile: "User Profile",
   },
   login: {
     email: "Adres e-mail",
@@ -135,6 +136,14 @@ const pl: AppTranslation = {
     onSignIn: "Zostałeś pomyślnie zalogowany.",
     onSignUp: "Twoje konto zostało utworzone.",
     onSignOut: "Zostałeś wylogowany.",
+  },
+  userProfile: {
+    firstName: "First name",
+    lastName: "Last name",
+    birthDay: "Birth day",
+    email: "Email Address",
+    password: "Password",
+    header: "Registration",
   },
 };
 
