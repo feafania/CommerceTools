@@ -18,7 +18,6 @@ const authRepository = {
     try {
       const response = await loginCustomer(email, password);
       const tokenData = await getCustomerToken(email, password);
-      console.info(response.customer);
 
       if (response && tokenData?.access_token) {
         const customer = this.toInternalCustomer(response.customer);

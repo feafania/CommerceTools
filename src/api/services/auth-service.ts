@@ -18,8 +18,6 @@ class AuthService {
 
       const { customer, token } = result;
       console.log(customer);
-      console.log("TOKEN:", token.access_token);
-      // console.log("REFRESH TOKEN:", token.refresh_token);
       authStore.setUser(customer, token);
       return customer;
     } catch (error) {
@@ -36,7 +34,6 @@ class AuthService {
     try {
       const customer: InCustomer | undefined =
         await authRepository.register(data);
-      console.log(customer);
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
@@ -74,8 +71,6 @@ class AuthService {
         );
         if (!token) return;
 
-        console.info("TOKEN:", token.access_token);
-        // console.log("REFRESH TOKEN:", token.refresh_token);
         tokenStore.setToken(token);
       }
     } catch (error) {

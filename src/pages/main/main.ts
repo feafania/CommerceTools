@@ -42,7 +42,6 @@ const MainView = {
         liPicture.append(picture);
         li.append(liPicture, liTitle);
         categoryList.append(li);
-        console.log(cat);
       }
     } catch (error) {
       console.error("Error loading categories:", error);
