@@ -129,7 +129,6 @@ export const VALIDATION: ValidationType = {
       }
 
       const { value, countryCode } = input;
-      console.log(value, countryCode);
       if (!countryCode || !value) return false;
 
       if (!countryCode) return false;

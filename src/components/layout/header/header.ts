@@ -5,8 +5,9 @@ import authService from "@/api/services/auth-service";
 import authStore from "@/stores/auth-store";
 import { PageType } from "@/types/enum";
 import { SETTINGS } from "@/config/settings";
-import { LanguageCode } from "@/types/types";
+import { LanguageCode, NavMenu } from "@/types/types";
 import showModalMessage from "@/components/modal-window/modal-window";
+import { renderPage } from "@/utils/page-render";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -82,11 +83,11 @@ const Header = {
     this.title.textContent = SETTINGS.label.header.appTitle;
   },
 
-  createNavList(): HTMLElement {
+  createNavList(type: NavMenu = "header"): HTMLElement {
     const ul = document.createElement("ul");
     ul.className = "nav-list";
 
-    for (const { label, page, visible } of this.getNavLinks()) {
+    for (const { label, page, visible } of this.getNavLinks(type)) {
       if (!visible) continue;
 
       const li = document.createElement("li");
@@ -113,17 +114,21 @@ const Header = {
     this.nav.replaceChildren(this.createNavList());
   },
 
-  getNavLinks(): NavType[] {
+  getNavLinks(type: NavMenu = "header"): NavType[] {
     const isLoggedIn = Boolean(authStore.user);
     const t = SETTINGS.label.nav;
 
     return [
       { label: t.main, page: PageType.main, visible: true },
-      { label: t.signIn, page: PageType.login, visible: true },
+      {
+        label: t.signIn,
+        page: PageType.login,
+        visible: !isLoggedIn || type === "main",
+      },
       {
         label: t.registration,
         page: PageType.registration,
-        visible: true,
+        visible: !isLoggedIn || type === "main",
       },
       { label: t.about, page: PageType.about, visible: false },
       { label: t.signOut, page: PageType.notfound, visible: isLoggedIn },
@@ -133,7 +138,6 @@ const Header = {
   onClick(label: string, page: PageType) {
     return async () => {
       const isLoggedIn = Boolean(authStore.user);
-      // const { signOut, signIn, registration } = SETTINGS.label.nav;
 
       if (label === SETTINGS.label.nav.signOut) {
         if (isLoggedIn) {
@@ -142,15 +146,15 @@ const Header = {
             if (logoutResponse) {
               this.setUsername();
               showModalMessage(SETTINGS.label.messages.onSignOut);
-              this.renderNav();
+              if (PageRouter.getPathFromUrl() === PageType.main) {
+                await renderPage(PageType.main);
+              }
               PageRouter.navigateTo(PageType.main);
             }
           } catch (error) {
             console.error("Logout error:", error);
           }
         }
-        // } else if ((label === signIn || label === registration) && isLoggedIn) {
-        //   PageRouter.navigateTo(PageType.main);
       } else {
         PageRouter.navigateTo(page);
       }

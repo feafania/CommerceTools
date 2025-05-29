@@ -120,7 +120,7 @@ describe("AddressElement", () => {
       expect(element).toBeInstanceOf(HTMLDivElement);
       expect(element.className).toBe("address-block");
       expect(element.id).toBe(`${AddressType.Billing}-address`);
-      expect(addressElement.type).toBe(AddressType.Billing);
+      expect(addressElement.name).toBe(AddressType.Billing);
     });
 
     it("should correctly initialize with Shipping type", () => {
@@ -129,7 +129,7 @@ describe("AddressElement", () => {
 
       expect(element.className).toBe("address-block");
       expect(element.id).toBe(`${AddressType.Shipping}-address`);
-      expect(addressElement.type).toBe(AddressType.Shipping);
+      expect(addressElement.name).toBe(AddressType.Shipping);
     });
   });
 

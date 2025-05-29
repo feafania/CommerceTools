@@ -1,14 +1,14 @@
 import { Customer, MyCustomerDraft } from "@commercetools/platform-sdk";
 
-import { InCustomer, InAddress } from "@/types/interfaces";
-import { TokenType } from "@/types/interfaces";
+import { InAddress, InCustomer, TokenType } from "@/types/interfaces";
 import { TokenKeys } from "@/types/types";
-import { calculateTokenExpiry } from "@/utils/helpers";
+import { calculateTokenExpiry, findDefaultAddressIndex } from "@/utils/helpers";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
 import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
 import refreshCustomerToken from "@/api/repositories/endpoints/customer/refresh-token";
 import revokeCustomerToken from "@/api/repositories/endpoints/customer/revoke-token";
+import { AddressType } from "@/types/enum";
 
 const authRepository = {
   async login(
@@ -79,12 +79,16 @@ const authRepository = {
   },
 
   toMyCustomerDraft(input: InCustomer): MyCustomerDraft {
-    const addresses: InAddress[] = input.isSameAddress
-      ? [input.billingAddress]
-      : [input.billingAddress, input.shippingAddress];
+    const addresses = input.addresses;
 
-    const billingIndex = 0;
-    const shippingIndex = input.isSameAddress ? 0 : 1;
+    const defaultBillingIndex = findDefaultAddressIndex(
+      input,
+      AddressType.Billing,
+    );
+    const defaultShippingIndex = findDefaultAddressIndex(
+      input,
+      AddressType.Shipping,
+    );
 
     return {
       email: input.email,
@@ -93,21 +97,25 @@ const authRepository = {
       lastName: input.lastName,
       dateOfBirth: input.dateOfBirth,
       addresses,
-      defaultBillingAddress: input.setBillingAsDefault
-        ? billingIndex
-        : undefined,
-      defaultShippingAddress: input.setShippingAsDefault
-        ? shippingIndex
-        : undefined,
+      defaultBillingAddress:
+        defaultBillingIndex === -1 ? undefined : defaultBillingIndex,
+      defaultShippingAddress:
+        defaultShippingIndex === -1 ? undefined : defaultShippingIndex,
     };
   },
 
   toInternalCustomer(customer: Customer): InCustomer {
-    const findAddressById = (id?: string) =>
-      customer.addresses.find((addr) => addr.id === id);
-
-    const billing = findAddressById(customer.defaultBillingAddressId);
-    const shipping = findAddressById(customer.defaultShippingAddressId);
+    const addresses = customer.addresses.map((addr) => ({
+      id: addr.id,
+      key: addr.key,
+      streetName: addr.streetName,
+      streetNumber: addr.streetNumber,
+      postalCode: addr.postalCode,
+      city: addr.city,
+      country: addr.country,
+      isDefaultBilling: addr.id === customer.defaultBillingAddressId,
+      isDefaultShipping: addr.id === customer.defaultShippingAddressId,
+    })) as InAddress[];
 
     return {
       id: customer.id,
@@ -115,26 +123,7 @@ const authRepository = {
       firstName: customer.firstName ?? "",
       lastName: customer.lastName ?? "",
       dateOfBirth: customer.dateOfBirth ?? "",
-      billingAddress: {
-        id: billing?.id ?? "",
-        key: billing?.key ?? "",
-        streetName: billing?.streetName ?? "",
-        postalCode: billing?.postalCode ?? "",
-        city: billing?.city ?? "",
-        country: billing?.country ?? "",
-      },
-      shippingAddress: {
-        id: shipping?.id ?? "",
-        key: shipping?.key ?? "",
-        streetName: shipping?.streetName ?? "",
-        postalCode: shipping?.postalCode ?? "",
-        city: shipping?.city ?? "",
-        country: shipping?.country ?? "",
-      },
-      isSameAddress:
-        customer.defaultBillingAddressId === customer.defaultShippingAddressId,
-      setBillingAsDefault: Boolean(customer.defaultBillingAddressId),
-      setShippingAsDefault: Boolean(customer.defaultShippingAddressId),
+      addresses,
     };
   },
 };

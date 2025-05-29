@@ -23,7 +23,7 @@ export type CountryCodeMap = {
   [key in CountryCode]: string;
 };
 
-export type AdressTypeMap = {
+export type AddressTypeMap = {
   [key in AddressType]: string;
 };
 
@@ -42,3 +42,5 @@ export type FormFieldsMap = {
 export type FieldErrorType = { field: string; message: string };
 
 export type TokenKeys = "access_token" | "refresh_token";
+
+export type NavMenu = "header" | "main";

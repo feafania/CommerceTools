@@ -118,6 +118,8 @@ export interface InAddress {
   postalCode: string;
   city: string;
   country: string;
+  isDefaultBilling?: boolean;
+  isDefaultShipping?: boolean;
 }
 
 export interface InCustomer {
@@ -127,9 +129,5 @@ export interface InCustomer {
   firstName: string;
   lastName: string;
   dateOfBirth: string; // "YYYY-MM-DD"
-  billingAddress: InAddress;
-  shippingAddress: InAddress;
-  isSameAddress?: boolean;
-  setBillingAsDefault?: boolean;
-  setShippingAsDefault?: boolean;
+  addresses: InAddress[];
 }

@@ -1,4 +1,4 @@
-import { AdressTypeMap, CountryCodeMap } from "@/types/types";
+import { AddressTypeMap, CountryCodeMap } from "@/types/types";
 
 export interface AppTranslation {
   header: {
@@ -36,12 +36,12 @@ export interface AppTranslation {
     submit: string;
   };
   address: {
-    headers: AdressTypeMap;
+    headers: AddressTypeMap;
     country: string;
     city: string;
     street: string;
     postalCode: string;
-    default: AdressTypeMap;
+    default: AddressTypeMap;
     isSameAddress: string;
     countryNames: CountryCodeMap;
     placeholders: {
