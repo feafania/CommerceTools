@@ -4,30 +4,11 @@ import createInput from "@/components/input/input";
 import createSelect from "@/components/select/select";
 import { createLabel } from "@/components/label/label";
 import { getCountriesOptions } from "@/utils/helpers";
-
-const mockSettingsLabelAddress = {
-  headers: {
-    [AddressType.Billing]: "Mock Billing Header Text",
-    [AddressType.Shipping]: "Mock Shipping Header Text",
-  },
-  city: "Mock City Label",
-  street: "Mock Street Label",
-  postalCode: "Mock Postal Code Label",
-  country: "Mock Country Label",
-  countryNames: { UK: "United Kingdom", PL: "Poland" },
-  placeholders: {
-    country: "Mock Select Country Placeholder",
-  },
-  default: {
-    [AddressType.Billing]: "Mock Default Billing Checkbox Label",
-    [AddressType.Shipping]: "Mock Default Shipping Checkbox Label",
-  },
-};
-
-const mockCountryOptions = [
-  { value: "UK", label: "United Kingdom" },
-  { value: "PL", label: "Poland" },
-];
+import {
+  ADDRESS_CHILDRENS_NUMBER,
+  mockCountryOptions,
+  mockSettingsLabelAddress,
+} from "../__mocks__/address.mock";
 
 const mockSelectElement = document.createElement("select");
 const mockCreateSelectResult = document.createElement("div");
@@ -119,7 +100,7 @@ describe("AddressElement", () => {
 
       expect(element).toBeInstanceOf(HTMLDivElement);
       expect(element.className).toBe("address-block");
-      expect(element.id).toBe(`${AddressType.Billing}-address`);
+      expect(element.id).toBe(`address-${AddressType.Billing}`);
       expect(addressElement.name).toBe(AddressType.Billing);
     });
 
@@ -128,7 +109,7 @@ describe("AddressElement", () => {
       const element = addressElement.element;
 
       expect(element.className).toBe("address-block");
-      expect(element.id).toBe(`${AddressType.Shipping}-address`);
+      expect(element.id).toBe(`address-${AddressType.Shipping}`);
       expect(addressElement.name).toBe(AddressType.Shipping);
     });
   });
@@ -176,16 +157,16 @@ describe("AddressElement", () => {
       const checkbox = checkboxWrapper.querySelector('input[type="checkbox"]');
       expect(checkbox).toBeInstanceOf(HTMLInputElement);
       expect((checkbox as HTMLInputElement).name).toBe(
-        `default-${AddressType.Billing}-address`,
+        `default-shipping-address-${AddressType.Billing}`,
       );
       expect((checkbox as HTMLInputElement).id).toBe(
-        `default-${AddressType.Billing}-address`,
+        `default-shipping-address-${AddressType.Billing}`,
       );
 
       expect(createLabel).toHaveBeenCalledWith(
         expect.objectContaining({
           label: mockSettingsLabelAddress.default[AddressType.Billing],
-          id: `default-${AddressType.Billing}-address`,
+          id: `default-billing-address-${AddressType.Billing}`,
         }),
       );
       expect(checkboxWrapper.querySelector(".mock-label")).not.toBeNull();
@@ -205,16 +186,16 @@ describe("AddressElement", () => {
       const checkbox = checkboxWrapper.querySelector('input[type="checkbox"]');
       expect(checkbox).toBeInstanceOf(HTMLInputElement);
       expect((checkbox as HTMLInputElement).name).toBe(
-        `default-${AddressType.Shipping}-address`,
+        `default-shipping-address-${AddressType.Shipping}`,
       );
       expect((checkbox as HTMLInputElement).id).toBe(
-        `default-${AddressType.Shipping}-address`,
+        `default-shipping-address-${AddressType.Shipping}`,
       );
 
       expect(createLabel).toHaveBeenCalledWith(
         expect.objectContaining({
           label: mockSettingsLabelAddress.default[AddressType.Shipping],
-          id: `default-${AddressType.Shipping}-address`,
+          id: `default-shipping-address-${AddressType.Shipping}`,
         }),
       );
       expect(checkboxWrapper.querySelector(".mock-label")).not.toBeNull();
@@ -238,7 +219,7 @@ describe("AddressElement", () => {
       addressElement.render();
 
       const children = [...addressElement.element.childNodes];
-      expect(children.length).toBe(6);
+      expect(children.length).toBe(ADDRESS_CHILDRENS_NUMBER);
 
       expect(
         (children[0] as HTMLElement).classList.contains("address-header"),
@@ -266,13 +247,13 @@ describe("AddressElement", () => {
 
       expect(createInput).toHaveBeenCalledTimes(3);
       expect(createInput).toHaveBeenCalledWith(
-        expect.objectContaining({ name: `${AddressType.Billing}-city` }),
+        expect.objectContaining({ name: `city-${AddressType.Billing}` }),
       );
       expect(createInput).toHaveBeenCalledWith(
-        expect.objectContaining({ name: `${AddressType.Billing}-street` }),
+        expect.objectContaining({ name: `street-${AddressType.Billing}` }),
       );
       expect(createInput).toHaveBeenCalledWith(
-        expect.objectContaining({ name: `${AddressType.Billing}-postalcode` }),
+        expect.objectContaining({ name: `postalcode-${AddressType.Billing}` }),
       );
 
       expect(createLabel).toHaveBeenCalled();
@@ -304,7 +285,7 @@ describe("AddressElement", () => {
         );
         newCountrySelectInput.dispatchEvent(new Event("change"));
         expect(postalInputQuerySelectorSpy).toHaveBeenCalledWith(
-          `#${AddressType.Billing}-postalcode`,
+          `#postalcode-${AddressType.Billing}`,
         );
       }
     });
