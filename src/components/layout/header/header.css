@@ -32,6 +32,12 @@
   cursor: default;
 }
 
+.nav-link.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .header-username {
   font-weight: bold;
   font-size: 2rem;

@@ -30,11 +30,12 @@ const PageRouter = {
     }
 
     this.currentPage = page;
-    await renderPage(page);
 
     if (!routes[page]?.canActivate()) {
-      setTimeout(() => PageRouter.navigateTo(PageType.main), 70);
+      page = PageType.main;
+      PageRouter.navigateTo(PageType.main);
     }
+    await renderPage(page);
   },
 
   navigateTo(path: PageType) {

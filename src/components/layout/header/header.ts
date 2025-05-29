@@ -87,7 +87,7 @@ const Header = {
     const ul = document.createElement("ul");
     ul.className = "nav-list";
 
-    for (const { label, page, visible } of this.getNavLinks(type)) {
+    for (const { label, page, visible, disabled } of this.getNavLinks(type)) {
       if (!visible) continue;
 
       const li = document.createElement("li");
@@ -95,12 +95,17 @@ const Header = {
       link.textContent = label;
       link.href = "javascript:void(0)";
       link.className = "nav-link";
+      if (disabled) {
+        link.classList.add("disabled");
+      }
 
       const isCurrent = PageRouter.currentPage === page;
       if (isCurrent) {
         link.classList.add("active");
       } else {
-        link.addEventListener("click", this.onClick(label, page));
+        if (!disabled) {
+          link.addEventListener("click", this.onClick(label, page));
+        }
       }
 
       li.append(link);
@@ -119,19 +124,26 @@ const Header = {
     const t = SETTINGS.label.nav;
 
     return [
-      { label: t.main, page: PageType.main, visible: true },
+      { label: t.main, page: PageType.main, visible: true, disabled: false },
       {
         label: t.signIn,
         page: PageType.login,
         visible: !isLoggedIn || type === "main",
+        disabled: isLoggedIn,
       },
       {
         label: t.registration,
         page: PageType.registration,
         visible: !isLoggedIn || type === "main",
+        disabled: isLoggedIn,
       },
-      { label: t.about, page: PageType.about, visible: false },
-      { label: t.signOut, page: PageType.notfound, visible: isLoggedIn },
+      { label: t.about, page: PageType.about, visible: false, disabled: true },
+      {
+        label: t.signOut,
+        page: PageType.notfound,
+        visible: isLoggedIn,
+        disabled: !isLoggedIn,
+      },
     ];
   },
 

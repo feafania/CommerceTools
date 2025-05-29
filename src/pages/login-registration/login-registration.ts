@@ -237,7 +237,6 @@ const LoginRegistrationView = {
     const password = formData.get("password") as string;
 
     const customer = this.setCustomer(formData);
-    console.log(customer);
     const user = await AuthService.register(customer);
     if (user && isInCustomer(user)) {
       const response = await AuthService.login(email, password);

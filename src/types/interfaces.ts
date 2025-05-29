@@ -36,6 +36,7 @@ export interface NavType {
   label: string;
   page: PageType;
   visible: boolean;
+  disabled: boolean;
 }
 
 export interface ModalOptions {
