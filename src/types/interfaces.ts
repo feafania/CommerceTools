@@ -36,6 +36,7 @@ export interface NavType {
   label: string;
   page: PageType;
   visible: boolean;
+  disabled: boolean;
 }
 
 export interface ModalOptions {
@@ -48,7 +49,7 @@ export interface ValidationRule {
   pattern?: RegExp;
   isValid?: (value: string | CountryValueType) => boolean;
   message?: string;
-  getValidationMessage?: (code: CountryCode) => string;
+  getValidationMessage?: (code: CountryCode | undefined) => string;
 }
 
 export interface TokenType {
@@ -118,6 +119,8 @@ export interface InAddress {
   postalCode: string;
   city: string;
   country: string;
+  isDefaultBilling?: boolean;
+  isDefaultShipping?: boolean;
 }
 
 export interface InCustomer {
@@ -127,9 +130,5 @@ export interface InCustomer {
   firstName: string;
   lastName: string;
   dateOfBirth: string; // "YYYY-MM-DD"
-  billingAddress: InAddress;
-  shippingAddress: InAddress;
-  isSameAddress?: boolean;
-  setBillingAsDefault?: boolean;
-  setShippingAsDefault?: boolean;
+  addresses: InAddress[];
 }

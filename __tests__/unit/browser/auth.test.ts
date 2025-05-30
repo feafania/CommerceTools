@@ -1,4 +1,9 @@
 import { SETTINGS } from "@/config/settings";
+import { ApiError } from "@/api/handle-api-error";
+import showModalMessage from "@/components/modal-window/modal-window";
+import authRepository from "@/api/repositories/auth-repository";
+import authService from "@/api/services/auth-service";
+import authStore from "@/stores/auth-store";
 
 jest.mock("@/api/repositories/api-client", () => ({
   __esModule: true,
@@ -28,12 +33,6 @@ jest.mock("@/components/modal-window/modal-window", () => ({
   __esModule: true,
   default: jest.fn(), // mock showModalMessage as jest.fn()
 }));
-
-import { ApiError } from "@/api/handle-api-error";
-import showModalMessage from "@/components/modal-window/modal-window";
-import authRepository from "@/api/repositories/auth-repository";
-import authService from "@/api/services/auth-service";
-import authStore from "@/stores/auth-store";
 
 describe("authServiceLogin", () => {
   beforeEach(() => {
@@ -74,19 +73,17 @@ describe("authServiceLogin", () => {
         firstName: "Test",
         lastName: "User",
         dateOfBirth: "2000-01-01",
-        billingAddress: {
-          streetName: "Main St",
-          postalCode: "12345",
-          city: "London",
-          country: "GB",
-        },
-        shippingAddress: {
-          streetName: "Main St",
-          postalCode: "12345",
-          city: "London",
-          country: "GB",
-        },
-        isSameAddress: true,
+        addresses: [
+          {
+            streetName: "Main St",
+            postalCode: "12345",
+            city: "London",
+            country: "GB",
+            isDefaultBilling: true,
+            isDefaultShipping: true,
+            key: "billing-shipping-address",
+          },
+        ],
       });
 
       expect(showModalMessage).toHaveBeenCalled();

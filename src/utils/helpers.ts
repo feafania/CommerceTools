@@ -1,7 +1,12 @@
 import { SETTINGS } from "@/config/settings";
 import { CountryCodeMap, LanguageCode } from "@/types/types";
-import { SelectType, StorageItem } from "@/types/interfaces";
-import { CountryCode } from "@/types/enum";
+import {
+  InAddress,
+  InCustomer,
+  SelectType,
+  StorageItem,
+} from "@/types/interfaces";
+import { AddressType, CountryCode } from "@/types/enum";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -113,4 +118,32 @@ export function formatDateForCommercetools(inputDate: string | null): string {
 export function calculateTokenExpiry(expiresIn: number): string {
   const expiryTimestamp = Date.now() + expiresIn * 1000;
   return new Date(expiryTimestamp).toISOString();
+}
+
+export function findDefaultAddress(
+  addresses: InAddress[],
+  addressType: AddressType,
+): InAddress | undefined {
+  if (addressType === "billing") {
+    return addresses.find((address) => address.isDefaultBilling);
+  } else if (addressType === "shipping") {
+    return addresses.find((address) => address.isDefaultShipping);
+  }
+
+  return undefined;
+}
+
+export function findDefaultAddressIndex(
+  customer: InCustomer,
+  addressType: AddressType,
+): number | undefined {
+  if (!customer) return undefined;
+
+  if (addressType === "billing") {
+    return customer.addresses.findIndex((address) => address.isDefaultBilling);
+  } else if (addressType === "shipping") {
+    return customer.addresses.findIndex((address) => address.isDefaultShipping);
+  }
+
+  return undefined;
 }

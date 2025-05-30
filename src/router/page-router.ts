@@ -1,9 +1,8 @@
 import { PageType } from "@/types/enum";
-import routes from "@/config/routes";
 import { DEFAULT_PAGE, NOT_FOUND_PAGE } from "@/config/constants";
 import { isValidPageType } from "@/utils/validation";
-import authStore from "@/stores/auth-store";
-import Header from "@/components/layout/header/header";
+import { renderPage } from "@/utils/page-render";
+import routes from "@/config/routes";
 
 const PageRouter = {
   currentPage: PageType.main as PageType,
@@ -31,24 +30,12 @@ const PageRouter = {
     }
 
     this.currentPage = page;
-    const render = routes[page]?.render;
-    if (render) {
-      const element = await render();
-      const container = document.querySelector("#view-container");
-      if (container) {
-        container.innerHTML = "";
-        container.append(element);
-      }
-    }
 
-    Header.renderNav();
-
-    if (
-      (PageType.login === page || PageType.registration === page) &&
-      Boolean(authStore.user)
-    ) {
-      setTimeout(() => PageRouter.navigateTo(PageType.main), 100);
+    if (!routes[page]?.canActivate()) {
+      page = PageType.main;
+      PageRouter.navigateTo(PageType.main);
     }
+    await renderPage(page);
   },
 
   navigateTo(path: PageType) {
