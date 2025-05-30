@@ -1,4 +1,4 @@
-import { TokenResponse } from "@/types/interfaces";
+import { TokenResponse } from "@/types/api-types";
 import { handleApiError } from "@/api/handle-api-error";
 
 export default async function getCustomerToken(
@@ -15,17 +15,18 @@ export default async function getCustomerToken(
   const basicAuth = isBrowser
     ? btoa(credentials)
     : Buffer.from(credentials).toString("base64");
-  const scope = [
+  const scopes = [
     `manage_my_orders:${projectKey}`,
     `manage_my_profile:${projectKey}`,
     `view_published_products:${projectKey}`,
+    `manage_my_shopping_lists:${projectKey}`,
   ].join(" ");
 
   const body = new URLSearchParams({
     ["grant_type"]: "password",
     username: email,
     password,
-    scope,
+    scope: scopes,
   });
 
   try {
@@ -42,9 +43,14 @@ export default async function getCustomerToken(
     );
 
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
       const errorText = await response.text();
       console.error("Token request failed:", errorText);
-      handleApiError(new Error(`Token request failed: ${response.status}`));
+      handleApiError(
+        new Error(
+          `Token request failed: ${response.status} ${JSON.stringify(errorData)}`,
+        ),
+      );
     }
 
     return (await response.json()) as TokenResponse;

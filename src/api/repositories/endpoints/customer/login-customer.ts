@@ -1,13 +1,20 @@
 import { CustomerSignInResult } from "@commercetools/platform-sdk";
+import { createApiBuilderFromCtpClient } from "@commercetools/platform-sdk";
 
-import apiRoot from "@/api/repositories/api-client";
 import { handleApiError } from "@/api/handle-api-error";
+import { createPasswordClient } from "@/api/repositories/build-client";
 
 export default async function loginCustomer(
   email: string,
   password: string,
 ): Promise<CustomerSignInResult> {
   try {
+    // Ствараем кліент з паролем
+    const client = createPasswordClient(email, password);
+    const apiRoot = createApiBuilderFromCtpClient(client).withProjectKey({
+      projectKey: process.env.CTP_PROJECT_KEY!,
+    });
+
     const response = await apiRoot
       .me()
       .login()

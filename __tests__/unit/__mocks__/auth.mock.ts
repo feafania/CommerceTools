@@ -3,7 +3,7 @@ import { CustomerSignInResult, Customer } from "@commercetools/platform-sdk";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
 import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
-import { TokenResponse, TokenType } from "@/types/interfaces";
+import { TokenResponse, TokenType } from "@/types/api-types";
 import revokeCustomerToken from "@/api/repositories/endpoints/customer/revoke-token";
 
 // Mocked functions

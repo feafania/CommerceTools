@@ -15,10 +15,10 @@ export default {
     : ["html", "text-summary"],
   coverageThreshold: {
     global: {
-      statements: 25,
-      branches: 25,
-      functions: 25,
-      lines: 25,
+      statements: 30,
+      branches: 30,
+      functions: 30,
+      lines: 30,
     },
   },
   collectCoverageFrom: [
@@ -54,6 +54,7 @@ export default {
       testMatch: ["**/__tests__/integration/**/*.[jt]s?(x)"],
       setupFiles: ["<rootDir>/jest.setup.ts"],
       moduleNameMapper: commonModuleNameMapper,
+      testPathIgnorePatterns: ["integration.mock.ts"],
     },
   ],
 };

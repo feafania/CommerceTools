@@ -52,18 +52,6 @@ export interface ValidationRule {
   getValidationMessage?: (code: CountryCode | undefined) => string;
 }
 
-export interface TokenType {
-  access_token: string;
-  token_expires_in: string;
-  refresh_token: string;
-}
-
-export interface TokenResponse extends Omit<TokenType, "token_expires_in"> {
-  expires_in: number;
-  scope: string;
-  token_type: "Bearer";
-}
-
 export interface CTErrorObject {
   code: string;
   message: string;
@@ -124,6 +112,7 @@ export interface InAddress {
 }
 
 export interface InCustomer {
+  version?: number;
   id?: string;
   email: string;
   password?: string;

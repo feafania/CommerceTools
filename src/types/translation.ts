@@ -97,10 +97,13 @@ export interface AppTranslation {
     logout: string;
     registration: string;
     categories: string;
+    updateCustomer: string;
+    token: string;
   };
   messages: {
     onSignIn: string;
     onSignUp: string;
     onSignOut: string;
+    nothingToUpdate: string;
   };
 }

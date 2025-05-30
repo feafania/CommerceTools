@@ -5,14 +5,12 @@ import getCategoryByKey from "@/api/repositories/endpoints/product/get-category-
 import { InCategory } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
 
-const fallbackLang = "en";
-
 const productRepository = {
   async getCategories(locale = SETTINGS.currentLang): Promise<InCategory[]> {
     try {
       const response = await getCategories();
       if (response) {
-        return response.body.results.map((category) =>
+        return response.results.map((category) =>
           this.mapCategoryToInternal(category, locale),
         );
       }
@@ -24,12 +22,13 @@ const productRepository = {
   async getCategoryByKey(
     key: string,
     locale = SETTINGS.currentLang,
-  ): Promise<InCategory | undefined> {
+  ): Promise<InCategory> {
     try {
       const response = await getCategoryByKey(key);
-      if (response) {
-        return this.mapCategoryToInternal(response.body, locale);
+      if (!response) {
+        throw new Error(`Category with key "${key}" not found.`);
       }
+      return this.mapCategoryToInternal(response, locale);
     } catch (error) {
       throw error;
     }
@@ -42,9 +41,12 @@ const productRepository = {
     return {
       id: asset.id,
       key: asset.key,
-      name: asset.name?.[locale] ?? asset.name?.[fallbackLang] ?? "",
+      name:
+        asset.name?.[locale] ?? asset.name?.[SETTINGS.fallbackLanguage] ?? "",
       description:
-        asset.description?.[locale] ?? asset.description?.[fallbackLang],
+        asset.description?.[locale] ??
+        asset.description?.[SETTINGS.fallbackLanguage] ??
+        "",
       sources: asset.sources.map((source) => ({
         key: source.key,
         uri: source.uri,
@@ -61,9 +63,13 @@ const productRepository = {
     return {
       id: category.id,
       key: category.key,
-      name: category.name?.[locale] ?? category.name?.[fallbackLang] ?? "",
+      name:
+        category.name?.[locale] ??
+        category.name?.[SETTINGS.fallbackLanguage] ??
+        "",
       description:
-        category.description?.[locale] ?? category.description?.[fallbackLang],
+        category.description?.[locale] ??
+        category.description?.[SETTINGS.fallbackLanguage],
       assets:
         category.assets?.map((asset) => this.mapAsset(asset, locale)) ?? [],
     };

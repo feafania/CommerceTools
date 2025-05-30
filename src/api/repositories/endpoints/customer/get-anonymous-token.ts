@@ -1,4 +1,4 @@
-import { TokenResponse } from "@/types/interfaces";
+import { TokenResponse } from "@/types/api-types";
 import { handleApiError } from "@/api/handle-api-error";
 
 export default async function getCustomerToken(): Promise<
@@ -34,10 +34,13 @@ export default async function getCustomerToken(): Promise<
     );
 
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
       const errorText = await response.text();
       console.error("Anonymous token request failed:", errorText);
       handleApiError(
-        new Error(`Anonymous token request failed: ${response.status}`),
+        new Error(
+          `Anonymous token request failed: ${response.status} ${JSON.stringify(errorData)}`,
+        ),
       );
     }
 

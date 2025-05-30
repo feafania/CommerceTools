@@ -131,11 +131,14 @@ const pl: AppTranslation = {
       "Wylogowanie nie powiodło się. Być może już zostałeś wylogowany. Spróbuj ponownie.",
     registration: "Rejestracja nie powiodła się.",
     categories: "Nie udało się załadować kategorii.",
+    updateCustomer: "Nie udało się zaktualizować informacji o kliencie.",
+    token: "Nie udało się zdobyć tokena.",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",
     onSignUp: "Twoje konto zostało utworzone.",
     onSignOut: "Zostałeś wylogowany.",
+    nothingToUpdate: "Brak zmian. Twój profil jest już aktualny.",
   },
 };
 

@@ -5,30 +5,6 @@ import authRepository from "@/api/repositories/auth-repository";
 import authService from "@/api/services/auth-service";
 import authStore from "@/stores/auth-store";
 
-jest.mock("@/api/repositories/api-client", () => ({
-  __esModule: true,
-  default: {
-    me: () => ({
-      signup: () => ({
-        post: () => ({
-          execute: jest.fn().mockResolvedValue({
-            body: { customer: { id: "123", email: "test@example.com" } },
-          }),
-        }),
-      }),
-      login: () => ({
-        post: () => ({
-          execute: jest.fn().mockResolvedValue({
-            body: {
-              customer: { id: "456", email: "login@example.com" },
-              cart: {},
-            },
-          }),
-        }),
-      }),
-    }),
-  },
-}));
 jest.mock("@/components/modal-window/modal-window", () => ({
   __esModule: true,
   default: jest.fn(), // mock showModalMessage as jest.fn()

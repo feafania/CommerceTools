@@ -147,3 +147,37 @@ export function findDefaultAddressIndex(
 
   return undefined;
 }
+
+export function deepEqual(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+
+  if (typeof a !== typeof b) return false;
+
+  if (a === null || b === null) return false;
+
+  if (typeof a !== "object") return false;
+  if (typeof b !== "object") return false;
+
+  // Arrays
+  if (Array.isArray(a)) {
+    if (!Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    return a.every((item, index) => deepEqual(item, b[index]));
+  }
+
+  // Objects
+  const objectA = a as Record<string, unknown>;
+  const objectB = b as Record<string, unknown>;
+
+  const aKeys = Object.keys(objectA);
+  const bKeys = Object.keys(objectB);
+
+  if (aKeys.length !== bKeys.length) return false;
+
+  for (const key of aKeys) {
+    if (!(key in objectB)) return false;
+    if (!deepEqual(objectA[key], objectB[key])) return false;
+  }
+
+  return true;
+}

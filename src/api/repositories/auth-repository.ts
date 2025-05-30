@@ -1,7 +1,6 @@
 import { Customer, MyCustomerDraft } from "@commercetools/platform-sdk";
 
-import { InAddress, InCustomer, TokenType } from "@/types/interfaces";
-import { TokenKeys } from "@/types/types";
+import { InAddress, InCustomer } from "@/types/interfaces";
 import { calculateTokenExpiry, findDefaultAddressIndex } from "@/utils/helpers";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
@@ -9,6 +8,7 @@ import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer
 import refreshCustomerToken from "@/api/repositories/endpoints/customer/refresh-token";
 import revokeCustomerToken from "@/api/repositories/endpoints/customer/revoke-token";
 import { AddressType } from "@/types/enum";
+import { TokenKeys, TokenType } from "@/types/api-types";
 
 const authRepository = {
   async login(
@@ -20,7 +20,7 @@ const authRepository = {
       const tokenData = await getCustomerToken(email, password);
 
       if (response && tokenData?.access_token) {
-        const customer = this.toInternalCustomer(response.customer);
+        const customer = this.toInternalCustomer(response.customer, password);
         return {
           customer,
           token: {
@@ -41,7 +41,7 @@ const authRepository = {
       const response = await registerCustomer(draft);
       if (response) {
         const customer = response.customer;
-        return this.toInternalCustomer(customer);
+        return this.toInternalCustomer(customer, data.password);
       }
     } catch (error) {
       throw error;
@@ -103,10 +103,14 @@ const authRepository = {
     };
   },
 
-  toInternalCustomer(customer: Customer): InCustomer {
+  toInternalCustomer(
+    customer: Customer,
+    password: string | undefined,
+  ): InCustomer {
     const addresses = customer.addresses.map((addr) => ({
       id: addr.id,
       key: addr.key,
+      password,
       streetName: addr.streetName,
       streetNumber: addr.streetNumber,
       postalCode: addr.postalCode,
@@ -117,6 +121,7 @@ const authRepository = {
     })) as InAddress[];
 
     return {
+      version: customer.version,
       id: customer.id,
       email: customer.email,
       firstName: customer.firstName ?? "",

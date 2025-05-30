@@ -1,4 +1,7 @@
-import { Category } from "@commercetools/platform-sdk";
+import {
+  Category,
+  CategoryPagedQueryResponse,
+} from "@commercetools/platform-sdk";
 
 import getCategories from "@/api/repositories/endpoints/product/get-categories";
 import getCategoryByKey from "@/api/repositories/endpoints/product/get-category-by-key";
@@ -51,18 +54,14 @@ export const setOfCategories: Category[] = [
   },
 ];
 
-export const categoriesApiResponse = {
-  body: {
-    limit: 20,
-    offset: 0,
-    count: 2,
-    total: 2,
-    results: [...setOfCategories],
-  },
-} as Awaited<ReturnType<typeof getCategories>>;
+export const categoriesApiResponse: CategoryPagedQueryResponse = {
+  limit: 20,
+  offset: 0,
+  count: 2,
+  total: 2,
+  results: [...setOfCategories],
+};
 
-export const CategoryByKeyApiResponse = {
-  body: {
-    ...setOfCategories[0],
-  },
-} as Awaited<ReturnType<typeof getCategoryByKey>>;
+export const CategoryByKeyApiResponse: Category = {
+  ...setOfCategories[0],
+};

@@ -127,11 +127,14 @@ const en: AppTranslation = {
     logout: "Logout failed. You may already be logged out. Please try again.",
     registration: "Registration failed.",
     categories: "Failed to load categories.",
+    updateCustomer: "Failed to update customer information.",
+    token: "Failed to get token.",
   },
   messages: {
     onSignIn: "You have successfully signed in.",
     onSignUp: "Your account has been created.",
     onSignOut: "You have been signed out.",
+    nothingToUpdate: "No changes detected. Your profile is already up to date.",
   },
 };
 

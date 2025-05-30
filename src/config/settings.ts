@@ -11,6 +11,7 @@ export const SETTINGS = {
   get label() {
     return translations[this.currentLang];
   },
+  fallbackLanguage: defaultLang,
   setLang(lang: LanguageCode) {
     this.currentLang = lang;
     saveLocalState({

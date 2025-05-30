@@ -17,12 +17,13 @@ class AuthService {
       if (!result) return;
 
       const { customer, token } = result;
-      console.log(customer);
       authStore.setUser(customer, token);
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
-        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
+        showModalMessage(
+          `${SETTINGS.label.errors.updateCustomer}\n${error.message}`,
+        );
         return error.invalidFields;
       }
     }
@@ -75,7 +76,7 @@ class AuthService {
       }
     } catch (error) {
       if (error instanceof ApiError) {
-        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
+        showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
         return error.invalidFields;
       }
     }

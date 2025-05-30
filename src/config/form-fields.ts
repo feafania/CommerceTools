@@ -53,56 +53,56 @@ export const FORM_FIELDS: FormFieldsMap = {
       validation: VALIDATION.dateOfBirth,
     },
     {
-      name: "billing-country",
+      name: "country-billing",
       get label() {
         return SETTINGS.label.address.country;
       },
       validation: VALIDATION.country,
     },
     {
-      name: "billing-city",
+      name: "city-billing",
       get label() {
         return SETTINGS.label.address.city;
       },
       validation: VALIDATION.city,
     },
     {
-      name: "billing-street",
+      name: "street-billing",
       get label() {
         return SETTINGS.label.address.street;
       },
       validation: VALIDATION.street,
     },
     {
-      name: "billing-postalcode",
+      name: "postalcode-billing",
       get label() {
         return SETTINGS.label.address.postalCode;
       },
       validation: VALIDATION.postalCode,
     },
     {
-      name: "shipping-country",
+      name: "country-shipping",
       get label() {
         return SETTINGS.label.address.country;
       },
       validation: VALIDATION.country,
     },
     {
-      name: "shipping-city",
+      name: "city-shipping",
       get label() {
         return SETTINGS.label.address.city;
       },
       validation: VALIDATION.city,
     },
     {
-      name: "shipping-street",
+      name: "street-shipping",
       get label() {
         return SETTINGS.label.address.street;
       },
       validation: VALIDATION.street,
     },
     {
-      name: "shipping-postalcode",
+      name: "postalcode-shipping",
       get label() {
         return SETTINGS.label.address.postalCode;
       },

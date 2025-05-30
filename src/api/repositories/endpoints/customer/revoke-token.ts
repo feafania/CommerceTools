@@ -1,5 +1,5 @@
 import { handleApiError } from "@/api/handle-api-error";
-import { TokenKeys } from "@/types/types";
+import { TokenKeys } from "@/types/api-types";
 
 export default async function revokeCustomerToken(
   token: string,

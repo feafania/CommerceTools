@@ -1,4 +1,4 @@
-import { TokenResponse } from "@/types/interfaces";
+import { TokenResponse } from "@/types/api-types";
 import { handleApiError } from "@/api/handle-api-error";
 
 export default async function refreshCustomerToken(
@@ -34,7 +34,10 @@ export default async function refreshCustomerToken(
     );
 
     if (!response.ok) {
-      throw new Error(`Token refresh failed: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        `Token refresh failed: ${response.status} ${JSON.stringify(errorData)}`,
+      );
     }
 
     return (await response.json()) as TokenResponse;

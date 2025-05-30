@@ -3,13 +3,19 @@ import { InCategory } from "@/types/interfaces";
 
 class ProductService {
   async getCategories(): Promise<InCategory[]> {
-    const categories = await productRepository.getCategories();
-    return categories;
+    try {
+      const categories = await productRepository.getCategories();
+      return categories;
+    } catch {
+      return [] as InCategory[];
+    }
   }
 
   async getCategoryByKey(key: string): Promise<InCategory | undefined> {
-    const category = await productRepository.getCategoryByKey(key);
-    return category;
+    try {
+      const category = await productRepository.getCategoryByKey(key);
+      return category;
+    } catch {}
   }
 }
 

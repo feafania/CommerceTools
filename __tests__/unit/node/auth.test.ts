@@ -18,7 +18,10 @@ jest.mock("@/api/repositories/endpoints/customer/login-customer");
 jest.mock("@/api/repositories/endpoints/customer/get-customer-token");
 jest.mock("@/api/repositories/endpoints/customer/revoke-token");
 
-const inMockCustomer = authRepository.toInternalCustomer(mockCustomer);
+const inMockCustomer = authRepository.toInternalCustomer(
+  mockCustomer,
+  mockCustomer.password,
+);
 
 describe("authRepository", () => {
   beforeEach(() => {
@@ -39,7 +42,10 @@ describe("authRepository", () => {
         authRepository.toMyCustomerDraft(inMockCustomer),
       );
       expect(result).toEqual(
-        authRepository.toInternalCustomer(registerResponse.customer),
+        authRepository.toInternalCustomer(
+          registerResponse.customer,
+          registerResponse.customer.password,
+        ),
       );
     });
 
@@ -72,7 +78,10 @@ describe("authRepository", () => {
       expect(result).toHaveProperty("token");
 
       expect(result?.customer).toEqual(
-        authRepository.toInternalCustomer(loginResponse.customer),
+        authRepository.toInternalCustomer(
+          loginResponse.customer,
+          loginResponse.customer.password,
+        ),
       );
       expect(result?.token).toStrictEqual(token);
     });
