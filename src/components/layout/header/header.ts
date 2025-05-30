@@ -144,6 +144,10 @@ const Header = {
         visible: isLoggedIn,
         disabled: !isLoggedIn,
       },
+
+      { label: t.about, page: PageType.about, visible: false },
+      { label: t.signOut, page: PageType.notfound, visible: isLoggedIn },
+      { label: t.userProfile, page: PageType.profile, visible: isLoggedIn },
     ];
   },
 
