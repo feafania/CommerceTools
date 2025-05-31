@@ -1,0 +1,41 @@
+.user-profile-view {
+  max-width: none !important;
+}
+
+.form-group-container {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+#enable-editing-button {
+  margin: 10px 0 30px;
+}
+
+input:disabled {
+  opacity: 0.5;
+}
+
+#password-form {
+  margin-top: 50px;
+}
+
+.address-block {
+  box-shadow: none;
+  background: none;
+  padding: 30px 0px;
+}
+
+.add-address-button {
+  margin: auto;
+  display: flex;
+}
+
+.address-controls {
+  display: flex;
+  gap: 20px;
+}
+
+.address-block .address-header {
+  display: none;
+}
