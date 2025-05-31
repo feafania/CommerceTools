@@ -145,9 +145,19 @@ const Header = {
         disabled: !isLoggedIn,
       },
 
-      { label: t.about, page: PageType.about, visible: false },
-      { label: t.signOut, page: PageType.notfound, visible: isLoggedIn },
-      { label: t.userProfile, page: PageType.profile, visible: isLoggedIn },
+      { label: t.about, page: PageType.about, visible: false, disabled: false },
+      {
+        label: t.signOut,
+        page: PageType.notfound,
+        visible: isLoggedIn,
+        disabled: false,
+      },
+      {
+        label: t.userProfile,
+        page: PageType.profile,
+        visible: isLoggedIn,
+        disabled: false,
+      },
     ];
   },
 
