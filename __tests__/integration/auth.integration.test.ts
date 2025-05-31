@@ -1,10 +1,13 @@
-import { testDraft, testLoginDraft } from "./__mocks__/integration.mock";
+import { getTestDraft, testLoginDraft } from "./__mocks__/integration.mock";
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
-import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
+import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
+import getMe from "@/api/repositories/endpoints/customer/get-me";
 
 describe("Auth Integration", () => {
+  const testDraft = getTestDraft();
+
   it("should register a new customer successfully", async () => {
     const testRegisterDraft = testDraft;
     const result = await registerCustomer(testRegisterDraft);
@@ -42,5 +45,19 @@ describe("Auth Integration", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }
+  });
+
+  it("should fetch the current customer using access token", async () => {
+    const tokenResponse = await getCustomerToken(
+      testLoginDraft.email,
+      testLoginDraft.password,
+    );
+
+    expect(tokenResponse?.access_token).toBeDefined();
+
+    const me = await getMe(tokenResponse!.access_token);
+
+    expect(me).toBeDefined();
+    expect(me.email).toBe(testLoginDraft.email);
   });
 });

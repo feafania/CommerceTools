@@ -103,7 +103,28 @@ class AuthService {
       console.error("Token revocation failed:", error);
       return false;
     }
-    return false;
+  }
+
+  async getMe(): Promise<InCustomer | undefined> {
+    try {
+      if (!tokenStore || !tokenStore.accessToken) return;
+
+      const customer = await authRepository.getMe(tokenStore.accessToken);
+      if (customer) {
+        customer.password = authStore.user?.password;
+        authStore.setUser(customer);
+      }
+      return customer;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showModalMessage(
+          `${SETTINGS.label.errors.getCurrentUser}\n${error.message}`,
+        );
+      } else {
+        console.error("Get current user failed:", error);
+      }
+      return undefined;
+    }
   }
 }
 

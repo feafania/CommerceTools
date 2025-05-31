@@ -4,6 +4,8 @@ import { InAddress, InCustomer } from "@/types/interfaces";
 import { CustomerActionType } from "@/types/api-types";
 import { deepEqual } from "@/utils/helpers";
 import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
+import { changeCustomerPassword } from "@/api/repositories/endpoints/customer/change-password";
+import authRepository from "@/api/repositories/auth-repository";
 
 export const customerRepository = {
   async update(
@@ -20,12 +22,34 @@ export const customerRepository = {
       if (actions.length === 0) {
         return undefined;
       }
-      const response = await updateCustomer(version, actions, token);
-      if (response) {
-        return this.updateCustomer(oldCustomer, response);
+      const updatedCustomer = await updateCustomer(version, actions, token);
+      if (updatedCustomer) {
+        return this.updateCustomer(oldCustomer, updatedCustomer);
       }
     } catch (error) {
       console.error("Customer update failed:", error);
+      throw error;
+    }
+  },
+
+  async changePassword(
+    version: number,
+    currentPassword: string,
+    newPassword: string,
+    token: string,
+  ): Promise<InCustomer | undefined> {
+    try {
+      const customer = await changeCustomerPassword(
+        version,
+        currentPassword,
+        newPassword,
+        token,
+      );
+
+      if (customer) {
+        return authRepository.toInternalCustomer(customer, newPassword);
+      }
+    } catch (error) {
       throw error;
     }
   },
@@ -174,17 +198,17 @@ export const customerRepository = {
     });
   },
 
-  updateCustomer(oldCustomer: InCustomer, response: Customer): InCustomer {
+  updateCustomer(oldCustomer: InCustomer, newCustomer: Customer): InCustomer {
     return {
-      version: response.version,
-      id: response.id,
-      email: response.email,
+      version: newCustomer.version,
+      id: newCustomer.id,
+      email: newCustomer.email,
       password: oldCustomer.password,
-      firstName: response.firstName ?? "",
-      lastName: response.lastName ?? "",
-      dateOfBirth: response.dateOfBirth ?? "",
+      firstName: newCustomer.firstName ?? "",
+      lastName: newCustomer.lastName ?? "",
+      dateOfBirth: newCustomer.dateOfBirth ?? "",
 
-      addresses: response.addresses.map(
+      addresses: newCustomer.addresses.map(
         (address): InAddress => ({
           id: address.id,
           key: address.key ?? "",
@@ -193,8 +217,9 @@ export const customerRepository = {
           postalCode: address.postalCode ?? "",
           city: address.city ?? "",
           country: address.country ?? "",
-          isDefaultShipping: response.defaultShippingAddressId === address.id,
-          isDefaultBilling: response.defaultBillingAddressId === address.id,
+          isDefaultShipping:
+            newCustomer.defaultShippingAddressId === address.id,
+          isDefaultBilling: newCustomer.defaultBillingAddressId === address.id,
         }),
       ),
     };

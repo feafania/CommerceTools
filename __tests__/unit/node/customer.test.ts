@@ -10,9 +10,19 @@ import { CustomerActionType } from "@/types/api-types";
 import customerRepository from "@/api/repositories/customer-repository";
 import { findDefaultAddress } from "@/utils/helpers";
 import { AddressType } from "@/types/enum";
+import { changeCustomerPassword } from "@/api/repositories/endpoints/customer/change-password";
+import authRepository from "@/api/repositories/auth-repository";
 
 jest.mock("@/api/repositories/endpoints/customer/update-customer", () => ({
   updateCustomer: jest.fn(),
+}));
+
+jest.mock("@/api/repositories/endpoints/customer/change-password", () => ({
+  changeCustomerPassword: jest.fn(),
+}));
+
+jest.mock("@/api/repositories/auth-repository", () => ({
+  toInternalCustomer: jest.fn(),
 }));
 
 describe("customerRepository.update", () => {
@@ -167,7 +177,7 @@ describe("customerRepository.update", () => {
           postalCode: "22222",
           city: "Worktown",
           country: "DE",
-          isDefaultShipping: true, // новы default
+          isDefaultShipping: true,
           isDefaultBilling: false,
         },
       ],
@@ -211,7 +221,7 @@ describe("customerRepository.update", () => {
           city: "Worktown",
           country: "DE",
           isDefaultShipping: false,
-          isDefaultBilling: true, // новы billing
+          isDefaultBilling: true,
         },
       ],
     };
@@ -277,5 +287,78 @@ describe("customerRepository.update", () => {
     await expect(
       customerRepository.update(oldTestCustomer, newTestCustomer, mockToken),
     ).rejects.toThrow("API error");
+  });
+});
+
+describe("customerRepository.changePassword", () => {
+  const mockVersion = 2;
+  const currentPassword = "123456";
+  const newPassword = "newpass123";
+  const token = "mocked-token";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should call changeCustomerPassword and return updated customer", async () => {
+    (changeCustomerPassword as jest.Mock).mockResolvedValue(updatedResponse);
+    const expectedCustomer = {
+      id: updatedResponse.id,
+      email: updatedResponse.email,
+    };
+
+    (authRepository.toInternalCustomer as jest.Mock).mockReturnValue(
+      expectedCustomer,
+    );
+
+    const result = await customerRepository.changePassword(
+      mockVersion,
+      currentPassword,
+      newPassword,
+      token,
+    );
+
+    expect(changeCustomerPassword).toHaveBeenCalledWith(
+      mockVersion,
+      currentPassword,
+      newPassword,
+      token,
+    );
+
+    expect(authRepository.toInternalCustomer).toHaveBeenCalledWith(
+      updatedResponse,
+      newPassword,
+    );
+
+    expect(result).toEqual(expectedCustomer);
+  });
+
+  it("should throw if API call fails", async () => {
+    (changeCustomerPassword as jest.Mock).mockRejectedValue(
+      new Error("Change password failed"),
+    );
+
+    await expect(
+      customerRepository.changePassword(
+        mockVersion,
+        currentPassword,
+        newPassword,
+        token,
+      ),
+    ).rejects.toThrow("Change password failed");
+  });
+
+  it("should return undefined if API returns undefined", async () => {
+    (changeCustomerPassword as jest.Mock).mockResolvedValue(JSON.parse("null"));
+
+    const result = await customerRepository.changePassword(
+      mockVersion,
+      currentPassword,
+      newPassword,
+      token,
+    );
+
+    expect(result).toBeUndefined();
+    expect(authRepository.toInternalCustomer).not.toHaveBeenCalled();
   });
 });

@@ -48,7 +48,7 @@ export const FORM_FIELDS: FormFieldsMap = {
     {
       name: "birthday",
       get label() {
-        return SETTINGS.label.address.country;
+        return SETTINGS.label.registration.birthDay;
       },
       validation: VALIDATION.dateOfBirth,
     },
@@ -103,6 +103,71 @@ export const FORM_FIELDS: FormFieldsMap = {
     },
     {
       name: "postalcode-shipping",
+      get label() {
+        return SETTINGS.label.address.postalCode;
+      },
+      validation: VALIDATION.postalCode,
+    },
+  ],
+  [FormType.PROFILE]: [
+    {
+      name: "email",
+      get label() {
+        return SETTINGS.label.registration.email;
+      },
+      validation: VALIDATION.email,
+    },
+    {
+      name: "password",
+      get label() {
+        return SETTINGS.label.registration.password;
+      },
+      validation: VALIDATION.password,
+    },
+    {
+      name: "firstname",
+      get label() {
+        return SETTINGS.label.registration.firstName;
+      },
+      validation: VALIDATION.firstName,
+    },
+    {
+      name: "lastname",
+      get label() {
+        return SETTINGS.label.registration.lastName;
+      },
+      validation: VALIDATION.lastName,
+    },
+    {
+      name: "birthday",
+      get label() {
+        return SETTINGS.label.registration.birthDay;
+      },
+      validation: VALIDATION.dateOfBirth,
+    },
+    {
+      name: "country",
+      get label() {
+        return SETTINGS.label.address.country;
+      },
+      validation: VALIDATION.country,
+    },
+    {
+      name: "city",
+      get label() {
+        return SETTINGS.label.address.city;
+      },
+      validation: VALIDATION.city,
+    },
+    {
+      name: "street",
+      get label() {
+        return SETTINGS.label.address.street;
+      },
+      validation: VALIDATION.street,
+    },
+    {
+      name: "postalcode",
       get label() {
         return SETTINGS.label.address.postalCode;
       },

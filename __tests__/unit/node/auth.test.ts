@@ -9,14 +9,16 @@ import {
   token,
   mockDate,
   mockedRevokeCustomerToken,
+  mockedGetMe,
 } from "../__mocks__/auth.mock";
 
 import authRepository from "@/api/repositories/auth-repository";
 
 jest.mock("@/api/repositories/endpoints/customer/register-customer");
 jest.mock("@/api/repositories/endpoints/customer/login-customer");
-jest.mock("@/api/repositories/endpoints/customer/get-customer-token");
-jest.mock("@/api/repositories/endpoints/customer/revoke-token");
+jest.mock("@/api/repositories/endpoints/token/get-customer-token");
+jest.mock("@/api/repositories/endpoints/token/revoke-token");
+jest.mock("@/api/repositories/endpoints/customer/get-me");
 
 const inMockCustomer = authRepository.toInternalCustomer(
   mockCustomer,
@@ -119,6 +121,30 @@ describe("authRepository", () => {
       await expect(
         authRepository.revokeToken("mock-token", "refresh_token"),
       ).rejects.toThrow("Token revoke failed");
+    });
+  });
+
+  describe("getMe", () => {
+    beforeEach(() => {
+      mockedGetMe.mockResolvedValue(mockCustomer);
+    });
+    it("should call getMe and return a transformed customer", async () => {
+      mockedGetMe.mockResolvedValueOnce(mockCustomer);
+
+      const result = await authRepository.getMe("mock-token");
+
+      expect(mockedGetMe).toHaveBeenCalledWith("mock-token");
+      expect(result).toEqual(
+        authRepository.toInternalCustomer(mockCustomer, ""),
+      );
+    });
+
+    it("should throw if getMe fails", async () => {
+      mockedGetMe.mockRejectedValueOnce(new Error("GetMe failed"));
+
+      await expect(authRepository.getMe("mock-token")).rejects.toThrow(
+        "GetMe failed",
+      );
     });
   });
 });

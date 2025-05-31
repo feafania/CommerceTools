@@ -9,7 +9,6 @@ export default async function loginCustomer(
   password: string,
 ): Promise<CustomerSignInResult> {
   try {
-    // Ствараем кліент з паролем
     const client = createPasswordClient(email, password);
     const apiRoot = createApiBuilderFromCtpClient(client).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,

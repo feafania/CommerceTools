@@ -4,14 +4,14 @@ import {
 } from "@commercetools/platform-sdk";
 
 import {
+  getTestDraft,
   testAddresses,
-  testDraft,
   testPassword,
 } from "./__mocks__/integration.mock";
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
-import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
+import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
 
 describe("Update Customer Addresses Integration", () => {
   let result: CustomerSignInResult;
@@ -19,6 +19,7 @@ describe("Update Customer Addresses Integration", () => {
   let accessToken: string;
 
   beforeAll(async () => {
+    const testDraft = getTestDraft();
     result = await registerCustomer(testDraft);
     expect(result).toBeDefined();
 
@@ -149,7 +150,6 @@ describe("Update Customer Addresses Integration", () => {
 
     version = updated!.version;
 
-    // Ставіць як default shipping
     updated = await updateCustomer(
       version,
       [{ action: "setDefaultShippingAddress", addressId }],

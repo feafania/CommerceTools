@@ -1,31 +1,42 @@
 import {
-  CustomerSignInResult,
+  MyCustomerDraft,
   MyCustomerUpdateAction,
 } from "@commercetools/platform-sdk";
 
-import { testDraft, testPassword } from "./__mocks__/integration.mock";
+import {
+  getRandomPassword,
+  getTestDraft,
+  testPassword,
+} from "./__mocks__/integration.mock";
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
-import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
+import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
+import { changeCustomerPassword } from "@/api/repositories/endpoints/customer/change-password";
+import getMe from "@/api/repositories/endpoints/customer/get-me";
 
 describe("Update Customer Integration", () => {
-  let result: CustomerSignInResult;
   let version: number;
   let accessToken: string;
+  let email: string;
+  let currentPassword: string;
 
-  beforeAll(async () => {
-    result = await registerCustomer(testDraft);
-    expect(result).toBeDefined();
+  const setupCustomer = async (): Promise<void> => {
+    const draft: MyCustomerDraft = getTestDraft();
+    await registerCustomer(draft);
+    email = draft.email;
+    currentPassword = draft.password ?? testPassword;
 
-    const tokenResponse = await getCustomerToken(testDraft.email, testPassword);
-    expect(tokenResponse?.access_token).toBeDefined();
+    const token = await getCustomerToken(email, currentPassword);
+    accessToken = token!.access_token;
 
-    accessToken = tokenResponse!.access_token;
-    version = result.customer.version;
-  });
+    const me = await getMe(accessToken);
+    version = me.version;
+  };
 
   it("should update the first name of the customer", async () => {
+    await setupCustomer();
+
     const newFirstName = "UpdatedName";
 
     const actions: MyCustomerUpdateAction[] = [
@@ -38,11 +49,11 @@ describe("Update Customer Integration", () => {
     const updated = await updateCustomer(version, actions, accessToken);
     expect(updated).toBeDefined();
     expect(updated?.firstName).toBe(newFirstName);
-
-    version = updated!.version;
   });
 
   it("should update the email of the customer", async () => {
+    await setupCustomer();
+
     const newEmail = `updated-${Date.now()}@example.com`;
 
     const actions: MyCustomerUpdateAction[] = [
@@ -55,11 +66,11 @@ describe("Update Customer Integration", () => {
     const updated = await updateCustomer(version, actions, accessToken);
     expect(updated).toBeDefined();
     expect(updated?.email).toBe(newEmail);
-
-    version = updated!.version;
   });
 
   it("should fail to update customer with wrong version", async () => {
+    await setupCustomer();
+
     const actions: MyCustomerUpdateAction[] = [
       {
         action: "setLastName",
@@ -67,28 +78,59 @@ describe("Update Customer Integration", () => {
       },
     ];
 
-    const wrongVersion = version - 5;
+    const wrongVersion = version - 1;
 
     await expect(
       updateCustomer(wrongVersion, actions, accessToken),
-    ).rejects.toThrow();
+    ).rejects.toThrow(/version/i);
   });
 
   it("should fail to update email to an existing one", async () => {
-    const secondEmail = `duplicate-${Date.now()}@example.com`;
-    const secondCustomerDraft = { ...testDraft, email: secondEmail };
-    const secondCustomer = await registerCustomer(secondCustomerDraft);
-    expect(secondCustomer).toBeDefined();
+    // Setup first customer
+    await setupCustomer();
 
+    const originalAccessToken = accessToken;
+    const originalVersion = version;
+
+    const secondDraft = getTestDraft();
+    const modifiedSecondDraft = {
+      ...secondDraft,
+      email: `duplicate-${Date.now()}@example.com`,
+    };
+    await registerCustomer(modifiedSecondDraft);
+    await new Promise((r) => setTimeout(r, 1000));
     const actions: MyCustomerUpdateAction[] = [
       {
         action: "changeEmail",
-        email: secondEmail,
+        email: modifiedSecondDraft.email,
       },
     ];
 
-    await expect(updateCustomer(version, actions, accessToken)).rejects.toThrow(
-      /email/i,
+    await expect(
+      updateCustomer(originalVersion, actions, originalAccessToken),
+    ).rejects.toThrow(/email/i);
+  });
+
+  it("should change customer password", async () => {
+    await setupCustomer();
+
+    const newPassword = getRandomPassword();
+
+    const updatedCustomer = await changeCustomerPassword(
+      version,
+      currentPassword,
+      newPassword,
+      accessToken,
     );
+
+    expect(updatedCustomer).toBeDefined();
+    expect(updatedCustomer!.version).toBeGreaterThan(version);
+
+    await expect(getCustomerToken(email, currentPassword)).rejects.toThrow(
+      /invalid|credentials|password/i,
+    );
+
+    const login = await getCustomerToken(email, newPassword);
+    expect(login?.access_token).toBeDefined();
   });
 });

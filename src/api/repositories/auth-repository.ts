@@ -4,11 +4,12 @@ import { InAddress, InCustomer } from "@/types/interfaces";
 import { calculateTokenExpiry, findDefaultAddressIndex } from "@/utils/helpers";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
-import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
-import refreshCustomerToken from "@/api/repositories/endpoints/customer/refresh-token";
-import revokeCustomerToken from "@/api/repositories/endpoints/customer/revoke-token";
-import { AddressType } from "@/types/enum";
+import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
+import refreshCustomerToken from "@/api/repositories/endpoints/token/refresh-token";
+import revokeCustomerToken from "@/api/repositories/endpoints/token/revoke-token";
 import { TokenKeys, TokenType } from "@/types/api-types";
+import { AddressType } from "@/types/enum";
+import getMe from "@/api/repositories/endpoints/customer/get-me";
 
 const authRepository = {
   async login(
@@ -77,8 +78,19 @@ const authRepository = {
     }
   },
 
+  async getMe(token: string): Promise<InCustomer | undefined> {
+    try {
+      const customer = await getMe(token);
+      if (customer) {
+        return this.toInternalCustomer(customer, "");
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
   toMyCustomerDraft(input: InCustomer): MyCustomerDraft {
-    const addresses = input.addresses;
+    const addresses = input.addresses ?? [];
 
     const defaultBillingIndex = findDefaultAddressIndex(
       input,
@@ -95,11 +107,25 @@ const authRepository = {
       firstName: input.firstName,
       lastName: input.lastName,
       dateOfBirth: input.dateOfBirth,
-      addresses,
+      addresses:
+        addresses.length > 0
+          ? addresses.map((address) => ({
+              key: address.key,
+              streetName: address.streetName,
+              streetNumber: address.streetNumber ?? "",
+              postalCode: address.postalCode,
+              city: address.city,
+              country: address.country ?? "",
+            }))
+          : undefined,
       defaultBillingAddress:
-        defaultBillingIndex === -1 ? undefined : defaultBillingIndex,
+        addresses.length > 0 && defaultBillingIndex !== -1
+          ? defaultBillingIndex
+          : undefined,
       defaultShippingAddress:
-        defaultShippingIndex === -1 ? undefined : defaultShippingIndex,
+        addresses.length > 0 && defaultShippingIndex !== -1
+          ? defaultShippingIndex
+          : undefined,
     };
   },
 
@@ -107,23 +133,28 @@ const authRepository = {
     customer: Customer,
     password: string | undefined,
   ): InCustomer {
-    const addresses = customer.addresses.map((addr) => ({
-      id: addr.id,
-      key: addr.key,
-      password,
-      streetName: addr.streetName,
-      streetNumber: addr.streetNumber,
-      postalCode: addr.postalCode,
-      city: addr.city,
-      country: addr.country,
-      isDefaultBilling: addr.id === customer.defaultBillingAddressId,
-      isDefaultShipping: addr.id === customer.defaultShippingAddressId,
-    })) as InAddress[];
+    const addresses = customer.addresses.map((addr) => {
+      const isDefaultBilling = addr.id === customer.defaultBillingAddressId;
+      const isDefaultShipping = addr.id === customer.defaultShippingAddressId;
+
+      return {
+        id: addr.id,
+        key: addr.key,
+        streetName: addr.streetName,
+        streetNumber: addr.streetNumber,
+        postalCode: addr.postalCode,
+        city: addr.city,
+        country: addr.country,
+        isDefaultBilling,
+        isDefaultShipping,
+      };
+    }) as InAddress[];
 
     return {
       version: customer.version,
       id: customer.id,
       email: customer.email,
+      password,
       firstName: customer.firstName ?? "",
       lastName: customer.lastName ?? "",
       dateOfBirth: customer.dateOfBirth ?? "",

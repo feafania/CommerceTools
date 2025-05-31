@@ -124,6 +124,8 @@ const pl: AppTranslation = {
       "Plik connect.yaml pod adresem $url (tag: $tag) jest nieprawidłowy. Sprawdź format lub zawartość.",
     connectorInCertification:
       "Ten konektor jest w trakcie procesu certyfikacji. Będzie dostępny po jego zakończeniu.",
+    versionMismatch:
+      "Błąd niezgodności wersji. Proszę odświeżyć i spróbować ponownie.",
   },
   errors: {
     login: "Logowanie nie powiodło się.",
@@ -132,7 +134,9 @@ const pl: AppTranslation = {
     registration: "Rejestracja nie powiodła się.",
     categories: "Nie udało się załadować kategorii.",
     updateCustomer: "Nie udało się zaktualizować informacji o kliencie.",
+    updatePassword: "Nie udało się zaktualizować hasła klienta.",
     token: "Nie udało się zdobyć tokena.",
+    getCurrentUser: "Nie udało się pobrać bieżącego użytkownika",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",

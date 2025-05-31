@@ -91,6 +91,7 @@ export interface AppTranslation {
     connectorFileNotFound: string;
     connectorFileNotValid: string;
     connectorInCertification: string;
+    versionMismatch: string;
   };
   errors: {
     login: string;
@@ -98,7 +99,9 @@ export interface AppTranslation {
     registration: string;
     categories: string;
     updateCustomer: string;
+    updatePassword: string;
     token: string;
+    getCurrentUser: string;
   };
   messages: {
     onSignIn: string;

@@ -2,9 +2,10 @@ import { CustomerSignInResult, Customer } from "@commercetools/platform-sdk";
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
-import getCustomerToken from "@/api/repositories/endpoints/customer/get-customer-token";
+import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
 import { TokenResponse, TokenType } from "@/types/api-types";
-import revokeCustomerToken from "@/api/repositories/endpoints/customer/revoke-token";
+import revokeCustomerToken from "@/api/repositories/endpoints/token/revoke-token";
+import getMe from "@/api/repositories/endpoints/customer/get-me";
 
 // Mocked functions
 export const mockedRegisterCustomer = registerCustomer as jest.MockedFunction<
@@ -21,6 +22,8 @@ export const mockedGetCustomerToken = getCustomerToken as jest.MockedFunction<
 
 export const mockedRevokeCustomerToken =
   revokeCustomerToken as jest.MockedFunction<typeof revokeCustomerToken>;
+
+export const mockedGetMe = getMe as jest.MockedFunction<typeof getMe>;
 
 // Faked customer data
 export const mockCustomer: Customer = {

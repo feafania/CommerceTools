@@ -22,7 +22,6 @@ export default async function registerCustomer(
       .post({
         body: {
           ...draft,
-          // Дадаем стандартныя значэнні для неабавязковых палёў
           addresses: draft.addresses || [],
           defaultShippingAddress: draft.defaultShippingAddress || undefined,
           defaultBillingAddress: draft.defaultBillingAddress || undefined,

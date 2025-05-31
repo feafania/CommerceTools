@@ -104,3 +104,108 @@ describe("customerService.update", () => {
     expect((showModalMessage as jest.Mock).mock.calls[0][0]).toMatchSnapshot();
   });
 });
+
+describe("customerService.changePassword", () => {
+  const oldCustomer = oldTestCustomer;
+  const newPassword = "newStrongPassword123";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    authStore.setUser({ ...oldCustomer, password: "oldPassword" });
+    jest
+      .spyOn(tokenStore, "accessToken", "get")
+      .mockReturnValue("mocked-token");
+    tokenStore.isTokenExpired = jest.fn().mockReturnValue(false);
+  });
+
+  it("should refresh token if expired", async () => {
+    (tokenStore.isTokenExpired as jest.Mock).mockReturnValue(true);
+    (authService.refreshToken as jest.Mock).mockResolvedValue(
+      JSON.parse("null"),
+    );
+    (customerRepository.changePassword as jest.Mock).mockResolvedValue(
+      oldCustomer,
+    );
+    (authService.login as jest.Mock).mockResolvedValue(oldCustomer);
+
+    await customerService.changePassword(newPassword);
+
+    expect(authService.refreshToken).toHaveBeenCalled();
+  });
+
+  it("should not proceed and return undefined if token is missing", async () => {
+    jest
+      .spyOn(tokenStore, "accessToken", "get")
+      .mockReturnValue(JSON.parse("null"));
+
+    const result = await customerService.changePassword(newPassword);
+
+    expect(customerRepository.changePassword).not.toHaveBeenCalled();
+    expect(result).toBeUndefined();
+  });
+
+  it("should not proceed and return undefined if user is missing or has no password", async () => {
+    authStore.setUser(undefined);
+    let result = await customerService.changePassword(newPassword);
+    expect(customerRepository.changePassword).not.toHaveBeenCalled();
+    expect(result).toBeUndefined();
+
+    authStore.setUser({ ...oldCustomer, password: undefined });
+    result = await customerService.changePassword(newPassword);
+    expect(customerRepository.changePassword).not.toHaveBeenCalled();
+    expect(result).toBeUndefined();
+
+    authStore.setUser({ ...oldCustomer, version: undefined });
+    result = await customerService.changePassword(newPassword);
+    expect(customerRepository.changePassword).not.toHaveBeenCalled();
+    expect(result).toBeUndefined();
+  });
+
+  it("should call changePassword and then login with new password", async () => {
+    (customerRepository.changePassword as jest.Mock).mockResolvedValue(
+      oldCustomer,
+    );
+    (authService.login as jest.Mock).mockResolvedValue(oldCustomer);
+
+    const result = await customerService.changePassword(newPassword);
+
+    expect(customerRepository.changePassword).toHaveBeenCalledWith(
+      oldCustomer.version,
+      authStore.user!.password,
+      newPassword,
+      "mocked-token",
+    );
+    expect(authService.login).toHaveBeenCalledWith(
+      oldCustomer.email,
+      newPassword,
+    );
+    expect(result).toEqual(oldCustomer);
+  });
+
+  it("should show modal error and return invalid fields on ApiError", async () => {
+    const fieldErrors = [{ field: "password", message: "Invalid password" }];
+    const error = new ApiError(400, "Bad Request", fieldErrors);
+
+    (customerRepository.changePassword as jest.Mock).mockRejectedValue(error);
+
+    const result = await customerService.changePassword(newPassword);
+
+    expect(showModalMessage).toHaveBeenCalledWith(
+      expect.stringContaining("Bad Request"),
+    );
+    expect(result).toEqual(fieldErrors);
+  });
+
+  it("should return undefined on unknown error without showing modal", async () => {
+    const unknownError = new Error("Unexpected error");
+
+    (customerRepository.changePassword as jest.Mock).mockRejectedValue(
+      unknownError,
+    );
+
+    const result = await customerService.changePassword(newPassword);
+
+    expect(showModalMessage).not.toHaveBeenCalled();
+    expect(result).toBeUndefined();
+  });
+});
