@@ -27,4 +27,5 @@ export enum CountryCode {
 export enum FormType {
   LOGIN = "login",
   REGISTRATION = "registration",
+  PROFILE = "profile",
 }
