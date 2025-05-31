@@ -144,7 +144,7 @@ const pl: AppTranslation = {
     birthDay: "Birth day",
     email: "Email Address",
     password: "Password",
-    header: "Registration",
+    header: "User profile",
   },
 };
 
