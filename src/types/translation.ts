@@ -18,6 +18,7 @@ export interface AppTranslation {
       toSignIn: string;
       toSignUp: string;
     };
+    userProfile: string;
   };
   login: {
     email: string;
@@ -108,5 +109,13 @@ export interface AppTranslation {
     onSignUp: string;
     onSignOut: string;
     nothingToUpdate: string;
+  };
+  userProfile: {
+    firstName: string;
+    lastName: string;
+    birthDay: string;
+    email: string;
+    password: string;
+    header: string;
   };
 }
