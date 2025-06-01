@@ -4,11 +4,10 @@ export enum PageType {
   main = "main",
   catalog = "catalog",
   detailed = "detailed",
-  profile = "user",
+  profile = "profile",
   basket = "basket",
   about = "about",
   notfound = "notfound",
-  userprofile = "userprofile",
 }
 
 export enum AddressType {

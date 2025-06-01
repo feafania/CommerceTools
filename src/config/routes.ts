@@ -39,7 +39,7 @@ const routes: Partial<Record<PageType, RouteType>> = {
     render: () => Promise.resolve(document.createElement("div")),
   },
   [PageType.profile]: {
-    canActivate: () => !authStore.user,
+    canActivate: () => true,
     render: UserProfile.render.bind(UserProfile),
   },
   [PageType.basket]: {

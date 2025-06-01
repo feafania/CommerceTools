@@ -17,6 +17,7 @@ const PageRouter = {
 
   async handleRoute() {
     const path = this.getPathFromUrl();
+
     let page: PageType;
 
     if (isValidPageType(path)) {
