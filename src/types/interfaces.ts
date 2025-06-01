@@ -1,6 +1,7 @@
 import { CountryValueType, InAttributes, LanguageCode } from "./types";
 
 import { CountryCode, PageType, SortDirection, SortName } from "@/types/enum";
+import AddressElement from "@/components/address/address";
 
 type ControlBase = {
   type: string;
@@ -13,6 +14,7 @@ type ControlBase = {
   required: boolean;
   validationName?: string;
   relatedCountryField?: string;
+  value: string;
 };
 
 export interface ControlSelect extends ControlBase {
@@ -154,4 +156,14 @@ export interface ProductImage {
     w: number;
     h: number;
   };
+}
+
+export interface AddressItem {
+  element: AddressElement;
+  id: string;
+  index: number;
+  isEditing: boolean;
+  name: string;
+  isDefaultShipping: boolean;
+  isDefaultBilling: boolean;
 }
