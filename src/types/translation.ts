@@ -92,17 +92,23 @@ export interface AppTranslation {
     connectorFileNotFound: string;
     connectorFileNotValid: string;
     connectorInCertification: string;
+    versionMismatch: string;
   };
   errors: {
     login: string;
     logout: string;
     registration: string;
     categories: string;
+    updateCustomer: string;
+    updatePassword: string;
+    token: string;
+    getCurrentUser: string;
   };
   messages: {
     onSignIn: string;
     onSignUp: string;
     onSignOut: string;
+    nothingToUpdate: string;
   };
   userProfile: {
     firstName: string;

@@ -1,5 +1,5 @@
 import translations from "@/config/interfaces";
-import { ValidationRule } from "@/types/interfaces";
+import { ProductListParameters, ValidationRule } from "@/types/interfaces";
 import { AddressType, CountryCode, FormType } from "@/types/enum";
 import { VALIDATION } from "@/config/validation";
 
@@ -41,6 +41,11 @@ export type FormFieldsMap = {
 
 export type FieldErrorType = { field: string; message: string };
 
-export type TokenKeys = "access_token" | "refresh_token";
-
 export type NavMenu = "header" | "main";
+
+export type GetProductListParameters = Partial<ProductListParameters>;
+
+export type InAttributes = Record<
+  string,
+  string | number | boolean | null | Array<string | number | boolean>
+>;

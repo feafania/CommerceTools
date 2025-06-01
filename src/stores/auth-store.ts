@@ -1,7 +1,7 @@
 import { deleteLocalState, getLocalState, saveState } from "@/utils/helpers";
 import { tokenStore } from "@/stores/token-store";
 import { InCustomer } from "@/types/interfaces";
-import { TokenType } from "@/types/interfaces";
+import { TokenType } from "@/types/api-types";
 
 export class AuthStore {
   private _user: InCustomer | undefined = undefined;
@@ -16,9 +16,7 @@ export class AuthStore {
 
   static restoreUser(): InCustomer | undefined {
     const storedUser = getLocalState("user");
-    if (storedUser) {
-      return JSON.parse(storedUser);
-    }
+    return storedUser ? JSON.parse(storedUser) : undefined;
   }
 
   setUser(user: InCustomer | undefined, token?: TokenType) {

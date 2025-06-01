@@ -17,14 +17,13 @@ class AuthService {
       if (!result) return;
 
       const { customer, token } = result;
-      console.log(customer);
-      console.log("TOKEN:", token.access_token);
-      // console.log("REFRESH TOKEN:", token.refresh_token);
       authStore.setUser(customer, token);
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
-        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
+        showModalMessage(
+          `${SETTINGS.label.errors.updateCustomer}\n${error.message}`,
+        );
         return error.invalidFields;
       }
     }
@@ -36,7 +35,6 @@ class AuthService {
     try {
       const customer: InCustomer | undefined =
         await authRepository.register(data);
-      console.log(customer);
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
@@ -74,13 +72,11 @@ class AuthService {
         );
         if (!token) return;
 
-        console.info("TOKEN:", token.access_token);
-        // console.log("REFRESH TOKEN:", token.refresh_token);
         tokenStore.setToken(token);
       }
     } catch (error) {
       if (error instanceof ApiError) {
-        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
+        showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
         return error.invalidFields;
       }
     }
@@ -107,7 +103,28 @@ class AuthService {
       console.error("Token revocation failed:", error);
       return false;
     }
-    return false;
+  }
+
+  async getMe(): Promise<InCustomer | undefined> {
+    try {
+      if (!tokenStore || !tokenStore.accessToken) return;
+
+      const customer = await authRepository.getMe(tokenStore.accessToken);
+      if (customer) {
+        customer.password = authStore.user?.password;
+        authStore.setUser(customer);
+      }
+      return customer;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showModalMessage(
+          `${SETTINGS.label.errors.getCurrentUser}\n${error.message}`,
+        );
+      } else {
+        console.error("Get current user failed:", error);
+      }
+      return undefined;
+    }
   }
 }
 

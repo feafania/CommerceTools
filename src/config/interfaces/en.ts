@@ -21,7 +21,7 @@ const en: AppTranslation = {
     userProfile: "User Profile",
   },
   login: {
-    email: "Email Address",
+    email: "Email address",
     password: "Password",
     header: "Authentication",
     emptyField: "Please enter",
@@ -31,7 +31,7 @@ const en: AppTranslation = {
     firstName: "First name",
     lastName: "Last name",
     birthDay: "Birth day",
-    email: "Email Address",
+    email: "Email address",
     password: "Password",
     header: "Registration",
     submit: "Sign up",
@@ -122,17 +122,23 @@ const en: AppTranslation = {
       "The connector file at isn’t valid. Please check the format or content.",
     connectorInCertification:
       "This connector is currently in certification. You’ll be able to use it once the process is complete.",
+    versionMismatch: "Version mismatch error. Please reload and try again.",
   },
   errors: {
     login: "Login failed.",
     logout: "Logout failed. You may already be logged out. Please try again.",
     registration: "Registration failed.",
     categories: "Failed to load categories.",
+    updateCustomer: "Failed to update customer information.",
+    updatePassword: "Failed to update customer password.",
+    token: "Failed to get token.",
+    getCurrentUser: "Failed to get current user",
   },
   messages: {
     onSignIn: "You have successfully signed in.",
     onSignUp: "Your account has been created.",
     onSignOut: "You have been signed out.",
+    nothingToUpdate: "No changes detected. Your profile is already up to date.",
   },
   userProfile: {
     firstName: "First name",

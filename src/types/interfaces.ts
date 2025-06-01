@@ -1,6 +1,6 @@
-import { CountryValueType } from "./types";
+import { CountryValueType, InAttributes, LanguageCode } from "./types";
 
-import { CountryCode, PageType } from "@/types/enum";
+import { CountryCode, PageType, SortDirection, SortName } from "@/types/enum";
 
 type ControlBase = {
   type: string;
@@ -50,18 +50,6 @@ export interface ValidationRule {
   isValid?: (value: string | CountryValueType) => boolean;
   message?: string;
   getValidationMessage?: (code: CountryCode | undefined) => string;
-}
-
-export interface TokenType {
-  access_token: string;
-  token_expires_in: string;
-  refresh_token: string;
-}
-
-export interface TokenResponse extends Omit<TokenType, "token_expires_in"> {
-  expires_in: number;
-  scope: string;
-  token_type: "Bearer";
 }
 
 export interface CTErrorObject {
@@ -124,6 +112,7 @@ export interface InAddress {
 }
 
 export interface InCustomer {
+  version?: number;
   id?: string;
   email: string;
   password?: string;
@@ -131,4 +120,38 @@ export interface InCustomer {
   lastName: string;
   dateOfBirth: string; // "YYYY-MM-DD"
   addresses: InAddress[];
+}
+
+export interface ProductListParameters {
+  limit: number;
+  offset: number;
+  sortName: SortName;
+  sortDirection: SortDirection;
+  searchText?: string;
+  filters?: string[];
+}
+
+export interface InProduct {
+  id: string;
+  key?: string;
+  name: Record<LanguageCode, string>;
+  description?: Record<LanguageCode, string>;
+  images: ProductImage[];
+  price: number; // main price in cents (without discount)
+  discountedPrice?: number | null;
+  isDiscounted: boolean;
+  categories?: string[];
+  attributes?: InAttributes;
+  available: boolean;
+  sku?: string;
+  variantId?: number; // ID of main variant
+}
+
+export interface ProductImage {
+  url: string;
+  label?: string;
+  dimensions?: {
+    w: number;
+    h: number;
+  };
 }
