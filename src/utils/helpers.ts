@@ -1,5 +1,5 @@
 import { SETTINGS } from "@/config/settings";
-import { CountryCodeMap, LanguageCode } from "@/types/types";
+import { CountryCodeMap, LanguageCode, LanguageVariants } from "@/types/types";
 import {
   InAddress,
   InCustomer,
@@ -180,4 +180,11 @@ export function deepEqual(a: unknown, b: unknown): boolean {
   }
 
   return true;
+}
+
+export function localizeName(variableName: string | LanguageVariants) {
+  if (typeof variableName === "string") return variableName;
+  if (variableName[SETTINGS.currentLang])
+    return variableName[SETTINGS.currentLang];
+  return variableName[SETTINGS.fallbackLanguage];
 }

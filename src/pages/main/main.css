@@ -11,6 +11,7 @@
   align-items: baseline !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+  overflow-x: hidden;
 }
 
 .categories {
@@ -40,6 +41,24 @@
   padding: 5px 10px;
   display: flex;
   align-items: center;
+}
+
+.category-item {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.category-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.category-item:hover .category-title {
+  background: #ffffffcc;
+  color: #222;
 }
 
 .main-page-content {

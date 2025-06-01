@@ -3,11 +3,11 @@ import "./main.css";
 import { SETTINGS } from "@/config/settings";
 import Header from "@/components/layout/header/header";
 import productService from "@/api/services/product-service";
+import { localizeName } from "@/utils/helpers";
 
 const MainView = {
   async render() {
     const container = document.createElement("section");
-
     container.className = "view main-view";
 
     const aside = document.createElement("aside");
@@ -23,20 +23,22 @@ const MainView = {
     categoryList.className = "categories";
 
     const categories = await productService.getCategories();
+
     for (const cat of categories) {
       const li = document.createElement("div");
       li.className = "category-item";
 
       const liTitle = document.createElement("div");
       liTitle.className = "category-title";
-      liTitle.textContent = cat.name;
+      liTitle.textContent = localizeName(cat.name);
 
       const liPicture = document.createElement("div");
       liPicture.className = "category-pic";
 
       const picture = document.createElement("img");
-      picture.src = "assets/img/categories/" + cat.key + ".png";
-      picture.alt = cat.name;
+      picture.src = cat.assets[0].sources[0].uri;
+      picture.alt = localizeName(cat.name);
+      picture.addEventListener("click", this.handleCategoryImageClick);
 
       liPicture.append(picture);
       li.append(liPicture, liTitle);
@@ -50,6 +52,12 @@ const MainView = {
     container.append(aside, content);
 
     return container;
+  },
+  handleCategoryImageClick(event: MouseEvent) {
+    console.log(
+      "Click on category image:",
+      (event.target as HTMLImageElement).alt,
+    );
   },
 };
 

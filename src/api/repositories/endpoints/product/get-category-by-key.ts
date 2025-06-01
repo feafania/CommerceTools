@@ -10,15 +10,12 @@ export default async function getCategoryByKey(
   key: string,
 ): Promise<Category | undefined> {
   try {
-    // Create anonymous client (public access)
     const ctpClient = createAnonymousClient();
 
-    // Create API root with project key
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });
 
-    // Execute the query
     const response = await apiRoot
       .categories()
       .withKey({ key })

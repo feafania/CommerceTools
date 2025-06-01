@@ -49,3 +49,5 @@ export type InAttributes = Record<
   string,
   string | number | boolean | null | Array<string | number | boolean>
 >;
+
+export type LanguageVariants = Record<LanguageCode, string>;
