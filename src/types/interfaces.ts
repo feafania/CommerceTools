@@ -1,6 +1,6 @@
-import { CountryValueType } from "./types";
+import { CountryValueType, InAttributes, LanguageCode } from "./types";
 
-import { CountryCode, PageType } from "@/types/enum";
+import { CountryCode, PageType, SortDirection, SortName } from "@/types/enum";
 
 type ControlBase = {
   type: string;
@@ -120,4 +120,38 @@ export interface InCustomer {
   lastName: string;
   dateOfBirth: string; // "YYYY-MM-DD"
   addresses: InAddress[];
+}
+
+export interface ProductListParameters {
+  limit: number;
+  offset: number;
+  sortName: SortName;
+  sortDirection: SortDirection;
+  searchText?: string;
+  filters?: string[];
+}
+
+export interface InProduct {
+  id: string;
+  key?: string;
+  name: Record<LanguageCode, string>;
+  description?: Record<LanguageCode, string>;
+  images: ProductImage[];
+  price: number; // main price in cents (without discount)
+  discountedPrice?: number | null;
+  isDiscounted: boolean;
+  categories?: string[];
+  attributes?: InAttributes;
+  available: boolean;
+  sku?: string;
+  variantId?: number; // ID of main variant
+}
+
+export interface ProductImage {
+  url: string;
+  label?: string;
+  dimensions?: {
+    w: number;
+    h: number;
+  };
 }

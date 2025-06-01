@@ -22,32 +22,25 @@ const MainView = {
     const categoryList = document.createElement("ul");
     categoryList.className = "categories";
 
-    try {
-      const categories = await productService.getCategories();
-      for (const cat of categories) {
-        const li = document.createElement("div");
-        li.className = "category-item";
+    const categories = await productService.getCategories();
+    for (const cat of categories) {
+      const li = document.createElement("div");
+      li.className = "category-item";
 
-        const liTitle = document.createElement("div");
-        liTitle.className = "category-title";
-        liTitle.textContent = cat.name;
+      const liTitle = document.createElement("div");
+      liTitle.className = "category-title";
+      liTitle.textContent = cat.name;
 
-        const liPicture = document.createElement("div");
-        liPicture.className = "category-pic";
+      const liPicture = document.createElement("div");
+      liPicture.className = "category-pic";
 
-        const picture = document.createElement("img");
-        picture.src = "assets/img/categories/" + cat.key + ".png";
-        picture.alt = cat.name;
+      const picture = document.createElement("img");
+      picture.src = "assets/img/categories/" + cat.key + ".png";
+      picture.alt = cat.name;
 
-        liPicture.append(picture);
-        li.append(liPicture, liTitle);
-        categoryList.append(li);
-      }
-    } catch (error) {
-      console.error("Error loading categories:", error);
-      const errorMessage = document.createElement("p");
-      errorMessage.textContent = SETTINGS.label.errors.categories;
-      categoryList.append(errorMessage);
+      liPicture.append(picture);
+      li.append(liPicture, liTitle);
+      categoryList.append(li);
     }
 
     const content = document.createElement("div");

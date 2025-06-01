@@ -1,5 +1,6 @@
 import productRepository from "@/api/repositories/product-repository";
-import { InCategory } from "@/types/interfaces";
+import { InCategory, InProduct } from "@/types/interfaces";
+import { GetProductListParameters } from "@/types/types";
 
 class ProductService {
   async getCategories(): Promise<InCategory[]> {
@@ -16,6 +17,17 @@ class ProductService {
       const category = await productRepository.getCategoryByKey(key);
       return category;
     } catch {}
+  }
+
+  async getProductList(
+    parameters: GetProductListParameters = {},
+  ): Promise<InProduct[]> {
+    try {
+      const products = await productRepository.getProductList(parameters);
+      return products;
+    } catch {
+      return [];
+    }
   }
 }
 

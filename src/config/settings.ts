@@ -1,6 +1,8 @@
 import { LanguageCode } from "@/types/types";
 import translations from "@/config/interfaces";
 import { getLocalState, saveLocalState } from "@/utils/helpers";
+import { ProductListParameters } from "@/types/interfaces";
+import { SortDirection, SortName } from "@/types/enum";
 
 const defaultLang: LanguageCode =
   (getLocalState("lang") as LanguageCode) || "en";
@@ -19,4 +21,10 @@ export const SETTINGS = {
       value: lang,
     });
   },
+  productListParametrs: {
+    limit: 20,
+    offset: 0,
+    sortName: SortName.NAME,
+    sortDirection: SortDirection.ASC,
+  } as ProductListParameters,
 };

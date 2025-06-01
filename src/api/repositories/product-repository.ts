@@ -1,9 +1,18 @@
-import { Asset, Category } from "@commercetools/platform-sdk";
+import {
+  Asset,
+  Attribute,
+  Category,
+  CategoryReference,
+  ProductProjection,
+  ProductProjectionPagedSearchResponse,
+} from "@commercetools/platform-sdk";
 
 import getCategories from "@/api/repositories/endpoints/product/get-categories";
 import getCategoryByKey from "@/api/repositories/endpoints/product/get-category-by-key";
-import { InCategory } from "@/types/interfaces";
+import { InCategory, InProduct } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
+import getProductList from "@/api/repositories/endpoints/product/get-product-list";
+import { InAttributes } from "@/types/types";
 
 const productRepository = {
   async getCategories(locale = SETTINGS.currentLang): Promise<InCategory[]> {
@@ -30,8 +39,48 @@ const productRepository = {
       }
       return this.mapCategoryToInternal(response, locale);
     } catch (error) {
+      console.error("Error getting categories:", error);
       throw error;
     }
+  },
+
+  async getProductList(parameters = {}): Promise<InProduct[]> {
+    try {
+      const response: ProductProjectionPagedSearchResponse | undefined =
+        await getProductList(parameters);
+
+      if (!response || response.results.length === 0) {
+        return [];
+      }
+
+      return response.results.map((product) =>
+        this.mapProductToInternal(product),
+      );
+    } catch (error) {
+      console.error("Error getting product list:", error);
+      throw error;
+    }
+  },
+
+  mapProductToInternal(product: ProductProjection): InProduct {
+    return {
+      id: product.id,
+      key: product.key,
+      name: product.name,
+      description: product.description,
+      images: product.masterVariant?.images ?? [],
+      price: product.masterVariant?.price?.value.centAmount ?? 0,
+      discountedPrice:
+        product.masterVariant?.price?.discounted?.value.centAmount ?? undefined,
+      isDiscounted: !!product.masterVariant?.price?.discounted,
+      categories:
+        product.categories?.map((cat: CategoryReference) => cat.id) ?? [],
+      attributes:
+        this.matAttributesArray(product.masterVariant?.attributes) ?? {},
+      available: product.masterVariant?.availability?.isOnStock ?? false,
+      sku: product.masterVariant?.sku,
+      variantId: product.masterVariant?.id,
+    };
   },
 
   mapAsset(
@@ -73,6 +122,13 @@ const productRepository = {
       assets:
         category.assets?.map((asset) => this.mapAsset(asset, locale)) ?? [],
     };
+  },
+
+  matAttributesArray(attributes: Attribute[] = []): InAttributes {
+    return attributes.reduce((accumulator, attribute) => {
+      accumulator[attribute.name] = attribute.value;
+      return accumulator;
+    }, {} as InAttributes);
   },
 };
 
