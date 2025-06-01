@@ -19,6 +19,7 @@ export interface AppTranslation {
       toSignUp: string;
     };
     userProfile: string;
+    changepassword: string;
   };
   login: {
     email: string;

@@ -19,6 +19,7 @@ const en: AppTranslation = {
       toSignUp: "Sign Up",
     },
     userProfile: "User Profile",
+    changepassword: "Change password",
   },
   login: {
     email: "Email address",

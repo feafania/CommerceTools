@@ -19,6 +19,7 @@ const pl: AppTranslation = {
       toSignUp: "Załóż konto",
     },
     userProfile: "User Profile",
+    changepassword: "Change password",
   },
   login: {
     email: "Adres e-mail",
