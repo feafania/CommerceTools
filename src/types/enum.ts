@@ -28,6 +28,7 @@ export enum FormType {
   LOGIN = "login",
   REGISTRATION = "registration",
   PROFILE = "profile",
+  PASSWORD = "password",
 }
 
 export enum SortName {

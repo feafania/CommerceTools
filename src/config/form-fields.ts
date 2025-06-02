@@ -174,4 +174,27 @@ export const FORM_FIELDS: FormFieldsMap = {
       validation: VALIDATION.postalCode,
     },
   ],
+  [FormType.PASSWORD]: [
+    {
+      name: "current-password",
+      get label() {
+        return SETTINGS.label.changePassword.current;
+      },
+      validation: VALIDATION.password,
+    },
+    {
+      name: "new-password",
+      get label() {
+        return SETTINGS.label.changePassword.newPassword;
+      },
+      validation: VALIDATION.password,
+    },
+    {
+      name: "confirm-password",
+      get label() {
+        return SETTINGS.label.changePassword.confirmNewPassword;
+      },
+      validation: VALIDATION.password,
+    },
+  ],
 };
