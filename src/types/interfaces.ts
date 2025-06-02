@@ -139,6 +139,7 @@ export interface InProduct {
   description?: LanguageVariants;
   images: ProductImage[];
   price: number; // main price in cents (without discount)
+  currencyCode?: string;
   discountedPrice?: number | undefined;
   isDiscounted: boolean;
   discountPercent?: number | undefined;
@@ -155,6 +156,7 @@ export interface InVariant {
   sku?: string;
   images: ProductImage[];
   price?: number;
+  currencyCode?: string;
   discountedPrice?: number | undefined;
   isDiscounted: boolean;
   discountPercent?: number | undefined;

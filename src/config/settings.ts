@@ -2,7 +2,7 @@ import { LanguageCode } from "@/types/types";
 import translations from "@/config/interfaces";
 import { getLocalState, saveLocalState } from "@/utils/helpers";
 import { ProductListParameters } from "@/types/interfaces";
-import { SortDirection, SortName } from "@/types/enum";
+import { CurrencyCode, SortDirection, SortName } from "@/types/enum";
 
 const defaultLang: LanguageCode =
   (getLocalState("lang") as LanguageCode) || "en";
@@ -27,4 +27,5 @@ export const SETTINGS = {
     sortName: SortName.NAME,
     sortDirection: SortDirection.ASC,
   } as ProductListParameters,
+  fallbackCurrency: CurrencyCode.EUR,
 };

@@ -23,6 +23,7 @@ import getProductAttributes from "@/api/repositories/endpoints/product/get-produ
 import getProductTypes from "@/api/repositories/endpoints/product/get-product-types";
 import getProductByKey from "@/api/repositories/endpoints/product/get-product-by-key";
 import getProductTypeByKey from "@/api/repositories/endpoints/product/get-product-type-by-key";
+import { SETTINGS } from "@/config/settings";
 
 const productRepository = {
   async getCategories(): Promise<InCategory[]> {
@@ -126,10 +127,11 @@ const productRepository = {
   },
 
   mapProductToInternal(product: ProductProjection): InProduct {
-    const price = product.masterVariant?.price?.value.centAmount ?? 0;
+    const masterPrice = product.masterVariant?.price;
+    const price = masterPrice?.value.centAmount ?? 0;
     const discountedPrice =
-      product.masterVariant?.price?.discounted?.value.centAmount ?? undefined;
-    const isDiscounted = !!product.masterVariant?.price?.discounted;
+      masterPrice?.discounted?.value.centAmount ?? undefined;
+    const isDiscounted = !!masterPrice?.discounted;
 
     return {
       id: product.id,
@@ -138,6 +140,8 @@ const productRepository = {
       description: this.mapLocalizedField(product.description),
       images: product.masterVariant?.images ?? [],
       price,
+      currencyCode:
+        masterPrice?.value.currencyCode ?? SETTINGS.fallbackCurrency,
       discountedPrice,
       isDiscounted,
       discountPercent: this.calculateDiscountPercent(price, discountedPrice),
@@ -150,16 +154,19 @@ const productRepository = {
       variantId: product.masterVariant?.id,
       variants:
         product.variants?.map((variant) => {
-          const vPrice = variant.price?.value.centAmount ?? 0;
+          const variantPrice = variant.price;
+          const vPrice = variantPrice?.value.centAmount ?? 0;
           const vDiscounted =
-            variant.price?.discounted?.value.centAmount ?? undefined;
-          const vIsDiscounted = !!variant.price?.discounted;
+            variantPrice?.discounted?.value.centAmount ?? undefined;
+          const vIsDiscounted = !!variantPrice?.discounted;
 
           return {
             id: variant.id,
             sku: variant.sku,
             images: variant.images ?? [],
             price: vPrice,
+            currencyCode:
+              variantPrice?.value.currencyCode ?? SETTINGS.fallbackCurrency,
             discountedPrice: vDiscounted,
             isDiscounted: vIsDiscounted,
             discountPercent: this.calculateDiscountPercent(vPrice, vDiscounted),

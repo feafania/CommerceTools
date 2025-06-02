@@ -23,6 +23,12 @@ export enum CountryCode {
   ES = "ES",
 }
 
+export enum CurrencyCode {
+  EUR = "EUR",
+  GBP = "GBP",
+  PLN = "PLN",
+}
+
 export enum FormType {
   LOGIN = "login",
   REGISTRATION = "registration",
