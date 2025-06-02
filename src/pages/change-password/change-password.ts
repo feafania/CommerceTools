@@ -1,11 +1,13 @@
 import { SETTINGS } from "@/config/settings";
-// import { handleOnSubmit } from "@/utils/validation";
+import { handleOnSubmit } from "@/utils/validation";
 import createInput from "@/components/input/input";
 import createButton from "@/components/button/button";
 import createEyeButton from "@/components/eye-button/eye-button";
-import { PageType } from "@/types/enum";
+import { PageType, FormType } from "@/types/enum";
 import PageRouter from "@/router/page-router";
 import authStore from "@/stores/auth-store";
+import customerService from "@/api/services/customer-service";
+import showModalMessage from "@/components/modal-window/modal-window";
 
 const ChangePassword = {
   async render(): Promise<HTMLElement> {
@@ -21,6 +23,12 @@ const ChangePassword = {
     passwordForm.id = "password-form";
     passwordForm.className = "form";
     passwordForm.append(this.renderPassword());
+
+    passwordForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      this.renderOnSubmit(event);
+    });
 
     container.append(passwordForm);
     return container;
@@ -40,6 +48,7 @@ const ChangePassword = {
       id: "current-password",
       class: "password-input",
       disabled: false,
+      validationName: "password",
       value: authStore.user?.password,
     });
     const currentEyeButton = createEyeButton("current-password");
@@ -54,6 +63,7 @@ const ChangePassword = {
       placeholder: `${SETTINGS.label.changePassword.newPassword}...`,
       id: "new-password",
       class: "password-input",
+      validationName: "password",
       disabled: false,
     });
     const newEyeButton = createEyeButton("new-password");
@@ -68,6 +78,7 @@ const ChangePassword = {
       placeholder: `${SETTINGS.label.changePassword.confirmNewPassword}...`,
       id: "confirm-password",
       class: "password-input",
+      validationName: "password",
       disabled: false,
     });
     const confirmEyeButton = createEyeButton("confirm-password");
@@ -98,7 +109,7 @@ const ChangePassword = {
   },
   createSaveButton(): HTMLElement {
     const saveButton = createButton({
-      type: "button",
+      type: "submit",
       name: "Save",
       id: "save",
     }) as HTMLButtonElement;
@@ -106,6 +117,35 @@ const ChangePassword = {
     saveButton.addEventListener("click", () => {});
 
     return saveButton;
+  },
+  async renderOnSubmit(event: SubmitEvent) {
+    const form = event.target as HTMLFormElement;
+
+    const isValid = handleOnSubmit(form, FormType.PROFILE);
+    if (!isValid) return;
+
+    const formData = new FormData(form);
+    const newPassword = formData.get("new-password")?.toString().trim();
+    const confirmPassword = formData.get("confirm-password")?.toString().trim();
+
+    if (!newPassword || !confirmPassword) return;
+
+    if (newPassword !== confirmPassword) {
+      await showModalMessage(SETTINGS.label.changePassword.wrongConfirm);
+      return;
+    }
+
+    const result = await customerService.changePassword(newPassword);
+
+    if (Array.isArray(result)) {
+      const message = result[0]?.message;
+      await showModalMessage(message);
+    } else if (result) {
+      await showModalMessage(SETTINGS.label.changePassword.success);
+      PageRouter.navigateTo(PageType.profile);
+    } else {
+      await showModalMessage(SETTINGS.label.errors.updatePassword);
+    }
   },
 };
 export default ChangePassword;
