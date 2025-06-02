@@ -119,4 +119,12 @@ export interface AppTranslation {
     password: string;
     header: string;
   };
+  changePassword: {
+    current: string;
+    newPassword: string;
+    confirmNewPassword: string;
+    formTitle: string;
+    success: string;
+    wrongConfirm: string;
+  };
 }

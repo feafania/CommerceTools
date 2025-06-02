@@ -154,6 +154,14 @@ const pl: AppTranslation = {
     password: "Password",
     header: "User profile",
   },
+  changePassword: {
+    current: "Current Password",
+    newPassword: "New Password",
+    confirmNewPassword: "Comfirm new Password",
+    formTitle: "Change Password",
+    wrongConfirm: "Wrong confirm password",
+    success: "Your password successfully changed",
+  },
 };
 
 export default pl;
