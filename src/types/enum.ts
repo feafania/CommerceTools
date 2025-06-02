@@ -8,7 +8,6 @@ export enum PageType {
   basket = "basket",
   about = "about",
   notfound = "notfound",
-  userprofile = "userprofile",
 }
 
 export enum AddressType {

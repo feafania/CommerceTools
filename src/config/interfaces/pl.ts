@@ -18,7 +18,7 @@ const pl: AppTranslation = {
       toSignIn: "Zaloguj się",
       toSignUp: "Załóż konto",
     },
-    userProfile: "User Profile",
+    userProfile: "Profil Użytkownika",
   },
   login: {
     email: "Adres e-mail",
@@ -35,6 +35,14 @@ const pl: AppTranslation = {
     password: "Hasło",
     header: "Rejestracja",
     submit: "Zarejestruj się",
+  },
+  userProfile: {
+    firstName: "Imię",
+    lastName: "Nazwisko",
+    birthDay: "Dzień urodzenia",
+    email: "Adres e-mail",
+    password: "Hasło",
+    header: "Profil użytkownika",
   },
   main: {
     title: "Witamy w sklepie z prezentami",
@@ -144,14 +152,6 @@ const pl: AppTranslation = {
     onSignUp: "Twoje konto zostało utworzone.",
     onSignOut: "Zostałeś wylogowany.",
     nothingToUpdate: "Brak zmian. Twój profil jest już aktualny.",
-  },
-  userProfile: {
-    firstName: "First name",
-    lastName: "Last name",
-    birthDay: "Birth day",
-    email: "Email Address",
-    password: "Password",
-    header: "User profile",
   },
 };
 

@@ -36,6 +36,14 @@ const en: AppTranslation = {
     header: "Registration",
     submit: "Sign up",
   },
+  userProfile: {
+    firstName: "First name",
+    lastName: "Last name",
+    birthDay: "Birth day",
+    email: "Email Address",
+    password: "Password",
+    header: "User profile",
+  },
   main: {
     title: "Welcome to Gifts Shop",
   },
@@ -139,14 +147,6 @@ const en: AppTranslation = {
     onSignUp: "Your account has been created.",
     onSignOut: "You have been signed out.",
     nothingToUpdate: "No changes detected. Your profile is already up to date.",
-  },
-  userProfile: {
-    firstName: "First name",
-    lastName: "Last name",
-    birthDay: "Birth day",
-    email: "Email Address",
-    password: "Password",
-    header: "User profile",
   },
 };
 

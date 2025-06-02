@@ -36,6 +36,17 @@ export interface AppTranslation {
     header: string;
     submit: string;
   };
+  userProfile: {
+    firstName: string;
+    lastName: string;
+    birthDay: string;
+    email: string;
+    password: string;
+    header: string;
+  };
+  main: {
+    title: string;
+  };
   address: {
     headers: AddressTypeMap;
     country: string;
@@ -48,9 +59,6 @@ export interface AppTranslation {
     placeholders: {
       country: string;
     };
-  };
-  main: {
-    title: string;
   };
   validation: {
     email: string;
@@ -109,13 +117,5 @@ export interface AppTranslation {
     onSignUp: string;
     onSignOut: string;
     nothingToUpdate: string;
-  };
-  userProfile: {
-    firstName: string;
-    lastName: string;
-    birthDay: string;
-    email: string;
-    password: string;
-    header: string;
   };
 }
