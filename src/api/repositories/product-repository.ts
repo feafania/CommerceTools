@@ -126,16 +126,21 @@ const productRepository = {
   },
 
   mapProductToInternal(product: ProductProjection): InProduct {
+    const price = product.masterVariant?.price?.value.centAmount ?? 0;
+    const discountedPrice =
+      product.masterVariant?.price?.discounted?.value.centAmount ?? undefined;
+    const isDiscounted = !!product.masterVariant?.price?.discounted;
+
     return {
       id: product.id,
       key: product.key,
       name: this.mapLocalizedField(product.name),
       description: this.mapLocalizedField(product.description),
       images: product.masterVariant?.images ?? [],
-      price: product.masterVariant?.price?.value.centAmount ?? 0,
-      discountedPrice:
-        product.masterVariant?.price?.discounted?.value.centAmount ?? undefined,
-      isDiscounted: !!product.masterVariant?.price?.discounted,
+      price,
+      discountedPrice,
+      isDiscounted,
+      discountPercent: this.calculateDiscountPercent(price, discountedPrice),
       categories:
         product.categories?.map((cat: CategoryReference) => cat.id) ?? [],
       attributes:
@@ -144,17 +149,24 @@ const productRepository = {
       sku: product.masterVariant?.sku,
       variantId: product.masterVariant?.id,
       variants:
-        product.variants?.map((variant) => ({
-          id: variant.id,
-          sku: variant.sku,
-          images: variant.images ?? [],
-          price: variant.price?.value.centAmount ?? 0,
-          discountedPrice:
-            variant.price?.discounted?.value.centAmount ?? undefined,
-          isDiscounted: !!variant.price?.discounted,
-          attributes: this.matAttributesArray(variant.attributes ?? []),
-          available: variant.availability?.isOnStock ?? false,
-        })) ?? [],
+        product.variants?.map((variant) => {
+          const vPrice = variant.price?.value.centAmount ?? 0;
+          const vDiscounted =
+            variant.price?.discounted?.value.centAmount ?? undefined;
+          const vIsDiscounted = !!variant.price?.discounted;
+
+          return {
+            id: variant.id,
+            sku: variant.sku,
+            images: variant.images ?? [],
+            price: vPrice,
+            discountedPrice: vDiscounted,
+            isDiscounted: vIsDiscounted,
+            discountPercent: this.calculateDiscountPercent(vPrice, vDiscounted),
+            attributes: this.matAttributesArray(variant.attributes ?? []),
+            available: variant.availability?.isOnStock ?? false,
+          };
+        }) ?? [],
     };
   },
 
@@ -235,6 +247,16 @@ const productRepository = {
 
   mapLocalizedField(field?: Record<string, string>): LanguageVariants {
     return (field ?? {}) as unknown as Record<LanguageCode, string>;
+  },
+
+  calculateDiscountPercent(
+    price?: number,
+    discounted?: number | undefined,
+  ): number | undefined {
+    if (price && discounted !== undefined && price > 0) {
+      return Math.round(((price - discounted) / price) * 100);
+    }
+    return undefined;
   },
 };
 
