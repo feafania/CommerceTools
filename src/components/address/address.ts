@@ -5,6 +5,7 @@ import { SETTINGS } from "@/config/settings";
 import { AddressType } from "@/types/enum";
 import { getCountriesOptions } from "@/utils/helpers";
 import createCheckbox from "@/components/checkbox/checkbox";
+import { InAddress } from "@/types/interfaces";
 
 export default class AddressElement {
   #addressBlock: HTMLDivElement;
@@ -117,5 +118,38 @@ export default class AddressElement {
       id: `default-${type}-address-${this.#name}`,
       relatedCountryField: `country-${this.#name}`,
     });
+  }
+  setData(data: InAddress): void {
+    const cityInput = this.#addressBlock.querySelector<HTMLInputElement>(
+      `#city-${this.#name}`,
+    );
+    const streetInput = this.#addressBlock.querySelector<HTMLInputElement>(
+      `#street-${this.#name}`,
+    );
+    const postalCodeInput = this.#addressBlock.querySelector<HTMLInputElement>(
+      `#postalcode-${this.#name}`,
+    );
+    const countrySelect = this.#addressBlock.querySelector<HTMLSelectElement>(
+      `#country-${this.#name}`,
+    );
+    const defaultBilling = this.#addressBlock.querySelector<HTMLInputElement>(
+      `#default-billing-address-${this.#name}`,
+    );
+    const defaultShipping = this.#addressBlock.querySelector<HTMLInputElement>(
+      `#default-shipping-address-${this.#name}`,
+    );
+
+    if (cityInput && data.city) cityInput.value = data.city;
+    if (streetInput && data.streetName) streetInput.value = data.streetName;
+    if (postalCodeInput && data.postalCode)
+      postalCodeInput.value = data.postalCode;
+    if (countrySelect && data.country) countrySelect.value = data.country;
+
+    if (defaultBilling && data.isDefaultBilling !== undefined) {
+      defaultBilling.checked = data.isDefaultBilling;
+    }
+    if (defaultShipping && data.isDefaultShipping !== undefined) {
+      defaultShipping.checked = data.isDefaultShipping;
+    }
   }
 }
