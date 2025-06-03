@@ -65,6 +65,11 @@ const pl: AppTranslation = {
     placeholders: {
       country: "Wybierz kraj",
     },
+    editAddress: "Edit",
+    editAddressStop: "Stop editing",
+    addAdress: "+ Add Adress",
+    addressProfileTitle: "Address",
+    addressesList: "Addresses",
   },
   validation: {
     email:
@@ -153,6 +158,10 @@ const pl: AppTranslation = {
     email: "Email Address",
     password: "Password",
     header: "User profile",
+    editModeBtn: "Edit Mode",
+    editModeStop: "Leave edit mode",
+    editPassword: "Change password",
+    submitBtn: "Save Changes",
   },
   changePassword: {
     current: "Current Password",

@@ -49,6 +49,11 @@ export interface AppTranslation {
     placeholders: {
       country: string;
     };
+    editAddress: string;
+    editAddressStop: string;
+    addAdress: string;
+    addressProfileTitle: string;
+    addressesList: string;
   };
   main: {
     title: string;
@@ -118,6 +123,10 @@ export interface AppTranslation {
     email: string;
     password: string;
     header: string;
+    editModeBtn: string;
+    editModeStop: string;
+    editPassword: string;
+    submitBtn: string;
   };
   changePassword: {
     current: string;
