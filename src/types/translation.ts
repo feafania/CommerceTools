@@ -9,6 +9,7 @@ export interface AppTranslation {
     registration: string;
     main: string;
     catalog: string;
+    product: string;
     about: string;
     signOut: string;
     directions: {

@@ -57,19 +57,27 @@ export default async function getProductList({
       fuzzy: true,
     };
 
-    if (searchText?.trim()) {
-      queryArguments[`text.${SETTINGS.currentLang}`] = `${searchText.trim()}`;
-    }
-
     if (filters.length > 0) {
       queryArguments.where = filters.join(" and ");
     }
 
-    const response = await apiRoot
-      .productProjections()
-      .search()
-      .get({ queryArgs: queryArguments })
-      .execute();
+    let response;
+
+    if (searchText?.trim()) {
+      queryArguments.fuzzy = true;
+      queryArguments[`text.${SETTINGS.currentLang}`] = searchText.trim();
+
+      response = await apiRoot
+        .productProjections()
+        .search()
+        .get({ queryArgs: queryArguments })
+        .execute();
+    } else {
+      response = await apiRoot
+        .productProjections()
+        .get({ queryArgs: queryArguments })
+        .execute();
+    }
 
     return response.body;
   } catch (error) {

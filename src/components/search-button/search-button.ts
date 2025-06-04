@@ -38,6 +38,7 @@ class SearchBar {
       this.searchInput = searchInput;
     }
     this.addInputListeners();
+    this.showClearButton();
     return searchInputGroupe;
   }
 
@@ -56,8 +57,7 @@ class SearchBar {
   private addInputListeners() {
     if (this.searchInput) {
       this.searchInput.addEventListener("input", () => {
-        this.clearButton.style.display =
-          this.searchInput.value.trim() === "" ? "none" : "block";
+        this.showClearButton();
       });
     }
   }
@@ -80,6 +80,11 @@ class SearchBar {
       clearTimeout(this.searchDebounce);
     }
     this.searchDebounce = setTimeout(callback, delay);
+  }
+
+  private showClearButton(): void {
+    this.clearButton.style.display =
+      this.searchInput.value.trim() === "" ? "none" : "block";
   }
 }
 

@@ -9,6 +9,7 @@ const en: AppTranslation = {
     registration: "Registration",
     main: "Main",
     catalog: "Catalog",
+    product: "Product",
     about: "About Us",
     signOut: "Sign Out",
     directions: {

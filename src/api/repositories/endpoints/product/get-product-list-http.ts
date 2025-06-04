@@ -5,7 +5,7 @@ import { GetProductListParameters } from "@/types/types";
 import { handleApiError } from "@/api/handle-api-error";
 import getAnonToken from "@/api/repositories/endpoints/token/get-anonymous-token";
 
-export default async function getProductList({
+export default async function getProductListHttp({
   limit = SETTINGS.productListParametrs.limit,
   offset = SETTINGS.productListParametrs.offset,
   sortName = SETTINGS.productListParametrs.sortName,
@@ -40,13 +40,16 @@ export default async function getProductList({
       parameters.append("where", where);
     }
 
-    if (searchText?.trim()) {
-      parameters.append(`text.${lang}`, searchText.trim());
-    }
-
     const projectKey = process.env.CTP_PROJECT_KEY!;
     const apiUrl = process.env.CTP_API_URL!;
-    const url = `${apiUrl}/${projectKey}/product-projections/search?${parameters.toString()}`;
+    let url = `${apiUrl}/${projectKey}/product-projections`;
+    if (searchText?.trim()) {
+      if (searchText?.trim()) {
+        parameters.append(`text.${lang}`, searchText.trim());
+      }
+      url = `${url}/search`;
+    }
+    url = `${url}?${parameters.toString()}`;
     const response = await fetch(url, { headers });
     if (!response.ok) throw new Error(await response.text());
 

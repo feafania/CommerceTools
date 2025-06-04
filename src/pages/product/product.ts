@@ -36,7 +36,7 @@ const ProductView = {
     }
   },
 
-  setProductKey(key: string) {
+  setProductKey(key: string | undefined): void {
     this.productKey = key;
   },
 

@@ -20,6 +20,7 @@ const PageRouter = {
     const path = this.getPathFromUrl();
     let page: PageType;
     let productId: string | undefined;
+    ProductView.setProductKey(undefined);
 
     if (path.startsWith("product/")) {
       productId = path.split("/")[1];
@@ -40,7 +41,7 @@ const PageRouter = {
       location.replace(`/#${page}`);
       return;
     }
-    await renderPage(page);
+    await this.renderPage(page);
   },
 
   navigateTo(path: PageType) {

@@ -5,9 +5,10 @@
   flex-direction: column;
   gap: 1.5rem;
   padding: 2rem;
+  border: 2px solid var(--border-color);
   border-radius: 0.75rem;
   background-color: var(--form-background);
-  box-shadow: 0 0 12px rgb(0 0 0 / 37%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .registration-form {
@@ -104,19 +105,6 @@
 
 .toggle-password-button:hover {
   background-color: unset;
-}
-
-.registration-form,
-.login-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 2rem;
-  border: 2px solid var(--border-color);
-  border-radius: 0.75rem;
-  background-color: var(--form-background);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 #submit-registration-login {

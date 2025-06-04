@@ -8,6 +8,7 @@ import { SETTINGS } from "@/config/settings";
 import { LanguageCode, NavMenu } from "@/types/types";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { renderPage } from "@/utils/page-render";
+import ProductView from "@/pages/product/product";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -129,6 +130,12 @@ const Header = {
         label: t.catalog,
         page: PageType.catalog,
         visible: true,
+        disabled: false,
+      },
+      {
+        label: t.product,
+        page: PageType.product,
+        visible: Boolean(ProductView.productKey),
         disabled: false,
       },
       { label: t.about, page: PageType.about, visible: false, disabled: false },

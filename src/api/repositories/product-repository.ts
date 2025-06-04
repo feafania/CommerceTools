@@ -32,6 +32,7 @@ import getProductByKey from "@/api/repositories/endpoints/product/get-product-by
 import getProductTypeByKey from "@/api/repositories/endpoints/product/get-product-type-by-key";
 import { SETTINGS } from "@/config/settings";
 import { CurrencyCode } from "@/types/enum";
+// import getProductListHttp from "@/api/repositories/endpoints/product/get-product-list-http";
 
 const productRepository = {
   async getCategories(): Promise<InCategory[]> {
@@ -65,6 +66,7 @@ const productRepository = {
     currency: CurrencyCode = SETTINGS.currentCurrency,
   ): Promise<ProductSearchResult> {
     try {
+      console.log("fdsfsfdsfsf", parameters);
       const response: ProductProjectionPagedSearchResponse | undefined =
         await getProductList(parameters);
 
@@ -118,22 +120,27 @@ const productRepository = {
         const categoryFilter = `categories(id = "${category.id}")`;
         const combinedFilters = [...(parameters.filters ?? []), categoryFilter];
 
-        const response = await this.getProductList(
-          {
-            ...parameters,
-            limit,
-            offset,
-            filters: combinedFilters,
-          },
-          currency,
-        );
+        const response = await getProductList({
+          ...parameters,
+          limit,
+          offset,
+          filters: combinedFilters,
+        });
 
         if (!response) {
-          console.warn("No response received from getProductList");
           return this.emptyProductResponse();
         }
 
-        return response;
+        const productResult = response.results.map((product) =>
+          this.mapProductToInternal(product, currency),
+        );
+        return {
+          limit: response?.limit,
+          offset: response?.offset,
+          count: response?.count,
+          total: response?.total,
+          results: productResult,
+        };
       }
       return this.emptyProductResponse();
     } catch (error) {
