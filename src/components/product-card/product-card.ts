@@ -14,6 +14,15 @@ const ProductCard = {
     img.src = product.images[0]?.url;
     img.alt = localizeName(product.name);
 
+    card.addEventListener("click", () => {
+      globalThis.location.hash = `product/${product.key}`;
+    });
+
+    card.append(img, this.renderProductInformation(product));
+    return card;
+  },
+  renderProductInformation(product: InProduct): HTMLElement {
+    const cardInformaion = document.createElement("div");
     const title = document.createElement("h3");
     title.textContent = localizeName(product.name);
 
@@ -32,13 +41,8 @@ const ProductCard = {
       `
         : `<span class="regular">${(product.price / 100).toFixed(2)}
           ${product.currencyCode}</span>`;
-
-    card.addEventListener("click", () => {
-      globalThis.location.hash = `/product/${product.key}`;
-    });
-
-    card.append(img, title, description, price);
-    return card;
+    cardInformaion.append(title, description, price);
+    return cardInformaion;
   },
 };
 

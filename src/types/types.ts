@@ -9,7 +9,7 @@ export type LanguageCode = keyof typeof translations;
 
 export type RouteType = {
   canActivate: () => boolean;
-  render: () => Promise<HTMLElement>;
+  render: () => Promise<HTMLElement | undefined>;
 };
 
 export type ValidationType = Record<string, ValidationRule>;

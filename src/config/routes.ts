@@ -7,6 +7,7 @@ import NotFoundView from "@/pages/notfound/notfound";
 import LoginRegistrationView from "@/pages/login-registration/login-registration";
 import UserProfile from "@/pages/profile/profile";
 import CatalogView2 from "@/pages/catalog2/catalog";
+import ProductView from "@/pages/product/product";
 
 const routes: Partial<Record<PageType, RouteType>> = {
   [PageType.login]: {
@@ -35,9 +36,9 @@ const routes: Partial<Record<PageType, RouteType>> = {
     canActivate: () => true,
     render: CatalogView2.render.bind(CatalogView2),
   },
-  [PageType.detailed]: {
+  [PageType.product]: {
     canActivate: () => true,
-    render: () => Promise.resolve(document.createElement("div")),
+    render: ProductView.render.bind(ProductView),
   },
   [PageType.profile]: {
     canActivate: () => !!authStore.user,
