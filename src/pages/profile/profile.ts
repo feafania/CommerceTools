@@ -341,6 +341,13 @@ const UserProfile = {
     for (const checkbox of defaultCheckboxes) {
       (checkbox as HTMLInputElement).disabled = true;
     }
+
+    const addressSubmitButtons = container.querySelectorAll(
+      ".submit-address-button",
+    );
+    for (const submitButton of addressSubmitButtons) {
+      (submitButton as HTMLButtonElement).disabled = true;
+    }
   },
 
   enableFields(container: HTMLElement): void {
@@ -500,6 +507,13 @@ const UserProfile = {
       (checkbox as HTMLInputElement).disabled = !addressItem.isEditing;
     }
 
+    const submitButton = addressWrapper.querySelector(
+      `#submit-address-${addressId}`,
+    ) as HTMLButtonElement;
+    if (submitButton) {
+      submitButton.disabled = !addressItem.isEditing;
+    }
+
     this.updateAddressEditButton(addressId);
 
     // Add change listeners to address fields if editing is enabled
@@ -574,6 +588,8 @@ const UserProfile = {
       id: `submit-address-${addressId}`,
       class: "submit-address-button",
     }) as HTMLButtonElement;
+
+    addSubmitAddress.disabled = true;
 
     addressWrapper.addEventListener("submit", (event) => {
       this.submitAddress(event);
@@ -748,6 +764,14 @@ const UserProfile = {
         );
         for (const checkbox of defaultCheckboxes) {
           (checkbox as HTMLInputElement).disabled = false;
+        }
+
+        // Enable submit button for new address
+        const submitButton = addressWrapper.querySelector(
+          `#submit-address-${addressId}`,
+        ) as HTMLButtonElement;
+        if (submitButton) {
+          submitButton.disabled = false;
         }
 
         this.updateAddressEditButton(addressId);
