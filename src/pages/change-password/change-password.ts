@@ -1,3 +1,4 @@
+import "./change-password.css";
 import { SETTINGS } from "@/config/settings";
 import { handleOnSubmit } from "@/utils/validation";
 import createInput from "@/components/input/input";
@@ -30,7 +31,7 @@ const ChangePassword = {
       this.renderOnSubmit(event);
     });
 
-    container.append(passwordForm);
+    container.append(headerElement, passwordForm);
     return container;
   },
 
@@ -121,14 +122,23 @@ const ChangePassword = {
   async renderOnSubmit(event: SubmitEvent) {
     const form = event.target as HTMLFormElement;
 
-    const isValid = handleOnSubmit(form, FormType.PROFILE);
+    const isValid = handleOnSubmit(form, FormType.PASSWORD);
     if (!isValid) return;
 
     const formData = new FormData(form);
-    const newPassword = formData.get("new-password")?.toString().trim();
-    const confirmPassword = formData.get("confirm-password")?.toString().trim();
+    const currentPasswordUser = authStore.user?.password;
+    const currentPasswordForm = formData.get("current-password") as string;
+    const newPassword = formData.get("new-password") as string;
+    const confirmPassword = formData.get("confirm-password") as string;
 
-    if (!newPassword || !confirmPassword) return;
+    if (currentPasswordUser !== currentPasswordForm) {
+      showModalMessage(SETTINGS.label.changePassword.wrongOldPassword);
+      return;
+    }
+    if (!newPassword || !confirmPassword) {
+      showModalMessage(SETTINGS.label.changePassword.emptyPassword);
+      return;
+    }
 
     if (newPassword !== confirmPassword) {
       await showModalMessage(SETTINGS.label.changePassword.wrongConfirm);
