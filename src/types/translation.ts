@@ -8,6 +8,7 @@ export interface AppTranslation {
     signIn: string;
     registration: string;
     main: string;
+    catalog: string;
     about: string;
     signOut: string;
     directions: {
@@ -45,6 +46,10 @@ export interface AppTranslation {
     header: string;
   };
   main: {
+    title: string;
+  };
+  catalog: {
+    search: string;
     title: string;
   };
   address: {

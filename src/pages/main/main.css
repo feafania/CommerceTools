@@ -61,10 +61,50 @@
   color: #222;
 }
 
+
+.layout {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #f9f9f9;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+}
+
 .main-page-content {
   width: 100%;
   padding: 2rem 0;
 }
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+}
+
+.nav-link {
+  display: block;
+  padding: 10px 0;
+  color: #333;
+  text-decoration: none;
+}
+
+.nav-link.active {
+  font-weight: bold;
+  color: #000;
+}
+
+.sidebar .nav-list,
+.main-view .nav-list {
+  flex-wrap: wrap;
+}
+.sidebar .nav-list li,
+.main-view .nav-list li {
+  width: 100%;
+}
+
 
 @media (max-width: 991.98px) {
   .categories .category-item {

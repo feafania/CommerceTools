@@ -8,6 +8,7 @@ const en: AppTranslation = {
     signIn: "Sign In",
     registration: "Registration",
     main: "Main",
+    catalog: "Catalog",
     about: "About Us",
     signOut: "Sign Out",
     directions: {
@@ -46,6 +47,10 @@ const en: AppTranslation = {
   },
   main: {
     title: "Welcome to Gifts Shop",
+  },
+  catalog: {
+    search: "Search...",
+    title: "Gift catalog",
   },
   address: {
     headers: {

@@ -188,3 +188,11 @@ export function localizeName(variableName: string | LanguageVariants) {
     return variableName[SETTINGS.currentLang];
   return variableName[SETTINGS.fallbackLanguage];
 }
+
+export function removeAllChildren(element: Element | undefined | null) {
+  if (element) {
+    while (element.firstChild) {
+      element.firstChild.remove();
+    }
+  }
+}

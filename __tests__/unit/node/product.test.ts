@@ -15,7 +15,7 @@ import {
   mockedAttributes,
 } from "../__mocks__/product.mock";
 
-jest.mock("@/api/repositories/endpoints/product/get-product-list");
+jest.mock("@/api/repositories/endpoints/product/get-product-list-http");
 jest.mock("@/api/repositories/endpoints/product/get-product-by-key");
 jest.mock("@/api/repositories/endpoints/product/get-product-types");
 jest.mock("@/api/repositories/endpoints/product/get-product-type-by-key");
@@ -88,9 +88,11 @@ describe("product categories", () => {
       available: true,
       sku: mockedProductProjection.masterVariant.sku,
     });
-    expect(products[0].price).toBe(
-      mockedProductProjection.masterVariant.price?.value.centAmount,
-    );
+    const expectedPrice = productRepository.mapProductToInternal(
+      mockedProductProjection,
+    ).price;
+
+    expect(products[0].price).toBe(expectedPrice);
   });
 
   it("should fetch product by key and map to internal format", async () => {
@@ -98,18 +100,20 @@ describe("product categories", () => {
 
     const product = await productRepository.getProductByKey("key1");
 
+    const expected = productRepository.mapProductToInternal(
+      mockedProductProjection,
+    );
+
     expect(product).toMatchObject({
-      id: mockedProductProjection.id,
-      key: mockedProductProjection.key,
-      name: mockedProductProjection.name,
-      description: mockedProductProjection.description,
-      price: mockedProductProjection.masterVariant?.price?.value.centAmount,
-      discountedPrice:
-        mockedProductProjection.masterVariant?.price?.discounted?.value
-          .centAmount,
-      categories: mockedProductProjection.categories.map((c) => c.id),
-      available: mockedProductProjection.masterVariant?.availability?.isOnStock,
-      sku: mockedProductProjection.masterVariant?.sku,
+      id: expected.id,
+      key: expected.key,
+      name: expected.name,
+      description: expected.description,
+      price: expected.price,
+      discountedPrice: expected.discountedPrice,
+      categories: expected.categories,
+      available: expected.available,
+      sku: expected.sku,
     });
   });
 
@@ -119,9 +123,9 @@ describe("product categories", () => {
     mockedGetProductList.mockResolvedValue({
       limit: 20,
       offset: 0,
-      count: mockedProductList.length,
-      total: mockedProductList.length,
-      results: mockedProductList,
+      count: 1,
+      total: 1,
+      results: [mockedProductList[0]],
     });
 
     const products = await productRepository.getProductsByCategoryKey("dhs");

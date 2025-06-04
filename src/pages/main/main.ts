@@ -4,6 +4,9 @@ import { SETTINGS } from "@/config/settings";
 import Header from "@/components/layout/header/header";
 import productService from "@/api/services/product-service";
 import { localizeName } from "@/utils/helpers";
+import CatalogView2 from "@/pages/catalog2/catalog";
+import PageRouter from "@/router/page-router";
+import { PageType } from "@/types/enum";
 
 const MainView = {
   async render() {
@@ -38,7 +41,9 @@ const MainView = {
       const picture = document.createElement("img");
       picture.src = cat.assets[0].sources[0].uri;
       picture.alt = localizeName(cat.name);
-      picture.addEventListener("click", this.handleCategoryImageClick);
+      li.addEventListener("click", () =>
+        this.handleCategoryImageClick(cat.key),
+      );
 
       liPicture.append(picture);
       li.append(liPicture, liTitle);
@@ -53,11 +58,11 @@ const MainView = {
 
     return container;
   },
-  handleCategoryImageClick(event: MouseEvent) {
-    console.log(
-      "Click on category image:",
-      (event.target as HTMLImageElement).alt,
-    );
+  handleCategoryImageClick(categoryKey: string | undefined) {
+    if (categoryKey) {
+      CatalogView2.setSelectedCategoryKey(categoryKey);
+      PageRouter.navigateTo(PageType.catalog);
+    }
   },
 };
 

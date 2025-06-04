@@ -40,9 +40,15 @@ class ProductService {
     }
   }
 
-  async getProductsByCategoryKey(categoryKey: string): Promise<InProduct[]> {
+  async getProductsByCategoryKey(
+    categoryKey: string,
+    parameters: GetProductListParameters = {},
+  ): Promise<InProduct[]> {
     try {
-      return await productRepository.getProductsByCategoryKey(categoryKey);
+      return await productRepository.getProductsByCategoryKey(
+        categoryKey,
+        parameters,
+      );
     } catch {
       return [];
     }

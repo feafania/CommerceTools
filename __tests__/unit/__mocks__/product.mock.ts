@@ -134,16 +134,18 @@ export const mockedProductProjection: ProductProjection = {
     images: [],
     attributes: [],
     availability: { isOnStock: true },
-    price: {
-      id: "price1",
-      value: {
-        type: "centPrecision",
-        currencyCode: "USD",
-        centAmount: 1000,
-        fractionDigits: 2,
+    prices: [
+      {
+        id: "price1",
+        value: {
+          type: "centPrecision",
+          currencyCode: "USD",
+          centAmount: 1000,
+          fractionDigits: 2,
+        },
+        discounted: undefined,
       },
-      discounted: undefined,
-    },
+    ],
   },
   variants: [],
 };
@@ -167,16 +169,18 @@ export const mockedProductList: ProductProjection[] = [
       id: 2,
       sku: "sku2",
       availability: { isOnStock: false },
-      price: {
-        id: "price2",
-        value: {
-          type: "centPrecision",
-          currencyCode: "USD",
-          centAmount: 1500,
-          fractionDigits: 2,
+      prices: [
+        {
+          id: "price2",
+          value: {
+            type: "centPrecision",
+            currencyCode: "USD",
+            centAmount: 1500,
+            fractionDigits: 2,
+          },
+          discounted: undefined,
         },
-        discounted: undefined,
-      },
+      ],
     },
   },
 ];

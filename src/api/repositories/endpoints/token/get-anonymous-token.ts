@@ -5,7 +5,7 @@ import {
   createTokenRequestBody,
 } from "@/api/api-helpers";
 
-export default async function getCustomerToken(): Promise<
+export default async function getAnonToken(): Promise<
   TokenResponse | undefined
 > {
   const projectKey = process.env.CTP_PROJECT_KEY!;
@@ -13,11 +13,14 @@ export default async function getCustomerToken(): Promise<
   const basicAuth = createBasicAuth();
 
   const scope = buildScopes(projectKey, [
+    "view_products",
     "manage_my_orders",
-    "view_published_products",
+    "create_anonymous_token",
   ]);
 
-  const body = createTokenRequestBody("anonymous", { scope });
+  const body = createTokenRequestBody("client_credentials", {
+    scope,
+  });
 
   try {
     const response = await fetch(
@@ -35,7 +38,6 @@ export default async function getCustomerToken(): Promise<
     if (!response.ok) {
       return undefined;
     }
-
     return (await response.json()) as TokenResponse;
   } catch (error) {
     console.error("Error fetching anonymous token:", error);

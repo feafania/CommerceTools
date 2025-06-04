@@ -6,6 +6,7 @@ import renderAboutView from "@/pages/about/about";
 import NotFoundView from "@/pages/notfound/notfound";
 import LoginRegistrationView from "@/pages/login-registration/login-registration";
 import UserProfile from "@/pages/profile/profile";
+import CatalogView2 from "@/pages/catalog2/catalog";
 
 const routes: Partial<Record<PageType, RouteType>> = {
   [PageType.login]: {
@@ -32,7 +33,7 @@ const routes: Partial<Record<PageType, RouteType>> = {
   },
   [PageType.catalog]: {
     canActivate: () => true,
-    render: () => Promise.resolve(document.createElement("div")),
+    render: CatalogView2.render.bind(CatalogView2),
   },
   [PageType.detailed]: {
     canActivate: () => true,

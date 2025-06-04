@@ -1,6 +1,6 @@
 import translations from "@/config/interfaces";
 import { ProductListParameters, ValidationRule } from "@/types/interfaces";
-import {AddressType, CountryCode, CurrencyCode, FormType} from "@/types/enum";
+import { AddressType, CountryCode, CurrencyCode, FormType } from "@/types/enum";
 import { VALIDATION } from "@/config/validation";
 
 export type Listener = () => void;

@@ -8,6 +8,7 @@ const pl: AppTranslation = {
     signIn: "Zaloguj się",
     registration: "Załóż konto",
     main: "Strona główna",
+    catalog: "Katalog",
     about: "O nas",
     signOut: "Wyloguj się",
     directions: {
@@ -46,6 +47,10 @@ const pl: AppTranslation = {
   },
   main: {
     title: "Witamy w sklepie z prezentami",
+  },
+  catalog: {
+    search: "Szukaj...",
+    title: "Katalog prezentów",
   },
   address: {
     headers: {

@@ -57,16 +57,17 @@ export default async function getProductList({
       fuzzy: true,
     };
 
-    if (searchText) {
-      queryArguments[`text.${SETTINGS.currentLang}`] = searchText;
+    if (searchText?.trim()) {
+      queryArguments[`text.${SETTINGS.currentLang}`] = `${searchText.trim()}`;
     }
 
     if (filters.length > 0) {
-      queryArguments["filter"] = filters;
+      queryArguments.where = filters.join(" and ");
     }
 
     const response = await apiRoot
       .productProjections()
+      .search()
       .get({ queryArgs: queryArguments })
       .execute();
 

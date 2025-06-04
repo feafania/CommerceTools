@@ -125,6 +125,12 @@ const Header = {
 
     return [
       { label: t.main, page: PageType.main, visible: true, disabled: false },
+      {
+        label: t.catalog,
+        page: PageType.catalog,
+        visible: true,
+        disabled: false,
+      },
       { label: t.about, page: PageType.about, visible: false, disabled: false },
       {
         label: t.signIn,

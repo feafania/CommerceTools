@@ -7,6 +7,9 @@ import { CurrencyCode, SortDirection, SortName } from "@/types/enum";
 const defaultLang: LanguageCode =
   (getLocalState("lang") as LanguageCode) || "en";
 
+const defaultCurrency: CurrencyCode =
+  (getLocalState("curr") as CurrencyCode) || CurrencyCode.EUR;
+
 export const SETTINGS = {
   currentLang: defaultLang,
   availableLanguages: Object.keys(translations),
@@ -22,10 +25,11 @@ export const SETTINGS = {
     });
   },
   productListParametrs: {
-    limit: 20,
+    limit: 12,
     offset: 0,
     sortName: SortName.NAME,
     sortDirection: SortDirection.ASC,
   } as ProductListParameters,
-  fallbackCurrency: CurrencyCode.EUR,
+  currentCurrency: defaultCurrency,
+  fallbackCurrency: defaultCurrency,
 };

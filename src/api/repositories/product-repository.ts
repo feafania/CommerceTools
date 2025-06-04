@@ -4,6 +4,7 @@ import {
   AttributeDefinition,
   Category,
   CategoryReference,
+  Price,
   ProductProjection,
   ProductProjectionPagedSearchResponse,
   ProductType,
@@ -18,12 +19,18 @@ import {
   InProductType,
 } from "@/types/interfaces";
 import getProductList from "@/api/repositories/endpoints/product/get-product-list";
-import { InAttributes, LanguageCode, LanguageVariants } from "@/types/types";
+import {
+  GetProductListParameters,
+  InAttributes,
+  LanguageCode,
+  LanguageVariants,
+} from "@/types/types";
 import getProductAttributes from "@/api/repositories/endpoints/product/get-product-attributes";
 import getProductTypes from "@/api/repositories/endpoints/product/get-product-types";
 import getProductByKey from "@/api/repositories/endpoints/product/get-product-by-key";
 import getProductTypeByKey from "@/api/repositories/endpoints/product/get-product-type-by-key";
 import { SETTINGS } from "@/config/settings";
+import { CurrencyCode } from "@/types/enum";
 
 const productRepository = {
   async getCategories(): Promise<InCategory[]> {
@@ -52,7 +59,10 @@ const productRepository = {
     }
   },
 
-  async getProductList(parameters = {}): Promise<InProduct[]> {
+  async getProductList(
+    parameters: GetProductListParameters = {},
+    currency: CurrencyCode = SETTINGS.currentCurrency,
+  ): Promise<InProduct[]> {
     try {
       const response: ProductProjectionPagedSearchResponse | undefined =
         await getProductList(parameters);
@@ -62,7 +72,7 @@ const productRepository = {
       }
 
       return response.results.map((product) =>
-        this.mapProductToInternal(product),
+        this.mapProductToInternal(product, currency),
       );
     } catch (error) {
       console.error("Error getting product list:", error);
@@ -70,24 +80,53 @@ const productRepository = {
     }
   },
 
-  async getProductByKey(key: string): Promise<InProduct | undefined> {
+  async getProductByKey(
+    key: string,
+    currency: CurrencyCode = SETTINGS.currentCurrency,
+  ): Promise<InProduct | undefined> {
     try {
       const response = await getProductByKey(key);
-      return response ? this.mapProductToInternal(response) : undefined;
+      return response
+        ? this.mapProductToInternal(response, currency)
+        : undefined;
     } catch (error) {
       console.error("Error getting product by key:", error);
       throw error;
     }
   },
 
-  async getProductsByCategoryKey(categoryKey: string): Promise<InProduct[]> {
+  async getProductsByCategoryKey(
+    categoryKey: string,
+    parameters: GetProductListParameters = {},
+    currency: CurrencyCode = SETTINGS.currentCurrency,
+  ): Promise<InProduct[]> {
     try {
       const category = await this.getCategoryByKey(categoryKey);
-      const allProducts = await this.getProductList();
+      if (category) {
+        const limit = parameters.limit ?? SETTINGS.productListParametrs.limit;
+        const offset =
+          parameters.offset ?? SETTINGS.productListParametrs.offset;
 
-      return allProducts.filter((product) =>
-        product.categories.includes(category.id),
-      );
+        const categoryFilter = `categories(id = "${category.id}")`;
+        const combinedFilters = [...(parameters.filters ?? []), categoryFilter];
+
+        const response = await getProductList({
+          ...parameters,
+          limit,
+          offset,
+          filters: combinedFilters,
+        });
+
+        if (!response) {
+          console.warn("No response received from getProductList");
+          return [];
+        }
+
+        return response.results.map((product) =>
+          this.mapProductToInternal(product, currency),
+        );
+      }
+      return [];
     } catch (error) {
       console.error("Error getting products by category key:", error);
       throw error;
@@ -126,12 +165,13 @@ const productRepository = {
     }
   },
 
-  mapProductToInternal(product: ProductProjection): InProduct {
-    const masterPrice = product.masterVariant?.price;
-    const price = masterPrice?.value.centAmount ?? 0;
-    const discountedPrice =
-      masterPrice?.discounted?.value.centAmount ?? undefined;
-    const isDiscounted = !!masterPrice?.discounted;
+  mapProductToInternal(
+    product: ProductProjection,
+    currency: CurrencyCode = SETTINGS.currentCurrency,
+  ): InProduct {
+    const masterPrices = product.masterVariant?.prices ?? [];
+    const { price, discountedPrice, currencyCode, isDiscounted } =
+      this.getPriceByCurrency(masterPrices, currency);
 
     return {
       id: product.id,
@@ -140,38 +180,41 @@ const productRepository = {
       description: this.mapLocalizedField(product.description),
       images: product.masterVariant?.images ?? [],
       price,
-      currencyCode:
-        masterPrice?.value.currencyCode ?? SETTINGS.fallbackCurrency,
       discountedPrice,
       isDiscounted,
       discountPercent: this.calculateDiscountPercent(price, discountedPrice),
-      categories:
-        product.categories?.map((cat: CategoryReference) => cat.id) ?? [],
+      currencyCode,
+      variantId: product.masterVariant?.id,
+      available: product.masterVariant?.availability?.isOnStock ?? false,
       attributes:
         this.matAttributesArray(product.masterVariant?.attributes) ?? {},
-      available: product.masterVariant?.availability?.isOnStock ?? false,
       sku: product.masterVariant?.sku,
-      variantId: product.masterVariant?.id,
+      categories:
+        product.categories?.map((cat: CategoryReference) => cat.id) ?? [],
       variants:
         product.variants?.map((variant) => {
-          const variantPrice = variant.price;
-          const vPrice = variantPrice?.value.centAmount ?? 0;
-          const vDiscounted =
-            variantPrice?.discounted?.value.centAmount ?? undefined;
-          const vIsDiscounted = !!variantPrice?.discounted;
+          const variantPrices = variant.prices ?? [];
+          const {
+            price: vPrice,
+            discountedPrice: vDiscountedPrice,
+            currencyCode: vCurrencyCode,
+            isDiscounted: vIsDiscounted,
+          } = this.getPriceByCurrency(variantPrices, currency);
 
           return {
             id: variant.id,
             sku: variant.sku,
             images: variant.images ?? [],
             price: vPrice,
-            currencyCode:
-              variantPrice?.value.currencyCode ?? SETTINGS.fallbackCurrency,
-            discountedPrice: vDiscounted,
+            discountedPrice: vDiscountedPrice,
             isDiscounted: vIsDiscounted,
-            discountPercent: this.calculateDiscountPercent(vPrice, vDiscounted),
-            attributes: this.matAttributesArray(variant.attributes ?? []),
+            discountPercent: this.calculateDiscountPercent(
+              vPrice,
+              vDiscountedPrice,
+            ),
+            currencyCode: vCurrencyCode,
             available: variant.availability?.isOnStock ?? false,
+            attributes: this.matAttributesArray(variant.attributes ?? []),
           };
         }) ?? [],
     };
@@ -264,6 +307,29 @@ const productRepository = {
       return Math.round(((price - discounted) / price) * 100);
     }
     return undefined;
+  },
+
+  getPriceByCurrency(prices: Price[] = [], currency: string) {
+    const priceObject = prices.find((p) => p.value?.currencyCode === currency);
+
+    if (!priceObject?.value)
+      return {
+        price: 0,
+        discountedPrice: undefined,
+        currencyCode: currency,
+        isDiscounted: false,
+      };
+
+    const centAmount = priceObject.value.centAmount ?? 0;
+    const discounted = priceObject.discounted?.value?.centAmount;
+    const isDiscounted = !!priceObject.discounted;
+
+    return {
+      price: centAmount,
+      discountedPrice: discounted,
+      currencyCode: priceObject.value.currencyCode,
+      isDiscounted,
+    };
   },
 };
 

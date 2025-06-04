@@ -9,6 +9,8 @@
   --validation-message: #e63946;
   --nav-active-color: #e3cab4;
   --accent-color: #a78a70;
+  --dark-gray: #333333;
+  --light-gray: #f0f0f0;
 }
 
 * {
