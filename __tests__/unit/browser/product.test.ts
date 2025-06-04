@@ -4,6 +4,8 @@ import {
   mappedInProductType,
   mappedInAttributeObject,
   mockedCategories,
+  productRepositoryResponse,
+  emptyProductResult,
 } from "../__mocks__/product.mock";
 
 import productService from "@/api/services/product-service";
@@ -60,18 +62,19 @@ describe("ProductService", () => {
   describe("getProductList", () => {
     it("should return list of products", async () => {
       mockedRepository.getProductList.mockResolvedValue(
-        mockedInternalProductList,
+        productRepositoryResponse,
       );
 
       const result = await productService.getProductList();
-      expect(result).toEqual(mockedInternalProductList);
+      expect(result.results).toEqual(mockedInternalProductList);
     });
 
     it("should return empty array on error", async () => {
+      mockedRepository.emptyProductResponse.mockReturnValue(emptyProductResult);
       mockedRepository.getProductList.mockRejectedValue(new Error("Error"));
 
       const result = await productService.getProductList();
-      expect(result).toEqual([]);
+      expect(result.results).toEqual([]);
     });
   });
 
@@ -93,11 +96,12 @@ describe("ProductService", () => {
 
   describe("getProductsByCategoryKey", () => {
     it("should return products filtered by category key", async () => {
-      mockedRepository.getProductsByCategoryKey.mockResolvedValue([
-        mappedInProduct,
-      ]);
+      mockedRepository.getProductsByCategoryKey.mockResolvedValue(
+        productRepositoryResponse,
+      );
 
-      const result = await productService.getProductsByCategoryKey("dhs");
+      const response = await productService.getProductsByCategoryKey("dhs");
+      const result = response.results;
       expect(result).toEqual([mappedInProduct]);
     });
 
@@ -105,9 +109,10 @@ describe("ProductService", () => {
       mockedRepository.getProductsByCategoryKey.mockRejectedValue(
         new Error("Error"),
       );
+      mockedRepository.emptyProductResponse.mockReturnValue(emptyProductResult);
 
       const result = await productService.getProductsByCategoryKey("invalid");
-      expect(result).toEqual([]);
+      expect(result.results).toEqual([]);
     });
   });
 

@@ -5,7 +5,7 @@ import { GetProductListParameters } from "@/types/types";
 import { handleApiError } from "@/api/handle-api-error";
 import getAnonToken from "@/api/repositories/endpoints/token/get-anonymous-token";
 
-export default async function getProductListHttp({
+export default async function getProductList({
   limit = SETTINGS.productListParametrs.limit,
   offset = SETTINGS.productListParametrs.offset,
   sortName = SETTINGS.productListParametrs.sortName,

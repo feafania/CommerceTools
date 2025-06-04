@@ -15,7 +15,7 @@ import {
   getProductTypes,
 } from "@/api/repositories/endpoints/product";
 import productRepository from "@/api/repositories/product-repository";
-import { InProduct } from "@/types/interfaces";
+import { InProduct, ProductSearchResult } from "@/types/interfaces";
 import { InAttributes } from "@/types/types";
 
 // mocked functions
@@ -219,3 +219,19 @@ export const mappedInAttributeObject = mockedAttributes.reduce(
   },
   {} as InAttributes,
 );
+
+export const productRepositoryResponse: ProductSearchResult = {
+  limit: 20,
+  offset: 0,
+  count: 2,
+  total: 2,
+  results: [...mockedInternalProductList],
+};
+
+export const emptyProductResult = {
+  limit: 0,
+  offset: 0,
+  count: 0,
+  total: 0,
+  results: [],
+};

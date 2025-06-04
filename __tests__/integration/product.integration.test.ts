@@ -26,7 +26,7 @@ describe("Product API endpoints", () => {
 
     expect(response).toBeDefined();
     if (!response) return;
-    expect(response.key).toBe("dsh");
+    expect(response.key).toBe(testKeys.category);
   });
 
   it("should fetch product list", async () => {
@@ -80,9 +80,9 @@ describe("Product API endpoints", () => {
     const products =
       await productRepository.getProductsByCategoryKey(categoryKey);
 
-    expect(products).toBeDefined();
-    expect(Array.isArray(products)).toBe(true);
-    for (const product of products) {
+    expect(products.results).toBeDefined();
+    expect(Array.isArray(products.results)).toBe(true);
+    for (const product of products.results) {
       expect(product.categories).toContainEqual(expect.any(String));
     }
   });

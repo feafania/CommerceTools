@@ -188,3 +188,36 @@ export interface InProductType {
   description?: string;
   attributes: InAttributeDefinition[];
 }
+
+export interface ProductSearchResult {
+  /**
+   *	The maximum number of results
+   *
+   *
+   */
+  readonly limit: number;
+  /**
+   *	The starting point for the retrieved
+   *
+   *
+   */
+  readonly offset: number;
+  /**
+   *	Actual number of results returned.
+   *
+   *
+   */
+  readonly count: number;
+  /**
+   *	Total number of results matching the query.
+   *
+   *
+   */
+  readonly total?: number;
+  /**
+   *	Products where at least one ProductVariant(ctp:api:type:ProductVariant)
+   *   matches the search query.
+   *
+   */
+  readonly results: InProduct[];
+}

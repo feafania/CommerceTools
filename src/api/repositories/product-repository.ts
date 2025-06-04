@@ -17,6 +17,7 @@ import {
   InCategory,
   InProduct,
   InProductType,
+  ProductSearchResult,
 } from "@/types/interfaces";
 import getProductList from "@/api/repositories/endpoints/product/get-product-list";
 import {
@@ -62,21 +63,28 @@ const productRepository = {
   async getProductList(
     parameters: GetProductListParameters = {},
     currency: CurrencyCode = SETTINGS.currentCurrency,
-  ): Promise<InProduct[]> {
+  ): Promise<ProductSearchResult> {
     try {
       const response: ProductProjectionPagedSearchResponse | undefined =
         await getProductList(parameters);
 
-      if (!response || response.results.length === 0) {
-        return [];
+      if (!response) {
+        return this.emptyProductResponse();
       }
 
-      return response.results.map((product) =>
+      const productResult = response.results.map((product) =>
         this.mapProductToInternal(product, currency),
       );
+      return {
+        limit: response?.limit,
+        offset: response?.offset,
+        count: response?.count,
+        total: response?.total,
+        results: productResult,
+      };
     } catch (error) {
       console.error("Error getting product list:", error);
-      throw error;
+      return this.emptyProductResponse();
     }
   },
 
@@ -99,7 +107,7 @@ const productRepository = {
     categoryKey: string,
     parameters: GetProductListParameters = {},
     currency: CurrencyCode = SETTINGS.currentCurrency,
-  ): Promise<InProduct[]> {
+  ): Promise<ProductSearchResult> {
     try {
       const category = await this.getCategoryByKey(categoryKey);
       if (category) {
@@ -110,26 +118,27 @@ const productRepository = {
         const categoryFilter = `categories(id = "${category.id}")`;
         const combinedFilters = [...(parameters.filters ?? []), categoryFilter];
 
-        const response = await getProductList({
-          ...parameters,
-          limit,
-          offset,
-          filters: combinedFilters,
-        });
+        const response = await this.getProductList(
+          {
+            ...parameters,
+            limit,
+            offset,
+            filters: combinedFilters,
+          },
+          currency,
+        );
 
         if (!response) {
           console.warn("No response received from getProductList");
-          return [];
+          return this.emptyProductResponse();
         }
 
-        return response.results.map((product) =>
-          this.mapProductToInternal(product, currency),
-        );
+        return response;
       }
-      return [];
+      return this.emptyProductResponse();
     } catch (error) {
       console.error("Error getting products by category key:", error);
-      throw error;
+      return this.emptyProductResponse();
     }
   },
 
@@ -329,6 +338,16 @@ const productRepository = {
       discountedPrice: discounted,
       currencyCode: priceObject.value.currencyCode,
       isDiscounted,
+    };
+  },
+
+  emptyProductResponse() {
+    return {
+      limit: 0,
+      offset: 0,
+      count: 0,
+      total: 0,
+      results: [],
     };
   },
 };

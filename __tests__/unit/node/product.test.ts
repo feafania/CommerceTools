@@ -15,7 +15,7 @@ import {
   mockedAttributes,
 } from "../__mocks__/product.mock";
 
-jest.mock("@/api/repositories/endpoints/product/get-product-list-http");
+jest.mock("@/api/repositories/endpoints/product/get-product-list");
 jest.mock("@/api/repositories/endpoints/product/get-product-by-key");
 jest.mock("@/api/repositories/endpoints/product/get-product-types");
 jest.mock("@/api/repositories/endpoints/product/get-product-type-by-key");
@@ -76,7 +76,9 @@ describe("product categories", () => {
       results: [mockedProductProjection],
     });
 
-    const products = await productRepository.getProductList();
+    const response = await productRepository.getProductList();
+    expect(response).toBeDefined();
+    const products = response.results;
 
     expect(products).toHaveLength(1);
     expect(products[0]).toMatchObject({
@@ -128,7 +130,8 @@ describe("product categories", () => {
       results: [mockedProductList[0]],
     });
 
-    const products = await productRepository.getProductsByCategoryKey("dhs");
+    const response = await productRepository.getProductsByCategoryKey("dhs");
+    const products = response.results;
 
     expect(products).toHaveLength(1);
     expect(products[0].id).toBe(mockedProductList[0].id);

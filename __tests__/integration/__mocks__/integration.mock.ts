@@ -2,8 +2,8 @@ import { MyCustomerDraft } from "@commercetools/platform-sdk";
 
 export const testPassword = "StrongPass123!";
 export const testKeys = {
-  category: "dsh",
-  product: "1",
+  category: "dsr",
+  product: "rshsrs",
   productType: "door-signs",
 };
 

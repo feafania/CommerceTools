@@ -4,3 +4,10 @@ export const VIEW_CONTAINER_NAME = "view-container";
 
 export const DEFAULT_PAGE = PageType.main;
 export const NOT_FOUND_PAGE = PageType.notfound;
+
+export const CARD_SETTINGS = {
+  cardWidth: 320,
+  cardHeight: 450,
+  slideStep: 1,
+  cardGap: 16,
+};

@@ -12,6 +12,11 @@ const CatalogView2 = {
   container: document.createElement("section"),
   selectedCategoryKey: undefined as string | undefined,
   products: [] as InProduct[],
+  total: 0,
+  limit: 9,
+  offset: 0,
+  currentQuery: "",
+  paginationWrapper: document.createElement("div"),
 
   async render(
     parameters: GetProductListParameters = {},
@@ -26,8 +31,9 @@ const CatalogView2 = {
 
     searchBar.searchInput.addEventListener("input", () => {
       searchBar.setDebounce(() => {
-        const query = searchBar.searchInput.value.trim();
-        this.renderProducts(parameters, query);
+        this.currentQuery = searchBar.searchInput.value.trim();
+        this.offset = 0; // Reset offset when searching
+        this.renderProducts(parameters, this.currentQuery);
       }, 400);
     });
 
@@ -37,7 +43,15 @@ const CatalogView2 = {
     const productList = document.createElement("div");
     productList.className = "product-list";
 
-    this.container.append(title, searchComponent, sliderWrapper, productList);
+    this.paginationWrapper.className = "pagination";
+
+    this.container.append(
+      title,
+      searchComponent,
+      sliderWrapper,
+      productList,
+      this.paginationWrapper,
+    );
     await this.renderProducts(parameters, "");
 
     return this.container;
@@ -57,22 +71,25 @@ const CatalogView2 = {
       productList.className = "product-list";
       this.container.append(productList);
     }
-    productList.className = "product-list";
 
     removeAllChildren(productList);
 
-    this.products = this.selectedCategoryKey
+    const requestParameters = {
+      ...parameters,
+      searchText: query || undefined,
+      offset: this.offset,
+      limit: this.limit,
+    };
+
+    const response = this.selectedCategoryKey
       ? await productService.getProductsByCategoryKey(
           this.selectedCategoryKey,
-          {
-            ...parameters,
-            searchText: query || undefined,
-          },
+          requestParameters,
         )
-      : await productService.getProductList({
-          ...parameters,
-          searchText: query || undefined,
-        });
+      : await productService.getProductList(requestParameters);
+
+    this.products = response.results;
+    this.total = response.total ?? 0;
 
     for (const product of this.products) {
       const card = ProductCard.create(product);
@@ -87,6 +104,29 @@ const CatalogView2 = {
       existingSlider.replaceWith(newSlider);
     } else {
       productList.before(newSlider);
+    }
+    this.renderPagination();
+  },
+  renderPagination() {
+    removeAllChildren(this.paginationWrapper);
+
+    const totalPages = Math.ceil(this.total / this.limit);
+    if (totalPages <= 1) return;
+
+    for (let page = 0; page < totalPages; page++) {
+      const pageButton = document.createElement("button");
+      pageButton.className = "page-button";
+      pageButton.textContent = (page + 1).toString();
+      if (page * this.limit === this.offset) {
+        pageButton.classList.add("active");
+      }
+
+      pageButton.addEventListener("click", () => {
+        this.offset = page * this.limit;
+        this.renderProducts({}, this.currentQuery);
+      });
+
+      this.paginationWrapper.append(pageButton);
     }
   },
 };

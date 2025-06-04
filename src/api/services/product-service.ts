@@ -1,5 +1,10 @@
 import productRepository from "@/api/repositories/product-repository";
-import { InCategory, InProduct, InProductType } from "@/types/interfaces";
+import {
+  InCategory,
+  InProduct,
+  InProductType,
+  ProductSearchResult,
+} from "@/types/interfaces";
 import { GetProductListParameters, InAttributes } from "@/types/types";
 
 class ProductService {
@@ -23,12 +28,12 @@ class ProductService {
 
   async getProductList(
     parameters: GetProductListParameters = {},
-  ): Promise<InProduct[]> {
+  ): Promise<ProductSearchResult> {
     try {
       const products = await productRepository.getProductList(parameters);
       return products;
     } catch {
-      return [];
+      return productRepository.emptyProductResponse();
     }
   }
 
@@ -43,14 +48,14 @@ class ProductService {
   async getProductsByCategoryKey(
     categoryKey: string,
     parameters: GetProductListParameters = {},
-  ): Promise<InProduct[]> {
+  ): Promise<ProductSearchResult> {
     try {
       return await productRepository.getProductsByCategoryKey(
         categoryKey,
         parameters,
       );
     } catch {
-      return [];
+      return productRepository.emptyProductResponse();
     }
   }
 

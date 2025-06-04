@@ -1,11 +1,14 @@
 import "./product-card.css";
 import { InProduct } from "@/types/interfaces";
 import { localizeName } from "@/utils/helpers";
+import { CARD_SETTINGS } from "@/config/constants";
 
 const ProductCard = {
   create(product: InProduct): HTMLElement {
     const card = document.createElement("div");
     card.className = "product-card";
+    card.style.width = `${CARD_SETTINGS.cardWidth}px`;
+    card.style.height = `${CARD_SETTINGS.cardHeight}px`;
 
     const img = document.createElement("img");
     img.src = product.images[0]?.url;
