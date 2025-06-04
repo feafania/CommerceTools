@@ -39,3 +39,26 @@ input:disabled {
 .address-block .address-header {
   display: none;
 }
+
+.address-section-header {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.address-wrapper {
+  margin-bottom: 30px;
+}
+
+#add-address-button {
+  margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .form-group,
+  .address-block .input-wrapper {
+    width: 100%;
+  }
+  .form-group-container {
+    flex-wrap: wrap;
+  }
+}
