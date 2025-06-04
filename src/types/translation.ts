@@ -126,6 +126,10 @@ export interface AppTranslation {
     editModeBtn: string;
     editModeStop: string;
     editPassword: string;
+    deleteAddress: string;
+    editUSer: string;
+    editAddress: string;
+    addAddress: string;
     submitBtn: string;
   };
   changePassword: {
@@ -135,5 +139,7 @@ export interface AppTranslation {
     formTitle: string;
     success: string;
     wrongConfirm: string;
+    wrongOldPassword: string;
+    emptyPassword: string;
   };
 }

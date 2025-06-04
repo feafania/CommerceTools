@@ -156,6 +156,10 @@ const en: AppTranslation = {
     editModeBtn: "Edit Mode",
     editModeStop: "Leave edit mode",
     editPassword: "Change password",
+    deleteAddress: "You deleted Address",
+    editUSer: "User information was successfully updated",
+    editAddress: "Address was successfully updated",
+    addAddress: "You added new Address",
     submitBtn: "Save Changes",
   },
   changePassword: {
@@ -165,6 +169,8 @@ const en: AppTranslation = {
     formTitle: "Change Password",
     wrongConfirm: "Wrong confirm password",
     success: "Your password successfully changed",
+    wrongOldPassword: "Wrong current password",
+    emptyPassword: "You have empty password field",
   },
 };
 
