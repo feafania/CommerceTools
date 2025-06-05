@@ -8,7 +8,7 @@
   background: transparent;
 }
 
-.image-view {
+.image-slider-view {
   width: 100%;
   max-width: 800px;
   max-height: 800px;
@@ -18,12 +18,12 @@
   overflow: hidden;
 }
 
-.slider-large .image-view {
+.image-slider-large .image-slider-view {
   max-width: 800px;
   max-height: 800px;
 }
 
-.slider-view {
+.image-slider-view {
   position: relative;
   width: 100%;
   display: flex;
@@ -32,7 +32,7 @@
   overflow: hidden;
 }
 
-.slider-image {
+.image-slider-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -42,7 +42,7 @@
 }
 
 /* Arrows */
-.slider-arrow {
+.image-slider-arrow {
   position: absolute;
   top: 50%;
   width: 40px;
@@ -62,20 +62,20 @@
   box-sizing: border-box;
 }
 
-.slider-arrow:hover {
+.image-slider-arrow:hover {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-.slider-arrow.left {
+.image-slider-arrow.left {
   left: 10px;
 }
 
-.slider-arrow.right {
+.image-slider-arrow.right {
   right: 10px;
 }
 
 /* Dots */
-.slider-dots {
+.image-slider-dots {
   display: flex;
   gap: 8px;
   justify-content: center;
@@ -83,7 +83,7 @@
   min-height: 20px;
 }
 
-.slider-dot {
+.image-slider-dot {
   display: inline-block;
   width: 12px;
   height: 12px;
@@ -93,23 +93,23 @@
   transition: background-color 0.3s ease-in-out;
 }
 
-.slider-dot.active {
+.image-slider-dot.active {
   background-color: #333;
 }
 
 /* Size variants */
-.slider-small {
+.image-slider-small {
   max-width: 500px;
   max-height: 500px;
 }
 
-.slider-large {
+.image-slider-large {
   width: 100%;
   max-width: 800px;
   max-height: 800px;
 }
 
-.modal-wrapper {
+.image-slider-wrapper {
   position: fixed;
   top: 0;
   left: 0;
@@ -121,7 +121,7 @@
   justify-content: center;
 }
 
-.modal-overlay {
+.image-slider-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -132,7 +132,7 @@
   z-index: 0;
 }
 
-.image-modal {
+.image-slider-modal {
   position: relative;
   z-index: 1;
   max-width: 90vw;
@@ -145,7 +145,7 @@
   align-items: center;
 }
 
-.modal-close {
+.image-slider-close {
   position: absolute;
   top: 10px;
   right: 10px;

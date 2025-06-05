@@ -19,10 +19,17 @@ const createAddressChangeHandler = (
   return () => {
     const currentValue =
       element.type === "checkbox" ? element.checked.toString() : element.value;
-    if (currentValue !== originalValue && !userProfile.isEdited) {
-      userProfile.isEdited = true;
-      if (userProfile.submitButton) {
-        userProfile.submitButton.disabled = false;
+
+    if (
+      currentValue !== originalValue &&
+      userProfile &&
+      !userProfile.isEdited
+    ) {
+      const submitButton = userProfile.submitButton;
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.style.cursor = "auto";
+        submitButton.classList.remove("disabled-style");
       }
     }
   };
@@ -183,6 +190,7 @@ const UserProfile = {
         this.isEdited = false;
         if (this.submitButton) {
           this.submitButton.disabled = true;
+          this.setDisabledStyles(this.submitButton);
         }
         if (this.containerElement) {
           this.disableGlobalEditingMode(this.containerElement);
@@ -380,16 +388,21 @@ const UserProfile = {
     );
     for (const field of basicFields) {
       (field as HTMLInputElement).disabled = false;
+      this.setDisabledStyles(field as HTMLInputElement);
     }
   },
 
   disableAllFields(container: HTMLElement): void {
     // all elements
-    const allInputElements = container.querySelectorAll(
+    const allInputElements = container.querySelectorAll<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >(
       "input, select, textarea, .address-element input, .address-element select",
     );
+
     for (const element of allInputElements) {
-      (element as HTMLInputElement).disabled = true;
+      element.disabled = true;
+      this.setDisabledStyles(element);
     }
 
     const specificElements = container.querySelectorAll(
@@ -401,6 +414,7 @@ const UserProfile = {
         element instanceof HTMLButtonElement
       ) {
         element.disabled = true;
+        this.setDisabledStyles(element);
       }
     }
   },
@@ -410,6 +424,7 @@ const UserProfile = {
     const inputElements = container.querySelectorAll("input, select, textarea");
     for (const inputElement of inputElements) {
       (inputElement as HTMLInputElement).disabled = false;
+      this.setDisabledStyles(inputElement as HTMLInputElement);
     }
 
     // Enable address elements and checkboxes
@@ -418,6 +433,7 @@ const UserProfile = {
       const addressInputs = addressElement.querySelectorAll("input, select");
       for (const addressInput of addressInputs) {
         (addressInput as HTMLInputElement).disabled = false;
+        this.setDisabledStyles(addressInput as HTMLInputElement);
       }
     }
 
@@ -427,6 +443,7 @@ const UserProfile = {
     );
     for (const checkbox of defaultCheckboxes) {
       (checkbox as HTMLInputElement).disabled = false;
+      this.setDisabledStyles(checkbox as HTMLInputElement);
     }
 
     // Add change listeners to detect edits
@@ -437,6 +454,7 @@ const UserProfile = {
       this.globalEditButton.textContent =
         SETTINGS.label.userProfile.editModeBtn;
       this.globalEditButton.disabled = false;
+      this.setDisabledStyles(this.globalEditButton);
     }
   },
 
@@ -445,11 +463,15 @@ const UserProfile = {
     const deleteButtons = document.querySelectorAll(".delete-address-button");
 
     for (const addButton of addButtons) {
-      (addButton as HTMLButtonElement).disabled = !enabled;
+      if (addButton instanceof HTMLButtonElement) {
+        addButton.disabled = !enabled;
+        this.setDisabledStyles(addButton);
+      }
     }
 
     for (const deleteButton of deleteButtons) {
       (deleteButton as HTMLButtonElement).disabled = !enabled;
+      this.setDisabledStyles(deleteButton as HTMLButtonElement);
     }
   },
 
@@ -459,6 +481,7 @@ const UserProfile = {
     );
     for (const addressEditButton of addressEditButtons) {
       (addressEditButton as HTMLButtonElement).disabled = !enabled;
+      this.setDisabledStyles(addressEditButton as HTMLButtonElement);
     }
   },
 
@@ -469,6 +492,7 @@ const UserProfile = {
         // Enable submit button when changes are detected
         if (this.submitButton) {
           this.submitButton.disabled = false;
+          this.setDisabledStyles(this.submitButton);
         }
       }
     };
@@ -552,6 +576,7 @@ const UserProfile = {
 
     for (const addressInput of addressInputs) {
       (addressInput as HTMLInputElement).disabled = !addressItem.isEditing;
+      this.setDisabledStyles(addressInput as HTMLInputElement);
     }
 
     // Toggle default address checkboxes
@@ -560,6 +585,7 @@ const UserProfile = {
     );
     for (const checkbox of defaultCheckboxes) {
       (checkbox as HTMLInputElement).disabled = !addressItem.isEditing;
+      this.setDisabledStyles(checkbox as HTMLInputElement);
     }
 
     const submitButton = addressWrapper.querySelector(
@@ -567,6 +593,7 @@ const UserProfile = {
     ) as HTMLButtonElement;
     if (submitButton) {
       submitButton.disabled = !addressItem.isEditing;
+      this.setDisabledStyles(submitButton);
     }
 
     this.updateAddressEditButton(addressId);
@@ -645,6 +672,7 @@ const UserProfile = {
     }) as HTMLButtonElement;
 
     addSubmitAddress.disabled = true;
+    this.setDisabledStyles(addSubmitAddress);
 
     addressWrapper.addEventListener("submit", (event) => {
       this.submitAddress(event);
@@ -811,6 +839,7 @@ const UserProfile = {
         const addressInputs = addressWrapper.querySelectorAll("input, select");
         for (const addressInput of addressInputs) {
           (addressInput as HTMLInputElement).disabled = false;
+          this.setDisabledStyles(addressInput as HTMLInputElement);
         }
 
         // Enable default address checkboxes
@@ -819,6 +848,7 @@ const UserProfile = {
         );
         for (const checkbox of defaultCheckboxes) {
           (checkbox as HTMLInputElement).disabled = false;
+          this.setDisabledStyles(checkbox as HTMLInputElement);
         }
 
         // Enable submit button for new address
@@ -827,6 +857,7 @@ const UserProfile = {
         ) as HTMLButtonElement;
         if (submitButton) {
           submitButton.disabled = false;
+          this.setDisabledStyles(submitButton);
         }
 
         this.updateAddressEditButton(addressId);
@@ -983,6 +1014,7 @@ const UserProfile = {
     }) as HTMLButtonElement;
 
     this.submitButton.disabled = true;
+    this.setDisabledStyles(this.submitButton);
 
     return this.submitButton;
   },
@@ -1025,6 +1057,7 @@ const UserProfile = {
       this.isEdited = true;
       if (this.submitButton) {
         this.submitButton.disabled = false;
+        this.setDisabledStyles(this.submitButton);
       }
     }
   },
@@ -1059,6 +1092,7 @@ const UserProfile = {
       this.isEdited = true;
       if (this.submitButton) {
         this.submitButton.disabled = false;
+        this.setDisabledStyles(this.submitButton);
       }
     }
   },
@@ -1069,6 +1103,22 @@ const UserProfile = {
 
   getDefaultBillingAddress(): AddressItem | undefined {
     return this.addresses.find((addr) => addr.isDefaultBilling);
+  },
+
+  setDisabledStyles(element: HTMLElement): void {
+    if (
+      element instanceof HTMLInputElement ||
+      element instanceof HTMLSelectElement ||
+      element instanceof HTMLTextAreaElement
+    ) {
+      if (element.disabled) {
+        element.style.cursor = "not-allowed";
+        element.classList.add("disabled-style");
+      } else {
+        element.style.cursor = "auto";
+        element.classList.remove("disabled-style");
+      }
+    }
   },
 };
 

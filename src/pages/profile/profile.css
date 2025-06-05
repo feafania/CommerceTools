@@ -20,6 +20,18 @@ input:disabled {
   margin-top: 50px;
 }
 
+#password-page {
+  margin-top: 20px;
+}
+
+.disabled-style {
+  background-color: transparent !important;
+  color: #999;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .address-block {
   box-shadow: none;
   background: none;
