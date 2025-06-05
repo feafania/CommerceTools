@@ -11,10 +11,13 @@ import Header from "@/components/layout/header/header";
 import PageRouter from "@/router/page-router";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { isInCustomer } from "@/utils/type-guards";
-import { InCustomer } from "@/types/interfaces";
+import { InAddress, InCustomer } from "@/types/interfaces";
 import createCheckbox from "@/components/checkbox/checkbox";
+import { getState } from "@/utils/helpers";
 
 const LoginRegistrationView = {
+  shippingAddressElement: undefined as AddressElement | undefined,
+  billingAddressElement: undefined as AddressElement | undefined,
   async renderRegistrationForm(): Promise<HTMLElement> {
     const container = document.createElement("div");
     container.id = "registration";
@@ -123,9 +126,9 @@ const LoginRegistrationView = {
     container.className = "registration-address-container";
 
     // First address block
-    const address1 = new AddressElement(AddressType.Shipping);
-    address1.render();
-    container.append(address1.element);
+    this.shippingAddressElement = new AddressElement(AddressType.Shipping);
+    this.shippingAddressElement.render();
+    container.append(this.shippingAddressElement.element);
 
     // Checkbox
     const checkboxWrapper = createCheckbox({
@@ -138,26 +141,17 @@ const LoginRegistrationView = {
     );
     container.append(checkboxWrapper);
 
-    // Second address block
-    let address2: AddressElement | undefined = undefined;
-
-    const toggleBillingAddress = () => {
-      const showBilling = checkbox?.checked;
-
-      if (showBilling && !address2) {
-        address2 = new AddressElement(AddressType.Billing);
-        address2.render();
-        address2.element.classList.add("secondary-address");
-        container.append(address2.element);
-      } else if (!showBilling && address2) {
-        address2.element.remove();
-        address2 = undefined;
-      }
-    };
-
     if (checkbox) {
-      checkbox.addEventListener("change", toggleBillingAddress);
-      toggleBillingAddress();
+      // Second address block
+      this.billingAddressElement = new AddressElement(AddressType.Billing);
+      this.billingAddressElement.render();
+      this.billingAddressElement.element.classList.add("secondary-address");
+
+      checkbox.addEventListener(
+        "change",
+        this.toggleBillingAddress(container, checkbox).bind(this),
+      );
+      this.toggleBillingAddress(container, checkbox).bind(this)();
     }
 
     return container;
@@ -275,44 +269,156 @@ const LoginRegistrationView = {
   },
 
   setCustomer(formData: FormData): InCustomer {
+    const isSameAddress = formData.get("show-billing-address") !== "on";
+
+    const shippingAddress: InAddress = {
+      streetName: formData.get("street-shipping") as string,
+      streetNumber: formData.get("number-shipping") as string,
+      postalCode: formData.get("postalcode-shipping") as string,
+      city: formData.get("city-shipping") as string,
+      country: formData.get("country-shipping") as string,
+      key: "shipping-address",
+      isDefaultShipping:
+        formData.get("default-shipping-address-shipping") === "on",
+      isDefaultBilling: isSameAddress
+        ? formData.get("default-billing-address-shipping") === "on"
+        : false,
+    };
+
+    const billingAddress: InAddress | undefined = isSameAddress
+      ? undefined
+      : {
+          streetName: formData.get("street-billing") as string,
+          streetNumber: formData.get("number-billing") as string,
+          postalCode: formData.get("postalcode-billing") as string,
+          city: formData.get("city-billing") as string,
+          country: formData.get("country-billing") as string,
+          key: "billing-address",
+          isDefaultShipping: false,
+          isDefaultBilling:
+            formData.get("default-billing-address-billing") === "on",
+        };
+    const addresses: InAddress[] = [shippingAddress];
+    if (!isSameAddress && billingAddress) {
+      addresses.push(billingAddress);
+    }
+
     return {
       email: formData.get("email") as string,
       password: formData.get("password") as string,
       firstName: formData.get("firstname") as string,
       lastName: formData.get("lastname") as string,
       dateOfBirth: formData.get("birthday") as string,
-      // formatDateForCommercetools(
-      //   formData.get("birthday")),
-      isSameAddress: !(formData.get("show-billing-address") === "on"),
-      shippingAddress: {
-        streetName: formData.get("shipping-street") as string,
-        streetNumber: formData.get("shipping-number") as string,
-        postalCode: formData.get("shipping-postalcode") as string,
-        city: formData.get("shipping-city") as string,
-        country: formData.get("shipping-country") as string,
-        key: "shipping-address",
-      },
-      billingAddress: {
-        streetName:
-          (formData.get("billing-street") as string) ||
-          (formData.get("shipping-street") as string),
-        streetNumber:
-          (formData.get("billing-number") as string) ||
-          (formData.get("shipping-number") as string),
-        postalCode:
-          (formData.get("billing-postalcode") as string) ||
-          (formData.get("shipping-postalcode") as string),
-        city:
-          (formData.get("billing-city") as string) ||
-          (formData.get("shipping-city") as string),
-        country:
-          (formData.get("billing-country") as string) ||
-          (formData.get("shipping-country") as string),
-        key: "billing-address",
-      },
-      setBillingAsDefault: formData.get("default-billing-address") === "on",
-      setShippingAsDefault: formData.get("default-shipping-address") === "on",
+      addresses,
     };
+  },
+
+  toggleBillingAddress(container: HTMLDivElement, checkbox: HTMLInputElement) {
+    return () => {
+      const showBilling = checkbox?.checked;
+      const address2: HTMLElement | undefined = this.billingAddressElement
+        ? this.billingAddressElement.element
+        : undefined;
+      const address1: HTMLElement | undefined = this.shippingAddressElement
+        ? this.shippingAddressElement.element
+        : undefined;
+
+      if (showBilling && address2) {
+        this.manageShippingAddress();
+        this.manageBillingAddress(container, address2);
+      } else if (!showBilling) {
+        if (address2) {
+          const shippingDefaultBillingCheckbox = address1
+            ? address1.querySelector<HTMLInputElement>(
+                `#default-billing-address-${AddressType.Shipping}`,
+              )
+            : undefined;
+          if (shippingDefaultBillingCheckbox) {
+            const savedValue = getState(shippingDefaultBillingCheckbox.id);
+            if (typeof savedValue === "string") {
+              shippingDefaultBillingCheckbox.checked = savedValue === "on";
+            }
+            shippingDefaultBillingCheckbox.value =
+              shippingDefaultBillingCheckbox.checked ? "on" : "off";
+          }
+          address2.remove();
+        }
+        const shippingDefaultBillingCheckboxWrapper = address1
+          ? address1.querySelector<HTMLInputElement>(
+              `#default-billing-address-${AddressType.Shipping}-wrapper`,
+            )
+          : undefined;
+        if (shippingDefaultBillingCheckboxWrapper) {
+          shippingDefaultBillingCheckboxWrapper.style.display = "";
+        }
+      }
+    };
+  },
+
+  manageBillingAddress(container: HTMLDivElement, address2: HTMLElement) {
+    container.append(address2);
+    const billingDefaultShippingCheckbox =
+      address2.querySelector<HTMLInputElement>(
+        `#default-shipping-address-${AddressType.Billing}`,
+      );
+    const billingDefaultBillingCheckbox =
+      address2.querySelector<HTMLInputElement>(
+        `#default-billing-address-${AddressType.Billing}`,
+      );
+    if (billingDefaultShippingCheckbox) {
+      billingDefaultShippingCheckbox.checked = false;
+      billingDefaultShippingCheckbox.dispatchEvent(
+        new Event("change", { bubbles: true }),
+      );
+    }
+    if (billingDefaultBillingCheckbox) {
+      const savedValue = getState(billingDefaultBillingCheckbox.id);
+      if (typeof savedValue === "string") {
+        billingDefaultBillingCheckbox.checked = savedValue === "on";
+      }
+      billingDefaultBillingCheckbox.value =
+        billingDefaultBillingCheckbox.checked ? "on" : "off";
+    }
+
+    const billingDefaultShippingCheckboxWrapper = address2
+      ? address2.querySelector<HTMLInputElement>(
+          `#default-shipping-address-${AddressType.Billing}-wrapper`,
+        )
+      : undefined;
+    if (billingDefaultShippingCheckbox) {
+      billingDefaultShippingCheckbox.checked = false;
+      billingDefaultShippingCheckbox.dispatchEvent(
+        new Event("change", { bubbles: true }),
+      );
+    }
+    if (billingDefaultShippingCheckboxWrapper) {
+      billingDefaultShippingCheckboxWrapper.style.display = "none";
+    }
+  },
+
+  manageShippingAddress() {
+    const address1: HTMLElement | undefined = this.shippingAddressElement
+      ? this.shippingAddressElement.element
+      : undefined;
+    const shippingDefaultBillingCheckbox = address1
+      ? address1.querySelector<HTMLInputElement>(
+          `#default-billing-address-${AddressType.Shipping}`,
+        )
+      : undefined;
+    const shippingDefaultBillingCheckboxWrapper = address1
+      ? address1.querySelector<HTMLInputElement>(
+          `#default-billing-address-${AddressType.Shipping}-wrapper`,
+        )
+      : undefined;
+    if (shippingDefaultBillingCheckboxWrapper) {
+      shippingDefaultBillingCheckboxWrapper.style.display = "none";
+    }
+    if (shippingDefaultBillingCheckbox) {
+      shippingDefaultBillingCheckbox.checked = false;
+      shippingDefaultBillingCheckbox.dispatchEvent(
+        new Event("change", { bubbles: true }),
+      );
+    }
   },
 };
 

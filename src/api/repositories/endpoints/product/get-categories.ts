@@ -1,14 +1,36 @@
-import apiRoot from "@/api/repositories/api-client";
-import { handleApiError } from "@/api/handle-api-error";
+import {
+  CategoryPagedQueryResponse,
+  createApiBuilderFromCtpClient,
+} from "@commercetools/platform-sdk";
 
-export default async function getCategories() {
+import { handleApiError } from "@/api/handle-api-error";
+import { createAnonymousClient } from "@/api/repositories/build-client";
+
+export default async function getCategories(): Promise<
+  CategoryPagedQueryResponse | undefined
+> {
   try {
-    return apiRoot
+    // Create anonymous client (no auth needed for public categories)
+    const ctpClient = createAnonymousClient();
+
+    // Create API root with project key
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: process.env.CTP_PROJECT_KEY!,
+    });
+
+    // Execute the query
+    const response = await apiRoot
       .categories()
-      .get({ queryArgs: { withTotal: false } })
+      .get({
+        queryArgs: {
+          withTotal: false,
+        },
+      })
       .execute();
+
+    return response.body;
   } catch (error) {
-    console.error(`Error fetching category:`, error);
+    console.error("Error fetching categories:", error);
     handleApiError(error);
   }
 }

@@ -5,6 +5,8 @@ import MainView from "@/pages/main/main";
 import renderAboutView from "@/pages/about/about";
 import NotFoundView from "@/pages/notfound/notfound";
 import LoginRegistrationView from "@/pages/login-registration/login-registration";
+import UserProfile from "@/pages/profile/profile";
+import ChangePassword from "@/pages/change-password/change-password";
 
 const routes: Partial<Record<PageType, RouteType>> = {
   [PageType.login]: {
@@ -38,12 +40,16 @@ const routes: Partial<Record<PageType, RouteType>> = {
     render: () => Promise.resolve(document.createElement("div")),
   },
   [PageType.profile]: {
-    canActivate: () => Boolean(authStore.user),
-    render: () => Promise.resolve(document.createElement("div")),
+    canActivate: () => true,
+    render: UserProfile.render.bind(UserProfile),
   },
   [PageType.basket]: {
     canActivate: () => true,
     render: () => Promise.resolve(document.createElement("div")),
+  },
+  [PageType.changepassword]: {
+    canActivate: () => true,
+    render: ChangePassword.render.bind(ChangePassword),
   },
 };
 

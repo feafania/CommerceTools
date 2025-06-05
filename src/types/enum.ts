@@ -4,10 +4,11 @@ export enum PageType {
   main = "main",
   catalog = "catalog",
   detailed = "detailed",
-  profile = "user",
+  profile = "profile",
   basket = "basket",
   about = "about",
   notfound = "notfound",
+  changepassword = "changepassword",
 }
 
 export enum AddressType {
@@ -26,4 +27,17 @@ export enum CountryCode {
 export enum FormType {
   LOGIN = "login",
   REGISTRATION = "registration",
+  PROFILE = "profile",
+  PASSWORD = "password",
+}
+
+export enum SortName {
+  NAME = "name",
+  PRICE = "price",
+  CREATED_AT = "createdAt",
+}
+
+export enum SortDirection {
+  ASC = "asc",
+  DESC = "desc",
 }

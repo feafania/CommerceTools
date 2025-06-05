@@ -18,6 +18,8 @@ const pl: AppTranslation = {
       toSignIn: "Zaloguj się",
       toSignUp: "Załóż konto",
     },
+    userProfile: "User Profile",
+    changepassword: "Change password",
   },
   login: {
     email: "Adres e-mail",
@@ -63,6 +65,11 @@ const pl: AppTranslation = {
     placeholders: {
       country: "Wybierz kraj",
     },
+    editAddress: "Edit",
+    editAddressStop: "Stop editing",
+    addAdress: "+ Add Adress",
+    addressProfileTitle: "Address",
+    addressesList: "Addresses",
   },
   validation: {
     email:
@@ -88,6 +95,7 @@ const pl: AppTranslation = {
       ES: "Kod pocztowy musi być zgodny z formatem obowiązującym w Hiszpanii  (28001).",
     },
     commonError: "Błąd walidacji.",
+    selectCountry: "Proszę wybrać kraj",
   },
   errorsTypes: {
     duplicate: "Wartość już istnieje w systemie.",
@@ -123,6 +131,8 @@ const pl: AppTranslation = {
       "Plik connect.yaml pod adresem $url (tag: $tag) jest nieprawidłowy. Sprawdź format lub zawartość.",
     connectorInCertification:
       "Ten konektor jest w trakcie procesu certyfikacji. Będzie dostępny po jego zakończeniu.",
+    versionMismatch:
+      "Błąd niezgodności wersji. Proszę odświeżyć i spróbować ponownie.",
   },
   errors: {
     login: "Logowanie nie powiodło się.",
@@ -130,11 +140,42 @@ const pl: AppTranslation = {
       "Wylogowanie nie powiodło się. Być może już zostałeś wylogowany. Spróbuj ponownie.",
     registration: "Rejestracja nie powiodła się.",
     categories: "Nie udało się załadować kategorii.",
+    updateCustomer: "Nie udało się zaktualizować informacji o kliencie.",
+    updatePassword: "Nie udało się zaktualizować hasła klienta.",
+    token: "Nie udało się zdobyć tokena.",
+    getCurrentUser: "Nie udało się pobrać bieżącego użytkownika",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",
     onSignUp: "Twoje konto zostało utworzone.",
     onSignOut: "Zostałeś wylogowany.",
+    nothingToUpdate: "Brak zmian. Twój profil jest już aktualny.",
+  },
+  userProfile: {
+    firstName: "First name",
+    lastName: "Last name",
+    birthDay: "Birth day",
+    email: "Email Address",
+    password: "Password",
+    header: "User profile",
+    editModeBtn: "Edit Mode",
+    editModeStop: "Leave edit mode",
+    editPassword: "Change password",
+    deleteAddress: "You deleted Address",
+    editUSer: "User information was successfully updated",
+    editAddress: "Address was successfully updated",
+    addAddress: "You added new Address",
+    submitBtn: "Save Changes",
+  },
+  changePassword: {
+    current: "Current Password",
+    newPassword: "New Password",
+    confirmNewPassword: "Comfirm new Password",
+    formTitle: "Change Password",
+    wrongConfirm: "Wrong confirm password",
+    success: "Your password successfully changed",
+    wrongOldPassword: "Wrong current password",
+    emptyPassword: "You have empty password field",
   },
 };
 

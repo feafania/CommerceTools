@@ -1,24 +1,37 @@
 import {
   CustomerSignInResult,
   MyCustomerDraft,
+  createApiBuilderFromCtpClient,
 } from "@commercetools/platform-sdk";
 
-import apiRoot from "@/api/repositories/api-client";
 import { handleApiError } from "@/api/handle-api-error";
+import { createAnonymousClient } from "@/api/repositories/build-client";
 
 export default async function registerCustomer(
   draft: MyCustomerDraft,
-): Promise<CustomerSignInResult | undefined> {
+): Promise<CustomerSignInResult> {
   try {
+    const anonymousClient = createAnonymousClient();
+    const apiRoot = createApiBuilderFromCtpClient(
+      anonymousClient,
+    ).withProjectKey({ projectKey: process.env.CTP_PROJECT_KEY! });
+
     const response = await apiRoot
       .me()
       .signup()
-      .post({ body: draft })
+      .post({
+        body: {
+          ...draft,
+          addresses: draft.addresses || [],
+          defaultShippingAddress: draft.defaultShippingAddress || undefined,
+          defaultBillingAddress: draft.defaultBillingAddress || undefined,
+        },
+      })
       .execute();
 
     return response.body;
   } catch (error: unknown) {
-    console.error(`Registration with email "${draft.email}" failed:`, error);
+    console.error(`Registration failed for email "${draft.email}":`, error);
     handleApiError(error);
   }
 }

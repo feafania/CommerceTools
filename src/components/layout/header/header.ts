@@ -5,8 +5,9 @@ import authService from "@/api/services/auth-service";
 import authStore from "@/stores/auth-store";
 import { PageType } from "@/types/enum";
 import { SETTINGS } from "@/config/settings";
-import { LanguageCode } from "@/types/types";
+import { LanguageCode, NavMenu } from "@/types/types";
 import showModalMessage from "@/components/modal-window/modal-window";
+import { renderPage } from "@/utils/page-render";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -82,11 +83,11 @@ const Header = {
     this.title.textContent = SETTINGS.label.header.appTitle;
   },
 
-  createNavList(): HTMLElement {
+  createNavList(type: NavMenu = "header"): HTMLElement {
     const ul = document.createElement("ul");
     ul.className = "nav-list";
 
-    for (const { label, page, visible } of this.getNavLinks()) {
+    for (const { label, page, visible, disabled } of this.getNavLinks(type)) {
       if (!visible) continue;
 
       const li = document.createElement("li");
@@ -94,12 +95,17 @@ const Header = {
       link.textContent = label;
       link.href = "javascript:void(0)";
       link.className = "nav-link";
+      if (disabled) {
+        link.classList.add("disabled");
+      }
 
       const isCurrent = PageRouter.currentPage === page;
       if (isCurrent) {
         link.classList.add("active");
       } else {
-        link.addEventListener("click", this.onClick(label, page));
+        if (!disabled) {
+          link.addEventListener("click", this.onClick(label, page));
+        }
       }
 
       li.append(link);
@@ -113,27 +119,51 @@ const Header = {
     this.nav.replaceChildren(this.createNavList());
   },
 
-  getNavLinks(): NavType[] {
+  getNavLinks(type: NavMenu = "header"): NavType[] {
     const isLoggedIn = Boolean(authStore.user);
     const t = SETTINGS.label.nav;
 
     return [
-      { label: t.main, page: PageType.main, visible: true },
-      { label: t.signIn, page: PageType.login, visible: true },
+      { label: t.main, page: PageType.main, visible: true, disabled: false },
+      {
+        label: t.signIn,
+        page: PageType.login,
+        visible: !isLoggedIn || type === "main",
+        disabled: isLoggedIn,
+      },
       {
         label: t.registration,
         page: PageType.registration,
-        visible: true,
+        visible: !isLoggedIn || type === "main",
+        disabled: isLoggedIn,
       },
-      { label: t.about, page: PageType.about, visible: false },
-      { label: t.signOut, page: PageType.notfound, visible: isLoggedIn },
+      { label: t.about, page: PageType.about, visible: false, disabled: true },
+      {
+        label: t.signOut,
+        page: PageType.notfound,
+        visible: isLoggedIn,
+        disabled: !isLoggedIn,
+      },
+
+      { label: t.about, page: PageType.about, visible: false, disabled: false },
+      {
+        label: t.userProfile,
+        page: PageType.profile,
+        visible: isLoggedIn,
+        disabled: !isLoggedIn,
+      },
+      {
+        label: t.changepassword,
+        page: PageType.changepassword,
+        visible: false,
+        disabled: !isLoggedIn,
+      },
     ];
   },
 
   onClick(label: string, page: PageType) {
     return async () => {
       const isLoggedIn = Boolean(authStore.user);
-      // const { signOut, signIn, registration } = SETTINGS.label.nav;
 
       if (label === SETTINGS.label.nav.signOut) {
         if (isLoggedIn) {
@@ -142,15 +172,15 @@ const Header = {
             if (logoutResponse) {
               this.setUsername();
               showModalMessage(SETTINGS.label.messages.onSignOut);
-              this.renderNav();
+              if (PageRouter.getPathFromUrl() === PageType.main) {
+                await renderPage(PageType.main);
+              }
               PageRouter.navigateTo(PageType.main);
             }
           } catch (error) {
             console.error("Logout error:", error);
           }
         }
-        // } else if ((label === signIn || label === registration) && isLoggedIn) {
-        //   PageRouter.navigateTo(PageType.main);
       } else {
         PageRouter.navigateTo(page);
       }

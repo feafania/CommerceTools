@@ -32,6 +32,12 @@
   cursor: default;
 }
 
+.nav-link.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .header-username {
   font-weight: bold;
   font-size: 2rem;
@@ -115,7 +121,7 @@
   height: 40px;
   background-size: contain;
   background-repeat: no-repeat;
-  background-image: url("~@/assets/img/burger-menu.png");
+  background-image: url("../../../assets/img/burger-menu.png");
 }
 
 .burger-menu-close::before {
@@ -125,7 +131,7 @@
   height: 40px;
   background-size: contain;
   background-repeat: no-repeat;
-  background-image: url("~@/assets/img/burger-menu-close.png");
+  background-image: url("../../../assets/img/burger-menu-close.png");
 }
 
 @media (max-width: 991.98px) {
