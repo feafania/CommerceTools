@@ -101,7 +101,6 @@ const UserProfile = {
   createUserDataContainer(): HTMLElement {
     const userDataContainer = document.createElement("div");
     userDataContainer.className = "form-group";
-    console.log(authStore.user);
     userDataContainer.append(
       createInput({
         type: "text",
@@ -162,8 +161,6 @@ const UserProfile = {
   },
   async renderOnSubmit(event: SubmitEvent) {
     const form = event.target as HTMLFormElement;
-    console.log(form);
-
     const isValid = handleOnSubmit(form, FormType.PROFILE);
     if (!isValid) return;
 
@@ -204,62 +201,130 @@ const UserProfile = {
 
     const formData = new FormData(form);
     event.preventDefault();
+
+    let addressId = form.dataset.addressId || this.generateAddressId();
+    const currentAddressForm = this.reciveCurrentForm(addressId);
+    if (currentAddressForm?.hasAttribute("data-address-id-new")) {
+      addressId =
+        currentAddressForm.dataset.addressIdNew || this.generateAddressId();
+    }
+
+    const newAddress = {
+      streetName: formData.get("street-billing") as string,
+      postalCode: formData.get("postalcode-billing") as string,
+      city: formData.get("city-billing") as string,
+      country: formData.get("country-billing") as string,
+      isDefaultBilling:
+        formData.get("default-billing-address-billing") === "on",
+      isDefaultShipping:
+        formData.get("default-shipping-address-billing") === "on",
+    };
+
+    await this.processAddressUpdate(addressId, newAddress, form);
+  },
+
+  async processAddressUpdate(
+    addressId: string,
+    newAddress: {
+      streetName: string;
+      postalCode: string;
+      city: string;
+      country: string;
+      isDefaultBilling: boolean;
+      isDefaultShipping: boolean;
+    },
+    form?: HTMLFormElement,
+  ) {
+    const updatedAddresses = this.prepareAddressUpdate(addressId, newAddress);
+
+    if (!updatedAddresses) return;
+
+    const userData = authStore.user;
+    const updatedCustomerData: InCustomer = {
+      firstName: userData?.firstName as string,
+      lastName: userData?.lastName as string,
+      email: userData?.email as string,
+      dateOfBirth: userData?.dateOfBirth as string,
+      addresses: updatedAddresses.addresses,
+    };
+
+    const result = await customerService.update(updatedCustomerData);
+
+    if (result) {
+      this.handleAddressUpdateSuccess(
+        result,
+        updatedAddresses.isNewAddress,
+        addressId,
+        form,
+      );
+    }
+  },
+
+  prepareAddressUpdate(addressId: string, newAddress: InAddress) {
     let userAddresses = structuredClone(authStore.user?.addresses);
-    const addressId = form.dataset.addressId || this.generateAddressId();
-    if (userAddresses) {
-      const isNewAddress = !userAddresses.some((addr) => addr.id === addressId);
 
-      const newAddress = {
-        streetName: formData.get("street-billing") as string,
-        postalCode: formData.get("postalcode-billing") as string,
-        city: formData.get("city-billing") as string,
-        country: formData.get("country-billing") as string,
-        isDefaultBilling:
-          formData.get("default-billing-address-billing") === "on",
-        isDefaultShipping:
-          formData.get("default-shipping-address-billing") === "on",
-      };
+    if (!userAddresses) return;
 
-      if (isNewAddress) {
-        userAddresses.push({
-          ...newAddress,
-          key: "billing-address-" + Date.now(),
-        });
-      } else {
-        userAddresses = userAddresses.map((addr) =>
-          addr.id === addressId ? { ...newAddress, id: addressId } : addr,
-        );
-      }
-      const userData = authStore.user;
-      const updatedCustomerData: InCustomer = {
-        firstName: userData?.firstName as string,
-        lastName: userData?.lastName as string,
-        email: userData?.email as string,
-        dateOfBirth: userData?.dateOfBirth as string,
-        addresses: userAddresses,
+    const isNewAddress = !userAddresses.some((addr) => addr.id === addressId);
+
+    if (isNewAddress) {
+      userAddresses.push({
+        ...newAddress,
+        key: "billing-address-" + Date.now(),
+      });
+    } else {
+      userAddresses = userAddresses.map((addr) =>
+        addr.id === addressId ? { ...newAddress, id: addressId } : addr,
+      );
+    }
+
+    return {
+      addresses: userAddresses,
+      isNewAddress,
+    };
+  },
+
+  async handleAddressUpdateSuccess(
+    result: InCustomer,
+    isNewAddress: boolean,
+    addressId: string,
+    form?: HTMLFormElement,
+  ) {
+    if (authStore.user) {
+      const updatedUser: InCustomer = {
+        ...authStore.user,
+        addresses: result.addresses,
       };
-      try {
-        const result = await customerService.update(updatedCustomerData);
-        if (result) {
-          await showModalMessage(
-            isNewAddress
-              ? SETTINGS.label.userProfile.addAddress
-              : SETTINGS.label.userProfile.editAddress,
-          );
-          // Close individual address editing mode
-          if (addressId) {
-            const addressItem = this.addresses.find(
-              (addr) => addr.id === addressId,
-            );
-            if (addressItem && addressItem.isEditing) {
-              this.toggleAddressEditing(addressId);
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Update failed", error);
+      authStore.setUser(updatedUser);
+    }
+
+    if (isNewAddress && form) {
+      const newlyCreatedAddress = result.addresses.at(-1)?.id || "no-id";
+      const form1 = document.querySelector(
+        "form[data-address-id=" + addressId + "]",
+      ) as HTMLFormElement;
+      if (form1) {
+        form1.dataset.addressIdNew = newlyCreatedAddress;
       }
     }
+
+    await showModalMessage(
+      isNewAddress
+        ? SETTINGS.label.userProfile.addAddress
+        : SETTINGS.label.userProfile.editAddress,
+    );
+
+    if (addressId) {
+      const addressItem = this.addresses.find((addr) => addr.id === addressId);
+      if (addressItem && addressItem.isEditing) {
+        this.toggleAddressEditing(addressId);
+      }
+    }
+  },
+  reciveCurrentForm(addressId: string): HTMLElement {
+    return document.querySelector(
+      "form[data-address-id=" + addressId + "]",
+    ) as HTMLFormElement;
   },
   toggleGlobalEditingMode(container: HTMLElement): void {
     if (this.isGlobalEditingEnabled) {
@@ -319,34 +384,24 @@ const UserProfile = {
   },
 
   disableAllFields(container: HTMLElement): void {
-    // Disable all input elements including basic profile fields
-    const inputElements = container.querySelectorAll("input, select, textarea");
-    for (const inputElement of inputElements) {
-      (inputElement as HTMLInputElement).disabled = true;
+    // all elements
+    const allInputElements = container.querySelectorAll(
+      "input, select, textarea, .address-element input, .address-element select",
+    );
+    for (const element of allInputElements) {
+      (element as HTMLInputElement).disabled = true;
     }
 
-    // Disable address elements and checkboxes
-    const addressElements = container.querySelectorAll(".address-element");
-    for (const addressElement of addressElements) {
-      const addressInputs = addressElement.querySelectorAll("input, select");
-      for (const addressInput of addressInputs) {
-        (addressInput as HTMLInputElement).disabled = true;
+    const specificElements = container.querySelectorAll(
+      "#default-shipping-address-billing, #default-billing-address-billing, .submit-address-button",
+    );
+    for (const element of specificElements) {
+      if (
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLButtonElement
+      ) {
+        element.disabled = true;
       }
-    }
-
-    // Disable default address checkboxes within AddressElement components
-    const defaultCheckboxes = container.querySelectorAll(
-      "#default-shipping-address-billing, #default-billing-address-billing",
-    );
-    for (const checkbox of defaultCheckboxes) {
-      (checkbox as HTMLInputElement).disabled = true;
-    }
-
-    const addressSubmitButtons = container.querySelectorAll(
-      ".submit-address-button",
-    );
-    for (const submitButton of addressSubmitButtons) {
-      (submitButton as HTMLButtonElement).disabled = true;
     }
   },
 
@@ -652,7 +707,7 @@ const UserProfile = {
     addressId: string,
   ): void {
     // Wait for the next tick to ensure the AddressElement has been fully rendered
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const shippingCheckbox = addressWrapper.querySelector(
         "#default-shipping-address-billing",
       ) as HTMLInputElement;
@@ -672,7 +727,7 @@ const UserProfile = {
           this.setDefaultBilling(addressId, billingCheckbox.checked);
         });
       }
-    }, 0);
+    });
   },
 
   createAddressHeader(addressName: string, addressId: string): HTMLElement {
@@ -784,6 +839,14 @@ const UserProfile = {
   },
 
   async deleteAddress(addressId: string): Promise<void> {
+    // if we need to delete just created address (with new id)
+    let databaseAddressId = addressId;
+    const currentAddressForm = this.reciveCurrentForm(addressId);
+    if (currentAddressForm?.hasAttribute("data-address-id-new")) {
+      databaseAddressId =
+        currentAddressForm.dataset.addressIdNew || this.generateAddressId();
+    }
+
     // Don't allow deletion if only one address remains
     if (this.addresses.length <= 1) return;
 
@@ -808,12 +871,16 @@ const UserProfile = {
 
     let userAddresses = structuredClone(authStore.user?.addresses);
     if (userAddresses) {
-      const addressExists = userAddresses.some((addr) => addr.id === addressId);
+      const addressExists = userAddresses.some(
+        (addr) => addr.id === databaseAddressId,
+      );
       if (!addressExists) {
-        console.warn(`Address with id "${addressId}" not found.`);
+        console.warn(`Address with id "${databaseAddressId}" not found.`);
         return;
       }
-      userAddresses = userAddresses.filter((addr) => addr.id !== addressId);
+      userAddresses = userAddresses.filter(
+        (addr) => addr.id !== databaseAddressId,
+      );
 
       const userData = authStore.user;
       const updatedCustomerData: InCustomer = {
