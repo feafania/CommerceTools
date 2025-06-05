@@ -115,8 +115,6 @@ const ChangePassword = {
       id: "save",
     }) as HTMLButtonElement;
 
-    saveButton.addEventListener("click", () => {});
-
     return saveButton;
   },
   async renderOnSubmit(event: SubmitEvent) {
