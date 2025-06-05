@@ -21,6 +21,7 @@ const en: AppTranslation = {
       toSignUp: "Sign Up",
     },
     userProfile: "User Profile",
+    changePassword: "Change password",
   },
   login: {
     email: "Email address",
@@ -38,14 +39,6 @@ const en: AppTranslation = {
     header: "Registration",
     submit: "Sign up",
   },
-  userProfile: {
-    firstName: "First name",
-    lastName: "Last name",
-    birthDay: "Birth day",
-    email: "Email Address",
-    password: "Password",
-    header: "User profile",
-  },
   main: {
     title: "Welcome to Gifts Shop",
   },
@@ -56,6 +49,32 @@ const en: AppTranslation = {
   product: {
     title: "Detailed Product",
     backButton: "Back to Catalog",
+  },
+  userProfile: {
+    firstName: "First name",
+    lastName: "Last name",
+    birthDay: "Birth day",
+    email: "Email Address",
+    password: "Password",
+    header: "User profile",
+    editModeBtn: "Edit Mode",
+    editModeStop: "Leave edit mode",
+    editPassword: "Change password",
+    deleteAddress: "You deleted address",
+    editUSer: "User information was successfully updated",
+    editAddress: "Address was successfully updated",
+    addAddress: "You added new address",
+    submitBtn: "Save Changes",
+  },
+  changePassword: {
+    current: "Current password",
+    newPassword: "New password",
+    confirmNewPassword: "Confirm new password",
+    formTitle: "Change password",
+    wrongConfirm: "Wrong confirm password",
+    success: "Your password successfully changed",
+    wrongOldPassword: "Wrong current password",
+    emptyPassword: "You have empty password field",
   },
   address: {
     headers: {
@@ -81,6 +100,11 @@ const en: AppTranslation = {
     placeholders: {
       country: "Select a country",
     },
+    editAddress: "Edit",
+    editAddressStop: "Stop editing",
+    addAdress: "+ Add adress",
+    addressProfileTitle: "Address",
+    addressesList: "Addresses",
   },
   validation: {
     email:

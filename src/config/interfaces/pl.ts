@@ -21,6 +21,7 @@ const pl: AppTranslation = {
       toSignUp: "Załóż konto",
     },
     userProfile: "Profil Użytkownika",
+    changePassword: "Zmień hasło",
   },
   login: {
     email: "Adres e-mail",
@@ -38,14 +39,6 @@ const pl: AppTranslation = {
     header: "Rejestracja",
     submit: "Zarejestruj się",
   },
-  userProfile: {
-    firstName: "Imię",
-    lastName: "Nazwisko",
-    birthDay: "Dzień urodzenia",
-    email: "Adres e-mail",
-    password: "Hasło",
-    header: "Profil użytkownika",
-  },
   main: {
     title: "Witamy w sklepie z prezentami",
   },
@@ -56,6 +49,32 @@ const pl: AppTranslation = {
   product: {
     title: "Szczegóły Produkta",
     backButton: "Powrót do katalogu",
+  },
+  userProfile: {
+    firstName: "Imię",
+    lastName: "Nazwisko",
+    birthDay: "Dzień urodzenia",
+    email: "Adres e-mail",
+    password: "Hasło",
+    header: "Profil użytkownika",
+    editModeBtn: "Tryb Edycji",
+    editModeStop: "Pozostaw tryb edycji",
+    editPassword: "Zmień hasło",
+    deleteAddress: "YUsunąłeś adres",
+    editUSer: "Informacje o użytkowniku zostały pomyślnie zaktualizowane",
+    editAddress: "Adres został pomyślnie zaktualizowany",
+    addAddress: "Dodałeś nowy adres",
+    submitBtn: "Zapisz Zmiany",
+  },
+  changePassword: {
+    current: "Aktualne hasło",
+    newPassword: "Nowe hasło",
+    confirmNewPassword: "Potwierdź nowe hasło",
+    formTitle: "Zmień Hasło",
+    wrongConfirm: "Błędne potwierdzenie hasła",
+    success: "Twoje hasło zostało pomyślnie zmienione",
+    wrongOldPassword: "Błędne aktualne hasło",
+    emptyPassword: "Masz puste pole hasła",
   },
   address: {
     headers: {
@@ -82,6 +101,11 @@ const pl: AppTranslation = {
     placeholders: {
       country: "Wybierz kraj",
     },
+    editAddress: "Edytuj",
+    editAddressStop: "Zatrzymaj edycję",
+    addAdress: "+ Dodaj adres",
+    addressProfileTitle: "Adres",
+    addressesList: "Adresy",
   },
   validation: {
     email:

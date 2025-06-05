@@ -8,6 +8,7 @@ import LoginRegistrationView from "@/pages/login-registration/login-registration
 import UserProfile from "@/pages/profile/profile";
 import CatalogView2 from "@/pages/catalog2/catalog";
 import ProductView from "@/pages/product/product";
+import ChangePassword from "@/pages/change-password/change-password";
 
 const routes: Partial<Record<PageType, RouteType>> = {
   [PageType.login]: {
@@ -47,6 +48,10 @@ const routes: Partial<Record<PageType, RouteType>> = {
   [PageType.basket]: {
     canActivate: () => true,
     render: () => Promise.resolve(document.createElement("div")),
+  },
+  [PageType.changePassword]: {
+    canActivate: () => true,
+    render: ChangePassword.render.bind(ChangePassword),
   },
 };
 

@@ -18,6 +18,7 @@ const PageRouter = {
 
   async handleRoute() {
     const path = this.getPathFromUrl();
+
     let page: PageType;
     let productId: string | undefined;
     ProductView.setProductKey(undefined);

@@ -3,21 +3,14 @@ import { SETTINGS } from "@/config/settings";
 import { handleOnSubmit } from "@/utils/validation";
 import createInput from "@/components/input/input";
 import createButton from "@/components/button/button";
-import createEyeButton from "@/components/eye-button/eye-button";
-import { FormType } from "@/types/enum";
+import { FormType, PageType } from "@/types/enum";
 import AddressElement from "@/components/address/address";
+import { AddressItem, InAddress, InCustomer } from "@/types/interfaces";
+import authStore from "@/stores/auth-store";
+import PageRouter from "@/router/page-router";
+import showModalMessage from "@/components/modal-window/modal-window";
+import customerService from "@/api/services/customer-service";
 
-interface AddressItem {
-  element: AddressElement;
-  id: string;
-  index: number;
-  isEditing: boolean;
-  name: string;
-  isDefaultShipping: boolean;
-  isDefaultBilling: boolean;
-}
-
-// Move changeHandler to outer scope to avoid linting error
 const createAddressChangeHandler = (
   element: HTMLInputElement,
   originalValue: string,
@@ -38,45 +31,41 @@ const createAddressChangeHandler = (
 const UserProfile = {
   globalEditButton: undefined as HTMLButtonElement | undefined,
   submitButton: undefined as HTMLButtonElement | undefined,
+  passwordButton: undefined as HTMLButtonElement | undefined,
   isEdited: false,
   isGlobalEditingEnabled: false,
   addresses: [] as AddressItem[],
   addressContainer: undefined as HTMLElement | undefined,
   nextAddressId: 1,
+  containerElement: undefined as HTMLElement | undefined,
 
   async render(): Promise<HTMLElement> {
     const container = document.createElement("div");
     container.id = "user-profile";
     container.className = "view user-profile-view";
 
+    this.containerElement = container;
     container.append(
       this.createHeader(),
       this.createGlobalEditButton(container),
       await this.createForm(),
     );
 
-    const passwordForm = document.createElement("form");
-    passwordForm.id = "password-form";
-    passwordForm.className = "form";
-    passwordForm.append(this.renderPassword());
-
     this.disableAllFields(container);
-    container.append(passwordForm);
     return container;
   },
 
   createHeader(): HTMLElement {
     const headerElement = document.createElement("h2");
     headerElement.className = "profile-title";
-    headerElement.textContent =
-      SETTINGS.label.userProfile.header || "User Profile";
+    headerElement.textContent = SETTINGS.label.userProfile.header;
     return headerElement;
   },
 
   createGlobalEditButton(container: HTMLElement): HTMLElement {
     this.globalEditButton = createButton({
       type: "button",
-      name: "Edit mode",
+      name: SETTINGS.label.userProfile.editModeBtn,
       id: "enable-editing-button",
       class: "enable-editing-button",
     }) as HTMLButtonElement;
@@ -88,17 +77,30 @@ const UserProfile = {
     return this.globalEditButton;
   },
 
+  createPasswordButton(): HTMLElement {
+    this.passwordButton = createButton({
+      type: "button",
+      name: SETTINGS.label.userProfile.editPassword,
+      id: "password-page",
+    }) as HTMLButtonElement;
+
+    this.passwordButton.addEventListener("click", () => {
+      PageRouter.navigateTo(PageType.changePassword);
+    });
+
+    return this.passwordButton;
+  },
+
   createLoginDataContainer(): HTMLElement {
     const loginDataContainer = document.createElement("div");
     loginDataContainer.className = "form-group";
-    loginDataContainer.append(this.renderEmail());
+    loginDataContainer.append(this.renderEmail(), this.createPasswordButton());
     return loginDataContainer;
   },
 
   createUserDataContainer(): HTMLElement {
     const userDataContainer = document.createElement("div");
     userDataContainer.className = "form-group";
-
     userDataContainer.append(
       createInput({
         type: "text",
@@ -107,6 +109,7 @@ const UserProfile = {
         placeholder: `${SETTINGS.label.userProfile.firstName}...`,
         id: "firstname",
         class: "firstname-input",
+        value: authStore.user?.firstName,
       }),
       createInput({
         type: "text",
@@ -115,6 +118,7 @@ const UserProfile = {
         placeholder: `${SETTINGS.label.userProfile.lastName}...`,
         id: "lastname",
         class: "lastname-input",
+        value: authStore.user?.lastName,
       }),
       createInput({
         type: "date",
@@ -122,6 +126,7 @@ const UserProfile = {
         name: "birthday",
         id: "birthday",
         class: "birthday-input",
+        value: authStore.user?.dateOfBirth,
       }),
     );
 
@@ -129,6 +134,7 @@ const UserProfile = {
   },
 
   async createForm(): Promise<HTMLElement> {
+    const container = document.createElement("div");
     const formGroupContainer = document.createElement("div");
     formGroupContainer.className = "form-group-container";
     formGroupContainer.append(
@@ -140,13 +146,186 @@ const UserProfile = {
     formElement.className = "profile-form form";
     formElement.append(
       formGroupContainer,
-      this.renderAddress(),
-      this.renderSubmit("Save Changes"),
+      this.renderSubmit(SETTINGS.label.userProfile.submitBtn),
     );
+    formElement.addEventListener("submit", (event) => {
+      this.renderOnSubmit(event);
+    });
 
-    return formElement;
+    const addressesForm = document.createElement("div");
+    addressesForm.append(this.renderAddress());
+
+    container.append(formElement, addressesForm);
+
+    return container;
+  },
+  async renderOnSubmit(event: SubmitEvent) {
+    const form = event.target as HTMLFormElement;
+    const isValid = handleOnSubmit(form, FormType.PROFILE);
+    if (!isValid) return;
+
+    const formData = new FormData(form);
+    event.preventDefault();
+    const addresses = authStore.user?.addresses || [];
+
+    const updatedCustomerData: InCustomer = {
+      firstName: formData.get("firstname") as string,
+      lastName: formData.get("lastname") as string,
+      email: formData.get("email") as string,
+      dateOfBirth: formData.get("birthday") as string,
+      addresses,
+    };
+    try {
+      const result = await customerService.update(updatedCustomerData);
+      if (result) {
+        await showModalMessage(SETTINGS.label.userProfile.editUSer);
+        // Reset edit state and disable submit button
+        this.isEdited = false;
+        if (this.submitButton) {
+          this.submitButton.disabled = true;
+        }
+        if (this.containerElement) {
+          this.disableGlobalEditingMode(this.containerElement);
+        }
+      }
+    } catch (error) {
+      console.error("Update failed", error);
+    }
   },
 
+  async submitAddress(event: SubmitEvent) {
+    const form = event.target as HTMLFormElement;
+
+    const isValid = handleOnSubmit(form, FormType.PROFILE);
+    if (!isValid) return;
+
+    const formData = new FormData(form);
+    event.preventDefault();
+
+    let addressId = form.dataset.addressId || this.generateAddressId();
+    const currentAddressForm = this.reciveCurrentForm(addressId);
+    if (currentAddressForm?.hasAttribute("data-address-id-new")) {
+      addressId =
+        currentAddressForm.dataset.addressIdNew || this.generateAddressId();
+    }
+
+    const newAddress = {
+      streetName: formData.get("street-billing") as string,
+      postalCode: formData.get("postalcode-billing") as string,
+      city: formData.get("city-billing") as string,
+      country: formData.get("country-billing") as string,
+      isDefaultBilling:
+        formData.get("default-billing-address-billing") === "on",
+      isDefaultShipping:
+        formData.get("default-shipping-address-billing") === "on",
+    };
+
+    await this.processAddressUpdate(addressId, newAddress, form);
+  },
+
+  async processAddressUpdate(
+    addressId: string,
+    newAddress: {
+      streetName: string;
+      postalCode: string;
+      city: string;
+      country: string;
+      isDefaultBilling: boolean;
+      isDefaultShipping: boolean;
+    },
+    form?: HTMLFormElement,
+  ) {
+    const updatedAddresses = this.prepareAddressUpdate(addressId, newAddress);
+
+    if (!updatedAddresses) return;
+
+    const userData = authStore.user;
+    const updatedCustomerData: InCustomer = {
+      firstName: userData?.firstName as string,
+      lastName: userData?.lastName as string,
+      email: userData?.email as string,
+      dateOfBirth: userData?.dateOfBirth as string,
+      addresses: updatedAddresses.addresses,
+    };
+
+    const result = await customerService.update(updatedCustomerData);
+
+    if (result) {
+      this.handleAddressUpdateSuccess(
+        result,
+        updatedAddresses.isNewAddress,
+        addressId,
+        form,
+      );
+    }
+  },
+
+  prepareAddressUpdate(addressId: string, newAddress: InAddress) {
+    let userAddresses = structuredClone(authStore.user?.addresses);
+
+    if (!userAddresses) return;
+
+    const isNewAddress = !userAddresses.some((addr) => addr.id === addressId);
+
+    if (isNewAddress) {
+      userAddresses.push({
+        ...newAddress,
+        key: "billing-address-" + Date.now(),
+      });
+    } else {
+      userAddresses = userAddresses.map((addr) =>
+        addr.id === addressId ? { ...newAddress, id: addressId } : addr,
+      );
+    }
+
+    return {
+      addresses: userAddresses,
+      isNewAddress,
+    };
+  },
+
+  async handleAddressUpdateSuccess(
+    result: InCustomer,
+    isNewAddress: boolean,
+    addressId: string,
+    form?: HTMLFormElement,
+  ) {
+    if (authStore.user) {
+      const updatedUser: InCustomer = {
+        ...authStore.user,
+        addresses: result.addresses,
+      };
+      authStore.setUser(updatedUser);
+    }
+
+    if (isNewAddress && form) {
+      const newlyCreatedAddress = result.addresses.at(-1)?.id || "no-id";
+      const form1 = document.querySelector(
+        "form[data-address-id=" + addressId + "]",
+      ) as HTMLFormElement;
+      if (form1) {
+        form1.dataset.addressIdNew = newlyCreatedAddress;
+      }
+    }
+
+    await showModalMessage(
+      isNewAddress
+        ? SETTINGS.label.userProfile.addAddress
+        : SETTINGS.label.userProfile.editAddress,
+    );
+
+    if (addressId) {
+      const addressItem = this.addresses.find((addr) => addr.id === addressId);
+      if (addressItem && addressItem.isEditing) {
+        this.toggleAddressEditing(addressId);
+      }
+    }
+  },
+  reciveCurrentForm(addressId: string): HTMLElement {
+    return document.querySelector(
+      "form[data-address-id=" + addressId + "]",
+    ) as HTMLFormElement;
+  },
   toggleGlobalEditingMode(container: HTMLElement): void {
     if (this.isGlobalEditingEnabled) {
       this.disableGlobalEditingMode(container);
@@ -158,26 +337,19 @@ const UserProfile = {
   enableGlobalEditingMode(container: HTMLElement): void {
     this.isGlobalEditingEnabled = true;
     this.isEdited = false;
-
-    // Enable only basic profile fields (not addresses)
     this.enableBasicProfileFields(container);
-
-    // Enable add/delete buttons for addresses
     this.toggleAddressButtons(true);
-
-    // Individual address edit buttons are always available - no need to enable/disable them
-
-    // Add change listeners to basic profile fields only
     this.addChangeListenersToBasicFields(container);
-
-    // Update global edit button
-    if (this.globalEditButton) {
-      this.globalEditButton.textContent = "Leave edit mode";
+    // disable nav
+    const headerNav = document.querySelectorAll(
+      ".header-actions a, .header-actions select",
+    );
+    for (const link of headerNav) {
+      (link as HTMLElement).style.pointerEvents = "none";
     }
-
-    // Keep submit button disabled until changes are made
-    if (this.submitButton) {
-      this.submitButton.disabled = true;
+    if (this.globalEditButton) {
+      this.globalEditButton.textContent =
+        SETTINGS.label.userProfile.editModeStop;
     }
   },
 
@@ -185,33 +357,24 @@ const UserProfile = {
     this.isGlobalEditingEnabled = false;
     this.isEdited = false;
 
-    // Disable all fields including basic profile fields
     this.disableAllFields(container);
 
-    // Disable all individual address editing
-    for (const addressItem of this.addresses) {
-      addressItem.isEditing = false;
-      this.updateAddressEditButton(addressItem.id);
+    // enable nav
+    const headerNav = document.querySelectorAll(
+      ".header-actions a, .header-actions select",
+    );
+    for (const link of headerNav) {
+      (link as HTMLElement).style.pointerEvents = "";
     }
 
-    // Disable add/delete buttons
-    this.toggleAddressButtons(false);
-
-    // Individual address edit buttons remain always available - don't disable them
-
-    // Update global edit button
     if (this.globalEditButton) {
-      this.globalEditButton.textContent = "Edit mode";
-    }
-
-    // Disable submit button when editing is disabled
-    if (this.submitButton) {
-      this.submitButton.disabled = true;
+      this.globalEditButton.textContent =
+        SETTINGS.label.userProfile.editModeBtn;
     }
   },
 
   enableBasicProfileFields(container: HTMLElement): void {
-    // Enable only basic profile input elements (firstname, lastname, birthday, email)
+    // Enable only basic profile input elements
     const basicFields = container.querySelectorAll(
       "#firstname, #lastname, #birthday, #email",
     );
@@ -221,27 +384,24 @@ const UserProfile = {
   },
 
   disableAllFields(container: HTMLElement): void {
-    // Disable all input elements including basic profile fields
-    const inputElements = container.querySelectorAll("input, select, textarea");
-    for (const inputElement of inputElements) {
-      (inputElement as HTMLInputElement).disabled = true;
-    }
-
-    // Disable address elements and checkboxes
-    const addressElements = container.querySelectorAll(".address-element");
-    for (const addressElement of addressElements) {
-      const addressInputs = addressElement.querySelectorAll("input, select");
-      for (const addressInput of addressInputs) {
-        (addressInput as HTMLInputElement).disabled = true;
-      }
-    }
-
-    // Disable default address checkboxes within AddressElement components
-    const defaultCheckboxes = container.querySelectorAll(
-      "#default-shipping-address-billing, #default-billing-address-billing",
+    // all elements
+    const allInputElements = container.querySelectorAll(
+      "input, select, textarea, .address-element input, .address-element select",
     );
-    for (const checkbox of defaultCheckboxes) {
-      (checkbox as HTMLInputElement).disabled = true;
+    for (const element of allInputElements) {
+      (element as HTMLInputElement).disabled = true;
+    }
+
+    const specificElements = container.querySelectorAll(
+      "#default-shipping-address-billing, #default-billing-address-billing, .submit-address-button",
+    );
+    for (const element of specificElements) {
+      if (
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLButtonElement
+      ) {
+        element.disabled = true;
+      }
     }
   },
 
@@ -274,7 +434,8 @@ const UserProfile = {
 
     // Update button text and disable it initially after enabling fields
     if (this.globalEditButton) {
-      this.globalEditButton.textContent = "Editing Enabled";
+      this.globalEditButton.textContent =
+        SETTINGS.label.userProfile.editModeBtn;
       this.globalEditButton.disabled = false;
     }
   },
@@ -350,27 +511,8 @@ const UserProfile = {
       placeholder: `${SETTINGS.label.userProfile.email}...`,
       id: "email",
       class: "email-input",
+      value: authStore.user?.email,
     });
-  },
-
-  renderPassword(): HTMLElement {
-    const passwordWrapper = document.createElement("div");
-    passwordWrapper.className = "password-wrapper";
-
-    const passwordInput = createInput({
-      type: "password",
-      label: SETTINGS.label.userProfile.password,
-      name: "password",
-      placeholder: `${SETTINGS.label.userProfile.password}...`,
-      id: "password",
-      class: "password-input",
-      disabled: true,
-    });
-
-    const eyeButton = createEyeButton();
-    passwordWrapper.append(passwordInput, eyeButton);
-
-    return passwordWrapper;
   },
 
   generateAddressId(): string {
@@ -382,7 +524,7 @@ const UserProfile = {
   createAddressEditButton(addressId: string): HTMLElement {
     const addressEditButton = createButton({
       type: "button",
-      name: "Edit",
+      name: SETTINGS.label.address.editAddress,
       id: `edit-address-${addressId}`,
       class: "address-edit-button",
     }) as HTMLButtonElement;
@@ -420,19 +562,18 @@ const UserProfile = {
       (checkbox as HTMLInputElement).disabled = !addressItem.isEditing;
     }
 
+    const submitButton = addressWrapper.querySelector(
+      `#submit-address-${addressId}`,
+    ) as HTMLButtonElement;
+    if (submitButton) {
+      submitButton.disabled = !addressItem.isEditing;
+    }
+
     this.updateAddressEditButton(addressId);
 
     // Add change listeners to address fields if editing is enabled
     if (addressItem.isEditing) {
       this.addChangeListenersToAddress(addressWrapper);
-    }
-
-    // Mark as edited if enabling editing
-    if (addressItem.isEditing && !this.isEdited) {
-      this.isEdited = true;
-      if (this.submitButton) {
-        this.submitButton.disabled = false;
-      }
     }
   },
 
@@ -469,8 +610,8 @@ const UserProfile = {
 
     if (addressEditButton && addressItem) {
       addressEditButton.textContent = addressItem.isEditing
-        ? "Stop Editing"
-        : "Edit";
+        ? SETTINGS.label.address.editAddressStop
+        : SETTINGS.label.address.editAddress;
       addressEditButton.classList.toggle(
         "editing-active",
         addressItem.isEditing,
@@ -481,33 +622,51 @@ const UserProfile = {
   createAddressWithControls(
     index: number,
     isEmpty: boolean = false,
+    addressData?: InAddress,
   ): HTMLElement {
-    const addressId = this.generateAddressId();
-    const addressName = `Address ${index + 1}`;
+    const addressId = addressData?.id || this.generateAddressId();
+    const addressName = `${SETTINGS.label.address.addressProfileTitle} ${index + 1}`;
 
-    const addressWrapper = document.createElement("div");
-    addressWrapper.className = "address-wrapper";
+    const addressWrapper = document.createElement("form");
+    addressWrapper.className = "address-wrapper form";
     addressWrapper.dataset.addressId = addressId;
     addressWrapper.dataset.addressIndex = index.toString();
 
-    const addressElement = this.createAddressElement(isEmpty);
+    const addressElement = this.createAddressElement(isEmpty, addressData);
     this.storeAddressReference(addressId, addressElement, index, addressName);
 
-    // Setup event listeners for the checkboxes within the AddressElement
     this.setupAddressCheckboxListeners(addressWrapper, addressId);
 
+    const addSubmitAddress = createButton({
+      type: "submit",
+      name: "Submit",
+      id: `submit-address-${addressId}`,
+      class: "submit-address-button",
+    }) as HTMLButtonElement;
+
+    addSubmitAddress.disabled = true;
+
+    addressWrapper.addEventListener("submit", (event) => {
+      this.submitAddress(event);
+    });
     addressWrapper.append(
       this.createAddressHeader(addressName, addressId),
       addressElement.element,
+      addSubmitAddress,
     );
 
     return addressWrapper;
   },
 
-  createAddressElement(isEmpty: boolean): AddressElement {
+  createAddressElement(
+    isEmpty: boolean,
+    addressData?: InAddress,
+  ): AddressElement {
     const addressElement = new AddressElement("billing");
     addressElement.render();
-
+    if (addressData) {
+      addressElement.setData(addressData);
+    }
     if (isEmpty) {
       this.clearAddressInputs(addressElement.element);
     }
@@ -548,7 +707,7 @@ const UserProfile = {
     addressId: string,
   ): void {
     // Wait for the next tick to ensure the AddressElement has been fully rendered
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const shippingCheckbox = addressWrapper.querySelector(
         "#default-shipping-address-billing",
       ) as HTMLInputElement;
@@ -568,7 +727,7 @@ const UserProfile = {
           this.setDefaultBilling(addressId, billingCheckbox.checked);
         });
       }
-    }, 0);
+    });
   },
 
   createAddressHeader(addressName: string, addressId: string): HTMLElement {
@@ -614,7 +773,7 @@ const UserProfile = {
   createAddButton(): HTMLElement {
     const addAddressButton = createButton({
       type: "button",
-      name: "+ Add Address",
+      name: SETTINGS.label.address.addAdress,
       id: "add-address-button",
       class: "add-address-button",
     }) as HTMLButtonElement;
@@ -642,7 +801,6 @@ const UserProfile = {
       this.addressContainer.append(addressWrapper);
     }
 
-    // FIXED: Set the new address as editing and enable its fields
     const addressId = addressWrapper.dataset.addressId;
     if (addressId) {
       const addressItem = this.addresses.find((addr) => addr.id === addressId);
@@ -663,27 +821,32 @@ const UserProfile = {
           (checkbox as HTMLInputElement).disabled = false;
         }
 
-        // Update the edit button to show "Stop Editing"
+        // Enable submit button for new address
+        const submitButton = addressWrapper.querySelector(
+          `#submit-address-${addressId}`,
+        ) as HTMLButtonElement;
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+
         this.updateAddressEditButton(addressId);
 
-        // Add change listeners to the new address
         this.addChangeListenersToAddress(addressWrapper);
       }
     }
 
-    // Update delete button visibility
     this.updateDeleteButtonsVisibility();
-
-    // Mark as edited
-    if (!this.isEdited) {
-      this.isEdited = true;
-      if (this.submitButton) {
-        this.submitButton.disabled = false;
-      }
-    }
   },
 
-  deleteAddress(addressId: string): void {
+  async deleteAddress(addressId: string): Promise<void> {
+    // if we need to delete just created address (with new id)
+    let databaseAddressId = addressId;
+    const currentAddressForm = this.reciveCurrentForm(addressId);
+    if (currentAddressForm?.hasAttribute("data-address-id-new")) {
+      databaseAddressId =
+        currentAddressForm.dataset.addressIdNew || this.generateAddressId();
+    }
+
     // Don't allow deletion if only one address remains
     if (this.addresses.length <= 1) return;
 
@@ -702,17 +865,38 @@ const UserProfile = {
       this.addresses.splice(addressIndex, 1);
     }
 
-    // Update indices and names
     this.updateAddressIndicesAndNames();
 
-    // Update delete button visibility
     this.updateDeleteButtonsVisibility();
 
-    // Mark as edited
-    if (!this.isEdited) {
-      this.isEdited = true;
-      if (this.submitButton) {
-        this.submitButton.disabled = false;
+    let userAddresses = structuredClone(authStore.user?.addresses);
+    if (userAddresses) {
+      const addressExists = userAddresses.some(
+        (addr) => addr.id === databaseAddressId,
+      );
+      if (!addressExists) {
+        console.warn(`Address with id "${databaseAddressId}" not found.`);
+        return;
+      }
+      userAddresses = userAddresses.filter(
+        (addr) => addr.id !== databaseAddressId,
+      );
+
+      const userData = authStore.user;
+      const updatedCustomerData: InCustomer = {
+        firstName: userData?.firstName as string,
+        lastName: userData?.lastName as string,
+        email: userData?.email as string,
+        dateOfBirth: userData?.dateOfBirth as string,
+        addresses: userAddresses,
+      };
+      try {
+        const result = await customerService.update(updatedCustomerData);
+        if (result) {
+          await showModalMessage(SETTINGS.label.userProfile.deleteAddress);
+        }
+      } catch (error) {
+        console.error("Update failed", error);
       }
     }
   },
@@ -731,13 +915,13 @@ const UserProfile = {
       const addressItem = this.addresses.find((addr) => addr.id === addressId);
       if (addressItem) {
         addressItem.index = index;
-        addressItem.name = `Address ${index + 1}`;
+        addressItem.name = `${SETTINGS.label.address.addressProfileTitle} ${index + 1}`;
       }
 
       // Update address title
       const addressTitle = addressWrapper.querySelector(".address-title");
       if (addressTitle) {
-        addressTitle.textContent = `Address ${index + 1}`;
+        addressTitle.textContent = `${SETTINGS.label.address.addressProfileTitle} ${index + 1}`;
       }
     }
   },
@@ -761,17 +945,29 @@ const UserProfile = {
     addressContainer.className = "registration-address-container";
     this.addressContainer = addressContainer;
 
-    // Address section header
     const sectionHeader = document.createElement("h3");
     sectionHeader.className = "address-section-header";
-    sectionHeader.textContent = "Addresses";
+    sectionHeader.textContent = SETTINGS.label.address.addressesList;
     addressContainer.append(sectionHeader);
 
-    // Add initial address (not empty, with default data)
-    const initialAddress = this.createAddressWithControls(0, false);
-    addressContainer.append(initialAddress);
+    // reciving addresses
+    const userAddresses = authStore.user?.addresses || [];
+    if (userAddresses.length > 0) {
+      let index = 0;
+      for (const address of userAddresses) {
+        const addressElement = this.createAddressWithControls(
+          index,
+          false,
+          address,
+        );
+        addressContainer.append(addressElement);
+        index++;
+      }
+    } else {
+      const initialAddress = this.createAddressWithControls(0, false);
+      addressContainer.append(initialAddress);
+    }
 
-    // Add button
     const addButton = this.createAddButton();
     addressContainer.append(addButton);
 
@@ -782,43 +978,28 @@ const UserProfile = {
     this.submitButton = createButton({
       type: "submit",
       name: submitName,
-      id: "submit-registration-login",
-      class: "submit-registration-login-button submit",
+      id: "submit-profile",
+      class: "submit-profile-button submit",
     }) as HTMLButtonElement;
 
-    // Initially disable the submit button
     this.submitButton.disabled = true;
 
     return this.submitButton;
   },
 
-  async onRegistrationSubmit(event: SubmitEvent) {
-    const formElement = event.target as HTMLFormElement;
-
-    const isValid = await handleOnSubmit(formElement, FormType.PROFILE);
-    if (!isValid) return;
-
-    // const formData = new FormData(formElement);
-  },
-
-  // Helper method to get address by ID
   getAddressById(addressId: string): AddressItem | undefined {
     return this.addresses.find((addr) => addr.id === addressId);
   },
 
-  // Helper method to get all addresses
   getAllAddresses(): AddressItem[] {
     return this.addresses;
   },
 
-  // Set default shipping address
   setDefaultShipping(addressId: string, isDefault: boolean): void {
     if (isDefault) {
-      // Remove default shipping from all other addresses
       for (const addressItem of this.addresses) {
         if (addressItem.id !== addressId && addressItem.isDefaultShipping) {
           addressItem.isDefaultShipping = false;
-          // Find and uncheck the shipping checkbox for this address
           const addressWrapper = document.querySelector(
             `[data-address-id="${addressItem.id}"]`,
           );
@@ -834,7 +1015,6 @@ const UserProfile = {
       }
     }
 
-    // Set the current address default shipping status
     const addressItem = this.addresses.find((addr) => addr.id === addressId);
     if (addressItem) {
       addressItem.isDefaultShipping = isDefault;
@@ -849,14 +1029,11 @@ const UserProfile = {
     }
   },
 
-  // Set default billing address
   setDefaultBilling(addressId: string, isDefault: boolean): void {
     if (isDefault) {
-      // Remove default billing from all other addresses
       for (const addressItem of this.addresses) {
         if (addressItem.id !== addressId && addressItem.isDefaultBilling) {
           addressItem.isDefaultBilling = false;
-          // Find and uncheck the billing checkbox for this address
           const addressWrapper = document.querySelector(
             `[data-address-id="${addressItem.id}"]`,
           );
@@ -872,7 +1049,6 @@ const UserProfile = {
       }
     }
 
-    // Set the current address default billing status
     const addressItem = this.addresses.find((addr) => addr.id === addressId);
     if (addressItem) {
       addressItem.isDefaultBilling = isDefault;
@@ -887,12 +1063,10 @@ const UserProfile = {
     }
   },
 
-  // Helper method to get default shipping address
   getDefaultShippingAddress(): AddressItem | undefined {
     return this.addresses.find((addr) => addr.isDefaultShipping);
   },
 
-  // Helper method to get default billing address
   getDefaultBillingAddress(): AddressItem | undefined {
     return this.addresses.find((addr) => addr.isDefaultBilling);
   },

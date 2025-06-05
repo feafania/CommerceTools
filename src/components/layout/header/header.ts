@@ -155,7 +155,13 @@ const Header = {
         label: t.userProfile,
         page: PageType.profile,
         visible: isLoggedIn,
-        disabled: false,
+        disabled: !isLoggedIn,
+      },
+      {
+        label: t.changePassword,
+        page: PageType.changePassword,
+        visible: false,
+        disabled: !isLoggedIn,
       },
       {
         label: t.signOut,

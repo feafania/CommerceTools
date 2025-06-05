@@ -21,6 +21,7 @@ export interface AppTranslation {
       toSignUp: string;
     };
     userProfile: string;
+    changePassword: string;
   };
   login: {
     email: string;
@@ -38,14 +39,6 @@ export interface AppTranslation {
     header: string;
     submit: string;
   };
-  userProfile: {
-    firstName: string;
-    lastName: string;
-    birthDay: string;
-    email: string;
-    password: string;
-    header: string;
-  };
   main: {
     title: string;
   };
@@ -56,6 +49,32 @@ export interface AppTranslation {
   product: {
     title: string;
     backButton: string;
+  };
+  userProfile: {
+    firstName: string;
+    lastName: string;
+    birthDay: string;
+    email: string;
+    password: string;
+    header: string;
+    editModeBtn: string;
+    editModeStop: string;
+    editPassword: string;
+    deleteAddress: string;
+    editUSer: string;
+    editAddress: string;
+    addAddress: string;
+    submitBtn: string;
+  };
+  changePassword: {
+    current: string;
+    newPassword: string;
+    confirmNewPassword: string;
+    formTitle: string;
+    success: string;
+    wrongConfirm: string;
+    wrongOldPassword: string;
+    emptyPassword: string;
   };
   address: {
     headers: AddressTypeMap;
@@ -69,6 +88,11 @@ export interface AppTranslation {
     placeholders: {
       country: string;
     };
+    editAddress: string;
+    editAddressStop: string;
+    addAdress: string;
+    addressProfileTitle: string;
+    addressesList: string;
   };
   validation: {
     email: string;

@@ -1,6 +1,7 @@
 import { CountryValueType, InAttributes, LanguageVariants } from "./types";
 
 import { CountryCode, PageType, SortDirection, SortName } from "@/types/enum";
+import AddressElement from "@/components/address/address";
 
 type ControlBase = {
   type: string;
@@ -220,4 +221,14 @@ export interface ProductSearchResult {
    *
    */
   readonly results: InProduct[];
+}
+
+export interface AddressItem {
+  element: AddressElement;
+  id: string;
+  index: number;
+  isEditing: boolean;
+  name: string;
+  isDefaultShipping: boolean;
+  isDefaultBilling: boolean;
 }

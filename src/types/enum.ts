@@ -8,6 +8,7 @@ export enum PageType {
   basket = "basket",
   about = "about",
   notfound = "notfound",
+  changePassword = "changePassword",
 }
 
 export enum AddressType {
@@ -33,6 +34,7 @@ export enum FormType {
   LOGIN = "login",
   REGISTRATION = "registration",
   PROFILE = "profile",
+  PASSWORD = "password",
 }
 
 export enum SortName {

@@ -1,7 +1,9 @@
 import eyeHide from "@/assets/svg/eye-password-hide.inline.svg";
 import eyeShow from "@/assets/svg/eye-password-show.inline.svg";
 
-export default function createEyeButton(): HTMLButtonElement {
+export default function createEyeButton(
+  targetInputId: string = "password",
+): HTMLButtonElement {
   const eyeButton = document.createElement("button");
   eyeButton.type = "button";
   eyeButton.className = "toggle-password-button";
@@ -24,7 +26,7 @@ export default function createEyeButton(): HTMLButtonElement {
   eyeButton.append(eyeShowSvg);
 
   eyeButton.addEventListener("click", () => {
-    const input = document.querySelector<HTMLInputElement>("#password");
+    const input = document.querySelector<HTMLInputElement>(`#${targetInputId}`);
     if (!input) return;
 
     const isHidden = input.type === "password";
