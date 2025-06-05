@@ -17,6 +17,8 @@ const CatalogView2 = {
   offset: 0,
   currentQuery: "",
   paginationWrapper: document.createElement("div"),
+  productList: document.createElement("div"),
+  sliderWrapper: document.createElement("div"),
 
   async render(
     parameters: GetProductListParameters = {},
@@ -37,20 +39,18 @@ const CatalogView2 = {
       }, 400);
     });
 
-    const sliderWrapper = document.createElement("div");
-    sliderWrapper.className = "product-slider";
-
-    const productList = document.createElement("div");
-    productList.className = "product-list";
+    this.sliderWrapper.className = "product-slider";
+    this.productList = document.createElement("div");
+    this.productList.className = "product-list";
 
     this.paginationWrapper.className = "pagination";
 
     this.container.append(
       title,
       searchComponent,
-      sliderWrapper,
-      productList,
+      this.sliderWrapper,
       this.paginationWrapper,
+      this.productList,
     );
     await this.renderProducts(parameters, "");
 
@@ -65,14 +65,13 @@ const CatalogView2 = {
     parameters: GetProductListParameters = {},
     query: string = "",
   ) {
-    let productList = this.container.querySelector(".product-list");
-    if (!productList) {
-      productList = document.createElement("div");
-      productList.className = "product-list";
-      this.container.append(productList);
+    if (!this.productList) {
+      this.productList = document.createElement("div");
+      this.productList.className = "product-list";
+      this.container.append(this.productList);
     }
 
-    removeAllChildren(productList);
+    removeAllChildren(this.productList);
 
     const requestParameters = {
       ...parameters,
@@ -92,19 +91,14 @@ const CatalogView2 = {
     this.total = response.total ?? 0;
 
     for (const product of this.products) {
-      const card = ProductCard.create(product);
-      productList.append(card);
+      const card = new ProductCard(product);
+      this.productList.append(card.create());
     }
 
-    const newSlider = await ProductSlider.create(this.products);
-
-    const existingSlider = this.container.querySelector(".product-slider");
-
-    if (existingSlider) {
-      existingSlider.replaceWith(newSlider);
-    } else {
-      productList.before(newSlider);
-    }
+    removeAllChildren(this.sliderWrapper);
+    const newSlider = new ProductSlider(this.products);
+    newSlider.create();
+    this.sliderWrapper.append(newSlider.container);
     this.renderPagination();
   },
   renderPagination() {

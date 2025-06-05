@@ -1,10 +1,12 @@
 import "./product.css";
-import { localizeName, removeAllChildren } from "@/utils/helpers";
+import { removeAllChildren } from "@/utils/helpers";
 import { InProduct } from "@/types/interfaces";
 import productService from "@/api/services/product-service";
 import PageRouter from "@/router/page-router";
 import { PageType } from "@/types/enum";
+import ProductImageSlider from "@/components/product-image-slider/product-image-slider";
 import ProductCard from "@/components/product-card/product-card";
+import { SETTINGS } from "@/config/settings";
 
 const ProductView = {
   productKey: undefined as string | undefined,
@@ -23,13 +25,19 @@ const ProductView = {
 
       this.product = await productService.getProductByKey(this.productKey);
       if (!this.product) {
-        throw new Error("No productKey found");
+        throw new Error("Product not found");
       }
 
-      const sliderWrapper = document.createElement("div");
-      sliderWrapper.className = "image-slider";
+      const layoutWrapper = document.createElement("div");
+      layoutWrapper.className = "product-detail-wrapper";
+
       await this.renderProduct();
-      this.container.append(sliderWrapper, this.productSection);
+      layoutWrapper.append(this.productSection);
+
+      const slider = new ProductImageSlider(this.product.images);
+      layoutWrapper.append(slider.create("small"));
+
+      this.container.append(layoutWrapper);
       return this.container;
     } catch {
       await PageRouter.renderPage(PageType.notfound);
@@ -42,15 +50,28 @@ const ProductView = {
 
   async renderProduct() {
     removeAllChildren(this.productSection);
+    this.productSection.className = "product-details";
+
     if (this.product) {
+      const headerRow = document.createElement("div");
+      headerRow.className = "product-header-row";
+
       const title = document.createElement("h1");
-      title.textContent = localizeName(this.product.name);
+      title.textContent = SETTINGS.label.product.title;
+
+      const backButton = document.createElement("button");
+      backButton.textContent = `← ${SETTINGS.label.product.backButton}`;
+      backButton.className = "back-to-catalog-btn";
+      backButton.addEventListener("click", () => {
+        PageRouter.navigateTo(PageType.catalog);
+      });
+
+      headerRow.append(title, backButton);
+      this.productSection.append(headerRow);
 
       const productInformation = ProductCard.renderProductInformation(
         this.product,
       );
-      const productTitle = productInformation.querySelector("h3");
-      productTitle?.replaceWith(title);
 
       this.productSection.append(productInformation);
     }

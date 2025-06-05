@@ -66,7 +66,6 @@ const productRepository = {
     currency: CurrencyCode = SETTINGS.currentCurrency,
   ): Promise<ProductSearchResult> {
     try {
-      console.log("fdsfsfdsfsf", parameters);
       const response: ProductProjectionPagedSearchResponse | undefined =
         await getProductList(parameters);
 

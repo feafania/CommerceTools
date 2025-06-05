@@ -53,6 +53,10 @@ const pl: AppTranslation = {
     search: "Szukaj...",
     title: "Katalog prezentów",
   },
+  product: {
+    title: "Szczegóły Produkta",
+    backButton: "Powrót do katalogu",
+  },
   address: {
     headers: {
       billing: "Adres do faktury",

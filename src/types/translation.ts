@@ -53,6 +53,10 @@ export interface AppTranslation {
     search: string;
     title: string;
   };
+  product: {
+    title: string;
+    backButton: string;
+  };
   address: {
     headers: AddressTypeMap;
     country: string;

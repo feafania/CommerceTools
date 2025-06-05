@@ -1,4 +1,4 @@
-import { PageType } from "@/types/enum";
+import { CurrencyCode, PageType } from "@/types/enum";
 
 export const VIEW_CONTAINER_NAME = "view-container";
 
@@ -10,4 +10,11 @@ export const CARD_SETTINGS = {
   cardHeight: 450,
   slideStep: 1,
   cardGap: 16,
+  sliderPadding: 16,
+};
+
+export const CurrencySymbolMap: Record<CurrencyCode, string> = {
+  [CurrencyCode.EUR]: "€",
+  [CurrencyCode.GBP]: "£",
+  [CurrencyCode.PLN]: "zł",
 };

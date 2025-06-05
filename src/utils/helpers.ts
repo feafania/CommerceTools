@@ -6,7 +6,8 @@ import {
   SelectType,
   StorageItem,
 } from "@/types/interfaces";
-import { AddressType, CountryCode } from "@/types/enum";
+import { AddressType, CountryCode, CurrencyCode } from "@/types/enum";
+import { CurrencySymbolMap } from "@/config/constants";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -193,6 +194,24 @@ export function removeAllChildren(element: Element | undefined | null) {
   if (element) {
     while (element.firstChild) {
       element.firstChild.remove();
+    }
+  }
+}
+
+export function formatPriceWithCurrency(
+  price: number,
+  currencyCode: CurrencyCode,
+): string {
+  const symbol = CurrencySymbolMap[currencyCode];
+  const amount = (price / 100).toFixed(2);
+
+  switch (currencyCode) {
+    case CurrencyCode.EUR:
+    case CurrencyCode.GBP: {
+      return `${symbol}${amount}`;
+    }
+    default: {
+      return `${amount} ${symbol}`;
     }
   }
 }

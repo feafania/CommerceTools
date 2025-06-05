@@ -54,7 +54,6 @@ export default async function getProductListHttp({
     if (!response.ok) throw new Error(await response.text());
 
     const json: ProductProjectionPagedSearchResponse = await response.json();
-    console.log("answer", json);
     return json;
   } catch (error) {
     console.error("Error fetching product list:", error);

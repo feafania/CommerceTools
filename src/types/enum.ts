@@ -45,3 +45,8 @@ export enum SortDirection {
   ASC = "asc",
   DESC = "desc",
 }
+
+export enum SliderType {
+  Cards = "cards",
+  Img = "img",
+}
