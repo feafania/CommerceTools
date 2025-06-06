@@ -6,7 +6,6 @@ import { SETTINGS } from "@/config/settings";
 import searchBar from "@/components/search-button/search-button";
 import { removeAllChildren } from "@/utils/helpers";
 import { InProduct } from "@/types/interfaces";
-import { GetProductListParameters } from "@/types/types";
 import PageRouter from "@/router/page-router";
 import { PageType } from "@/types/enum";
 
@@ -22,9 +21,7 @@ const CatalogView2 = {
   productList: document.createElement("div"),
   // sliderWrapper: document.createElement("div"),
 
-  async render(
-    parameters: GetProductListParameters = {},
-  ): Promise<HTMLElement | undefined> {
+  async render(): Promise<HTMLElement | undefined> {
     removeAllChildren(this.container);
     this.container.className = "view catalog-view";
 
@@ -52,7 +49,7 @@ const CatalogView2 = {
         searchBar.setDebounce(() => {
           this.currentQuery = searchBar.searchInput.value.trim();
           this.offset = 0; // Reset offset when searching
-          this.renderProducts(parameters, this.currentQuery);
+          this.renderProducts();
         }, 400);
       });
 
@@ -70,7 +67,7 @@ const CatalogView2 = {
       ); // this.sliderWrapper,
       this.container.append(sidebar, contentWrapper);
 
-      await this.renderProducts(parameters, "");
+      await this.renderProducts();
 
       return this.container;
     } catch {
@@ -83,10 +80,7 @@ const CatalogView2 = {
     this.selectedCategoryKey = key;
   },
 
-  async renderProducts(
-    parameters: GetProductListParameters = {},
-    query: string = "",
-  ) {
+  async renderProducts() {
     if (!this.productList) {
       this.productList = document.createElement("div");
       this.productList.className = "product-list";
@@ -96,8 +90,7 @@ const CatalogView2 = {
     removeAllChildren(this.productList);
 
     const requestParameters = {
-      ...parameters,
-      searchText: query || undefined,
+      searchText: this.currentQuery || undefined,
       offset: this.offset,
       limit: this.limit,
     };
@@ -208,7 +201,7 @@ const CatalogView2 = {
 
       pageButton.addEventListener("click", () => {
         this.offset = page * this.limit;
-        this.renderProducts({}, this.currentQuery);
+        this.renderProducts();
       });
 
       this.paginationWrapper.append(pageButton);

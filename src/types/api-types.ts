@@ -44,10 +44,18 @@ export type QueryArguments = {
   sort?: string | string[];
 
   /**
-   * Filters applied to narrow down the product list.
+   * Filters applied to narrow down the product list (for regular queries).
    * Example: ['variants.attributes.color.key:"red"'].
+   * Uses `where` parameter in API requests.
    */
   where?: string;
+
+  /**
+   * Filters applied for search queries.
+   * Example: ['variants.attributes.color.key:"red"'].
+   * Uses `filter` parameter in search() requests.
+   */
+  filter?: string[];
 
   /**
    * Whether to include staged (unpublished) product data.
@@ -62,7 +70,7 @@ export type QueryArguments = {
   fuzzy?: boolean;
 
   /**
-   * serch text.
+   * Search text (deprecated, use `text.<locale>` instead).
    */
   searchText?: string;
 } & {

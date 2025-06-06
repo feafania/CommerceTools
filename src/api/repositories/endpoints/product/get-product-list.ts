@@ -56,11 +56,14 @@ export default async function getProductList({
       staged: true,
       fuzzy: true,
     };
+    console.log("filters", filters);
 
-    if (filters.length > 0) {
+    if (searchText?.trim()) {
+      queryArguments.filter = filters;
+    } else if (filters.length > 0) {
       queryArguments.where = filters.join(" and ");
     }
-
+    console.log("queryArguments", queryArguments);
     let response;
 
     if (searchText?.trim()) {

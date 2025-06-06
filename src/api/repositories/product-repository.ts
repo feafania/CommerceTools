@@ -153,8 +153,9 @@ const productRepository = {
         const offset =
           parameters.offset ?? SETTINGS.productListParametrs.offset;
 
-        const categoryFilter = `categories(id in (
-        ${categoryIds.map((id) => `"${id}"`).join(", ")}))`;
+        const categoryFilter = parameters.searchText
+          ? `categories.id:${categoryIds.map((id) => `"${id}"`).join(",")}`
+          : `categories(id in (${categoryIds.map((id) => `"${id}"`).join(",")}))`;
         const combinedFilters = [...(parameters.filters ?? []), categoryFilter];
 
         const response = await getProductList({
