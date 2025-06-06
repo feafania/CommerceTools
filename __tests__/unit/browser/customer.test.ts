@@ -15,6 +15,8 @@ jest.mock("@/components/modal-window/modal-window", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
+jest.mock("@/assets/svg/eye-password-hide.inline.svg", () => "mocked-svg");
+jest.mock("@/assets/svg/eye-password-show.inline.svg", () => "mocked-svg");
 
 describe("customerService.update", () => {
   const oldCustomer = oldTestCustomer;

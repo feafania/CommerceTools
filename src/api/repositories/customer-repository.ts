@@ -180,15 +180,13 @@ export const customerRepository = {
           addressId: JSON.parse("null"),
         };
       } else {
-        newAction = newAddresses[newDefault]?.id
-          ? {
-              action: type,
-              addressId: newAddresses[newDefault]?.id,
-            }
-          : {
-              action: type,
-              addressKey: newAddresses[newDefault]?.key,
-            };
+        const addr = newAddresses[newDefault];
+        if (!addr) return undefined;
+
+        newAction = {
+          action: type,
+          ...(addr.id ? { addressId: addr.id } : { addressKey: addr.key }),
+        };
       }
       return newAction as MyCustomerUpdateAction;
     }

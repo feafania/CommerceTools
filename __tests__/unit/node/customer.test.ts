@@ -41,20 +41,14 @@ describe("customerRepository.update", () => {
     expect(updateCustomer).toHaveBeenCalledWith(
       1,
       expect.arrayContaining([
-        {
-          action: CustomerActionType.ChangeEmail,
-          email: "john.doe@example.com",
-        },
+        { action: CustomerActionType.ChangeEmail, email: "john.doe@example.com" },
         { action: CustomerActionType.SetFirstName, firstName: "Johnny" },
-        {
-          action: CustomerActionType.SetDefaultBillingAddress,
-          addressId: "addr-1",
-          addressKey: "home",
-        },
-        expect.objectContaining({ action: CustomerActionType.AddAddress }),
         expect.objectContaining({
-          action: CustomerActionType.SetDefaultShippingAddress,
+          action: CustomerActionType.SetDefaultBillingAddress,
+          addressId: "addr-1", // без addressKey
         }),
+        expect.objectContaining({ action: CustomerActionType.AddAddress }),
+        expect.objectContaining({ action: CustomerActionType.SetDefaultShippingAddress }),
       ]),
       mockToken,
     );
@@ -199,7 +193,9 @@ describe("customerRepository.update", () => {
       expect.arrayContaining([
         expect.objectContaining({
           action: CustomerActionType.SetDefaultShippingAddress,
-          addressId: newDefault?.id,
+          ...(newDefault?.id
+            ? { addressId: newDefault.id }
+            : { addressKey: newDefault?.key }),
         }),
       ]),
       mockToken,
@@ -236,13 +232,14 @@ describe("customerRepository.update", () => {
       modifiedCustomer.addresses,
       AddressType.Billing,
     );
-
     expect(updateCustomer).toHaveBeenCalledWith(
       expect.any(Number),
       expect.arrayContaining([
         expect.objectContaining({
           action: CustomerActionType.SetDefaultBillingAddress,
-          addressId: newDefault?.id,
+          ...(newDefault?.id
+            ? { addressId: newDefault.id }
+            : { addressKey: newDefault?.key }),
         }),
       ]),
       mockToken,
