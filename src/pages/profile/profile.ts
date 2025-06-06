@@ -117,6 +117,7 @@ const UserProfile = {
         id: "firstname",
         class: "firstname-input",
         value: authStore.user?.firstName,
+        forbidValueChange: true,
       }),
       createInput({
         type: "text",
@@ -126,6 +127,7 @@ const UserProfile = {
         id: "lastname",
         class: "lastname-input",
         value: authStore.user?.lastName,
+        forbidValueChange: true,
       }),
       createInput({
         type: "date",
@@ -134,6 +136,7 @@ const UserProfile = {
         id: "birthday",
         class: "birthday-input",
         value: authStore.user?.dateOfBirth,
+        forbidValueChange: true,
       }),
     );
 
@@ -211,7 +214,7 @@ const UserProfile = {
     event.preventDefault();
 
     let addressId = form.dataset.addressId || this.generateAddressId();
-    const currentAddressForm = this.reciveCurrentForm(addressId);
+    const currentAddressForm = this.receiveCurrentForm(addressId);
     if (currentAddressForm?.hasAttribute("data-address-id-new")) {
       addressId =
         currentAddressForm.dataset.addressIdNew || this.generateAddressId();
@@ -278,7 +281,7 @@ const UserProfile = {
     if (isNewAddress) {
       userAddresses.push({
         ...newAddress,
-        key: "billing-address-" + Date.now(),
+        key: `auto-${userAddresses.length}-${Date.now()}`,
       });
     } else {
       userAddresses = userAddresses.map((addr) =>
@@ -329,7 +332,7 @@ const UserProfile = {
       }
     }
   },
-  reciveCurrentForm(addressId: string): HTMLElement {
+  receiveCurrentForm(addressId: string): HTMLElement {
     return document.querySelector(
       "form[data-address-id=" + addressId + "]",
     ) as HTMLFormElement;
@@ -536,6 +539,7 @@ const UserProfile = {
       id: "email",
       class: "email-input",
       value: authStore.user?.email,
+      forbidValueChange: true,
     });
   },
 
@@ -660,9 +664,13 @@ const UserProfile = {
     addressWrapper.dataset.addressIndex = index.toString();
 
     const addressElement = this.createAddressElement(isEmpty, addressData);
-    this.storeAddressReference(addressId, addressElement, index, addressName);
-
-    this.setupAddressCheckboxListeners(addressWrapper, addressId);
+    this.storeAddressReference(
+      addressId,
+      addressElement,
+      index,
+      addressName,
+      addressData,
+    );
 
     const addSubmitAddress = createButton({
       type: "submit",
@@ -674,14 +682,15 @@ const UserProfile = {
     addSubmitAddress.disabled = true;
     this.setDisabledStyles(addSubmitAddress);
 
-    addressWrapper.addEventListener("submit", (event) => {
-      this.submitAddress(event);
-    });
     addressWrapper.append(
       this.createAddressHeader(addressName, addressId),
       addressElement.element,
       addSubmitAddress,
     );
+    this.setupAddressCheckboxListeners(addressWrapper, addressId);
+    addressWrapper.addEventListener("submit", (event) => {
+      this.submitAddress(event);
+    });
 
     return addressWrapper;
   },
@@ -690,7 +699,7 @@ const UserProfile = {
     isEmpty: boolean,
     addressData?: InAddress,
   ): AddressElement {
-    const addressElement = new AddressElement("billing");
+    const addressElement = new AddressElement("billing", true);
     addressElement.render();
     if (addressData) {
       addressElement.setData(addressData);
@@ -718,15 +727,19 @@ const UserProfile = {
     addressElement: AddressElement,
     index: number,
     addressName: string,
+    addressData: InAddress | undefined,
   ): void {
+    const isDefaultShipping = addressData?.isDefaultShipping ?? false;
+    const isDefaultBilling = addressData?.isDefaultBilling ?? false;
+
     this.addresses[index] = {
       element: addressElement,
       id: addressId,
       index,
       name: addressName,
       isEditing: false,
-      isDefaultShipping: false,
-      isDefaultBilling: false,
+      isDefaultShipping,
+      isDefaultBilling,
     };
   },
 
@@ -872,7 +885,7 @@ const UserProfile = {
   async deleteAddress(addressId: string): Promise<void> {
     // if we need to delete just created address (with new id)
     let databaseAddressId = addressId;
-    const currentAddressForm = this.reciveCurrentForm(addressId);
+    const currentAddressForm = this.receiveCurrentForm(addressId);
     if (currentAddressForm?.hasAttribute("data-address-id-new")) {
       databaseAddressId =
         currentAddressForm.dataset.addressIdNew || this.generateAddressId();
@@ -1028,28 +1041,24 @@ const UserProfile = {
   },
 
   setDefaultShipping(addressId: string, isDefault: boolean): void {
-    if (isDefault) {
-      for (const addressItem of this.addresses) {
-        if (addressItem.id !== addressId && addressItem.isDefaultShipping) {
-          addressItem.isDefaultShipping = false;
-          const addressWrapper = document.querySelector(
-            `[data-address-id="${addressItem.id}"]`,
-          );
-          if (addressWrapper) {
-            const checkbox = addressWrapper.querySelector(
-              "#default-shipping-address-billing",
-            ) as HTMLInputElement;
-            if (checkbox) {
-              checkbox.checked = false;
-            }
-          }
+    for (const addressItem of this.addresses) {
+      if (
+        addressItem.id !== addressId &&
+        addressItem.isDefaultShipping &&
+        isDefault
+      ) {
+        addressItem.isDefaultShipping = false;
+        const addressWrapper = addressItem.element.element;
+        const checkbox = addressWrapper.querySelector(
+          "#default-shipping-address-billing",
+        ) as HTMLInputElement;
+        if (checkbox) {
+          checkbox.checked = false;
+          checkbox.value = checkbox.checked ? "on" : "off";
         }
+      } else if (addressItem.id === addressId) {
+        addressItem.isDefaultShipping = isDefault;
       }
-    }
-
-    const addressItem = this.addresses.find((addr) => addr.id === addressId);
-    if (addressItem) {
-      addressItem.isDefaultShipping = isDefault;
     }
 
     // Mark as edited
@@ -1063,28 +1072,26 @@ const UserProfile = {
   },
 
   setDefaultBilling(addressId: string, isDefault: boolean): void {
-    if (isDefault) {
-      for (const addressItem of this.addresses) {
-        if (addressItem.id !== addressId && addressItem.isDefaultBilling) {
-          addressItem.isDefaultBilling = false;
-          const addressWrapper = document.querySelector(
-            `[data-address-id="${addressItem.id}"]`,
-          );
-          if (addressWrapper) {
-            const checkbox = addressWrapper.querySelector(
-              "#default-billing-address-billing",
-            ) as HTMLInputElement;
-            if (checkbox) {
-              checkbox.checked = false;
-            }
+    for (const addressItem of this.addresses) {
+      if (
+        addressItem.id !== addressId &&
+        addressItem.isDefaultBilling &&
+        isDefault
+      ) {
+        addressItem.isDefaultBilling = false;
+        const addressWrapper = addressItem.element.element;
+        if (addressWrapper) {
+          const checkbox = addressWrapper.querySelector(
+            "#default-billing-address-billing",
+          ) as HTMLInputElement;
+          if (checkbox) {
+            checkbox.checked = false;
+            checkbox.value = checkbox.checked ? "on" : "off";
           }
         }
+      } else if (addressItem.id === addressId) {
+        addressItem.isDefaultBilling = isDefault;
       }
-    }
-
-    const addressItem = this.addresses.find((addr) => addr.id === addressId);
-    if (addressItem) {
-      addressItem.isDefaultBilling = isDefault;
     }
 
     // Mark as edited

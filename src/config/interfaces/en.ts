@@ -60,10 +60,10 @@ const en: AppTranslation = {
     editModeBtn: "Edit Mode",
     editModeStop: "Leave edit mode",
     editPassword: "Change password",
-    deleteAddress: "You deleted address",
+    deleteAddress: "The address was successfully deleted",
     editUSer: "User information was successfully updated",
-    editAddress: "Address was successfully updated",
-    addAddress: "You added new address",
+    editAddress: "The address was successfully updated",
+    addAddress: "The new address was successfully added",
     submitBtn: "Save Changes",
   },
   changePassword: {
@@ -71,10 +71,10 @@ const en: AppTranslation = {
     newPassword: "New password",
     confirmNewPassword: "Confirm new password",
     formTitle: "Change password",
-    wrongConfirm: "Wrong confirm password",
-    success: "Your password successfully changed",
+    wrongConfirm: "Wrong confirming password",
+    success: "Your password was successfully changed",
     wrongOldPassword: "Wrong current password",
-    emptyPassword: "You have empty password field",
+    emptyPassword: "Password field is empty",
   },
   address: {
     headers: {

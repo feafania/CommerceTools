@@ -10,12 +10,14 @@ import { InAddress } from "@/types/interfaces";
 export default class AddressElement {
   #addressBlock: HTMLDivElement;
   #name: string;
+  #forbidValueChange: boolean;
 
-  constructor(name: string) {
+  constructor(name: string, forbidValueChange: boolean = false) {
     this.#name = name;
     this.#addressBlock = document.createElement("div");
     this.#addressBlock.className = "address-block";
     this.#addressBlock.id = `address-${name}`;
+    this.#forbidValueChange = forbidValueChange;
   }
 
   get element(): HTMLDivElement {
@@ -57,6 +59,7 @@ export default class AddressElement {
       placeholder: `${SETTINGS.label.address.city}...`,
       class: "city-input",
       validationName: "city",
+      forbidValueChange: this.#forbidValueChange,
     });
   }
 
@@ -69,6 +72,7 @@ export default class AddressElement {
       placeholder: `${SETTINGS.label.address.street}...`,
       class: "street-input",
       validationName: "street",
+      forbidValueChange: this.#forbidValueChange,
     });
   }
 
@@ -82,6 +86,7 @@ export default class AddressElement {
       class: "postal-code-input",
       validationName: "postalCode",
       relatedCountryField: `country-${this.#name}`,
+      forbidValueChange: this.#forbidValueChange,
     });
   }
 
@@ -96,6 +101,7 @@ export default class AddressElement {
       options: getCountriesOptions(countryOptions),
       validationName: "country",
       relatedCountryField: `country-${this.#name}`,
+      forbidValueChange: this.#forbidValueChange,
     });
     const countrySelect = countrySelectWrapper.querySelector("select")!;
 
@@ -117,6 +123,7 @@ export default class AddressElement {
       name: `default-${type}-address-${this.#name}`,
       id: `default-${type}-address-${this.#name}`,
       relatedCountryField: `country-${this.#name}`,
+      forbidValueChange: this.#forbidValueChange,
     });
   }
   setData(data: InAddress): void {

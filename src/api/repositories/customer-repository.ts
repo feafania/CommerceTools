@@ -22,6 +22,7 @@ export const customerRepository = {
       if (actions.length === 0) {
         return undefined;
       }
+
       const updatedCustomer = await updateCustomer(version, actions, token);
       if (updatedCustomer) {
         return this.updateCustomer(oldCustomer, updatedCustomer);
@@ -171,17 +172,26 @@ export const customerRepository = {
   ): MyCustomerUpdateAction | undefined {
     const oldDefault = oldAddresses.findIndex((a) => a[flag]);
     const newDefault = newAddresses.findIndex((a) => a[flag]);
+    console.log("default", oldDefault, newDefault);
     if (oldDefault !== newDefault) {
-      return newDefault === -1
-        ? ({
-            action: type,
-            addressId: JSON.parse("null"),
-          } as MyCustomerUpdateAction)
-        : ({
-            action: type,
-            addressId: newAddresses[newDefault]?.id,
-            addressKey: newAddresses[newDefault]?.key,
-          } as MyCustomerUpdateAction);
+      let newAction;
+      if (newDefault === -1) {
+        newAction = {
+          action: type,
+          addressId: JSON.parse("null"),
+        };
+      } else {
+        newAction = newAddresses[newDefault]?.id
+          ? {
+              action: type,
+              addressId: newAddresses[newDefault]?.id,
+            }
+          : {
+              action: type,
+              addressKey: newAddresses[newDefault]?.key,
+            };
+      }
+      return newAction as MyCustomerUpdateAction;
     }
     return undefined;
   },

@@ -34,7 +34,7 @@ export default function createInput(object: ControlConfig): HTMLDivElement {
   const savedValue = getState(input.id);
   if (object.value !== undefined) {
     input.value = object.value;
-  } else if (typeof savedValue === "string") {
+  } else if (typeof savedValue === "string" && !object.forbidValueChange) {
     input.value = savedValue;
   }
 

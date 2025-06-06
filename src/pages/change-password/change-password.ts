@@ -66,6 +66,7 @@ const ChangePassword = {
       class: "password-input",
       validationName: "password",
       disabled: false,
+      forbidValueChange: true,
     });
     const newEyeButton = createEyeButton("new-password");
     newPasswordContainer.append(newPassword, newEyeButton);
@@ -81,6 +82,7 @@ const ChangePassword = {
       class: "password-input",
       validationName: "password",
       disabled: false,
+      forbidValueChange: true,
     });
     const confirmEyeButton = createEyeButton("confirm-password");
     confirmContainer.append(confirmNewPassword, confirmEyeButton);
@@ -120,9 +122,6 @@ const ChangePassword = {
   async renderOnSubmit(event: SubmitEvent) {
     const form = event.target as HTMLFormElement;
 
-    const isValid = handleOnSubmit(form, FormType.PASSWORD);
-    if (!isValid) return;
-
     const formData = new FormData(form);
     const currentPasswordUser = authStore.user?.password;
     const currentPasswordForm = formData.get("current-password") as string;
@@ -142,6 +141,9 @@ const ChangePassword = {
       await showModalMessage(SETTINGS.label.changePassword.wrongConfirm);
       return;
     }
+
+    const isValid = handleOnSubmit(form, FormType.PASSWORD);
+    if (!isValid) return;
 
     const result = await customerService.changePassword(newPassword);
 
