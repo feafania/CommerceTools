@@ -85,6 +85,8 @@ export interface InCategory {
   name: LanguageVariants;
   description?: LanguageVariants;
   assets: InAsset[];
+  parentId?: string;
+  children?: InCategory[];
 }
 
 export interface InAssetSource {

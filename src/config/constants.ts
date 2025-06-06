@@ -6,8 +6,8 @@ export const DEFAULT_PAGE = PageType.main;
 export const NOT_FOUND_PAGE = PageType.notfound;
 
 export const CARD_SETTINGS = {
-  cardWidth: 320,
-  cardHeight: 450,
+  cardWidth: 250,
+  cardHeight: 350,
   slideStep: 1,
   cardGap: 16,
   sliderPadding: 16,

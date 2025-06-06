@@ -38,23 +38,53 @@ const productRepository = {
   async getCategories(): Promise<InCategory[]> {
     try {
       const response = await getCategories();
-      if (response) {
-        return response.results.map((category) =>
-          this.mapCategoryToInternal(category),
-        );
+      if (!response) return [];
+
+      const flatCategories = response.results.map((category) =>
+        this.mapCategoryToInternal(category),
+      );
+
+      const categoryMap = new Map<string, InCategory>();
+      for (const cat of flatCategories) categoryMap.set(cat.id, cat);
+
+      const rootCategories: InCategory[] = [];
+
+      for (const category of flatCategories) {
+        if (category.parentId && categoryMap.has(category.parentId)) {
+          const parent = categoryMap.get(category.parentId)!;
+          parent.children = parent.children || [];
+          parent.children.push(category);
+        } else {
+          rootCategories.push(category);
+        }
       }
+
+      return rootCategories;
     } catch (error) {
+      console.error("Error fetching categories:", error);
       throw error;
     }
-    return [] as InCategory[];
   },
-  async getCategoryByKey(key: string): Promise<InCategory> {
+
+  async getCategoryByKey(
+    key: string,
+    withChildren = false,
+  ): Promise<InCategory> {
     try {
       const response = await getCategoryByKey(key);
       if (!response) {
         throw new Error(`Category with key "${key}" not found.`);
       }
-      return this.mapCategoryToInternal(response);
+
+      const category = this.mapCategoryToInternal(response);
+
+      if (withChildren) {
+        const allCategories = await this.getCategories();
+        const found = this.findCategoryById(category.id, allCategories);
+        return found ?? category;
+      }
+
+      return category;
     } catch (error) {
       console.error("Error getting categories:", error);
       throw error;
@@ -111,12 +141,20 @@ const productRepository = {
   ): Promise<ProductSearchResult> {
     try {
       const category = await this.getCategoryByKey(categoryKey);
+      const allCategories = await this.getCategories(); // атрымай поўны спіс катэгорый
+
       if (category) {
+        const categoryIds = await this.getAllCategoryIdsRecursive(
+          category,
+          allCategories,
+        );
+
         const limit = parameters.limit ?? SETTINGS.productListParametrs.limit;
         const offset =
           parameters.offset ?? SETTINGS.productListParametrs.offset;
 
-        const categoryFilter = `categories(id = "${category.id}")`;
+        const categoryFilter = `categories(id in (
+        ${categoryIds.map((id) => `"${id}"`).join(", ")}))`;
         const combinedFilters = [...(parameters.filters ?? []), categoryFilter];
 
         const response = await getProductList({
@@ -134,13 +172,14 @@ const productRepository = {
           this.mapProductToInternal(product, currency),
         );
         return {
-          limit: response?.limit,
-          offset: response?.offset,
-          count: response?.count,
-          total: response?.total,
+          limit: response.limit,
+          offset: response.offset,
+          count: response.count,
+          total: response.total,
           results: productResult,
         };
       }
+
       return this.emptyProductResponse();
     } catch (error) {
       console.error("Error getting products by category key:", error);
@@ -178,6 +217,26 @@ const productRepository = {
       console.error("Error getting product attributes:", error);
       throw error;
     }
+  },
+
+  async getAllCategoryIdsRecursive(
+    category: InCategory,
+    allCategories: InCategory[],
+  ): Promise<string[]> {
+    const result = [category.id];
+    const children = allCategories.filter(
+      (cat) => cat.parentId === category.id,
+    );
+
+    for (const child of children) {
+      const childIds = await this.getAllCategoryIdsRecursive(
+        child,
+        allCategories,
+      );
+      result.push(...childIds);
+    }
+
+    return result;
   },
 
   mapProductToInternal(
@@ -274,6 +333,8 @@ const productRepository = {
       name: this.mapLocalizedField(category.name),
       description: this.mapLocalizedField(category.description),
       assets: [localAsset, ...mappedAssets],
+      parentId: category.parent?.id,
+      children: [],
     };
   },
 
@@ -345,6 +406,19 @@ const productRepository = {
       currencyCode: priceObject.value.currencyCode,
       isDiscounted,
     };
+  },
+
+  findCategoryById(
+    id: string,
+    categories: InCategory[],
+  ): InCategory | undefined {
+    for (const cat of categories) {
+      if (cat.id === id) return cat;
+      if (cat.children?.length) {
+        const found = this.findCategoryById(id, cat.children);
+        if (found) return found;
+      }
+    }
   },
 
   emptyProductResponse() {
