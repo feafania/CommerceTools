@@ -1,6 +1,6 @@
 .product-view {
   width: 100%;
-  padding: 2rem;
+  padding: 2rem 0;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -32,7 +32,7 @@
 }
 
 .back-to-catalog-btn {
-  background-color: #333;
+  background-color: var(--main-color);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -43,13 +43,13 @@
 }
 
 .back-to-catalog-btn:hover {
-  background-color: #555;
+  background-color: var(--main-color-hover);
 }
 
 .product-details .product-title {
   font-size: 1.5rem;
   font-weight: 700;
-  margin: 0;
+  margin: 0 0 20px;
 }
 
 .product-details .product-description {
