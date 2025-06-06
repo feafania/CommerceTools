@@ -45,6 +45,7 @@ export interface AppTranslation {
   catalog: {
     search: string;
     title: string;
+    allProducts: string;
   };
   product: {
     title: string;

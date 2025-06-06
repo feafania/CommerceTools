@@ -7,6 +7,7 @@ import { PageType } from "@/types/enum";
 import ProductImageSlider from "@/components/product-image-slider/product-image-slider";
 import ProductCard from "@/components/product-card/product-card";
 import { SETTINGS } from "@/config/settings";
+import CatalogView2 from "@/pages/catalog2/catalog";
 
 const ProductView = {
   productKey: undefined as string | undefined,
@@ -20,7 +21,7 @@ const ProductView = {
 
     try {
       if (!this.productKey) {
-        throw new Error("No productKey found");
+        throw new Error("No product key found");
       }
 
       this.product = await productService.getProductByKey(this.productKey);
@@ -63,7 +64,10 @@ const ProductView = {
       backButton.textContent = `← ${SETTINGS.label.product.backButton}`;
       backButton.className = "back-to-catalog-btn";
       backButton.addEventListener("click", () => {
-        PageRouter.navigateTo(PageType.catalog);
+        const categoryRoute = CatalogView2.selectedCategoryKey
+          ? "/" + CatalogView2.selectedCategoryKey
+          : "";
+        globalThis.location.hash = `${PageType.catalog}${categoryRoute}`;
       });
 
       headerRow.append(title, backButton);

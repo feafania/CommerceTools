@@ -40,11 +40,12 @@ const pl: AppTranslation = {
     submit: "Zarejestruj się",
   },
   main: {
-    title: "Witamy w sklepie z prezentami",
+    title: "Zapraszamy do naszego sklepu",
   },
   catalog: {
     search: "Szukaj...",
-    title: "Katalog prezentów",
+    title: "Nasz asortyment",
+    allProducts: "Wszystkie produkty",
   },
   product: {
     title: "Szczegóły Produkta",

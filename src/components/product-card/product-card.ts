@@ -2,7 +2,7 @@ import "./product-card.css";
 import { InProduct } from "@/types/interfaces";
 import { formatPriceWithCurrency, localizeName } from "@/utils/helpers";
 import { CARD_SETTINGS } from "@/config/constants";
-import { CurrencyCode, SliderType } from "@/types/enum";
+import { CurrencyCode, PageType, SliderType } from "@/types/enum";
 
 export default class ProductCard {
   card: HTMLDivElement;
@@ -33,7 +33,7 @@ export default class ProductCard {
       img.alt = localizeName(this.product.name);
 
       this.card.addEventListener("click", () => {
-        globalThis.location.hash = `product/${this.product.key}`;
+        globalThis.location.hash = `${PageType.product}/${this.product.key}`;
       });
 
       this.card.append(img, ProductCard.renderProductInformation(this.product));

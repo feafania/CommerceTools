@@ -1,12 +1,14 @@
 import "./catalog.css";
 import productService from "@/api/services/product-service";
-import ProductSlider from "@/components/product-slider/product-slider";
+// import ProductSlider from "@/components/product-slider/product-slider";
 import ProductCard from "@/components/product-card/product-card";
 import { SETTINGS } from "@/config/settings";
 import searchBar from "@/components/search-button/search-button";
 import { removeAllChildren } from "@/utils/helpers";
 import { InProduct } from "@/types/interfaces";
 import { GetProductListParameters } from "@/types/types";
+import PageRouter from "@/router/page-router";
+import { PageType } from "@/types/enum";
 
 const CatalogView2 = {
   container: document.createElement("section"),
@@ -18,46 +20,66 @@ const CatalogView2 = {
   currentQuery: "",
   paginationWrapper: document.createElement("div"),
   productList: document.createElement("div"),
-  sliderWrapper: document.createElement("div"),
+  // sliderWrapper: document.createElement("div"),
 
   async render(
     parameters: GetProductListParameters = {},
-  ): Promise<HTMLElement> {
+  ): Promise<HTMLElement | undefined> {
     removeAllChildren(this.container);
     this.container.className = "view catalog-view";
 
-    const title = document.createElement("h1");
-    title.textContent = SETTINGS.label.catalog.title;
+    try {
+      if (this.selectedCategoryKey) {
+        const selectedCategory = await productService.getCategoryByKey(
+          this.selectedCategoryKey,
+        );
+        if (!selectedCategory) {
+          throw new Error("Category not found");
+        }
+      }
 
-    const searchComponent = searchBar.render();
+      const sidebar = await this.renderSideBar();
 
-    searchBar.searchInput.addEventListener("input", () => {
-      searchBar.setDebounce(() => {
-        this.currentQuery = searchBar.searchInput.value.trim();
-        this.offset = 0; // Reset offset when searching
-        this.renderProducts(parameters, this.currentQuery);
-      }, 400);
-    });
+      const contentWrapper = document.createElement("div");
+      contentWrapper.className = "catalog-content";
 
-    this.sliderWrapper.className = "product-slider";
-    this.productList = document.createElement("div");
-    this.productList.className = "product-list";
+      const title = document.createElement("h1");
+      title.textContent = SETTINGS.label.catalog.title;
 
-    this.paginationWrapper.className = "pagination";
+      const searchComponent = searchBar.render();
 
-    this.container.append(
-      title,
-      searchComponent,
-      this.sliderWrapper,
-      this.paginationWrapper,
-      this.productList,
-    );
-    await this.renderProducts(parameters, "");
+      searchBar.searchInput.addEventListener("input", () => {
+        searchBar.setDebounce(() => {
+          this.currentQuery = searchBar.searchInput.value.trim();
+          this.offset = 0; // Reset offset when searching
+          this.renderProducts(parameters, this.currentQuery);
+        }, 400);
+      });
 
-    return this.container;
+      // this.sliderWrapper.className = "product-slider";
+      this.productList = document.createElement("div");
+      this.productList.className = "product-list";
+
+      this.paginationWrapper.className = "pagination";
+
+      contentWrapper.append(
+        title,
+        searchComponent,
+        this.paginationWrapper,
+        this.productList,
+      ); // this.sliderWrapper,
+      this.container.append(sidebar, contentWrapper);
+
+      await this.renderProducts(parameters, "");
+
+      return this.container;
+    } catch {
+      this.setSelectedCategoryKey(undefined);
+      await PageRouter.renderPage(PageType.notfound);
+    }
   },
 
-  setSelectedCategoryKey(key: string) {
+  setSelectedCategoryKey(key: string | undefined): void {
     this.selectedCategoryKey = key;
   },
 
@@ -95,12 +117,81 @@ const CatalogView2 = {
       this.productList.append(card.create());
     }
 
-    removeAllChildren(this.sliderWrapper);
-    const newSlider = new ProductSlider(this.products);
-    newSlider.create();
-    this.sliderWrapper.append(newSlider.container);
+    // removeAllChildren(this.sliderWrapper);
+    // const newSlider = new ProductSlider(this.products);
+    // newSlider.create();
+    // this.sliderWrapper.append(newSlider.container);
     this.renderPagination();
   },
+
+  async renderSideBar() {
+    const sidebar = document.createElement("aside");
+    sidebar.className = "catalog-sidebar";
+
+    const groupAll = document.createElement("div");
+    groupAll.className = "category-group";
+    const allButton = document.createElement("button");
+    allButton.textContent = SETTINGS.label.catalog.allProducts;
+    allButton.className = "catalog-sidebar-button all-category-button";
+    if (!this.selectedCategoryKey) {
+      allButton.classList.add("active");
+    }
+    allButton.addEventListener("click", () => {
+      this.offset = 0;
+      globalThis.location.hash = PageType.catalog;
+    });
+    groupAll.append(allButton);
+    sidebar.append(groupAll);
+
+    const categories = await productService.getCategories();
+
+    for (const category of categories) {
+      const group = document.createElement("div");
+      group.className = "category-group";
+
+      const button = document.createElement("button");
+      button.textContent =
+        category.name[SETTINGS.currentLang] || category.key || "";
+      button.classList.add("catalog-sidebar-button", "category-button");
+      if (category.key === this.selectedCategoryKey) {
+        button.classList.add("active");
+      }
+
+      button.addEventListener("click", () => {
+        this.offset = 0;
+        globalThis.location.hash = `${PageType.catalog}/${category.key}`;
+      });
+
+      group.append(button);
+
+      if (category.children && category.children.length > 0) {
+        for (const sub of category.children) {
+          const subButton = document.createElement("button");
+          subButton.textContent =
+            "— " + (sub.name?.[SETTINGS.currentLang] || sub.key || "");
+          subButton.classList.add(
+            "catalog-sidebar-button",
+            "subcategory-button",
+          );
+
+          if (sub.key === this.selectedCategoryKey) {
+            subButton.classList.add("active");
+          }
+
+          subButton.addEventListener("click", () => {
+            this.offset = 0;
+            globalThis.location.hash = `${PageType.catalog}/${sub.key}`;
+          });
+
+          group.append(subButton);
+        }
+      }
+
+      sidebar.append(group);
+    }
+    return sidebar;
+  },
+
   renderPagination() {
     removeAllChildren(this.paginationWrapper);
 

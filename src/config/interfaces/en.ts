@@ -40,11 +40,12 @@ const en: AppTranslation = {
     submit: "Sign up",
   },
   main: {
-    title: "Welcome to Gifts Shop",
+    title: "Welcome to our shop",
   },
   catalog: {
     search: "Search...",
-    title: "Gift catalog",
+    title: "Our product range",
+    allProducts: "All products",
   },
   product: {
     title: "Detailed Product",

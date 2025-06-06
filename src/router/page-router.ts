@@ -4,6 +4,7 @@ import { isValidPageType } from "@/utils/validation";
 import { renderPage } from "@/utils/page-render";
 import routes from "@/config/routes";
 import ProductView from "@/pages/product/product";
+import CatalogView2 from "@/pages/catalog2/catalog";
 
 const PageRouter = {
   currentPage: PageType.main as PageType,
@@ -20,11 +21,10 @@ const PageRouter = {
     const path = this.getPathFromUrl();
 
     let page: PageType;
-    let productId: string | undefined;
     ProductView.setProductKey(undefined);
 
-    if (path.startsWith("product/")) {
-      productId = path.split("/")[1];
+    if (path.startsWith(`${PageType.product}/`)) {
+      const productId = path.split("/")[1];
 
       if (productId) {
         page = PageType.product;
@@ -32,6 +32,16 @@ const PageRouter = {
         ProductView.setProductKey(productId);
       } else {
         page = NOT_FOUND_PAGE;
+      }
+    } else if (path.startsWith(PageType.catalog)) {
+      const categoryId = path.split("/")[1];
+      page = PageType.catalog;
+      this.currentPage = page;
+
+      if (categoryId) {
+        CatalogView2.setSelectedCategoryKey(categoryId);
+      } else {
+        CatalogView2.setSelectedCategoryKey(undefined);
       }
     } else if (isValidPageType(path)) {
       page = path;
