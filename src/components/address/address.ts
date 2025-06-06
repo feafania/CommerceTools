@@ -84,7 +84,7 @@ export default class AddressElement {
       id: `postalcode-${this.#name}`,
       placeholder: `${SETTINGS.label.address.postalCode}...`,
       class: "postal-code-input",
-      validationName: "postalCode",
+      validationName: "postalcode",
       relatedCountryField: `country-${this.#name}`,
       forbidValueChange: this.#forbidValueChange,
     });

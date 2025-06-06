@@ -30,6 +30,7 @@ const createAddressChangeHandler = (
         submitButton.disabled = false;
         submitButton.style.cursor = "auto";
         submitButton.classList.remove("disabled-style");
+        element.removeAttribute("disabled");
       }
     }
   };
@@ -170,12 +171,12 @@ const UserProfile = {
     return container;
   },
   async renderOnSubmit(event: SubmitEvent) {
+    event.preventDefault();
     const form = event.target as HTMLFormElement;
     const isValid = handleOnSubmit(form, FormType.PROFILE);
     if (!isValid) return;
 
     const formData = new FormData(form);
-    event.preventDefault();
     const addresses = authStore.user?.addresses || [];
 
     const updatedCustomerData: InCustomer = {
@@ -205,13 +206,13 @@ const UserProfile = {
   },
 
   async submitAddress(event: SubmitEvent) {
+    event.preventDefault();
     const form = event.target as HTMLFormElement;
 
-    const isValid = handleOnSubmit(form, FormType.PROFILE);
+    const isValid = await handleOnSubmit(form, FormType.PROFILE);
     if (!isValid) return;
 
     const formData = new FormData(form);
-    event.preventDefault();
 
     let addressId = form.dataset.addressId || this.generateAddressId();
     const currentAddressForm = this.receiveCurrentForm(addressId);
@@ -1124,6 +1125,7 @@ const UserProfile = {
       } else {
         element.style.cursor = "auto";
         element.classList.remove("disabled-style");
+        element.removeAttribute("disabled");
       }
     }
   },

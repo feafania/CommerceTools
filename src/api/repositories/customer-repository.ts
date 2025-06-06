@@ -172,7 +172,6 @@ export const customerRepository = {
   ): MyCustomerUpdateAction | undefined {
     const oldDefault = oldAddresses.findIndex((a) => a[flag]);
     const newDefault = newAddresses.findIndex((a) => a[flag]);
-    console.log("default", oldDefault, newDefault);
     if (oldDefault !== newDefault) {
       let newAction;
       if (newDefault === -1) {
