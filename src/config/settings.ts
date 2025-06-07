@@ -24,7 +24,7 @@ export const SETTINGS = {
       value: lang,
     });
   },
-  productListParametrs: {
+  productListParameters: {
     limit: 12,
     offset: 0,
     sortName: SortName.NAME,

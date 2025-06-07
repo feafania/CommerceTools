@@ -55,3 +55,10 @@ export type InAttributes = Record<
 >;
 
 export type LanguageVariants = Record<LanguageCode, string>;
+
+export type SortOptions =
+  | "price-asc"
+  | "price-desc"
+  | "name-asc"
+  | "name-desc"
+  | undefined;

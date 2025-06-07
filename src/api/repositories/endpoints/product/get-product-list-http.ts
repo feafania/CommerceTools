@@ -6,16 +6,16 @@ import { handleApiError } from "@/api/handle-api-error";
 import getAnonToken from "@/api/repositories/endpoints/token/get-anonymous-token";
 
 export default async function getProductListHttp({
-  limit = SETTINGS.productListParametrs.limit,
-  offset = SETTINGS.productListParametrs.offset,
-  sortName = SETTINGS.productListParametrs.sortName,
-  sortDirection = SETTINGS.productListParametrs.sortDirection,
+  limit = SETTINGS.productListParameters.limit,
+  offset = SETTINGS.productListParameters.offset,
+  sortName = `${SETTINGS.productListParameters.sortName}.${SETTINGS.currentLang}`,
+  sortDirection = SETTINGS.productListParameters.sortDirection,
   searchText,
   filters = [],
 }: GetProductListParameters = {}) {
   try {
     const lang = SETTINGS.currentLang;
-    const sort = `${sortName}.${lang} ${sortDirection}`;
+    const sort = `${sortName} ${sortDirection}`;
 
     const token = await getAnonToken();
     if (!token) {
@@ -26,29 +26,34 @@ export default async function getProductListHttp({
       Accept: "application/json",
     };
 
-    const where = filters.join(" and ");
-
     const parameters = new URLSearchParams({
       limit: String(limit),
       offset: String(offset),
       sort,
       staged: "true",
       fuzzy: "true",
+      priceCurrency: SETTINGS.currentCurrency,
     });
-
-    if (where) {
-      parameters.append("where", where);
-    }
 
     const projectKey = process.env.CTP_PROJECT_KEY!;
     const apiUrl = process.env.CTP_API_URL!;
     let url = `${apiUrl}/${projectKey}/product-projections`;
-    if (searchText?.trim()) {
-      if (searchText?.trim()) {
-        parameters.append(`text.${lang}`, searchText.trim());
-      }
-      url = `${url}/search`;
+
+    const searchTerm = searchText?.trim();
+    if (searchTerm) {
+      parameters.append(`text.${lang}`, `*${searchTerm}*`);
+      parameters.set("fuzzy", String(searchTerm.length < 5));
     }
+    for (const filter of filters) {
+      parameters.append("filter", filter);
+    }
+    url = `${url}/search`;
+    // } else {
+    //   if (filters.length > 0) {
+    //     parameters.append("where", filters.join(" and "));
+    //   }
+    // }
+
     url = `${url}?${parameters.toString()}`;
     const response = await fetch(url, { headers });
     if (!response.ok) throw new Error(await response.text());

@@ -1,11 +1,11 @@
-import { Customer, MyCustomerUpdateAction } from "@commercetools/platform-sdk";
+import { MyCustomerUpdateAction } from "@commercetools/platform-sdk";
 
 import { InAddress, InCustomer } from "@/types/interfaces";
 import { CustomerActionType } from "@/types/api-types";
 import { deepEqual } from "@/utils/helpers";
 import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
 import { changeCustomerPassword } from "@/api/repositories/endpoints/customer/change-password";
-import authRepository from "@/api/repositories/auth-repository";
+import MappingHelpers from "@/api/repositories/mapping-helpers";
 
 export const customerRepository = {
   async update(
@@ -25,7 +25,7 @@ export const customerRepository = {
 
       const updatedCustomer = await updateCustomer(version, actions, token);
       if (updatedCustomer) {
-        return this.updateCustomer(oldCustomer, updatedCustomer);
+        return MappingHelpers.updateCustomer(oldCustomer, updatedCustomer);
       }
     } catch (error) {
       console.error("Customer update failed:", error);
@@ -48,7 +48,7 @@ export const customerRepository = {
       );
 
       if (customer) {
-        return authRepository.toInternalCustomer(customer, newPassword);
+        return MappingHelpers.toInternalCustomer(customer, newPassword);
       }
     } catch (error) {
       throw error;
@@ -203,33 +203,6 @@ export const customerRepository = {
       }
       return addr;
     });
-  },
-
-  updateCustomer(oldCustomer: InCustomer, newCustomer: Customer): InCustomer {
-    return {
-      version: newCustomer.version,
-      id: newCustomer.id,
-      email: newCustomer.email,
-      password: oldCustomer.password,
-      firstName: newCustomer.firstName ?? "",
-      lastName: newCustomer.lastName ?? "",
-      dateOfBirth: newCustomer.dateOfBirth ?? "",
-
-      addresses: newCustomer.addresses.map(
-        (address): InAddress => ({
-          id: address.id,
-          key: address.key ?? "",
-          streetName: address.streetName ?? "",
-          streetNumber: address.streetNumber ?? "",
-          postalCode: address.postalCode ?? "",
-          city: address.city ?? "",
-          country: address.country ?? "",
-          isDefaultShipping:
-            newCustomer.defaultShippingAddressId === address.id,
-          isDefaultBilling: newCustomer.defaultBillingAddressId === address.id,
-        }),
-      ),
-    };
   },
 };
 

@@ -40,7 +40,6 @@ export enum FormType {
 export enum SortName {
   NAME = "name",
   PRICE = "price",
-  CREATED_AT = "createdAt",
 }
 
 export enum SortDirection {

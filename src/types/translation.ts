@@ -46,6 +46,13 @@ export interface AppTranslation {
     search: string;
     title: string;
     allProducts: string;
+    sort: {
+      default: string;
+      priceAsc: string;
+      priceDesc: string;
+      nameAsc: string;
+      nameDesc: string;
+    };
   };
   product: {
     title: string;

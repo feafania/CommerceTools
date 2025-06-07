@@ -1,4 +1,4 @@
-import { oldTestCustomer } from "../__mocks__/customer";
+import { oldTestCustomer } from "../__mocks__/customer.mock";
 
 import customerService from "@/api/services/customer-service";
 import customerRepository from "@/api/repositories/customer-repository";

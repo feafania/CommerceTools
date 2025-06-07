@@ -23,6 +23,7 @@ jest.mock("@/api/repositories/endpoints/product/get-product-attributes");
 
 import { InCategory } from "@/types/interfaces";
 import productRepository from "@/api/repositories/product-repository";
+import MappingHelpers from "@/api/repositories/mapping-helpers";
 
 jest.mock("@/api/repositories/endpoints/product/get-categories");
 jest.mock("@/api/repositories/endpoints/product/get-category-by-key");
@@ -90,7 +91,7 @@ describe("product categories", () => {
       available: true,
       sku: mockedProductProjection.masterVariant.sku,
     });
-    const expectedPrice = productRepository.mapProductToInternal(
+    const expectedPrice = MappingHelpers.mapProductToInternal(
       mockedProductProjection,
     ).price;
 
@@ -102,7 +103,7 @@ describe("product categories", () => {
 
     const product = await productRepository.getProductByKey("key1");
 
-    const expected = productRepository.mapProductToInternal(
+    const expected = MappingHelpers.mapProductToInternal(
       mockedProductProjection,
     );
 

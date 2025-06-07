@@ -1,14 +1,15 @@
+import {
+  ADDRESS_CHILDRENS_NUMBER,
+  mockCountryOptions,
+  mockSettingsLabelAddress,
+} from "../__mocks__/address.mock";
+
 import AddressElement from "@/components/address/address";
 import { AddressType } from "@/types/enum";
 import createInput from "@/components/input/input";
 import createSelect from "@/components/select/select";
 import { createLabel } from "@/components/label/label";
 import { getCountriesOptions } from "@/utils/helpers";
-import {
-  ADDRESS_CHILDRENS_NUMBER,
-  mockCountryOptions,
-  mockSettingsLabelAddress,
-} from "../__mocks__/address.mock";
 
 const mockSelectElement = document.createElement("select");
 const mockCreateSelectResult = document.createElement("div");

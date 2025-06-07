@@ -4,7 +4,7 @@ import { isValidPageType } from "@/utils/validation";
 import { renderPage } from "@/utils/page-render";
 import routes from "@/config/routes";
 import ProductView from "@/pages/product/product";
-import CatalogView2 from "@/pages/catalog2/catalog";
+import CatalogView from "@/pages/catalog/catalog";
 
 const PageRouter = {
   currentPage: PageType.main as PageType,
@@ -39,9 +39,9 @@ const PageRouter = {
       this.currentPage = page;
 
       if (categoryId) {
-        CatalogView2.setSelectedCategoryKey(categoryId);
+        CatalogView.setSelectedCategoryKey(categoryId);
       } else {
-        CatalogView2.setSelectedCategoryKey(undefined);
+        CatalogView.setSelectedCategoryKey(undefined);
       }
     } else if (isValidPageType(path)) {
       page = path;

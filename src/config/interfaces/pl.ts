@@ -46,6 +46,13 @@ const pl: AppTranslation = {
     search: "Szukaj...",
     title: "Nasz asortyment",
     allProducts: "Wszystkie produkty",
+    sort: {
+      default: "Sortuj według",
+      priceAsc: "Cena: od niskiej do wysokiej",
+      priceDesc: "Cena: od wysokiej do niskiej",
+      nameAsc: "Nazwa: od A do Z",
+      nameDesc: "Nazwa: Z do A",
+    },
   },
   product: {
     title: "Szczegóły Produkta",

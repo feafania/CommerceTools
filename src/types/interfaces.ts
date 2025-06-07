@@ -1,6 +1,6 @@
 import { CountryValueType, InAttributes, LanguageVariants } from "./types";
 
-import { CountryCode, PageType, SortDirection, SortName } from "@/types/enum";
+import { CountryCode, PageType, SortDirection } from "@/types/enum";
 import AddressElement from "@/components/address/address";
 
 type ControlBase = {
@@ -130,7 +130,7 @@ export interface InCustomer {
 export interface ProductListParameters {
   limit: number;
   offset: number;
-  sortName: SortName;
+  sortName: string;
   sortDirection: SortDirection;
   searchText?: string;
   filters?: string[];

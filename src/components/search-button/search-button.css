@@ -28,17 +28,4 @@
   padding: 2px;
 }
 
-@media (max-width: 600px) {
-  .search-bar {
-    padding: 0.25rem;
-  }
-  #search-input {
-    font-size: clamp(0.75rem, 2.7vw, 1rem);
-  }
-  #clear-search-button {
-    font-size: clamp(0.9rem, 4.1vw, 1.5rem);
-  }
-}
 
-@media (max-width: 380px) {
-}

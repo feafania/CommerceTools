@@ -33,10 +33,10 @@ import { GetProductListParameters } from "@/types/types";
  */
 
 export default async function getProductList({
-  limit = SETTINGS.productListParametrs.limit,
-  offset = SETTINGS.productListParametrs.offset,
-  sortName = SETTINGS.productListParametrs.sortName,
-  sortDirection = SETTINGS.productListParametrs.sortDirection,
+  limit = SETTINGS.productListParameters.limit,
+  offset = SETTINGS.productListParameters.offset,
+  sortName = `${SETTINGS.productListParameters.sortName}.${SETTINGS.currentLang}`,
+  sortDirection = SETTINGS.productListParameters.sortDirection,
   searchText,
   filters = [],
 }: GetProductListParameters = {}): Promise<
@@ -47,7 +47,7 @@ export default async function getProductList({
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });
-    const sort = `${sortName}.${SETTINGS.currentLang} ${sortDirection}`;
+    const sort = `${sortName} ${sortDirection}`;
 
     const queryArguments: QueryArguments = {
       limit,
@@ -55,32 +55,35 @@ export default async function getProductList({
       sort,
       staged: true,
       fuzzy: true,
+      priceCurrency: SETTINGS.currentCurrency,
     };
     console.log("filters", filters);
 
-    if (searchText?.trim()) {
-      queryArguments.filter = filters;
-    } else if (filters.length > 0) {
-      queryArguments.where = filters.join(" and ");
-    }
+    // if (searchText?.trim()) {
+    queryArguments.filter = filters;
+    // } else if (filters.length > 0) {
+    //   queryArguments.where = filters.join(" and ");
+    // }
     console.log("queryArguments", queryArguments);
-    let response;
+    // let response;
 
-    if (searchText?.trim()) {
-      queryArguments.fuzzy = true;
-      queryArguments[`text.${SETTINGS.currentLang}`] = searchText.trim();
-
-      response = await apiRoot
-        .productProjections()
-        .search()
-        .get({ queryArgs: queryArguments })
-        .execute();
-    } else {
-      response = await apiRoot
-        .productProjections()
-        .get({ queryArgs: queryArguments })
-        .execute();
+    const searchTerm = searchText?.trim();
+    if (searchTerm) {
+      // queryArguments.fuzzy = searchTerm.length < 5;
+      queryArguments[`text.${SETTINGS.currentLang}`] = `*${searchTerm}*`;
     }
+
+    const response = await apiRoot
+      .productProjections()
+      .search()
+      .get({ queryArgs: queryArguments })
+      .execute();
+    // } else {
+    //   response = await apiRoot
+    //     .productProjections()
+    //     .get({ queryArgs: queryArguments })
+    //     .execute();
+    // }
 
     return response.body;
   } catch (error) {

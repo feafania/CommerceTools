@@ -79,4 +79,10 @@ export type QueryArguments = {
    * The key must follow the format `text.<locale>`, e.g., "text.en".
    */
   [key: `text.${string}`]: string;
+  /**
+   * Currency code used for price-based sorting and filtering.
+   * Required when sorting or filtering by price.
+   * Example: "EUR", "USD", etc.
+   */
+  priceCurrency?: string;
 };
