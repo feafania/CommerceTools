@@ -154,6 +154,57 @@
   box-shadow: 0 0 0 2px rgba(112, 58, 8, 0.25);
 }
 
+.filter-input-label {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.filter-input {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.filter-title {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.filter-label {
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.attribute-filters,
+.attribute-filters * {
+  font-size: 12px !important;
+}
+
+.attribute-filters {
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-filter-button {
+  font-size: 12px;
+  padding: 4px 8px;
+  margin-top: 8px;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.custom-filter-button:hover {
+  background-color: #555;
+}
+
 @media (max-width: 768px) {
   .catalog-view {
     flex-direction: column;

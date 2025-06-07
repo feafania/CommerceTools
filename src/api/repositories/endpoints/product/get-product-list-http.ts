@@ -32,6 +32,7 @@ export default async function getProductListHttp({
       sort,
       staged: "true",
       fuzzy: "true",
+      fuzzyLevel: "2",
       priceCurrency: SETTINGS.currentCurrency,
     });
 

@@ -20,7 +20,6 @@ export default class ProductCard {
 
     if (this.variant === SliderType.Img) {
       this.card.classList.add("img-only");
-
       const img = document.createElement("img");
       img.src = this.product.images[0]?.url;
       img.alt = localizeName(this.product.name);
@@ -28,15 +27,20 @@ export default class ProductCard {
 
       this.card.append(img);
     } else {
+      const imgWrapper = document.createElement("div");
+      imgWrapper.className = "product-card-img";
       const img = document.createElement("img");
       img.src = this.product.images[0]?.url;
       img.alt = localizeName(this.product.name);
-
+      imgWrapper.append(img);
       this.card.addEventListener("click", () => {
         globalThis.location.hash = `${PageType.product}/${this.product.key}`;
       });
 
-      this.card.append(img, ProductCard.renderProductInformation(this.product));
+      this.card.append(
+        imgWrapper,
+        ProductCard.renderProductInformation(this.product),
+      );
     }
 
     return this.card;

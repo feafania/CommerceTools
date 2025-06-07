@@ -33,7 +33,10 @@ const PageRouter = {
       } else {
         page = NOT_FOUND_PAGE;
       }
-    } else if (path.startsWith(PageType.catalog)) {
+    } else if (
+      path.startsWith(`${PageType.catalog}/`) ||
+      path === PageType.catalog
+    ) {
       const categoryId = path.split("/")[1];
       page = PageType.catalog;
       this.currentPage = page;

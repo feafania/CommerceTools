@@ -68,6 +68,14 @@ export type QueryArguments = {
    * Useful for forgiving typos in search input.
    */
   fuzzy?: boolean;
+  /**
+   * Only applicable if fuzzy is true.
+   * 0 for text with 1-2 characters
+   * 1 for text with 3-5 characters
+   * 2 for text with more than 5 characters
+   */
+
+  fuzzyLevel?: number;
 
   /**
    * Search text (deprecated, use `text.<locale>` instead).

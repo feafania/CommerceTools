@@ -12,7 +12,8 @@ import {
 } from "@/types/interfaces";
 import PageRouter from "@/router/page-router";
 import { CurrencyCode, PageType, SortDirection, SortName } from "@/types/enum";
-import { SortOptions } from "@/types/types";
+import { InAttributes, SortOptions } from "@/types/types";
+import createInput from "@/components/input/input";
 
 const CatalogView = {
   container: document.createElement("section"),
@@ -28,6 +29,9 @@ const CatalogView = {
   categories: [] as InCategory[],
   isSamePage: false,
   sortOption: undefined as SortOptions,
+  minPrice: undefined as number | undefined,
+  maxPrice: undefined as number | undefined,
+  attributeFilters: {} as InAttributes,
   // sliderWrapper: document.createElement("div"),
 
   async render(): Promise<HTMLElement | undefined> {
@@ -120,14 +124,7 @@ const CatalogView = {
 
     removeAllChildren(this.productList);
 
-    const { sortName, sortDirection } = this.getSortParameters();
-    const requestParameters: ProductListParameters = {
-      searchText: this.currentQuery || undefined,
-      offset: this.offset,
-      limit: this.limit,
-      sortName,
-      sortDirection,
-    };
+    const requestParameters: ProductListParameters = this.createParameters();
 
     const response = this.selectedCategoryKey
       ? await productService.getProductsByCategoryKey(
@@ -200,6 +197,7 @@ const CatalogView = {
 
       sidebar.append(group);
     }
+    sidebar.append(this.renderFilters());
     return sidebar;
   },
 
@@ -333,35 +331,6 @@ const CatalogView = {
     return select;
   },
 
-  getSortParameters(): { sortName: SortName; sortDirection: SortDirection } {
-    switch (this.sortOption) {
-      case "price-asc": {
-        return {
-          sortName: SortName.PRICE,
-          sortDirection: SortDirection.ASC,
-        };
-      }
-      case "price-desc": {
-        return { sortName: SortName.PRICE, sortDirection: SortDirection.DESC };
-      }
-      case "name-asc": {
-        return {
-          sortName: SortName.NAME as SortName,
-          sortDirection: SortDirection.ASC,
-        };
-      }
-      case "name-desc": {
-        return {
-          sortName: SortName.NAME as SortName,
-          sortDirection: SortDirection.DESC,
-        };
-      }
-      default: {
-        return { sortName: SortName.PRICE, sortDirection: SortDirection.ASC };
-      }
-    }
-  },
-
   async setTitle() {
     if (!this.title) return;
 
@@ -411,6 +380,206 @@ const CatalogView = {
       pathNames.length > 0
         ? `${pathNames.join(" > ")}`
         : SETTINGS.label.catalog.title;
+  },
+
+  renderFilters(): HTMLDivElement {
+    const filtersSection = document.createElement("div");
+    filtersSection.className = "filters-section";
+
+    // Title
+    const priceTitle = document.createElement("div");
+    priceTitle.textContent = "Price range";
+    priceTitle.className = "filter-title";
+    filtersSection.append(priceTitle);
+    const priceFilter = this.renderPriceFilter();
+    const minPriceInput =
+      priceFilter.querySelector<HTMLInputElement>("#min-price-input");
+    const maxPriceInput =
+      priceFilter.querySelector<HTMLInputElement>("#max-price-input");
+    filtersSection.append(priceFilter);
+
+    const attributesWrapper = document.createElement("div");
+    attributesWrapper.className = "attribute-filters";
+    filtersSection.append(attributesWrapper);
+    this.renderAttributeFilters(attributesWrapper);
+
+    // Apply button
+    const applyFiltersButton = document.createElement("button");
+    applyFiltersButton.textContent = "Apply Filters";
+    applyFiltersButton.className = "apply-filters-btn custom-filter-button";
+
+    if (minPriceInput && maxPriceInput) {
+      applyFiltersButton.addEventListener("click", () => {
+        const min = minPriceInput.value
+          ? Number(minPriceInput.value)
+          : undefined;
+        const max = maxPriceInput.value
+          ? Number(maxPriceInput.value)
+          : undefined;
+        this.minPrice = min;
+        this.maxPrice = max;
+        this.offset = 0;
+        this.renderProducts();
+      });
+    }
+
+    // Reset button
+    const resetFiltersButton = document.createElement("button");
+    resetFiltersButton.textContent = "Reset Filters";
+    resetFiltersButton.className = "reset-filters-btn custom-filter-button";
+
+    if (minPriceInput && maxPriceInput) {
+      resetFiltersButton.addEventListener("click", () => {
+        minPriceInput.value = "";
+        maxPriceInput.value = "";
+        this.minPrice = undefined;
+        this.maxPrice = undefined;
+        this.attributeFilters = {};
+        this.renderProducts();
+      });
+    }
+
+    filtersSection.append(applyFiltersButton, resetFiltersButton);
+    return filtersSection;
+  },
+
+  renderPriceFilter() {
+    const priceFilter = document.createElement("div");
+
+    priceFilter.className = "filter price-filter";
+
+    // "From"
+    const fromLabel = document.createElement("label");
+    fromLabel.textContent = "From";
+    fromLabel.className = "filter-label";
+    const minPriceInput = document.createElement("input");
+    minPriceInput.placeholder = "0";
+    minPriceInput.id = "min-price-input";
+    minPriceInput.className = "filter-input";
+    minPriceInput.min = "0";
+
+    // "To"
+    const toLabel = document.createElement("label");
+    toLabel.textContent = "To";
+    toLabel.className = "filter-label";
+    const maxPriceInput = document.createElement("input");
+    maxPriceInput.placeholder = "9999";
+    maxPriceInput.id = "max-price-input";
+    maxPriceInput.className = "filter-input";
+    maxPriceInput.min = "0";
+
+    for (const input of [minPriceInput, maxPriceInput]) {
+      input.type = "text";
+      input.inputMode = "decimal";
+      input.addEventListener("input", () => {
+        input.value = input.value.replaceAll(/[^0-9.]/g, "");
+      });
+    }
+
+    priceFilter.append(fromLabel, minPriceInput, toLabel, maxPriceInput);
+    return priceFilter;
+  },
+
+  createParameters(): ProductListParameters {
+    const filters: string[] = [];
+
+    if (this.minPrice !== undefined) {
+      filters.push(
+        `variants.price.centAmount:range(${this.minPrice * 100} to*)`,
+      );
+    }
+    if (this.maxPrice !== undefined) {
+      filters.push(
+        `variants.price.centAmount:range(* to ${this.maxPrice * 100})`,
+      );
+    }
+
+    for (const [key, value] of Object.entries(this.attributeFilters)) {
+      filters.push(`variants.attributes.${key}.key:"${value}"`);
+    }
+
+    const { sortName, sortDirection } = this.getSortParameters();
+    const requestParameters: ProductListParameters = {
+      searchText: this.currentQuery || undefined,
+      offset: this.offset,
+      limit: this.limit,
+      sortName,
+      sortDirection,
+      filters,
+    };
+    return requestParameters;
+  },
+
+  getSortParameters(): { sortName: SortName; sortDirection: SortDirection } {
+    switch (this.sortOption) {
+      case "price-asc": {
+        return {
+          sortName: SortName.PRICE,
+          sortDirection: SortDirection.ASC,
+        };
+      }
+      case "price-desc": {
+        return { sortName: SortName.PRICE, sortDirection: SortDirection.DESC };
+      }
+      case "name-asc": {
+        return {
+          sortName: SortName.NAME as SortName,
+          sortDirection: SortDirection.ASC,
+        };
+      }
+      case "name-desc": {
+        return {
+          sortName: SortName.NAME as SortName,
+          sortDirection: SortDirection.DESC,
+        };
+      }
+      default: {
+        return { sortName: SortName.PRICE, sortDirection: SortDirection.ASC };
+      }
+    }
+  },
+
+  async renderAttributeFilters(wrapper: HTMLElement) {
+    const productTypes = await productService.getProductTypes();
+
+    const attributeFields = new Set<string>();
+    for (const pt of productTypes) {
+      for (const attribute of pt.attributes) {
+        if (attribute.isSearchable && attribute.type === "text") {
+          attributeFields.add(attribute.name);
+        }
+      }
+    }
+
+    for (const name of attributeFields) {
+      const inputWrapper = createInput({
+        type: name,
+        label: SETTINGS.label.registration.firstName,
+        name: `filter-${name}`,
+        placeholder: `Filter by ${name}`,
+        value: this.attributeFilters[name]?.toString() ?? "",
+        forbidValueChange: true,
+        id: `filter-input-${name}`,
+        class: "filter-input",
+      });
+
+      const input = inputWrapper.querySelector<HTMLInputElement>("input");
+      if (input) {
+        input.addEventListener("input", () => {
+          if (input.value.trim() === "") {
+            delete this.attributeFilters[name];
+          } else {
+            this.attributeFilters[name] = input.value;
+          }
+        });
+      }
+
+      const container = document.createElement("div");
+      container.className = "attribute-filter";
+      container.append(inputWrapper);
+
+      wrapper.append(container);
+    }
   },
 };
 

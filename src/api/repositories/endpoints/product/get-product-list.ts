@@ -18,10 +18,10 @@ import { GetProductListParameters } from "@/types/types";
  * await getProductList({ sort: "price asc" });
  * filter
  * await getProductList({
-  filters: [
-    'variants.attributes.color.key:"red"',
-    'variants.attributes.size.key:"M"',
-  ],
+ filters: [
+ 'variants.attributes.color.key:"red"',
+ 'variants.attributes.size.key:"M"',
+ ],
  * discount
  * In each productProjection → masterVariant → price:
  * const price = product.masterVariant?.price;
@@ -55,6 +55,7 @@ export default async function getProductList({
       sort,
       staged: true,
       fuzzy: true,
+      fuzzyLevel: 2,
       priceCurrency: SETTINGS.currentCurrency,
     };
     console.log("filters", filters);
@@ -69,7 +70,6 @@ export default async function getProductList({
 
     const searchTerm = searchText?.trim();
     if (searchTerm) {
-      // queryArguments.fuzzy = searchTerm.length < 5;
       queryArguments[`text.${SETTINGS.currentLang}`] = `*${searchTerm}*`;
     }
 
