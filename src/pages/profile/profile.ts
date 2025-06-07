@@ -232,7 +232,64 @@ const UserProfile = {
         formData.get("default-shipping-address-billing") === "on",
     };
 
+    this.updateDefaultAddressesBeforeSubmit(addressId, newAddress);
     await this.processAddressUpdate(addressId, newAddress, form);
+  },
+  updateDefaultAddressesBeforeSubmit(
+    addressId: string,
+    newAddress: {
+      isDefaultBilling: boolean;
+      isDefaultShipping: boolean;
+    },
+  ): void {
+    if (newAddress.isDefaultShipping) {
+      // Uncheck other shipping checkboxes in UI
+      for (const addressItem of this.addresses) {
+        if (addressItem.id !== addressId && addressItem.isDefaultShipping) {
+          addressItem.isDefaultShipping = false;
+          const addressWrapper = document.querySelector(
+            `[data-address-id="${CSS.escape(addressItem.id)}"]`,
+          );
+          if (addressWrapper) {
+            const checkbox = addressWrapper.querySelector(
+              "#default-shipping-address-billing",
+            ) as HTMLInputElement;
+            if (checkbox) {
+              checkbox.checked = false;
+            }
+          }
+        }
+      }
+    }
+
+    if (newAddress.isDefaultBilling) {
+      // Uncheck other billing checkboxes in UI
+      for (const addressItem of this.addresses) {
+        if (addressItem.id !== addressId && addressItem.isDefaultBilling) {
+          addressItem.isDefaultBilling = false;
+          const addressWrapper = document.querySelector(
+            `[data-address-id="${CSS.escape(addressItem.id)}"]`,
+          );
+          if (addressWrapper) {
+            const checkbox = addressWrapper.querySelector(
+              "#default-billing-address-billing",
+            ) as HTMLInputElement;
+            if (checkbox) {
+              checkbox.checked = false;
+            }
+          }
+        }
+      }
+    }
+
+    // Update the current address item
+    const currentAddressItem = this.addresses.find(
+      (addr) => addr.id === addressId,
+    );
+    if (currentAddressItem) {
+      currentAddressItem.isDefaultBilling = newAddress.isDefaultBilling;
+      currentAddressItem.isDefaultShipping = newAddress.isDefaultShipping;
+    }
   },
 
   async processAddressUpdate(
@@ -278,6 +335,19 @@ const UserProfile = {
     if (!userAddresses) return;
 
     const isNewAddress = !userAddresses.some((addr) => addr.id === addressId);
+    if (newAddress.isDefaultBilling) {
+      userAddresses = userAddresses.map((addr) => ({
+        ...addr,
+        isDefaultBilling: addr.id === addressId ? true : false,
+      }));
+    }
+
+    if (newAddress.isDefaultShipping) {
+      userAddresses = userAddresses.map((addr) => ({
+        ...addr,
+        isDefaultShipping: addr.id === addressId ? true : false,
+      }));
+    }
 
     if (isNewAddress) {
       userAddresses.push({
@@ -313,7 +383,7 @@ const UserProfile = {
     if (isNewAddress && form) {
       const newlyCreatedAddress = result.addresses.at(-1)?.id || "no-id";
       const form1 = document.querySelector(
-        "form[data-address-id=" + addressId + "]",
+        "form[data-address-id=" + CSS.escape(addressId) + "]",
       ) as HTMLFormElement;
       if (form1) {
         form1.dataset.addressIdNew = newlyCreatedAddress;
@@ -332,10 +402,11 @@ const UserProfile = {
         this.toggleAddressEditing(addressId);
       }
     }
+    this.toggleAddDeleteButtons();
   },
   receiveCurrentForm(addressId: string): HTMLElement {
     return document.querySelector(
-      "form[data-address-id=" + addressId + "]",
+      "form[data-address-id=" + CSS.escape(addressId) + "]",
     ) as HTMLFormElement;
   },
   toggleGlobalEditingMode(container: HTMLElement): void {
@@ -369,6 +440,7 @@ const UserProfile = {
     this.isGlobalEditingEnabled = false;
     this.isEdited = false;
 
+    this.restoreBasicProfileFields(container);
     this.disableAllFields(container);
 
     // enable nav
@@ -423,45 +495,6 @@ const UserProfile = {
     }
   },
 
-  enableFields(container: HTMLElement): void {
-    // Enable all input elements
-    const inputElements = container.querySelectorAll("input, select, textarea");
-    for (const inputElement of inputElements) {
-      (inputElement as HTMLInputElement).disabled = false;
-      this.setDisabledStyles(inputElement as HTMLInputElement);
-    }
-
-    // Enable address elements and checkboxes
-    const addressElements = container.querySelectorAll(".address-element");
-    for (const addressElement of addressElements) {
-      const addressInputs = addressElement.querySelectorAll("input, select");
-      for (const addressInput of addressInputs) {
-        (addressInput as HTMLInputElement).disabled = false;
-        this.setDisabledStyles(addressInput as HTMLInputElement);
-      }
-    }
-
-    // Enable default address checkboxes within AddressElement components
-    const defaultCheckboxes = container.querySelectorAll(
-      "#default-shipping-address-billing, #default-billing-address-billing",
-    );
-    for (const checkbox of defaultCheckboxes) {
-      (checkbox as HTMLInputElement).disabled = false;
-      this.setDisabledStyles(checkbox as HTMLInputElement);
-    }
-
-    // Add change listeners to detect edits
-    this.addChangeListeners(container);
-
-    // Update button text and disable it initially after enabling fields
-    if (this.globalEditButton) {
-      this.globalEditButton.textContent =
-        SETTINGS.label.userProfile.editModeBtn;
-      this.globalEditButton.disabled = false;
-      this.setDisabledStyles(this.globalEditButton);
-    }
-  },
-
   toggleAddressButtons(enabled: boolean): void {
     const addButtons = document.querySelectorAll(".add-address-button");
     const deleteButtons = document.querySelectorAll(".delete-address-button");
@@ -476,16 +509,6 @@ const UserProfile = {
     for (const deleteButton of deleteButtons) {
       (deleteButton as HTMLButtonElement).disabled = !enabled;
       this.setDisabledStyles(deleteButton as HTMLButtonElement);
-    }
-  },
-
-  toggleIndividualEditButtons(enabled: boolean): void {
-    const addressEditButtons = document.querySelectorAll(
-      ".address-edit-button",
-    );
-    for (const addressEditButton of addressEditButtons) {
-      (addressEditButton as HTMLButtonElement).disabled = !enabled;
-      this.setDisabledStyles(addressEditButton as HTMLButtonElement);
     }
   },
 
@@ -569,28 +592,34 @@ const UserProfile = {
     const addressItem = this.addresses.find((addr) => addr.id === addressId);
     if (!addressItem) return;
 
+    // If currently editing and user wants to stop editing
+    if (addressItem.isEditing) {
+      const isNewlyCreated = this.isNewlyCreatedAddress(addressId);
+      // If it's a newly created address that hasn't been submitted, delete it
+      if (isNewlyCreated && !this.isAddressSubmitted(addressId)) {
+        this.deleteEmptyNewAddress(addressId);
+        return;
+      }
+      if (!isNewlyCreated) {
+        this.restoreAddressFromStore(addressId);
+      }
+    }
+
     addressItem.isEditing = !addressItem.isEditing;
 
     const addressWrapper = document.querySelector(
-      `[data-address-id="${addressId}"]`,
+      `[data-address-id="${CSS.escape(addressId)}"]`,
     );
     if (!addressWrapper) return;
 
-    // Toggle address fields and checkboxes
-    const addressInputs = addressWrapper.querySelectorAll("input, select");
-
-    for (const addressInput of addressInputs) {
-      (addressInput as HTMLInputElement).disabled = !addressItem.isEditing;
-      this.setDisabledStyles(addressInput as HTMLInputElement);
-    }
-
     // Toggle default address checkboxes
-    const defaultCheckboxes = addressWrapper.querySelectorAll(
-      "#default-shipping-address-billing, #default-billing-address-billing",
+    const allAddressElements = addressWrapper.querySelectorAll(
+      "input, select, #default-shipping-address-billing, #default-billing-address-billing",
     );
-    for (const checkbox of defaultCheckboxes) {
-      (checkbox as HTMLInputElement).disabled = !addressItem.isEditing;
-      this.setDisabledStyles(checkbox as HTMLInputElement);
+
+    for (const element of allAddressElements) {
+      (element as HTMLInputElement).disabled = !addressItem.isEditing;
+      this.setDisabledStyles(element as HTMLInputElement);
     }
 
     const submitButton = addressWrapper.querySelector(
@@ -607,6 +636,108 @@ const UserProfile = {
     if (addressItem.isEditing) {
       this.addChangeListenersToAddress(addressWrapper);
     }
+    this.toggleAddDeleteButtons();
+  },
+  restoreAddressFromStore(addressId: string): void {
+    // Get the actual address ID (might be different for newly created addresses)
+    let actualAddressId = addressId;
+    const currentAddressForm = this.receiveCurrentForm(addressId);
+    if (currentAddressForm?.hasAttribute("data-address-id-new")) {
+      actualAddressId = currentAddressForm.dataset.addressIdNew || addressId;
+    }
+
+    const userAddresses = authStore.user?.addresses || [];
+    const originalAddress = userAddresses.find(
+      (addr) => addr.id === actualAddressId,
+    );
+
+    if (!originalAddress) return;
+
+    const addressWrapper = document.querySelector(
+      `[data-address-id="${CSS.escape(addressId)}"]`,
+    );
+    if (!addressWrapper) return;
+
+    const streetInput = addressWrapper.querySelector(
+      '[name="street-billing"]',
+    ) as HTMLInputElement;
+    if (streetInput) streetInput.value = originalAddress.streetName || "";
+
+    const postalCodeInput = addressWrapper.querySelector(
+      '[name="postalcode-billing"]',
+    ) as HTMLInputElement;
+    if (postalCodeInput)
+      postalCodeInput.value = originalAddress.postalCode || "";
+
+    const cityInput = addressWrapper.querySelector(
+      '[name="city-billing"]',
+    ) as HTMLInputElement;
+    if (cityInput) cityInput.value = originalAddress.city || "";
+
+    const countrySelect = addressWrapper.querySelector(
+      '[name="country-billing"]',
+    ) as HTMLSelectElement;
+    if (countrySelect) countrySelect.value = originalAddress.country || "";
+
+    const billingCheckbox = addressWrapper.querySelector(
+      "#default-billing-address-billing",
+    ) as HTMLInputElement;
+    if (billingCheckbox) {
+      billingCheckbox.checked = originalAddress.isDefaultBilling || false;
+    }
+
+    const shippingCheckbox = addressWrapper.querySelector(
+      "#default-shipping-address-billing",
+    ) as HTMLInputElement;
+    if (shippingCheckbox) {
+      shippingCheckbox.checked = originalAddress.isDefaultShipping || false;
+    }
+
+    const addressItem = this.addresses.find((addr) => addr.id === addressId);
+    if (addressItem) {
+      addressItem.isDefaultBilling = originalAddress.isDefaultBilling || false;
+      addressItem.isDefaultShipping =
+        originalAddress.isDefaultShipping || false;
+    }
+  },
+  restoreBasicProfileFields(container: HTMLElement): void {
+    // Get original values from authStore
+    const userData = authStore.user;
+    if (!userData) return;
+
+    const firstnameInput = container.querySelector(
+      "#firstname",
+    ) as HTMLInputElement;
+    if (firstnameInput) {
+      firstnameInput.value = userData.firstName || "";
+    }
+
+    const lastnameInput = container.querySelector(
+      "#lastname",
+    ) as HTMLInputElement;
+    if (lastnameInput) {
+      lastnameInput.value = userData.lastName || "";
+    }
+
+    const birthdayInput = container.querySelector(
+      "#birthday",
+    ) as HTMLInputElement;
+    if (birthdayInput) {
+      birthdayInput.value = userData.dateOfBirth || "";
+    }
+    const emailInput = container.querySelector("#email") as HTMLInputElement;
+    if (emailInput) {
+      emailInput.value = userData.email || "";
+    }
+  },
+
+  isAddressSubmitted(addressId: string): boolean {
+    const currentAddressForm = this.receiveCurrentForm(addressId);
+    if (currentAddressForm?.hasAttribute("data-address-id-new")) {
+      return true;
+    }
+    const userAddresses = authStore.user?.addresses || [];
+    return userAddresses.some((addr) => addr.id === addressId);
   },
 
   addChangeListenersToAddress(addressWrapper: Element): void {
@@ -656,7 +787,19 @@ const UserProfile = {
     isEmpty: boolean = false,
     addressData?: InAddress,
   ): HTMLElement {
-    const addressId = addressData?.id || this.generateAddressId();
+    let addressDataLet = addressData;
+    if (isEmpty && !addressData) {
+      addressDataLet = {
+        id: this.generateAddressId(),
+        streetName: "",
+        city: "",
+        postalCode: "",
+        country: "",
+        isDefaultBilling: false,
+        isDefaultShipping: false,
+      };
+    }
+    const addressId = addressDataLet?.id || this.generateAddressId();
     const addressName = `${SETTINGS.label.address.addressProfileTitle} ${index + 1}`;
 
     const addressWrapper = document.createElement("form");
@@ -664,13 +807,14 @@ const UserProfile = {
     addressWrapper.dataset.addressId = addressId;
     addressWrapper.dataset.addressIndex = index.toString();
 
-    const addressElement = this.createAddressElement(isEmpty, addressData);
+    const addressElement = this.createAddressElement(isEmpty, addressDataLet);
     this.storeAddressReference(
       addressId,
       addressElement,
       index,
       addressName,
-      addressData,
+      addressDataLet,
+      isEmpty,
     );
 
     const addSubmitAddress = createButton({
@@ -729,9 +873,16 @@ const UserProfile = {
     index: number,
     addressName: string,
     addressData: InAddress | undefined,
+    isEmpty: boolean = false,
   ): void {
-    const isDefaultShipping = addressData?.isDefaultShipping ?? false;
-    const isDefaultBilling = addressData?.isDefaultBilling ?? false;
+    const isDefaultShipping =
+      !isEmpty && addressData?.isDefaultShipping
+        ? addressData.isDefaultShipping
+        : false;
+    const isDefaultBilling =
+      !isEmpty && addressData?.isDefaultBilling
+        ? addressData.isDefaultBilling
+        : false;
 
     this.addresses[index] = {
       element: addressElement,
@@ -829,7 +980,9 @@ const UserProfile = {
 
   addAddress(): void {
     if (!this.addressContainer) return;
-
+    if (this.isAnyAddressBeingEdited()) {
+      return;
+    }
     const newIndex = this.addresses.length;
     const addressWrapper = this.createAddressWithControls(newIndex, true); // true for empty fields
 
@@ -850,19 +1003,13 @@ const UserProfile = {
         addressItem.isEditing = true;
 
         // Enable address fields and checkboxes
-        const addressInputs = addressWrapper.querySelectorAll("input, select");
-        for (const addressInput of addressInputs) {
-          (addressInput as HTMLInputElement).disabled = false;
-          this.setDisabledStyles(addressInput as HTMLInputElement);
-        }
-
-        // Enable default address checkboxes
-        const defaultCheckboxes = addressWrapper.querySelectorAll(
-          "#default-shipping-address-billing, #default-billing-address-billing",
+        const allAddressElements = addressWrapper.querySelectorAll(
+          "input, select, #default-shipping-address-billing, #default-billing-address-billing",
         );
-        for (const checkbox of defaultCheckboxes) {
-          (checkbox as HTMLInputElement).disabled = false;
-          this.setDisabledStyles(checkbox as HTMLInputElement);
+
+        for (const element of allAddressElements) {
+          (element as HTMLInputElement).disabled = !addressItem.isEditing;
+          this.setDisabledStyles(element as HTMLInputElement);
         }
 
         // Enable submit button for new address
@@ -875,8 +1022,8 @@ const UserProfile = {
         }
 
         this.updateAddressEditButton(addressId);
-
         this.addChangeListenersToAddress(addressWrapper);
+        this.toggleAddDeleteButtons();
       }
     }
 
@@ -884,6 +1031,9 @@ const UserProfile = {
   },
 
   async deleteAddress(addressId: string): Promise<void> {
+    if (this.isAnyAddressBeingEdited()) {
+      return;
+    }
     // if we need to delete just created address (with new id)
     let databaseAddressId = addressId;
     const currentAddressForm = this.receiveCurrentForm(addressId);
@@ -896,7 +1046,7 @@ const UserProfile = {
     if (this.addresses.length <= 1) return;
 
     const addressWrapper = document.querySelector(
-      `[data-address-id="${addressId}"]`,
+      `[data-address-id="${CSS.escape(addressId)}"]`,
     );
     if (addressWrapper) {
       addressWrapper.remove();
@@ -1033,33 +1183,12 @@ const UserProfile = {
     return this.submitButton;
   },
 
-  getAddressById(addressId: string): AddressItem | undefined {
-    return this.addresses.find((addr) => addr.id === addressId);
-  },
-
-  getAllAddresses(): AddressItem[] {
-    return this.addresses;
-  },
-
   setDefaultShipping(addressId: string, isDefault: boolean): void {
-    for (const addressItem of this.addresses) {
-      if (
-        addressItem.id !== addressId &&
-        addressItem.isDefaultShipping &&
-        isDefault
-      ) {
-        addressItem.isDefaultShipping = false;
-        const addressWrapper = addressItem.element.element;
-        const checkbox = addressWrapper.querySelector(
-          "#default-shipping-address-billing",
-        ) as HTMLInputElement;
-        if (checkbox) {
-          checkbox.checked = false;
-          checkbox.value = checkbox.checked ? "on" : "off";
-        }
-      } else if (addressItem.id === addressId) {
-        addressItem.isDefaultShipping = isDefault;
-      }
+    const currentAddressItem = this.addresses.find(
+      (addr) => addr.id === addressId,
+    );
+    if (currentAddressItem) {
+      currentAddressItem.isDefaultShipping = isDefault;
     }
 
     // Mark as edited
@@ -1073,26 +1202,11 @@ const UserProfile = {
   },
 
   setDefaultBilling(addressId: string, isDefault: boolean): void {
-    for (const addressItem of this.addresses) {
-      if (
-        addressItem.id !== addressId &&
-        addressItem.isDefaultBilling &&
-        isDefault
-      ) {
-        addressItem.isDefaultBilling = false;
-        const addressWrapper = addressItem.element.element;
-        if (addressWrapper) {
-          const checkbox = addressWrapper.querySelector(
-            "#default-billing-address-billing",
-          ) as HTMLInputElement;
-          if (checkbox) {
-            checkbox.checked = false;
-            checkbox.value = checkbox.checked ? "on" : "off";
-          }
-        }
-      } else if (addressItem.id === addressId) {
-        addressItem.isDefaultBilling = isDefault;
-      }
+    const currentAddressItem = this.addresses.find(
+      (addr) => addr.id === addressId,
+    );
+    if (currentAddressItem) {
+      currentAddressItem.isDefaultBilling = isDefault;
     }
 
     // Mark as edited
@@ -1104,13 +1218,70 @@ const UserProfile = {
       }
     }
   },
+  toggleAddDeleteButtons(): void {
+    const isAnyAddressEditing = this.isAnyAddressBeingEdited();
 
-  getDefaultShippingAddress(): AddressItem | undefined {
-    return this.addresses.find((addr) => addr.isDefaultShipping);
+    // Query all relevant buttons at once
+    const allButtons = document.querySelectorAll(
+      ".add-address-button, .delete-address-button, .address-edit-button",
+    );
+
+    for (const oneButton of allButtons) {
+      const button = oneButton as HTMLButtonElement;
+
+      if (button.classList.contains("add-address-button")) {
+        button.disabled = isAnyAddressEditing;
+        this.setDisabledStyles(button);
+      } else if (button.classList.contains("delete-address-button")) {
+        button.disabled = isAnyAddressEditing;
+        this.setDisabledStyles(button);
+      } else if (button.classList.contains("address-edit-button")) {
+        const addressId = button.id.replace("edit-address-", "");
+        const addressItem = this.addresses.find(
+          (addr) => addr.id === addressId,
+        );
+
+        if (addressItem && !addressItem.isEditing) {
+          button.disabled = isAnyAddressEditing;
+          this.setDisabledStyles(button);
+        }
+      }
+    }
+  },
+  isAnyAddressBeingEdited(): boolean {
+    return this.addresses.some((addr) => addr.isEditing);
   },
 
-  getDefaultBillingAddress(): AddressItem | undefined {
-    return this.addresses.find((addr) => addr.isDefaultBilling);
+  isNewlyCreatedAddress(addressId: string): boolean {
+    const userAddresses = authStore.user?.addresses || [];
+    const existsInDatabase = userAddresses.some(
+      (addr) => addr.id === addressId,
+    );
+    const currentAddressForm = this.receiveCurrentForm(addressId);
+    const hasNewAddressId = currentAddressForm?.hasAttribute(
+      "data-address-id-new",
+    );
+    return !existsInDatabase && !hasNewAddressId;
+  },
+
+  deleteEmptyNewAddress(addressId: string): void {
+    const addressWrapper = document.querySelector(
+      `[data-address-id="${CSS.escape(addressId)}"]`,
+    );
+    if (addressWrapper) {
+      addressWrapper.remove();
+    }
+    const addressIndex = this.addresses.findIndex(
+      (addr) => addr.id === addressId,
+    );
+    if (addressIndex !== -1) {
+      this.addresses.splice(addressIndex, 1);
+    }
+
+    this.updateAddressIndicesAndNames();
+    this.updateDeleteButtonsVisibility();
+
+    this.toggleAddDeleteButtons();
   },
 
   setDisabledStyles(element: HTMLElement): void {
