@@ -395,7 +395,12 @@ const CatalogView = {
     }
 
     for (const [key, value] of Object.entries(this.attributeFilters)) {
-      filters.push(`variants.attributes.${key}.key:"${value}"`);
+      if (Array.isArray(value)) {
+        const joined = value.map((v) => `"${v}"`).join(",");
+        filters.push(`variants.attributes.${key}.key:${joined}`);
+      } else {
+        filters.push(`variants.attributes.${key}.key:"${value}"`);
+      }
     }
 
     const { sortName, sortDirection } = this.getSortParameters();

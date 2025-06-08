@@ -219,7 +219,7 @@ const CatalogViewFiltering = {
 
       let filterElement: HTMLElement;
 
-      if (options.length <= 1) {
+      if (options.length <= 4) {
         // Checkbox group
         const groupWrapper = this.createAttributeCheckbox(
           name,
@@ -285,11 +285,14 @@ const CatalogViewFiltering = {
         input.checked = selectedValues.includes(opt.code);
         input.addEventListener("change", () => {
           const current = Array.isArray(CatalogViewFiltering.tempFilters[name])
-            ? (CatalogViewFiltering.tempFilters[name] as string[])
+            ? [...(CatalogViewFiltering.tempFilters[name] as string[])]
             : [];
 
           if (input.checked) {
-            CatalogViewFiltering.tempFilters[name] = [...current, opt.code];
+            if (!current.includes(opt.code)) {
+              current.push(opt.code);
+            }
+            CatalogViewFiltering.tempFilters[name] = current;
           } else {
             const filtered = current.filter((v) => v !== opt.code);
             if (filtered.length === 0) {
@@ -299,6 +302,7 @@ const CatalogViewFiltering = {
             }
           }
         });
+        // input.dispatchEvent(new Event("change"));
       }
 
       groupWrapper.append(checkbox);
@@ -453,6 +457,8 @@ const CatalogViewFiltering = {
         parameters.set(`attr_${key}`, value.join(","));
       } else if (typeof value === "string") {
         parameters.set(`attr_${key}`, value);
+      } else if (value !== null) {
+        parameters.set(`attr_${key}`, String(value));
       }
     }
     return parameters.toString();
@@ -485,10 +491,14 @@ const CatalogViewFiltering = {
       : 0;
 
     const attributeFilters: InAttributes = {};
+
     for (const [key, value] of parameters.entries()) {
       if (key.startsWith("attr_")) {
         const attributeName = key.slice(5);
-        attributeFilters[attributeName] = value;
+
+        attributeFilters[attributeName] = value.includes(",")
+          ? value.split(",")
+          : value;
 
         const input = CatalogView.container.querySelector<HTMLInputElement>(
           `#filter-input-${attributeName} input`,
