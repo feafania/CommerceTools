@@ -5,6 +5,9 @@ export default function showModalMessage(
   message: string,
   options?: ModalOptions,
 ): void {
+  disableScroll();
+  document.body.classList.add("no-scroll");
+
   const overlay = document.createElement("div");
   overlay.className = "modal-overlay";
 
@@ -22,6 +25,8 @@ export default function showModalMessage(
   okButton.addEventListener("click", () => {
     overlay.remove();
     document.removeEventListener("keydown", handleKeydown);
+    document.body.classList.remove("no-scroll");
+    enableScroll();
     options?.onOk?.();
   });
   buttonsContainer.append(okButton);
@@ -33,7 +38,8 @@ export default function showModalMessage(
     cancelButton.addEventListener("click", () => {
       overlay.remove();
       document.removeEventListener("keydown", handleKeydown);
-
+      document.body.classList.remove("no-scroll");
+      enableScroll();
       options.onCancel?.();
     });
     buttonsContainer.append(cancelButton);
@@ -51,4 +57,23 @@ export default function showModalMessage(
   }
 
   document.addEventListener("keydown", handleKeydown);
+}
+
+export function disableScroll() {
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.width = "100%";
+  document.body.style.overflow = "hidden";
+  document.documentElement.style.scrollBehavior = "auto";
+}
+
+export function enableScroll() {
+  const scrollY = Number.parseInt(document.body.style.top || "0");
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.width = "";
+  document.body.style.overflow = "";
+  window.scrollTo(0, Math.abs(scrollY));
+  document.documentElement.style.scrollBehavior = "smooth";
 }

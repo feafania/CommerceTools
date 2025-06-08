@@ -50,7 +50,7 @@ const routes: Partial<Record<PageType, RouteType>> = {
     render: () => Promise.resolve(document.createElement("div")),
   },
   [PageType.changePassword]: {
-    canActivate: () => true,
+    canActivate: () => !!authStore.user,
     render: ChangePassword.render.bind(ChangePassword),
   },
 };

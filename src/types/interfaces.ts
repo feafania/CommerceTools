@@ -8,6 +8,7 @@ type ControlBase = {
   label: string;
   name: string;
   value: string;
+  forbidValueChange: boolean | undefined;
   placeholder: string;
   id: string;
   class: string | string[];

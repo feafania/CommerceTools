@@ -22,6 +22,7 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -29,6 +30,12 @@ body {
   background-color: #f9f9f9;
   color: #333;
   line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.no-scroll {
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .container {
@@ -153,7 +160,6 @@ label {
   -webkit-justify-content: flex-start;
   -ms-flex-pack: start;
   background: top no-repeat;
-  z-index: 10;
 }
 
 body.no-scroll {

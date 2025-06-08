@@ -24,10 +24,6 @@ export interface TokenResponse extends Omit<TokenType, "token_expires_in"> {
   token_type: "Bearer";
 }
 
-export interface BaseCustomerUpdateAction {
-  action: string;
-}
-
 export type QueryArguments = {
   /**
    * Maximum number of products to return in the response.

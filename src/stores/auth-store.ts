@@ -2,6 +2,7 @@ import { deleteLocalState, getLocalState, saveState } from "@/utils/helpers";
 import { tokenStore } from "@/stores/token-store";
 import { InCustomer } from "@/types/interfaces";
 import { TokenType } from "@/types/api-types";
+import Header from "@/components/layout/header/header";
 
 export class AuthStore {
   private _user: InCustomer | undefined = undefined;
@@ -21,6 +22,7 @@ export class AuthStore {
 
   setUser(user: InCustomer | undefined, token?: TokenType) {
     this._user = user;
+    Header.setUsername();
     if (user) {
       saveState({ key: "user", value: JSON.stringify(user) });
       if (token) tokenStore.setToken(token);

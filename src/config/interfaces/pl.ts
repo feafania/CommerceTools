@@ -60,10 +60,10 @@ const pl: AppTranslation = {
     editModeBtn: "Tryb Edycji",
     editModeStop: "Pozostaw tryb edycji",
     editPassword: "Zmień hasło",
-    deleteAddress: "YUsunąłeś adres",
+    deleteAddress: "Adres został pomyślnie usunięty",
     editUSer: "Informacje o użytkowniku zostały pomyślnie zaktualizowane",
     editAddress: "Adres został pomyślnie zaktualizowany",
-    addAddress: "Dodałeś nowy adres",
+    addAddress: "Nowy adres został pomyślnie dodany",
     submitBtn: "Zapisz Zmiany",
   },
   changePassword: {
@@ -74,7 +74,7 @@ const pl: AppTranslation = {
     wrongConfirm: "Błędne potwierdzenie hasła",
     success: "Twoje hasło zostało pomyślnie zmienione",
     wrongOldPassword: "Błędne aktualne hasło",
-    emptyPassword: "Masz puste pole hasła",
+    emptyPassword: "Pole hasła jest puste",
   },
   address: {
     headers: {

@@ -1,5 +1,9 @@
 import "./product-image-slider.css";
 import { ProductImage } from "@/types/interfaces";
+import {
+  disableScroll,
+  enableScroll,
+} from "@/components/modal-window/modal-window";
 
 export default class ProductImageSlider {
   container: HTMLDivElement;
@@ -15,17 +19,17 @@ export default class ProductImageSlider {
     this.container.className = "image-slider";
 
     this.imageElement = document.createElement("img");
-    this.imageElement.className = "slider-image";
+    this.imageElement.className = "image-slider-image";
 
     this.dotsContainer = document.createElement("div");
-    this.dotsContainer.className = "slider-dots";
+    this.dotsContainer.className = "image-slider-dots";
   }
 
   create(variant: "small" | "large" = "small"): HTMLDivElement {
     if (variant === "large") {
-      this.container.classList.add("slider-large");
+      this.container.classList.add("image-slider-large");
     } else {
-      this.container.classList.add("slider-small");
+      this.container.classList.add("image-slider-small");
     }
 
     if (this.images.length === 0) return this.container;
@@ -33,10 +37,10 @@ export default class ProductImageSlider {
     this.updateImage();
 
     const viewWrapper = document.createElement("div");
-    viewWrapper.className = "slider-view";
+    viewWrapper.className = "image-slider-view";
 
     const imgWrapper = document.createElement("div");
-    imgWrapper.className = "image-view";
+    imgWrapper.className = "image-slider-view";
     imgWrapper.append(this.imageElement);
     if (variant === "small") {
       imgWrapper.style.cursor = "pointer";
@@ -68,7 +72,7 @@ export default class ProductImageSlider {
 
   private createArrow(direction: "left" | "right"): HTMLButtonElement {
     const button = document.createElement("button");
-    button.className = `slider-arrow ${direction}`;
+    button.className = `image-slider-arrow ${direction}`;
     button.innerHTML = direction === "left" ? "&#10094;" : "&#10095;";
     button.addEventListener("click", () => {
       this.currentIndex =
@@ -84,7 +88,7 @@ export default class ProductImageSlider {
     this.dotsContainer.innerHTML = "";
     for (const [index] of this.images.entries()) {
       const dot = document.createElement("span");
-      dot.className = "slider-dot";
+      dot.className = "image-slider-dot";
       dot.addEventListener("click", () => {
         this.currentIndex = index;
         this.updateImage();
@@ -101,28 +105,30 @@ export default class ProductImageSlider {
   }
 
   private createModalSlider(startIndex: number) {
+    disableScroll();
+    document.body.classList.add("no-scroll");
     const modalSlider = new ProductImageSlider(this.images);
     modalSlider.currentIndex = startIndex;
 
     const modalContent = modalSlider.create("large");
 
     const modal = document.createElement("div");
-    modal.className = "image-modal";
+    modal.className = "image-slider-modal";
     modal.append(modalContent);
 
     const closeButton = document.createElement("button");
-    closeButton.className = "modal-close";
+    closeButton.className = "image-slider-close";
     closeButton.innerHTML = "&times;";
     closeButton.addEventListener("click", () => this.closeModal());
 
     modal.append(closeButton);
 
     const overlay = document.createElement("div");
-    overlay.className = "modal-overlay";
+    overlay.className = "image-slider-overlay";
     overlay.addEventListener("click", () => this.closeModal());
 
     this.modalContainer = document.createElement("div");
-    this.modalContainer.className = "modal-wrapper";
+    this.modalContainer.className = "image-slider-wrapper";
     this.modalContainer.append(overlay, modal);
     document.body.append(this.modalContainer);
   }
@@ -131,6 +137,8 @@ export default class ProductImageSlider {
     if (this.modalContainer) {
       this.modalContainer.remove();
       this.modalContainer = undefined;
+      document.body.classList.remove("no-scroll");
+      enableScroll();
     }
   }
 }

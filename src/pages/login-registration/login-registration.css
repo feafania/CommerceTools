@@ -12,7 +12,8 @@
 }
 
 .registration-form {
-  flex-direction: unset;
+  /*flex-direction: unset;*/
+  flex-direction: row;
   justify-content: space-between;
   flex-wrap: wrap;
 }
@@ -108,6 +109,10 @@
 }
 
 #submit-registration-login {
+  margin-left: auto;
+  margin-right: auto;
+  margin-inline: auto;
+  display: block;
   padding: 0.8rem 1rem;
   font-size: 1rem;
   background-color: var(--main-color);

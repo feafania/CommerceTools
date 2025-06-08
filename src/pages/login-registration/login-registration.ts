@@ -262,7 +262,6 @@ const LoginRegistrationView = {
     const password = formData.get("password") as string;
     const user = await AuthService.login(email, password);
     if (user && isInCustomer(user)) {
-      Header.setUsername();
       PageRouter.navigateTo(PageType.main);
       showModalMessage(SETTINGS.label.messages.onSignIn);
     }
