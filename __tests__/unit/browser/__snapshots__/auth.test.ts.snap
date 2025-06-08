@@ -1,0 +1,6 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`authServiceLogin register should show registration error modal with correct ApiError message 1`] = `
+"Registration failed.
+The user has already exists"
+`;

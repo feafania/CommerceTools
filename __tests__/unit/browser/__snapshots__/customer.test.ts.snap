@@ -1,0 +1,6 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`customerService.update should show modal on ApiError 1`] = `
+"Failed to update customer information.
+Bad Request"
+`;
