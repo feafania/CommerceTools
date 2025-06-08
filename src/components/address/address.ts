@@ -10,14 +10,14 @@ import { InAddress } from "@/types/interfaces";
 export default class AddressElement {
   #addressBlock: HTMLDivElement;
   #name: string;
-  #forbidValueChange: boolean;
+  #forbidValueFromState: boolean;
 
-  constructor(name: string, forbidValueChange: boolean = false) {
+  constructor(name: string, forbidValueFromState: boolean = false) {
     this.#name = name;
     this.#addressBlock = document.createElement("div");
     this.#addressBlock.className = "address-block";
     this.#addressBlock.id = `address-${name}`;
-    this.#forbidValueChange = forbidValueChange;
+    this.#forbidValueFromState = forbidValueFromState;
   }
 
   get element(): HTMLDivElement {
@@ -59,7 +59,7 @@ export default class AddressElement {
       placeholder: `${SETTINGS.label.address.city}...`,
       class: "city-input",
       validationName: "city",
-      forbidValueChange: this.#forbidValueChange,
+      forbidValueFromState: this.#forbidValueFromState,
     });
   }
 
@@ -72,7 +72,7 @@ export default class AddressElement {
       placeholder: `${SETTINGS.label.address.street}...`,
       class: "street-input",
       validationName: "street",
-      forbidValueChange: this.#forbidValueChange,
+      forbidValueFromState: this.#forbidValueFromState,
     });
   }
 
@@ -86,7 +86,7 @@ export default class AddressElement {
       class: "postal-code-input",
       validationName: "postalcode",
       relatedCountryField: `country-${this.#name}`,
-      forbidValueChange: this.#forbidValueChange,
+      forbidValueFromState: this.#forbidValueFromState,
     });
   }
 
@@ -101,7 +101,7 @@ export default class AddressElement {
       options: getCountriesOptions(countryOptions),
       validationName: "country",
       relatedCountryField: `country-${this.#name}`,
-      forbidValueChange: this.#forbidValueChange,
+      forbidValueFromState: this.#forbidValueFromState,
     });
     const countrySelect = countrySelectWrapper.querySelector("select")!;
 
@@ -123,7 +123,7 @@ export default class AddressElement {
       name: `default-${type}-address-${this.#name}`,
       id: `default-${type}-address-${this.#name}`,
       relatedCountryField: `country-${this.#name}`,
-      forbidValueChange: this.#forbidValueChange,
+      forbidValueFromState: this.#forbidValueFromState,
     });
   }
   setData(data: InAddress): void {

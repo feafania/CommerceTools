@@ -118,7 +118,7 @@ const UserProfile = {
         id: "firstname",
         class: "firstname-input",
         value: authStore.user?.firstName,
-        forbidValueChange: true,
+        forbidValueFromState: true,
       }),
       createInput({
         type: "text",
@@ -128,7 +128,7 @@ const UserProfile = {
         id: "lastname",
         class: "lastname-input",
         value: authStore.user?.lastName,
-        forbidValueChange: true,
+        forbidValueFromState: true,
       }),
       createInput({
         type: "date",
@@ -137,7 +137,7 @@ const UserProfile = {
         id: "birthday",
         class: "birthday-input",
         value: authStore.user?.dateOfBirth,
-        forbidValueChange: true,
+        forbidValueFromState: true,
       }),
     );
 
@@ -563,7 +563,7 @@ const UserProfile = {
       id: "email",
       class: "email-input",
       value: authStore.user?.email,
-      forbidValueChange: true,
+      forbidValueFromState: true,
     });
   },
 

@@ -33,10 +33,11 @@ export default function createCheckbox(
 
   if (object.value !== undefined) {
     input.value = object.value;
-  } else if (typeof savedValue === "string" && !object.forbidValueChange) {
+  } else if (typeof savedValue === "string" && !object.forbidValueFromState) {
     input.value = savedValue;
   }
   input.checked = input.value === "on";
+  console.log(input.checked);
 
   input.addEventListener("change", () => {
     input.value = input.checked ? "on" : "off";

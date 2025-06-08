@@ -62,7 +62,7 @@ export default function createSelect(object: SelectConfig): HTMLDivElement {
     } else if (
       savedValue &&
       object.options.some((opt) => opt.code === savedValue) &&
-      !object.forbidValueChange
+      !object.forbidValueFromState
     ) {
       select.value = savedValue;
     }
