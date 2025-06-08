@@ -19,6 +19,7 @@ jest.mock("@/api/services/product-service", () => ({
   getCategoryByKey: jest.fn(),
   getProductList: jest.fn(),
   getProductsByCategoryKey: jest.fn(),
+  getProductTypes: jest.fn().mockResolvedValue([]),
 }));
 
 const mockCategories = [
@@ -46,7 +47,6 @@ describe("CatalogView", () => {
     CatalogView.container = document.createElement("div");
     CatalogView.selectedCategoryKey = undefined;
     CatalogView.sortOption = undefined;
-    CatalogView.products = [];
     CatalogView.offset = 0;
     CatalogView.limit = 9;
     CatalogView.total = 0;
@@ -124,7 +124,7 @@ describe("CatalogView", () => {
     (productService.getProductList as jest.Mock).mockResolvedValue({
       results: Array.from({ length: 9 }).fill(
         productRepositoryResponse.results[0],
-      ), // 9 тавараў
+      ),
       total: 18,
     });
 
@@ -146,11 +146,7 @@ describe("CatalogView", () => {
       productRepositoryResponse,
     );
     await CatalogView.render();
-    console.log("Container HTML:", CatalogView.container.innerHTML);
-    console.log(
-      "Product list children:",
-      CatalogView.productList.children.length,
-    );
+    // console.log("Container HTML:", CatalogView.container.innerHTML);
     const input = CatalogView.container.querySelector(
       "#search-input",
     ) as HTMLInputElement;

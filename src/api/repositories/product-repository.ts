@@ -210,7 +210,7 @@ const productRepository = {
   async getProductAttributes(productId: string): Promise<InAttributes> {
     try {
       const attributes = await getProductAttributes(productId);
-      return MappingHelpers.matAttributesArray(attributes);
+      return MappingHelpers.mapAttributesArray(attributes);
     } catch (error) {
       console.error("Error getting product attributes:", error);
       throw error;

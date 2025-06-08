@@ -53,6 +53,17 @@ export interface AppTranslation {
       nameAsc: string;
       nameDesc: string;
     };
+    filters: {
+      priceRange: string;
+      applyFilters: string;
+      resetFilters: string;
+      priceFrom: string;
+      priceFromPlaceholder: string;
+      priceTo: string;
+      priceToPlaceholder: string;
+      filtersApplied: string;
+      filterBy: string;
+    };
   };
   product: {
     title: string;

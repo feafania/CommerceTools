@@ -51,3 +51,13 @@ export enum SliderType {
   Cards = "cards",
   Img = "img",
 }
+
+export enum InAttributeTypeValues {
+  Enum = "enum",
+  Lenum = "lenum",
+}
+
+export enum LabelPosition {
+  Left = "left",
+  Right = "right",
+}

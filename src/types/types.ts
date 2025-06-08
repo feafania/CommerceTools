@@ -1,5 +1,9 @@
 import translations from "@/config/interfaces";
-import { ProductListParameters, ValidationRule } from "@/types/interfaces";
+import {
+  InAttributeDefinition,
+  ProductListParameters,
+  ValidationRule,
+} from "@/types/interfaces";
 import { AddressType, CountryCode, CurrencyCode, FormType } from "@/types/enum";
 import { VALIDATION } from "@/config/validation";
 
@@ -51,7 +55,12 @@ export type GetProductListParameters = Partial<ProductListParameters>;
 
 export type InAttributes = Record<
   string,
-  string | number | boolean | null | Array<string | number | boolean>
+  | string
+  | number
+  | boolean
+  | null
+  | Array<string | number | boolean>
+  | LanguageVariants
 >;
 
 export type LanguageVariants = Record<LanguageCode, string>;
@@ -62,3 +71,5 @@ export type SortOptions =
   | "name-asc"
   | "name-desc"
   | undefined;
+
+export type AttributeMap = Map<string, InAttributeDefinition>;

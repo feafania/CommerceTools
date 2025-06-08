@@ -26,7 +26,12 @@ import {
   LanguageVariants,
 } from "@/types/types";
 import { SETTINGS } from "@/config/settings";
-import { AddressType, CurrencyCode, SortName } from "@/types/enum";
+import {
+  AddressType,
+  CurrencyCode,
+  InAttributeTypeValues,
+  SortName,
+} from "@/types/enum";
 import { findDefaultAddressIndex } from "@/utils/helpers";
 
 const MappingHelpers = {
@@ -52,7 +57,7 @@ const MappingHelpers = {
       variantId: product.masterVariant?.id,
       available: product.masterVariant?.availability?.isOnStock ?? false,
       attributes:
-        this.matAttributesArray(product.masterVariant?.attributes) ?? {},
+        this.mapAttributesArray(product.masterVariant?.attributes) ?? {},
       sku: product.masterVariant?.sku,
       categories:
         product.categories?.map((cat: CategoryReference) => cat.id) ?? [],
@@ -79,7 +84,7 @@ const MappingHelpers = {
             ),
             currencyCode: vCurrencyCode,
             available: variant.availability?.isOnStock ?? false,
-            attributes: this.matAttributesArray(variant.attributes ?? []),
+            attributes: this.mapAttributesArray(variant.attributes ?? []),
           };
         }) ?? [],
     };
@@ -129,7 +134,7 @@ const MappingHelpers = {
     };
   },
 
-  matAttributesArray(attributes: Attribute[] = []): InAttributes {
+  mapAttributesArray(attributes: Attribute[] = []): InAttributes {
     return attributes.reduce((accumulator, attribute) => {
       accumulator[attribute.name] = attribute.value;
       return accumulator;
@@ -153,10 +158,24 @@ const MappingHelpers = {
   mapAttributeDefinitionToInternal(
     attributeDefinition: AttributeDefinition,
   ): InAttributeDefinition {
+    const isEnumType =
+      attributeDefinition.type.name === InAttributeTypeValues.Enum ||
+      attributeDefinition.type.name === InAttributeTypeValues.Lenum;
+
+    const type = isEnumType
+      ? {
+          name: attributeDefinition.type.name as InAttributeTypeValues,
+          values: attributeDefinition.type.values.map((v) => ({
+            key: v.key,
+            label: v.label,
+          })),
+        }
+      : undefined;
+
     return {
       name: attributeDefinition.name,
-      label: this.mapLocalizedField(attributeDefinition.label),
-      type: attributeDefinition.type.name,
+      label: attributeDefinition.label,
+      type,
       required: attributeDefinition.isRequired,
       isSearchable: attributeDefinition.isSearchable,
     };

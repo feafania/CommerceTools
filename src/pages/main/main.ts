@@ -5,6 +5,7 @@ import Header from "@/components/layout/header/header";
 import productService from "@/api/services/product-service";
 import { localizeName } from "@/utils/helpers";
 import { PageType } from "@/types/enum";
+import CatalogView from "@/pages/catalog/catalog";
 
 const MainView = {
   async render() {
@@ -58,6 +59,7 @@ const MainView = {
   },
   handleCategoryImageClick(categoryKey: string | undefined) {
     if (categoryKey) {
+      CatalogView.isSamePage = false;
       globalThis.location.hash = `${PageType.catalog}/${categoryKey}`;
     }
   },

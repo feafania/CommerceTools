@@ -5,6 +5,7 @@ import { renderPage } from "@/utils/page-render";
 import routes from "@/config/routes";
 import ProductView from "@/pages/product/product";
 import CatalogView from "@/pages/catalog/catalog";
+import CatalogViewFiltering from "@/pages/catalog/filtering";
 
 const PageRouter = {
   currentPage: PageType.main as PageType,
@@ -14,11 +15,19 @@ const PageRouter = {
   },
 
   getPathFromUrl(): string {
-    return location.hash.slice(1);
+    const fullPath = location.hash.slice(1);
+    return fullPath.split("?")[0];
+  },
+
+  getQueryParams(): URLSearchParams {
+    const fullPath = location.hash.slice(1);
+    const queryString = fullPath.includes("?") ? fullPath.split("?")[1] : "";
+    return new URLSearchParams(queryString);
   },
 
   async handleRoute() {
     const path = this.getPathFromUrl();
+    const queryParameters = this.getQueryParams();
 
     let page: PageType;
     ProductView.setProductKey(undefined);
@@ -46,6 +55,7 @@ const PageRouter = {
       } else {
         CatalogView.setSelectedCategoryKey(undefined);
       }
+      CatalogViewFiltering.applyQueryParams(queryParameters);
     } else if (isValidPageType(path)) {
       page = path;
     } else if (path) {

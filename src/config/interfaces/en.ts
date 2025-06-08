@@ -53,6 +53,17 @@ const en: AppTranslation = {
       nameAsc: "Name: A to Z",
       nameDesc: "Name: Z to A",
     },
+    filters: {
+      priceRange: "Price range",
+      applyFilters: "Apply",
+      resetFilters: "Reset",
+      priceFrom: "From",
+      priceFromPlaceholder: "0",
+      priceTo: "To",
+      priceToPlaceholder: "9999",
+      filtersApplied: "Filters are applied",
+      filterBy: "Filter by",
+    },
   },
   product: {
     title: "Detailed Product",

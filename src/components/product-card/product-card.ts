@@ -3,6 +3,7 @@ import { InProduct } from "@/types/interfaces";
 import { formatPriceWithCurrency, localizeName } from "@/utils/helpers";
 import { CARD_SETTINGS } from "@/config/constants";
 import { CurrencyCode, PageType, SliderType } from "@/types/enum";
+import CatalogView from "@/pages/catalog/catalog";
 
 export default class ProductCard {
   card: HTMLDivElement;
@@ -34,6 +35,7 @@ export default class ProductCard {
       img.alt = localizeName(this.product.name);
       imgWrapper.append(img);
       this.card.addEventListener("click", () => {
+        CatalogView.isSamePage = false;
         globalThis.location.hash = `${PageType.product}/${this.product.key}`;
       });
 
