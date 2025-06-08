@@ -3,11 +3,12 @@ export enum PageType {
   registration = "registration",
   main = "main",
   catalog = "catalog",
-  detailed = "detailed",
-  profile = "user",
+  product = "product",
+  profile = "profile",
   basket = "basket",
   about = "about",
   notfound = "notfound",
+  changePassword = "changePassword",
 }
 
 export enum AddressType {
@@ -23,7 +24,40 @@ export enum CountryCode {
   ES = "ES",
 }
 
+export enum CurrencyCode {
+  EUR = "EUR",
+  GBP = "GBP",
+  PLN = "PLN",
+}
+
 export enum FormType {
   LOGIN = "login",
   REGISTRATION = "registration",
+  PROFILE = "profile",
+  PASSWORD = "password",
+}
+
+export enum SortName {
+  NAME = "name",
+  PRICE = "price",
+}
+
+export enum SortDirection {
+  ASC = "asc",
+  DESC = "desc",
+}
+
+export enum SliderType {
+  Cards = "cards",
+  Img = "img",
+}
+
+export enum InAttributeTypeValues {
+  Enum = "enum",
+  Lenum = "lenum",
+}
+
+export enum LabelPosition {
+  Left = "left",
+  Right = "right",
 }

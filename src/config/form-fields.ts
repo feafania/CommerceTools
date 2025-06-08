@@ -48,65 +48,153 @@ export const FORM_FIELDS: FormFieldsMap = {
     {
       name: "birthday",
       get label() {
-        return SETTINGS.label.address.country;
+        return SETTINGS.label.registration.birthDay;
       },
       validation: VALIDATION.dateOfBirth,
     },
     {
-      name: "billing-country",
+      name: "country-shipping",
       get label() {
         return SETTINGS.label.address.country;
       },
       validation: VALIDATION.country,
     },
     {
-      name: "billing-city",
+      name: "city-shipping",
       get label() {
         return SETTINGS.label.address.city;
       },
       validation: VALIDATION.city,
     },
     {
-      name: "billing-street",
+      name: "street-shipping",
       get label() {
         return SETTINGS.label.address.street;
       },
       validation: VALIDATION.street,
     },
     {
-      name: "billing-zip",
+      name: "postalcode-shipping",
       get label() {
         return SETTINGS.label.address.postalCode;
       },
       validation: VALIDATION.postalCode,
     },
     {
-      name: "shipping-country",
+      name: "country-billing",
       get label() {
         return SETTINGS.label.address.country;
       },
       validation: VALIDATION.country,
     },
     {
-      name: "shipping-city",
+      name: "city-billing",
       get label() {
         return SETTINGS.label.address.city;
       },
       validation: VALIDATION.city,
     },
     {
-      name: "shipping-street",
+      name: "street-billing",
       get label() {
         return SETTINGS.label.address.street;
       },
       validation: VALIDATION.street,
     },
     {
-      name: "shipping-postalcode",
+      name: "postalcode-billing",
       get label() {
         return SETTINGS.label.address.postalCode;
       },
       validation: VALIDATION.postalCode,
+    },
+  ],
+  [FormType.PROFILE]: [
+    {
+      name: "email",
+      get label() {
+        return SETTINGS.label.registration.email;
+      },
+      validation: VALIDATION.email,
+    },
+    {
+      name: "password",
+      get label() {
+        return SETTINGS.label.registration.password;
+      },
+      validation: VALIDATION.password,
+    },
+    {
+      name: "firstname",
+      get label() {
+        return SETTINGS.label.registration.firstName;
+      },
+      validation: VALIDATION.firstName,
+    },
+    {
+      name: "lastname",
+      get label() {
+        return SETTINGS.label.registration.lastName;
+      },
+      validation: VALIDATION.lastName,
+    },
+    {
+      name: "birthday",
+      get label() {
+        return SETTINGS.label.registration.birthDay;
+      },
+      validation: VALIDATION.dateOfBirth,
+    },
+    {
+      name: "country",
+      get label() {
+        return SETTINGS.label.address.country;
+      },
+      validation: VALIDATION.country,
+    },
+    {
+      name: "city",
+      get label() {
+        return SETTINGS.label.address.city;
+      },
+      validation: VALIDATION.city,
+    },
+    {
+      name: "street",
+      get label() {
+        return SETTINGS.label.address.street;
+      },
+      validation: VALIDATION.street,
+    },
+    {
+      name: "postalcode",
+      get label() {
+        return SETTINGS.label.address.postalCode;
+      },
+      validation: VALIDATION.postalCode,
+    },
+  ],
+  [FormType.PASSWORD]: [
+    {
+      name: "current-password",
+      get label() {
+        return SETTINGS.label.changePassword.current;
+      },
+      validation: VALIDATION.password,
+    },
+    {
+      name: "new-password",
+      get label() {
+        return SETTINGS.label.changePassword.newPassword;
+      },
+      validation: VALIDATION.password,
+    },
+    {
+      name: "confirm-password",
+      get label() {
+        return SETTINGS.label.changePassword.confirmNewPassword;
+      },
+      validation: VALIDATION.password,
     },
   ],
 };

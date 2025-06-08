@@ -1,11 +1,19 @@
-import { CountryValueType } from "./types";
+import { CountryValueType, InAttributes, LanguageVariants } from "./types";
 
-import { CountryCode, PageType } from "@/types/enum";
+import {
+  CountryCode,
+  InAttributeTypeValues,
+  PageType,
+  SortDirection,
+} from "@/types/enum";
+import AddressElement from "@/components/address/address";
 
 type ControlBase = {
   type: string;
   label: string;
   name: string;
+  value: string;
+  forbidValueFromState: boolean | undefined;
   placeholder: string;
   id: string;
   class: string | string[];
@@ -36,6 +44,7 @@ export interface NavType {
   label: string;
   page: PageType;
   visible: boolean;
+  disabled: boolean;
 }
 
 export interface ModalOptions {
@@ -48,19 +57,7 @@ export interface ValidationRule {
   pattern?: RegExp;
   isValid?: (value: string | CountryValueType) => boolean;
   message?: string;
-  getValidationMessage?: (code: CountryCode) => string;
-}
-
-export interface TokenType {
-  access_token: string;
-  token_expires_in: string;
-  refresh_token: string;
-}
-
-export interface TokenResponse extends Omit<TokenType, "token_expires_in"> {
-  expires_in: number;
-  scope: string;
-  token_type: "Bearer";
+  getValidationMessage?: (code: CountryCode | undefined) => string;
 }
 
 export interface CTErrorObject {
@@ -90,9 +87,11 @@ export interface CTApiError {
 export interface InCategory {
   id: string;
   key?: string;
-  name: string;
-  description?: string;
+  name: LanguageVariants;
+  description?: LanguageVariants;
   assets: InAsset[];
+  parentId?: string;
+  children?: InCategory[];
 }
 
 export interface InAssetSource {
@@ -106,8 +105,8 @@ export interface InAsset {
   id: string;
   key?: string;
   sources: InAssetSource[];
-  name: string;
-  description?: string;
+  name: LanguageVariants;
+  description?: LanguageVariants;
 }
 
 export interface InAddress {
@@ -118,18 +117,134 @@ export interface InAddress {
   postalCode: string;
   city: string;
   country: string;
+  isDefaultBilling?: boolean;
+  isDefaultShipping?: boolean;
 }
 
 export interface InCustomer {
+  version?: number;
   id?: string;
   email: string;
   password?: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string; // "YYYY-MM-DD"
-  billingAddress: InAddress;
-  shippingAddress: InAddress;
-  isSameAddress?: boolean;
-  setBillingAsDefault?: boolean;
-  setShippingAsDefault?: boolean;
+  addresses: InAddress[];
+}
+
+export interface ProductListParameters {
+  limit: number;
+  offset: number;
+  sortName: string;
+  sortDirection: SortDirection;
+  searchText?: string;
+  filters?: string[];
+}
+
+export interface InProduct {
+  id: string;
+  key?: string;
+  name: LanguageVariants;
+  description?: LanguageVariants;
+  images: ProductImage[];
+  price: number; // main price in cents (without discount)
+  currencyCode?: string;
+  discountedPrice?: number | undefined;
+  isDiscounted: boolean;
+  discountPercent?: number | undefined;
+  categories: string[];
+  attributes: InAttributes;
+  available: boolean;
+  sku?: string;
+  variantId?: number; // ID of main variant
+  variants: InVariant[];
+}
+
+export interface InVariant {
+  id: number;
+  sku?: string;
+  images: ProductImage[];
+  price?: number;
+  currencyCode?: string;
+  discountedPrice?: number | undefined;
+  isDiscounted: boolean;
+  discountPercent?: number | undefined;
+  attributes: InAttributes;
+  available: boolean;
+}
+
+export interface ProductImage {
+  url: string;
+  label?: string;
+  dimensions?: {
+    w: number;
+    h: number;
+  };
+}
+
+export interface InAttributeDefinition {
+  name: string;
+  label: LanguageVariants;
+  type?: InAttributeType;
+  required: boolean;
+  isSearchable: boolean;
+}
+
+export interface InAttributeType {
+  name: InAttributeTypeValues;
+  values: {
+    key: string;
+    label: string | Record<string, string>;
+  }[];
+}
+
+export interface InProductType {
+  id: string;
+  key?: string;
+  name: string;
+  description?: string;
+  attributes: InAttributeDefinition[];
+}
+
+export interface ProductSearchResult {
+  /**
+   *	The maximum number of results
+   *
+   *
+   */
+  readonly limit: number;
+  /**
+   *	The starting point for the retrieved
+   *
+   *
+   */
+  readonly offset: number;
+  /**
+   *	Actual number of results returned.
+   *
+   *
+   */
+  readonly count: number;
+  /**
+   *	Total number of results matching the query.
+   *
+   *
+   */
+  readonly total?: number;
+  /**
+   *	Products where at least one ProductVariant(ctp:api:type:ProductVariant)
+   *   matches the search query.
+   *
+   */
+  readonly results: InProduct[];
+}
+
+export interface AddressItem {
+  element: AddressElement;
+  id: string;
+  index: number;
+  isEditing: boolean;
+  name: string;
+  isDefaultShipping: boolean;
+  isDefaultBilling: boolean;
 }

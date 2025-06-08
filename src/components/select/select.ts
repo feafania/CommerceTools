@@ -57,7 +57,13 @@ export default function createSelect(object: SelectConfig): HTMLDivElement {
     }
 
     const savedValue = getState(select.id);
-    if (savedValue && object.options.some((opt) => opt.code === savedValue)) {
+    if (object.value !== undefined) {
+      select.value = object.value;
+    } else if (
+      savedValue &&
+      object.options.some((opt) => opt.code === savedValue) &&
+      !object.forbidValueFromState
+    ) {
       select.value = savedValue;
     }
   }

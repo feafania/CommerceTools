@@ -8,6 +8,8 @@ const pl: AppTranslation = {
     signIn: "Zaloguj się",
     registration: "Załóż konto",
     main: "Strona główna",
+    catalog: "Katalog",
+    product: "Produkt",
     about: "O nas",
     signOut: "Wyloguj się",
     directions: {
@@ -18,6 +20,8 @@ const pl: AppTranslation = {
       toSignIn: "Zaloguj się",
       toSignUp: "Załóż konto",
     },
+    userProfile: "Profil Użytkownika",
+    changePassword: "Zmień hasło",
   },
   login: {
     email: "Adres e-mail",
@@ -36,7 +40,60 @@ const pl: AppTranslation = {
     submit: "Zarejestruj się",
   },
   main: {
-    title: "Witamy w sklepie z prezentami",
+    title: "Zapraszamy do naszego sklepu",
+  },
+  catalog: {
+    search: "Szukaj...",
+    title: "Nasz asortyment",
+    allProducts: "Wszystkie produkty",
+    sort: {
+      default: "Sortuj według",
+      priceAsc: "Cena: od niskiej do wysokiej",
+      priceDesc: "Cena: od wysokiej do niskiej",
+      nameAsc: "Nazwa: od A do Z",
+      nameDesc: "Nazwa: Z do A",
+    },
+    filters: {
+      priceRange: "Przedział cenowy",
+      applyFilters: "Zastosuj",
+      resetFilters: "Resetuj",
+      priceFrom: "Od",
+      priceFromPlaceholder: "0",
+      priceTo: "Do",
+      priceToPlaceholder: "9999",
+      filtersApplied: "Filtry są stosowane",
+      filterBy: "Filtruj według",
+    },
+  },
+  product: {
+    title: "Szczegóły Produkta",
+    backButton: "Powrót do katalogu",
+  },
+  userProfile: {
+    firstName: "Imię",
+    lastName: "Nazwisko",
+    birthDay: "Dzień urodzenia",
+    email: "Adres e-mail",
+    password: "Hasło",
+    header: "Profil użytkownika",
+    editModeBtn: "Tryb Edycji",
+    editModeStop: "Pozostaw tryb edycji",
+    editPassword: "Zmień hasło",
+    deleteAddress: "Adres został pomyślnie usunięty",
+    editUSer: "Informacje o użytkowniku zostały pomyślnie zaktualizowane",
+    editAddress: "Adres został pomyślnie zaktualizowany",
+    addAddress: "Nowy adres został pomyślnie dodany",
+    submitBtn: "Zapisz Zmiany",
+  },
+  changePassword: {
+    current: "Aktualne hasło",
+    newPassword: "Nowe hasło",
+    confirmNewPassword: "Potwierdź nowe hasło",
+    formTitle: "Zmień Hasło",
+    wrongConfirm: "Błędne potwierdzenie hasła",
+    success: "Twoje hasło zostało pomyślnie zmienione",
+    wrongOldPassword: "Błędne aktualne hasło",
+    emptyPassword: "Pole hasła jest puste",
   },
   address: {
     headers: {
@@ -63,6 +120,11 @@ const pl: AppTranslation = {
     placeholders: {
       country: "Wybierz kraj",
     },
+    editAddress: "Edytuj",
+    editAddressStop: "Zatrzymaj edycję",
+    addAdress: "+ Dodaj adres",
+    addressProfileTitle: "Adres",
+    addressesList: "Adresy",
   },
   validation: {
     email:
@@ -88,6 +150,7 @@ const pl: AppTranslation = {
       ES: "Kod pocztowy musi być zgodny z formatem obowiązującym w Hiszpanii  (28001).",
     },
     commonError: "Błąd walidacji.",
+    selectCountry: "Proszę wybrać kraj",
   },
   errorsTypes: {
     duplicate: "Wartość już istnieje w systemie.",
@@ -123,6 +186,8 @@ const pl: AppTranslation = {
       "Plik connect.yaml pod adresem $url (tag: $tag) jest nieprawidłowy. Sprawdź format lub zawartość.",
     connectorInCertification:
       "Ten konektor jest w trakcie procesu certyfikacji. Będzie dostępny po jego zakończeniu.",
+    versionMismatch:
+      "Błąd niezgodności wersji. Proszę odświeżyć i spróbować ponownie.",
   },
   errors: {
     login: "Logowanie nie powiodło się.",
@@ -130,11 +195,16 @@ const pl: AppTranslation = {
       "Wylogowanie nie powiodło się. Być może już zostałeś wylogowany. Spróbuj ponownie.",
     registration: "Rejestracja nie powiodła się.",
     categories: "Nie udało się załadować kategorii.",
+    updateCustomer: "Nie udało się zaktualizować informacji o kliencie.",
+    updatePassword: "Nie udało się zaktualizować hasła klienta.",
+    token: "Nie udało się zdobyć tokena.",
+    getCurrentUser: "Nie udało się pobrać bieżącego użytkownika",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",
     onSignUp: "Twoje konto zostało utworzone.",
     onSignOut: "Zostałeś wylogowany.",
+    nothingToUpdate: "Brak zmian. Twój profil jest już aktualny.",
   },
 };
 

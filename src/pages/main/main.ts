@@ -3,17 +3,19 @@ import "./main.css";
 import { SETTINGS } from "@/config/settings";
 import Header from "@/components/layout/header/header";
 import productService from "@/api/services/product-service";
+import { localizeName } from "@/utils/helpers";
+import { PageType } from "@/types/enum";
+import CatalogView from "@/pages/catalog/catalog";
 
 const MainView = {
   async render() {
     const container = document.createElement("section");
-
     container.className = "view main-view";
 
     const aside = document.createElement("aside");
     aside.className = "sidebar";
 
-    const nav = Header.createNavList();
+    const nav = Header.createNavList("main");
     aside.append(nav);
 
     const title = document.createElement("h1");
@@ -22,33 +24,29 @@ const MainView = {
     const categoryList = document.createElement("ul");
     categoryList.className = "categories";
 
-    try {
-      const categories = await productService.getCategories();
-      for (const cat of categories) {
-        const li = document.createElement("div");
-        li.className = "category-item";
+    const categories = await productService.getCategories();
 
-        const liTitle = document.createElement("div");
-        liTitle.className = "category-title";
-        liTitle.textContent = cat.name;
+    for (const cat of categories) {
+      const li = document.createElement("div");
+      li.className = "category-item";
 
-        const liPicture = document.createElement("div");
-        liPicture.className = "category-pic";
+      const liTitle = document.createElement("div");
+      liTitle.className = "category-title";
+      liTitle.textContent = localizeName(cat.name);
 
-        const picture = document.createElement("img");
-        picture.src = "assets/img/categories/" + cat.key + ".png";
-        picture.alt = cat.name;
+      const liPicture = document.createElement("div");
+      liPicture.className = "category-pic";
 
-        liPicture.append(picture);
-        li.append(liPicture, liTitle);
-        categoryList.append(li);
-        console.log(cat);
-      }
-    } catch (error) {
-      console.error("Error loading categories:", error);
-      const errorMessage = document.createElement("p");
-      errorMessage.textContent = SETTINGS.label.errors.categories;
-      categoryList.append(errorMessage);
+      const picture = document.createElement("img");
+      picture.src = cat.assets[0].sources[0].uri;
+      picture.alt = localizeName(cat.name);
+      li.addEventListener("click", () =>
+        this.handleCategoryImageClick(cat.key),
+      );
+
+      liPicture.append(picture);
+      li.append(liPicture, liTitle);
+      categoryList.append(li);
     }
 
     const content = document.createElement("div");
@@ -58,6 +56,12 @@ const MainView = {
     container.append(aside, content);
 
     return container;
+  },
+  handleCategoryImageClick(categoryKey: string | undefined) {
+    if (categoryKey) {
+      CatalogView.isSamePage = false;
+      globalThis.location.hash = `${PageType.catalog}/${categoryKey}`;
+    }
   },
 };
 

@@ -1,7 +1,13 @@
 import { SETTINGS } from "@/config/settings";
-import { CountryCodeMap, LanguageCode } from "@/types/types";
-import { SelectType, StorageItem } from "@/types/interfaces";
-import { CountryCode } from "@/types/enum";
+import { CountryCodeMap, LanguageCode, LanguageVariants } from "@/types/types";
+import {
+  InAddress,
+  InCustomer,
+  SelectType,
+  StorageItem,
+} from "@/types/interfaces";
+import { AddressType, CountryCode, CurrencyCode } from "@/types/enum";
+import { CurrencySymbolMap } from "@/config/constants";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -113,4 +119,99 @@ export function formatDateForCommercetools(inputDate: string | null): string {
 export function calculateTokenExpiry(expiresIn: number): string {
   const expiryTimestamp = Date.now() + expiresIn * 1000;
   return new Date(expiryTimestamp).toISOString();
+}
+
+export function findDefaultAddress(
+  addresses: InAddress[],
+  addressType: AddressType,
+): InAddress | undefined {
+  if (addressType === "billing") {
+    return addresses.find((address) => address.isDefaultBilling);
+  } else if (addressType === "shipping") {
+    return addresses.find((address) => address.isDefaultShipping);
+  }
+
+  return undefined;
+}
+
+export function findDefaultAddressIndex(
+  customer: InCustomer,
+  addressType: AddressType,
+): number | undefined {
+  if (!customer) return undefined;
+
+  if (addressType === "billing") {
+    return customer.addresses.findIndex((address) => address.isDefaultBilling);
+  } else if (addressType === "shipping") {
+    return customer.addresses.findIndex((address) => address.isDefaultShipping);
+  }
+
+  return undefined;
+}
+
+export function deepEqual(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+
+  if (typeof a !== typeof b) return false;
+
+  if (a === null || b === null) return false;
+
+  if (typeof a !== "object") return false;
+  if (typeof b !== "object") return false;
+
+  // Arrays
+  if (Array.isArray(a)) {
+    if (!Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    return a.every((item, index) => deepEqual(item, b[index]));
+  }
+
+  // Objects
+  const objectA = a as Record<string, unknown>;
+  const objectB = b as Record<string, unknown>;
+
+  const aKeys = Object.keys(objectA);
+  const bKeys = Object.keys(objectB);
+
+  if (aKeys.length !== bKeys.length) return false;
+
+  for (const key of aKeys) {
+    if (!(key in objectB)) return false;
+    if (!deepEqual(objectA[key], objectB[key])) return false;
+  }
+
+  return true;
+}
+
+export function localizeName(variableName: string | LanguageVariants) {
+  if (typeof variableName === "string") return variableName;
+  if (variableName[SETTINGS.currentLang])
+    return variableName[SETTINGS.currentLang];
+  return variableName[SETTINGS.fallbackLanguage];
+}
+
+export function removeAllChildren(element: Element | undefined | null) {
+  if (element) {
+    while (element.firstChild) {
+      element.firstChild.remove();
+    }
+  }
+}
+
+export function formatPriceWithCurrency(
+  price: number,
+  currencyCode: CurrencyCode,
+): string {
+  const symbol = CurrencySymbolMap[currencyCode];
+  const amount = (price / 100).toFixed(2);
+
+  switch (currencyCode) {
+    case CurrencyCode.EUR:
+    case CurrencyCode.GBP: {
+      return `${symbol}${amount}`;
+    }
+    default: {
+      return `${amount} ${symbol}`;
+    }
+  }
 }

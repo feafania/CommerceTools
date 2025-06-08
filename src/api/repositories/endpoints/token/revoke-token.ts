@@ -1,27 +1,18 @@
 import { handleApiError } from "@/api/handle-api-error";
-import { TokenKeys } from "@/types/types";
+import { TokenKeys } from "@/types/api-types";
+import {
+  createBasicAuth,
+  createRevokeTokenRequestBody,
+} from "@/api/api-helpers";
 
 export default async function revokeCustomerToken(
   token: string,
   tokenTypeHint?: TokenKeys,
 ): Promise<boolean> {
   const authUrl = process.env.CTP_AUTH_URL!;
-  const clientID = process.env.CTP_CLIENT_ID!;
-  const clientSecret = process.env.CTP_CLIENT_SECRET!;
-  const isBrowser = typeof document !== "undefined";
+  const basicAuth = createBasicAuth();
 
-  const credentials = `${clientID}:${clientSecret}`;
-  const basicAuth = isBrowser
-    ? btoa(credentials)
-    : Buffer.from(credentials).toString("base64");
-
-  const body = new URLSearchParams({
-    token,
-  });
-
-  if (tokenTypeHint) {
-    body.set("token_type_hint", tokenTypeHint);
-  }
+  const body = createRevokeTokenRequestBody(token, tokenTypeHint);
 
   try {
     const response = await fetch(`${authUrl}/oauth/token/revoke`, {
@@ -34,7 +25,7 @@ export default async function revokeCustomerToken(
     });
     return response.status === 200;
   } catch (error) {
-    console.error("Error revoking token:", error);
+    // console.error("Error revoking token:", error);
     handleApiError(error);
     return false;
   }

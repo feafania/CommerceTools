@@ -1,7 +1,22 @@
-import { Category } from "@commercetools/platform-sdk";
+import {
+  Category,
+  CategoryPagedQueryResponse,
+  ProductProjection,
+  ProductType,
+} from "@commercetools/platform-sdk";
 
 import getCategories from "@/api/repositories/endpoints/product/get-categories";
-import getCategoryByKey from "@/api/repositories/endpoints/product/get-category-by-key";
+import {
+  getCategoryByKey,
+  getProductAttributes,
+  getProductByKey,
+  getProductList,
+  getProductTypeByKey,
+  getProductTypes,
+} from "@/api/repositories/endpoints/product";
+import { InProduct, ProductSearchResult } from "@/types/interfaces";
+import { InAttributes } from "@/types/types";
+import MappingHelpers from "@/api/repositories/mapping-helpers";
 
 // mocked functions
 export const mockedGetCategories = getCategories as jest.MockedFunction<
@@ -10,6 +25,19 @@ export const mockedGetCategories = getCategories as jest.MockedFunction<
 export const mockedGetCategoryByKey = getCategoryByKey as jest.MockedFunction<
   typeof getCategoryByKey
 >;
+export const mockedGetProductList = getProductList as jest.MockedFunction<
+  typeof getProductList
+>;
+export const mockedGetProductByKey = getProductByKey as jest.MockedFunction<
+  typeof getProductByKey
+>;
+export const mockedGetProductTypes = getProductTypes as jest.MockedFunction<
+  typeof getProductTypes
+>;
+export const mockedGetProductTypeByKey =
+  getProductTypeByKey as jest.MockedFunction<typeof getProductTypeByKey>;
+export const mockedGetProductAttributes =
+  getProductAttributes as jest.MockedFunction<typeof getProductAttributes>;
 
 // faked data
 
@@ -51,18 +79,159 @@ export const setOfCategories: Category[] = [
   },
 ];
 
-export const categoriesApiResponse = {
-  body: {
-    limit: 20,
-    offset: 0,
-    count: 2,
-    total: 2,
-    results: [...setOfCategories],
-  },
-} as Awaited<ReturnType<typeof getCategories>>;
+export const mockedCategories = setOfCategories.map((category) => {
+  return {
+    id: category.id,
+    key: category.key,
+    name: category.name,
+    description: category.description,
+    assets: [],
+  };
+});
 
-export const CategoryByKeyApiResponse = {
-  body: {
-    ...setOfCategories[0],
+export const categoriesApiResponse: CategoryPagedQueryResponse = {
+  limit: 20,
+  offset: 0,
+  count: 2,
+  total: 2,
+  results: [...setOfCategories],
+};
+
+export const CategoryByKeyApiResponse: Category = {
+  ...setOfCategories[0],
+};
+
+export const mockedProductProjection: ProductProjection = {
+  id: "prod1",
+  version: 1,
+  createdAt: new Date().toISOString(),
+  lastModifiedAt: new Date().toISOString(),
+  productType: {
+    typeId: "product-type",
+    id: "pt1",
   },
-} as Awaited<ReturnType<typeof getCategoryByKey>>;
+  taxCategory: {
+    typeId: "tax-category",
+    id: "tax1",
+  },
+  state: {
+    typeId: "state",
+    id: "state1",
+  },
+  key: "key1",
+  slug: { en: "product-1" },
+  name: { en: "Product 1" },
+  description: { en: "Description 1" },
+  categories: [
+    {
+      typeId: "category",
+      id: setOfCategories[0].id,
+    },
+  ],
+  masterVariant: {
+    id: 1,
+    sku: "sku1",
+    images: [],
+    attributes: [],
+    availability: { isOnStock: true },
+    prices: [
+      {
+        id: "price1",
+        value: {
+          type: "centPrecision",
+          currencyCode: "USD",
+          centAmount: 1000,
+          fractionDigits: 2,
+        },
+        discounted: undefined,
+      },
+    ],
+  },
+  variants: [],
+};
+
+export const mockedProductList: ProductProjection[] = [
+  mockedProductProjection,
+  {
+    ...mockedProductProjection,
+    id: "prod2",
+    key: "key2",
+    name: { en: "Product 2" },
+    slug: { en: "product-2" },
+    categories: [
+      {
+        typeId: "category",
+        id: setOfCategories[1].id,
+      },
+    ],
+    masterVariant: {
+      ...mockedProductProjection.masterVariant,
+      id: 2,
+      sku: "sku2",
+      availability: { isOnStock: false },
+      prices: [
+        {
+          id: "price2",
+          value: {
+            type: "centPrecision",
+            currencyCode: "USD",
+            centAmount: 1500,
+            fractionDigits: 2,
+          },
+          discounted: undefined,
+        },
+      ],
+    },
+  },
+];
+
+export const mappedInProduct = MappingHelpers.mapProductToInternal(
+  mockedProductProjection,
+);
+
+export const mockedInternalProductList: InProduct[] = mockedProductList.map(
+  (element) => MappingHelpers.mapProductToInternal(element),
+);
+
+export const mockedProductType: ProductType = {
+  id: "pt1",
+  key: "prodType1",
+  version: 1,
+  createdAt: new Date().toISOString(),
+  lastModifiedAt: new Date().toISOString(),
+  name: "ProductType 1",
+  description: "desc",
+  attributes: [],
+};
+
+export const mappedInProductType =
+  MappingHelpers.mapProductTypeToInternal(mockedProductType);
+
+export const mockedAttributes = [
+  { name: "color", value: "red" },
+  { name: "size", value: "M" },
+];
+
+export const mappedInAttributeObject = mockedAttributes.reduce(
+  (accumulator, { name, value }) => {
+    accumulator[name] = value;
+    return accumulator;
+  },
+  {} as InAttributes,
+);
+
+export const productRepositoryResponse: ProductSearchResult = {
+  limit: 20,
+  offset: 0,
+  count: 2,
+  total: 2,
+  results: [...mockedInternalProductList],
+};
+
+export const emptyProductResult = {
+  limit: 0,
+  offset: 0,
+  count: 0,
+  total: 0,
+  results: [],
+};

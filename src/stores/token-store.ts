@@ -1,4 +1,4 @@
-import { TokenType } from "@/types/interfaces";
+import { TokenType } from "@/types/api-types";
 
 export class TokenStore {
   #token: TokenType | undefined;

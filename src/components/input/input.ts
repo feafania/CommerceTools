@@ -32,7 +32,9 @@ export default function createInput(object: ControlConfig): HTMLDivElement {
   input.required = object.required || false;
 
   const savedValue = getState(input.id);
-  if (typeof savedValue === "string") {
+  if (object.value !== undefined) {
+    input.value = object.value;
+  } else if (typeof savedValue === "string" && !object.forbidValueFromState) {
     input.value = savedValue;
   }
 

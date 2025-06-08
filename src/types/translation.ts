@@ -1,4 +1,4 @@
-import { AdressTypeMap, CountryCodeMap } from "@/types/types";
+import { AddressTypeMap, CountryCodeMap } from "@/types/types";
 
 export interface AppTranslation {
   header: {
@@ -8,6 +8,8 @@ export interface AppTranslation {
     signIn: string;
     registration: string;
     main: string;
+    catalog: string;
+    product: string;
     about: string;
     signOut: string;
     directions: {
@@ -18,6 +20,8 @@ export interface AppTranslation {
       toSignIn: string;
       toSignUp: string;
     };
+    userProfile: string;
+    changePassword: string;
   };
   login: {
     email: string;
@@ -35,21 +39,79 @@ export interface AppTranslation {
     header: string;
     submit: string;
   };
+  main: {
+    title: string;
+  };
+  catalog: {
+    search: string;
+    title: string;
+    allProducts: string;
+    sort: {
+      default: string;
+      priceAsc: string;
+      priceDesc: string;
+      nameAsc: string;
+      nameDesc: string;
+    };
+    filters: {
+      priceRange: string;
+      applyFilters: string;
+      resetFilters: string;
+      priceFrom: string;
+      priceFromPlaceholder: string;
+      priceTo: string;
+      priceToPlaceholder: string;
+      filtersApplied: string;
+      filterBy: string;
+    };
+  };
+  product: {
+    title: string;
+    backButton: string;
+  };
+  userProfile: {
+    firstName: string;
+    lastName: string;
+    birthDay: string;
+    email: string;
+    password: string;
+    header: string;
+    editModeBtn: string;
+    editModeStop: string;
+    editPassword: string;
+    deleteAddress: string;
+    editUSer: string;
+    editAddress: string;
+    addAddress: string;
+    submitBtn: string;
+  };
+  changePassword: {
+    current: string;
+    newPassword: string;
+    confirmNewPassword: string;
+    formTitle: string;
+    success: string;
+    wrongConfirm: string;
+    wrongOldPassword: string;
+    emptyPassword: string;
+  };
   address: {
-    headers: AdressTypeMap;
+    headers: AddressTypeMap;
     country: string;
     city: string;
     street: string;
     postalCode: string;
-    default: AdressTypeMap;
+    default: AddressTypeMap;
     isSameAddress: string;
     countryNames: CountryCodeMap;
     placeholders: {
       country: string;
     };
-  };
-  main: {
-    title: string;
+    editAddress: string;
+    editAddressStop: string;
+    addAdress: string;
+    addressProfileTitle: string;
+    addressesList: string;
   };
   validation: {
     email: string;
@@ -62,6 +124,7 @@ export interface AppTranslation {
     street: string;
     postalCode: CountryCodeMap;
     commonError: string;
+    selectCountry: string;
   };
   errorsTypes: {
     duplicate: string;
@@ -90,16 +153,22 @@ export interface AppTranslation {
     connectorFileNotFound: string;
     connectorFileNotValid: string;
     connectorInCertification: string;
+    versionMismatch: string;
   };
   errors: {
     login: string;
     logout: string;
     registration: string;
     categories: string;
+    updateCustomer: string;
+    updatePassword: string;
+    token: string;
+    getCurrentUser: string;
   };
   messages: {
     onSignIn: string;
     onSignUp: string;
     onSignOut: string;
+    nothingToUpdate: string;
   };
 }

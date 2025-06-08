@@ -11,41 +11,54 @@ export default function localizeMessage(
   )
     return SETTINGS.label.errorsTypes.emailExist;
 
+  if (message.toLowerCase().includes("version")) {
+    return SETTINGS.label.errorsTypes.versionMismatch;
+  }
+
   if (code) {
     const result = localizeByCode(code);
     if (result) return result;
   }
-
-  if (message.includes("credentials"))
+  const messageToLowerCase = message.toLowerCase();
+  if (
+    messageToLowerCase.includes("credential") ||
+    messageToLowerCase.includes("invalid email or password")
+  ) {
     return SETTINGS.label.errorsTypes.credentials;
+  }
 
-  if (message.includes("Duplicate") || message.includes("duplicate"))
+  if (messageToLowerCase.includes("duplicate"))
     return SETTINGS.label.errorsTypes.duplicate;
 
-  if (message.includes("Required")) return SETTINGS.label.errorsTypes.required;
+  if (messageToLowerCase.includes("required"))
+    return SETTINGS.label.errorsTypes.required;
 
-  if (message.includes("Internal Server Error"))
+  if (messageToLowerCase.includes("internal server error"))
     return SETTINGS.label.errorsTypes.serverError;
 
   if (
-    message.includes("postal code") ||
-    message.includes("ZIP Code") ||
-    message.includes("postcode")
+    messageToLowerCase.includes("postal code") ||
+    messageToLowerCase.includes("zip code") ||
+    messageToLowerCase.includes("postcode")
   )
     return SETTINGS.label.errorsTypes.invalidPostalCode;
 
-  if (message.includes("email address"))
+  if (messageToLowerCase.includes("email address"))
     return SETTINGS.label.errorsTypes.invalidEmail;
 
-  if (message.includes("phone number"))
+  if (messageToLowerCase.includes("phone number"))
     return SETTINGS.label.errorsTypes.invalidPhoneNumber;
 
-  if (message.includes("Invalid")) return SETTINGS.label.errorsTypes.invalid;
+  if (messageToLowerCase.includes("invalid"))
+    return SETTINGS.label.errorsTypes.invalid;
 
-  return message; // or SETTINGS.label.errorsTypes.unknown
+  return messageToLowerCase; // or SETTINGS.label.errorsTypes.unknown
 }
 
 function localizeByCode(code: string): string | undefined {
+  if (code.includes("invalid_customer_account_credentials"))
+    return SETTINGS.label.errorsTypes.credentials;
+
   if (code.includes("InvalidJsonInput"))
     return SETTINGS.label.errorsTypes.invalidJson;
 

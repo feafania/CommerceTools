@@ -2,8 +2,12 @@ import "./checkbox.css";
 import { ControlConfig } from "@/types/interfaces";
 import { classesToArray, getState, saveState } from "@/utils/helpers";
 import { createLabel } from "@/components/label/label";
+import { LabelPosition } from "@/types/enum";
 
-export default function createCheckbox(object: ControlConfig): HTMLDivElement {
+export default function createCheckbox(
+  object: ControlConfig,
+  labelPosition: LabelPosition = LabelPosition.Right,
+): HTMLDivElement {
   const classNames = classesToArray(object.class);
 
   const wrapper = document.createElement("div");
@@ -12,9 +16,9 @@ export default function createCheckbox(object: ControlConfig): HTMLDivElement {
   }
   wrapper.classList.add("checkbox-wrapper", "custom-checkbox");
 
+  let label: HTMLLabelElement | undefined;
   if (object.label) {
-    const label = createLabel(object);
-    wrapper.append(label);
+    label = createLabel(object);
   }
 
   const input = document.createElement("input");
@@ -26,10 +30,13 @@ export default function createCheckbox(object: ControlConfig): HTMLDivElement {
   input.required = object.required || false;
 
   const savedValue = getState(input.id);
-  if (typeof savedValue === "string") {
-    input.checked = savedValue === "on";
+
+  if (object.value !== undefined) {
+    input.value = object.value;
+  } else if (typeof savedValue === "string" && !object.forbidValueFromState) {
+    input.value = savedValue;
   }
-  input.value = input.checked ? "on" : "off";
+  input.checked = input.value === "on";
 
   input.addEventListener("change", () => {
     input.value = input.checked ? "on" : "off";
@@ -49,6 +56,13 @@ export default function createCheckbox(object: ControlConfig): HTMLDivElement {
       input.classList.add(className);
     }
   }
-  wrapper.append(input);
+  if (labelPosition === LabelPosition.Left && label) {
+    wrapper.append(label, input);
+  } else if (label) {
+    wrapper.append(input, label);
+  } else {
+    wrapper.append(input);
+  }
+
   return wrapper;
 }
