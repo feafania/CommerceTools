@@ -1,5 +1,7 @@
 import "./catalog.css";
-import "./resize-filter.js";
+
+import mobileFilterToggle from "./resize-filter";
+
 import productService from "@/api/services/product-service";
 // import ProductSlider from "@/components/product-slider/product-slider";
 import ProductCard from "@/components/product-card/product-card";
@@ -37,6 +39,7 @@ const CatalogView = {
       this.isSamePage = false;
       await CatalogViewFiltering.applyFiltering();
       await this.renderProducts();
+      mobileFilterToggle.refresh();
       return;
     }
     removeAllChildren(this.container);
@@ -85,6 +88,10 @@ const CatalogView = {
 
       await CatalogViewFiltering.applyFiltering();
       await this.renderProducts();
+
+      setTimeout(() => {
+        mobileFilterToggle.refresh();
+      }, 0);
 
       return this.container;
     } catch {
@@ -229,6 +236,9 @@ const CatalogView = {
     this.offset = 0;
     this.isSamePage = true;
     CatalogViewFiltering.buildPath();
+    setTimeout(() => {
+      mobileFilterToggle.refresh();
+    }, 0);
   },
 
   updateSidebarActiveClass() {

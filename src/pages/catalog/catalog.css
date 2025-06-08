@@ -259,6 +259,7 @@
 
 .mobile-filter-toggle {
   display: none;
+  position: relative;
 }
 
 .mobile-filter-toggle::after {
