@@ -71,7 +71,7 @@ export default defineConfig([
   },
   ...tseslint.configs.recommended,
   {
-    ignores: ["**/*.config.js","**/svg-transform.js"],
+    ignores: ["**/*.config.js", "**/svg-transform.js"],
   },
   {
     files: ["**/*.test.ts", "**/__tests__/**/*.ts"],

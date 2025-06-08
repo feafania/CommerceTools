@@ -83,7 +83,6 @@
   text-overflow: ellipsis;
 }
 
-
 .catalog-sidebar-button:hover {
   background-color: #e9ecef;
   border-color: #ced4da;
@@ -331,4 +330,3 @@
     font-size: 0.85rem;
   }
 }
-
