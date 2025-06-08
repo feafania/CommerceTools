@@ -40,7 +40,6 @@ export enum FormType {
 export enum SortName {
   NAME = "name",
   PRICE = "price",
-  CREATED_AT = "createdAt",
 }
 
 export enum SortDirection {
@@ -51,4 +50,14 @@ export enum SortDirection {
 export enum SliderType {
   Cards = "cards",
   Img = "img",
+}
+
+export enum InAttributeTypeValues {
+  Enum = "enum",
+  Lenum = "lenum",
+}
+
+export enum LabelPosition {
+  Left = "left",
+  Right = "right",
 }

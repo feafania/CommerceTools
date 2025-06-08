@@ -40,11 +40,30 @@ const pl: AppTranslation = {
     submit: "Zarejestruj się",
   },
   main: {
-    title: "Witamy w sklepie z prezentami",
+    title: "Zapraszamy do naszego sklepu",
   },
   catalog: {
     search: "Szukaj...",
-    title: "Katalog prezentów",
+    title: "Nasz asortyment",
+    allProducts: "Wszystkie produkty",
+    sort: {
+      default: "Sortuj według",
+      priceAsc: "Cena: od niskiej do wysokiej",
+      priceDesc: "Cena: od wysokiej do niskiej",
+      nameAsc: "Nazwa: od A do Z",
+      nameDesc: "Nazwa: Z do A",
+    },
+    filters: {
+      priceRange: "Przedział cenowy",
+      applyFilters: "Zastosuj",
+      resetFilters: "Resetuj",
+      priceFrom: "Od",
+      priceFromPlaceholder: "0",
+      priceTo: "Do",
+      priceToPlaceholder: "9999",
+      filtersApplied: "Filtry są stosowane",
+      filterBy: "Filtruj według",
+    },
   },
   product: {
     title: "Szczegóły Produkta",

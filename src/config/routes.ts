@@ -6,7 +6,7 @@ import renderAboutView from "@/pages/about/about";
 import NotFoundView from "@/pages/notfound/notfound";
 import LoginRegistrationView from "@/pages/login-registration/login-registration";
 import UserProfile from "@/pages/profile/profile";
-import CatalogView2 from "@/pages/catalog2/catalog";
+import CatalogView from "@/pages/catalog/catalog";
 import ProductView from "@/pages/product/product";
 import ChangePassword from "@/pages/change-password/change-password";
 
@@ -35,7 +35,7 @@ const routes: Partial<Record<PageType, RouteType>> = {
   },
   [PageType.catalog]: {
     canActivate: () => true,
-    render: CatalogView2.render.bind(CatalogView2),
+    render: CatalogView.render.bind(CatalogView),
   },
   [PageType.product]: {
     canActivate: () => true,

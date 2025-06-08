@@ -14,9 +14,9 @@ import {
   getProductTypeByKey,
   getProductTypes,
 } from "@/api/repositories/endpoints/product";
-import productRepository from "@/api/repositories/product-repository";
 import { InProduct, ProductSearchResult } from "@/types/interfaces";
 import { InAttributes } from "@/types/types";
+import MappingHelpers from "@/api/repositories/mapping-helpers";
 
 // mocked functions
 export const mockedGetCategories = getCategories as jest.MockedFunction<
@@ -185,12 +185,12 @@ export const mockedProductList: ProductProjection[] = [
   },
 ];
 
-export const mappedInProduct = productRepository.mapProductToInternal(
+export const mappedInProduct = MappingHelpers.mapProductToInternal(
   mockedProductProjection,
 );
 
 export const mockedInternalProductList: InProduct[] = mockedProductList.map(
-  (element) => productRepository.mapProductToInternal(element),
+  (element) => MappingHelpers.mapProductToInternal(element),
 );
 
 export const mockedProductType: ProductType = {
@@ -205,7 +205,7 @@ export const mockedProductType: ProductType = {
 };
 
 export const mappedInProductType =
-  productRepository.mapProductTypeToInternal(mockedProductType);
+  MappingHelpers.mapProductTypeToInternal(mockedProductType);
 
 export const mockedAttributes = [
   { name: "color", value: "red" },

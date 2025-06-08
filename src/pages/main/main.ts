@@ -4,9 +4,8 @@ import { SETTINGS } from "@/config/settings";
 import Header from "@/components/layout/header/header";
 import productService from "@/api/services/product-service";
 import { localizeName } from "@/utils/helpers";
-import CatalogView2 from "@/pages/catalog2/catalog";
-import PageRouter from "@/router/page-router";
 import { PageType } from "@/types/enum";
+import CatalogView from "@/pages/catalog/catalog";
 
 const MainView = {
   async render() {
@@ -60,8 +59,8 @@ const MainView = {
   },
   handleCategoryImageClick(categoryKey: string | undefined) {
     if (categoryKey) {
-      CatalogView2.setSelectedCategoryKey(categoryKey);
-      PageRouter.navigateTo(PageType.catalog);
+      CatalogView.isSamePage = false;
+      globalThis.location.hash = `${PageType.catalog}/${categoryKey}`;
     }
   },
 };

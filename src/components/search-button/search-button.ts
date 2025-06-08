@@ -21,6 +21,7 @@ class SearchBar {
     const clearButton = this.renderButton();
 
     searchBar.append(searchInputGroupe, clearButton);
+    this.showClearButton();
     return searchBar;
   }
 

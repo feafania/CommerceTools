@@ -167,7 +167,7 @@ body.no-scroll {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 /* Responsive */

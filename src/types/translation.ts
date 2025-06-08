@@ -45,6 +45,25 @@ export interface AppTranslation {
   catalog: {
     search: string;
     title: string;
+    allProducts: string;
+    sort: {
+      default: string;
+      priceAsc: string;
+      priceDesc: string;
+      nameAsc: string;
+      nameDesc: string;
+    };
+    filters: {
+      priceRange: string;
+      applyFilters: string;
+      resetFilters: string;
+      priceFrom: string;
+      priceFromPlaceholder: string;
+      priceTo: string;
+      priceToPlaceholder: string;
+      filtersApplied: string;
+      filterBy: string;
+    };
   };
   product: {
     title: string;

@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { MyCustomerDraft } from "@commercetools/platform-sdk";
 
 export const testPassword = "StrongPass123!";
@@ -9,7 +11,7 @@ export const testKeys = {
 
 export function getTestDraft(): MyCustomerDraft {
   return {
-    email: `test-${Date.now()}@example.com`,
+    email: `test-${randomUUID()}@example.com`,
     password: testPassword,
     firstName: "Test",
     lastName: "User",

@@ -4,6 +4,8 @@ import { isValidPageType } from "@/utils/validation";
 import { renderPage } from "@/utils/page-render";
 import routes from "@/config/routes";
 import ProductView from "@/pages/product/product";
+import CatalogView from "@/pages/catalog/catalog";
+import CatalogViewFiltering from "@/pages/catalog/filtering";
 
 const PageRouter = {
   currentPage: PageType.main as PageType,
@@ -13,18 +15,25 @@ const PageRouter = {
   },
 
   getPathFromUrl(): string {
-    return location.hash.slice(1);
+    const fullPath = location.hash.slice(1);
+    return fullPath.split("?")[0];
+  },
+
+  getQueryParams(): URLSearchParams {
+    const fullPath = location.hash.slice(1);
+    const queryString = fullPath.includes("?") ? fullPath.split("?")[1] : "";
+    return new URLSearchParams(queryString);
   },
 
   async handleRoute() {
     const path = this.getPathFromUrl();
+    const queryParameters = this.getQueryParams();
 
     let page: PageType;
-    let productId: string | undefined;
     ProductView.setProductKey(undefined);
 
-    if (path.startsWith("product/")) {
-      productId = path.split("/")[1];
+    if (path.startsWith(`${PageType.product}/`)) {
+      const productId = path.split("/")[1];
 
       if (productId) {
         page = PageType.product;
@@ -33,6 +42,20 @@ const PageRouter = {
       } else {
         page = NOT_FOUND_PAGE;
       }
+    } else if (
+      path.startsWith(`${PageType.catalog}/`) ||
+      path === PageType.catalog
+    ) {
+      const categoryId = path.split("/")[1];
+      page = PageType.catalog;
+      this.currentPage = page;
+
+      if (categoryId) {
+        CatalogView.setSelectedCategoryKey(categoryId);
+      } else {
+        CatalogView.setSelectedCategoryKey(undefined);
+      }
+      CatalogViewFiltering.applyQueryParams(queryParameters);
     } else if (isValidPageType(path)) {
       page = path;
     } else if (path) {

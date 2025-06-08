@@ -1,6 +1,11 @@
 import { CountryValueType, InAttributes, LanguageVariants } from "./types";
 
-import { CountryCode, PageType, SortDirection, SortName } from "@/types/enum";
+import {
+  CountryCode,
+  InAttributeTypeValues,
+  PageType,
+  SortDirection,
+} from "@/types/enum";
 import AddressElement from "@/components/address/address";
 
 type ControlBase = {
@@ -85,6 +90,8 @@ export interface InCategory {
   name: LanguageVariants;
   description?: LanguageVariants;
   assets: InAsset[];
+  parentId?: string;
+  children?: InCategory[];
 }
 
 export interface InAssetSource {
@@ -128,7 +135,7 @@ export interface InCustomer {
 export interface ProductListParameters {
   limit: number;
   offset: number;
-  sortName: SortName;
+  sortName: string;
   sortDirection: SortDirection;
   searchText?: string;
   filters?: string[];
@@ -178,9 +185,17 @@ export interface ProductImage {
 export interface InAttributeDefinition {
   name: string;
   label: LanguageVariants;
-  type?: string;
+  type?: InAttributeType;
   required: boolean;
   isSearchable: boolean;
+}
+
+export interface InAttributeType {
+  name: InAttributeTypeValues;
+  values: {
+    key: string;
+    label: string | Record<string, string>;
+  }[];
 }
 
 export interface InProductType {

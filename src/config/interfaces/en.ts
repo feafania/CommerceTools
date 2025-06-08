@@ -40,11 +40,30 @@ const en: AppTranslation = {
     submit: "Sign up",
   },
   main: {
-    title: "Welcome to Gifts Shop",
+    title: "Welcome to our shop",
   },
   catalog: {
     search: "Search...",
-    title: "Gift catalog",
+    title: "Our product range",
+    allProducts: "All products",
+    sort: {
+      default: "Sort by",
+      priceAsc: "Price: Low to High",
+      priceDesc: "Price: High to Low",
+      nameAsc: "Name: A to Z",
+      nameDesc: "Name: Z to A",
+    },
+    filters: {
+      priceRange: "Price range",
+      applyFilters: "Apply",
+      resetFilters: "Reset",
+      priceFrom: "From",
+      priceFromPlaceholder: "0",
+      priceTo: "To",
+      priceToPlaceholder: "9999",
+      filtersApplied: "Filters are applied",
+      filterBy: "Filter by",
+    },
   },
   product: {
     title: "Detailed Product",

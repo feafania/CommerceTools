@@ -2,7 +2,8 @@ import "./product-card.css";
 import { InProduct } from "@/types/interfaces";
 import { formatPriceWithCurrency, localizeName } from "@/utils/helpers";
 import { CARD_SETTINGS } from "@/config/constants";
-import { CurrencyCode, SliderType } from "@/types/enum";
+import { CurrencyCode, PageType, SliderType } from "@/types/enum";
+import CatalogView from "@/pages/catalog/catalog";
 
 export default class ProductCard {
   card: HTMLDivElement;
@@ -20,7 +21,6 @@ export default class ProductCard {
 
     if (this.variant === SliderType.Img) {
       this.card.classList.add("img-only");
-
       const img = document.createElement("img");
       img.src = this.product.images[0]?.url;
       img.alt = localizeName(this.product.name);
@@ -28,15 +28,21 @@ export default class ProductCard {
 
       this.card.append(img);
     } else {
+      const imgWrapper = document.createElement("div");
+      imgWrapper.className = "product-card-img";
       const img = document.createElement("img");
       img.src = this.product.images[0]?.url;
       img.alt = localizeName(this.product.name);
-
+      imgWrapper.append(img);
       this.card.addEventListener("click", () => {
-        globalThis.location.hash = `product/${this.product.key}`;
+        CatalogView.isSamePage = false;
+        globalThis.location.hash = `${PageType.product}/${this.product.key}`;
       });
 
-      this.card.append(img, ProductCard.renderProductInformation(this.product));
+      this.card.append(
+        imgWrapper,
+        ProductCard.renderProductInformation(this.product),
+      );
     }
 
     return this.card;

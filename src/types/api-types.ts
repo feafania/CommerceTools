@@ -44,10 +44,18 @@ export type QueryArguments = {
   sort?: string | string[];
 
   /**
-   * Filters applied to narrow down the product list.
+   * Filters applied to narrow down the product list (for regular queries).
    * Example: ['variants.attributes.color.key:"red"'].
+   * Uses `where` parameter in API requests.
    */
   where?: string;
+
+  /**
+   * Filters applied for search queries.
+   * Example: ['variants.attributes.color.key:"red"'].
+   * Uses `filter` parameter in search() requests.
+   */
+  filter?: string[];
 
   /**
    * Whether to include staged (unpublished) product data.
@@ -60,9 +68,17 @@ export type QueryArguments = {
    * Useful for forgiving typos in search input.
    */
   fuzzy?: boolean;
+  /**
+   * Only applicable if fuzzy is true.
+   * 0 for text with 1-2 characters
+   * 1 for text with 3-5 characters
+   * 2 for text with more than 5 characters
+   */
+
+  fuzzyLevel?: number;
 
   /**
-   * serch text.
+   * Search text (deprecated, use `text.<locale>` instead).
    */
   searchText?: string;
 } & {
@@ -71,4 +87,10 @@ export type QueryArguments = {
    * The key must follow the format `text.<locale>`, e.g., "text.en".
    */
   [key: `text.${string}`]: string;
+  /**
+   * Currency code used for price-based sorting and filtering.
+   * Required when sorting or filtering by price.
+   * Example: "EUR", "USD", etc.
+   */
+  priceCurrency?: string;
 };

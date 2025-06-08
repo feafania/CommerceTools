@@ -13,6 +13,7 @@ import {
 } from "../__mocks__/auth.mock";
 
 import authRepository from "@/api/repositories/auth-repository";
+import MappingHelpers from "@/api/repositories/mapping-helpers";
 
 jest.mock("@/api/repositories/endpoints/customer/register-customer");
 jest.mock("@/api/repositories/endpoints/customer/login-customer");
@@ -20,7 +21,7 @@ jest.mock("@/api/repositories/endpoints/token/get-customer-token");
 jest.mock("@/api/repositories/endpoints/token/revoke-token");
 jest.mock("@/api/repositories/endpoints/customer/get-me");
 
-const inMockCustomer = authRepository.toInternalCustomer(
+const inMockCustomer = MappingHelpers.toInternalCustomer(
   mockCustomer,
   mockCustomer.password,
 );
@@ -41,10 +42,10 @@ describe("authRepository", () => {
       const result = await authRepository.register(inMockCustomer);
 
       expect(mockedRegisterCustomer).toHaveBeenCalledWith(
-        authRepository.toMyCustomerDraft(inMockCustomer),
+        MappingHelpers.toMyCustomerDraft(inMockCustomer),
       );
       expect(result).toEqual(
-        authRepository.toInternalCustomer(
+        MappingHelpers.toInternalCustomer(
           registerResponse.customer,
           registerResponse.customer.password,
         ),
@@ -80,7 +81,7 @@ describe("authRepository", () => {
       expect(result).toHaveProperty("token");
 
       expect(result?.customer).toEqual(
-        authRepository.toInternalCustomer(
+        MappingHelpers.toInternalCustomer(
           loginResponse.customer,
           loginResponse.customer.password,
         ),
@@ -135,7 +136,7 @@ describe("authRepository", () => {
 
       expect(mockedGetMe).toHaveBeenCalledWith("mock-token");
       expect(result).toEqual(
-        authRepository.toInternalCustomer(mockCustomer, ""),
+        MappingHelpers.toInternalCustomer(mockCustomer, ""),
       );
     });
 

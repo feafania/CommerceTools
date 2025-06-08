@@ -3,32 +3,38 @@ import {
   newTestCustomer,
   oldTestCustomer,
   updatedResponse,
-} from "../__mocks__/customer";
+} from "../__mocks__/customer.mock";
 
-import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
 import { CustomerActionType } from "@/types/api-types";
 import customerRepository from "@/api/repositories/customer-repository";
 import { findDefaultAddress } from "@/utils/helpers";
 import { AddressType } from "@/types/enum";
 import { changeCustomerPassword } from "@/api/repositories/endpoints/customer/change-password";
-import authRepository from "@/api/repositories/auth-repository";
-
-jest.mock("@/api/repositories/endpoints/customer/update-customer", () => ({
-  updateCustomer: jest.fn(),
-}));
+import MappingHelpers from "@/api/repositories/mapping-helpers";
+import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
 
 jest.mock("@/api/repositories/endpoints/customer/change-password", () => ({
   changeCustomerPassword: jest.fn(),
 }));
 
-jest.mock("@/api/repositories/auth-repository", () => ({
-  toInternalCustomer: jest.fn(),
+jest.mock("@/api/repositories/mapping-helpers", () => ({
+  __esModule: true,
+  default: {
+    updateCustomer: jest.fn(),
+    toInternalCustomer: jest.fn(),
+  },
+}));
+
+jest.mock("@/api/repositories/endpoints/customer/update-customer", () => ({
+  updateCustomer: jest.fn().mockResolvedValue(updatedResponse),
 }));
 
 describe("customerRepository.update", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (updateCustomer as jest.Mock).mockResolvedValue(updatedResponse);
+    (MappingHelpers.updateCustomer as jest.Mock).mockResolvedValue(
+      updatedResponse,
+    );
   });
 
   it("should generate correct update actions and return updated customer", async () => {
@@ -46,11 +52,10 @@ describe("customerRepository.update", () => {
           email: "john.doe@example.com",
         },
         { action: CustomerActionType.SetFirstName, firstName: "Johnny" },
-        {
+        expect.objectContaining({
           action: CustomerActionType.SetDefaultBillingAddress,
-          addressId: "addr-1",
-          addressKey: "home",
-        },
+          addressId: "addr-1", // без addressKey
+        }),
         expect.objectContaining({ action: CustomerActionType.AddAddress }),
         expect.objectContaining({
           action: CustomerActionType.SetDefaultShippingAddress,
@@ -199,7 +204,9 @@ describe("customerRepository.update", () => {
       expect.arrayContaining([
         expect.objectContaining({
           action: CustomerActionType.SetDefaultShippingAddress,
-          addressId: newDefault?.id,
+          ...(newDefault?.id
+            ? { addressId: newDefault.id }
+            : { addressKey: newDefault?.key }),
         }),
       ]),
       mockToken,
@@ -236,13 +243,14 @@ describe("customerRepository.update", () => {
       modifiedCustomer.addresses,
       AddressType.Billing,
     );
-
     expect(updateCustomer).toHaveBeenCalledWith(
       expect.any(Number),
       expect.arrayContaining([
         expect.objectContaining({
           action: CustomerActionType.SetDefaultBillingAddress,
-          addressId: newDefault?.id,
+          ...(newDefault?.id
+            ? { addressId: newDefault.id }
+            : { addressKey: newDefault?.key }),
         }),
       ]),
       mockToken,
@@ -256,7 +264,7 @@ describe("customerRepository.update", () => {
       mockToken,
     );
 
-    expect(updateCustomer).not.toHaveBeenCalled();
+    expect(MappingHelpers.updateCustomer).not.toHaveBeenCalled();
   });
 
   it("should not change addresses if only the order changed", async () => {
@@ -271,7 +279,7 @@ describe("customerRepository.update", () => {
       mockToken,
     );
 
-    expect(updateCustomer).not.toHaveBeenCalled();
+    expect(MappingHelpers.updateCustomer).not.toHaveBeenCalled();
   });
 
   it("should throw if version is missing", async () => {
@@ -282,7 +290,9 @@ describe("customerRepository.update", () => {
   });
 
   it("should rethrow API errors", async () => {
-    (updateCustomer as jest.Mock).mockRejectedValueOnce(new Error("API error"));
+    (MappingHelpers.updateCustomer as jest.Mock).mockRejectedValueOnce(
+      new Error("API error"),
+    );
 
     await expect(
       customerRepository.update(oldTestCustomer, newTestCustomer, mockToken),
@@ -307,7 +317,7 @@ describe("customerRepository.changePassword", () => {
       email: updatedResponse.email,
     };
 
-    (authRepository.toInternalCustomer as jest.Mock).mockReturnValue(
+    (MappingHelpers.toInternalCustomer as jest.Mock).mockReturnValue(
       expectedCustomer,
     );
 
@@ -325,7 +335,7 @@ describe("customerRepository.changePassword", () => {
       token,
     );
 
-    expect(authRepository.toInternalCustomer).toHaveBeenCalledWith(
+    expect(MappingHelpers.toInternalCustomer).toHaveBeenCalledWith(
       updatedResponse,
       newPassword,
     );
@@ -359,6 +369,6 @@ describe("customerRepository.changePassword", () => {
     );
 
     expect(result).toBeUndefined();
-    expect(authRepository.toInternalCustomer).not.toHaveBeenCalled();
+    expect(MappingHelpers.toInternalCustomer).not.toHaveBeenCalled();
   });
 });

@@ -102,7 +102,7 @@ describe("ProductService", () => {
 
       const response = await productService.getProductsByCategoryKey("dhs");
       const result = response.results;
-      expect(result).toEqual([mappedInProduct]);
+      expect(result).toEqual(mockedInternalProductList);
     });
 
     it("should return empty array on error", async () => {
