@@ -25,7 +25,7 @@ export default async function revokeCustomerToken(
     });
     return response.status === 200;
   } catch (error) {
-    console.error("Error revoking token:", error);
+    // console.error("Error revoking token:", error);
     handleApiError(error);
     return false;
   }

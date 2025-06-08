@@ -17,7 +17,7 @@ export default async function getMe(token: string): Promise<Customer> {
 
     return response.body;
   } catch (error: unknown) {
-    console.error("Fetching customer (me) failed:", error);
+    // console.error("Fetching customer (me) failed:", error);
     handleApiError(error);
   }
 }

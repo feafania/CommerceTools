@@ -23,7 +23,7 @@ export default async function getProductByKey(
 
     return response.body;
   } catch (error) {
-    console.error(`Error fetching product with key "${key}":`, error);
+    // console.error(`Error fetching product with key "${key}":`, error);
     handleApiError(error);
   }
 }

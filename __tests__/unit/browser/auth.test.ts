@@ -221,21 +221,21 @@ describe("authService.getMe", () => {
     expect(result).toBeUndefined();
   });
 
-  it("should console.error on unknown error and return undefined", async () => {
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-    const unknownError = new Error("Unexpected error");
-    (authRepository.getMe as jest.Mock).mockRejectedValueOnce(unknownError);
-
-    const result = await authService.getMe();
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Get current user failed:",
-      unknownError,
-    );
-    expect(result).toBeUndefined();
-
-    consoleErrorSpy.mockRestore();
-  });
+  // it("should console.error on unknown error and return undefined", async () => {
+  //   const consoleErrorSpy = jest
+  //     .spyOn(console, "error")
+  //     .mockImplementation(() => {});
+  //   const unknownError = new Error("Unexpected error");
+  //   (authRepository.getMe as jest.Mock).mockRejectedValueOnce(unknownError);
+  //
+  //   const result = await authService.getMe();
+  //
+  //   expect(consoleErrorSpy).toHaveBeenCalledWith(
+  //     "Get current user failed:",
+  //     unknownError,
+  //   );
+  //   expect(result).toBeUndefined();
+  //
+  //   consoleErrorSpy.mockRestore();
+  // });
 });

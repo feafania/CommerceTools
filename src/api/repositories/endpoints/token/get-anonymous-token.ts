@@ -39,8 +39,8 @@ export default async function getAnonToken(): Promise<
       return undefined;
     }
     return (await response.json()) as TokenResponse;
-  } catch (error) {
-    console.error("Error fetching anonymous token:", error);
+  } catch {
+    // console.error("Error fetching anonymous token:", error);
     return undefined;
   }
 }

@@ -70,6 +70,10 @@ jest.mock("@/types/enum", () => {
   return {
     __esModule: true,
     AddressType: actualEnumModule.AddressType,
+    LabelPosition: {
+      Right: "right",
+      Left: "left",
+    },
   };
 });
 

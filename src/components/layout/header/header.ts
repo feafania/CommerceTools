@@ -188,8 +188,8 @@ const Header = {
               }
               PageRouter.navigateTo(PageType.main);
             }
-          } catch (error) {
-            console.error("Logout error:", error);
+          } catch {
+            // console.error("Logout error:", error);
           }
         }
       } else {

@@ -29,7 +29,7 @@ export default async function loginCustomer(
 
     return response.body;
   } catch (error: unknown) {
-    console.error(`Login with email "${email}" failed:`, error);
+    // console.error(`Login with email "${email}" failed:`, error);
     handleApiError(error);
   }
 }

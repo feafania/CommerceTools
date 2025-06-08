@@ -1,13 +1,17 @@
 import productService from "@/api/services/product-service";
 import { SETTINGS } from "@/config/settings";
 import CatalogView from "@/pages/catalog/catalog";
-import { AttributeMap, SortOptions } from "@/types/types";
+import { AttributeMap, InAttributes, SortOptions } from "@/types/types";
 import { InAttributeTypeValues, LabelPosition, PageType } from "@/types/enum";
 import { localizeName } from "@/utils/helpers";
 import createSelect from "@/components/select/select";
 import createCheckbox from "@/components/checkbox/checkbox";
 
 const CatalogViewFiltering = {
+  tempFilters: {} as InAttributes,
+  tempMinPrice: undefined as number | undefined,
+  tempMaxPrice: undefined as number | undefined,
+
   renderFilters(): HTMLDivElement {
     const filtersSection = document.createElement("div");
     filtersSection.className = "filters-section";
@@ -36,21 +40,15 @@ const CatalogViewFiltering = {
     applyFiltersButton.className = "apply-filters-btn custom-filter-button";
 
     applyFiltersButton.addEventListener("click", async () => {
-      if (minPriceInput && maxPriceInput) {
-        const min = minPriceInput.value
-          ? Number(minPriceInput.value)
-          : undefined;
-        const max = maxPriceInput.value
-          ? Number(maxPriceInput.value)
-          : undefined;
-        CatalogView.minPrice = min;
-        CatalogView.maxPrice = max;
-        CatalogView.offset = 0;
+      CatalogView.minPrice = CatalogViewFiltering.tempMinPrice;
+      CatalogView.maxPrice = CatalogViewFiltering.tempMaxPrice;
+      CatalogView.attributeFilters = { ...CatalogViewFiltering.tempFilters };
+      CatalogView.offset = 0;
+      CatalogViewFiltering.tempFilters = { ...CatalogView.attributeFilters };
 
-        this.filterInform();
-        CatalogView.isSamePage = true;
-        this.buildPath();
-      }
+      await this.filterInform();
+      CatalogView.isSamePage = true;
+      this.buildPath();
     });
 
     // Reset button
@@ -63,14 +61,19 @@ const CatalogViewFiltering = {
       if (minPriceInput && maxPriceInput) {
         minPriceInput.value = "";
         maxPriceInput.value = "";
-        CatalogView.minPrice = undefined;
-        CatalogView.maxPrice = undefined;
-        CatalogView.attributeFilters = {};
-
-        await this.filterInform();
-        CatalogView.isSamePage = true;
-        this.buildPath();
       }
+
+      CatalogViewFiltering.tempMinPrice = undefined;
+      CatalogViewFiltering.tempMaxPrice = undefined;
+      CatalogViewFiltering.tempFilters = {};
+
+      CatalogView.minPrice = undefined;
+      CatalogView.maxPrice = undefined;
+      CatalogView.attributeFilters = {};
+      this.clearInputs();
+      await this.filterInform();
+      CatalogView.isSamePage = true;
+      this.buildPath();
     });
 
     this.setActiveFiltering();
@@ -79,22 +82,34 @@ const CatalogViewFiltering = {
     return filtersSection;
   },
 
-  setActiveFiltering() {
-    const applyFiltersButton =
-      CatalogView.container.querySelector<HTMLButtonElement>(
-        ".apply-filters-btn",
-      );
-    if (applyFiltersButton) {
-      if (
-        CatalogView.minPrice ||
-        CatalogView.maxPrice ||
-        Object.keys(CatalogView.attributeFilters).length > 0
-      ) {
-        applyFiltersButton.classList.add("active");
-      } else {
-        applyFiltersButton.classList.remove("active");
-      }
+  clearInputs() {
+    const selects = document.querySelectorAll<HTMLSelectElement>(
+      "select.select-filter",
+    );
+    for (const sel of selects) {
+      sel.value = "";
+      sel.dispatchEvent(new Event("change"));
     }
+
+    const checkboxes = document.querySelectorAll<HTMLInputElement>(
+      "input[type='checkbox']",
+    );
+    for (const check of checkboxes) {
+      check.checked = false;
+      check.dispatchEvent(new Event("change"));
+    }
+  },
+
+  setActiveFiltering() {
+    //   if (
+    //     CatalogView.minPrice ||
+    //     CatalogView.maxPrice ||
+    //     Object.keys(CatalogView.attributeFilters).length > 0
+    //   ) {
+    //     applyFiltersButton.classList.add("active");
+    //   } else {
+    //     applyFiltersButton.classList.remove("active");
+    //   }
   },
 
   renderPriceFilter() {
@@ -129,6 +144,15 @@ const CatalogViewFiltering = {
       input.inputMode = "decimal";
       input.addEventListener("input", () => {
         input.value = input.value.replaceAll(/[^0-9.]/g, "");
+        const min = minPriceInput?.value
+          ? Number(minPriceInput.value)
+          : undefined;
+        const max = maxPriceInput?.value
+          ? Number(maxPriceInput.value)
+          : undefined;
+
+        CatalogViewFiltering.tempMinPrice = min;
+        CatalogViewFiltering.tempMaxPrice = max;
       });
     }
 
@@ -155,6 +179,34 @@ const CatalogViewFiltering = {
       }
     }
     CatalogView.availableAttributes = attributeFields;
+
+    const newFilterContainers: HTMLElement[] =
+      this.createAttributeContainer(attributeFields);
+
+    const currentFilters =
+      wrapper.querySelectorAll<HTMLElement>(".attribute-filter");
+    for (const oldFilter of currentFilters) {
+      const name = oldFilter.dataset.attrName;
+      if (!attributeFields.has(name!)) {
+        oldFilter.remove();
+      }
+    }
+
+    for (const newContainer of newFilterContainers) {
+      const attributeName = newContainer.dataset.attrName!;
+      const existing = wrapper.querySelector(
+        `.attribute-filter[data-attr-name="${attributeName}"]`,
+      );
+      if (existing) {
+        existing.replaceWith(newContainer);
+      } else {
+        wrapper.append(newContainer);
+      }
+    }
+  },
+
+  createAttributeContainer(attributeFields: AttributeMap): HTMLElement[] {
+    const newFilterContainers: HTMLElement[] = [];
 
     for (const [name, attribute] of attributeFields) {
       const type = attribute.type!;
@@ -190,10 +242,12 @@ const CatalogViewFiltering = {
 
       const container = document.createElement("div");
       container.className = "attribute-filter";
+      container.dataset.attrName = name;
       container.append(filterElement);
 
-      wrapper.append(container);
+      newFilterContainers.push(container);
     }
+    return newFilterContainers;
   },
 
   createAttributeCheckbox(
@@ -211,20 +265,17 @@ const CatalogViewFiltering = {
       title.textContent = label;
       groupWrapper.append(title);
     }
-
-    const selectedValues = Array.isArray(CatalogView.attributeFilters[name])
-      ? (CatalogView.attributeFilters[name] as string[])
-      : [];
+    const selectedValues = this.getSelectedValues(name);
 
     for (const opt of options) {
       const checkbox = createCheckbox(
         {
           id: `${id}-${opt.code}`,
-          name: `${id}`,
+          name: `${opt.code}`,
           label: opt.label,
-          value: opt.code,
+          value: selectedValues.includes(opt.code) ? "on" : "off",
           class: "checkbox-option",
-          forbidValueChange: false,
+          forbidValueFromState: true,
         },
         LabelPosition.Right,
       );
@@ -233,26 +284,41 @@ const CatalogViewFiltering = {
       if (input) {
         input.checked = selectedValues.includes(opt.code);
         input.addEventListener("change", () => {
-          const current = Array.isArray(CatalogView.attributeFilters[name])
-            ? (CatalogView.attributeFilters[name] as string[])
+          const current = Array.isArray(CatalogViewFiltering.tempFilters[name])
+            ? [...(CatalogViewFiltering.tempFilters[name] as string[])]
             : [];
 
           if (input.checked) {
-            CatalogView.attributeFilters[name] = [...current, opt.code];
+            if (!current.includes(opt.code)) {
+              current.push(opt.code);
+            }
+            CatalogViewFiltering.tempFilters[name] = current;
           } else {
             const filtered = current.filter((v) => v !== opt.code);
             if (filtered.length === 0) {
-              delete CatalogView.attributeFilters[name];
+              delete CatalogViewFiltering.tempFilters[name];
             } else {
-              CatalogView.attributeFilters[name] = filtered;
+              CatalogViewFiltering.tempFilters[name] = filtered;
             }
           }
         });
+        // input.dispatchEvent(new Event("change"));
       }
 
       groupWrapper.append(checkbox);
     }
     return groupWrapper;
+  },
+
+  getSelectedValues(name: string): string[] {
+    const raw = CatalogView.attributeFilters[name];
+    if (Array.isArray(raw)) {
+      return raw as string[];
+    } else if (typeof raw === "string") {
+      return raw.split(",");
+    } else {
+      return [];
+    }
   },
 
   createAttributeSelect(
@@ -272,16 +338,16 @@ const CatalogViewFiltering = {
         typeof CatalogView.attributeFilters[name] === "string"
           ? (CatalogView.attributeFilters[name] as string)
           : "",
-      forbidValueChange: false,
+      forbidValueFromState: true,
     });
 
     const selectElement = select.querySelector("select");
     if (selectElement) {
       selectElement.addEventListener("change", () => {
         if (selectElement.value) {
-          CatalogView.attributeFilters[name] = selectElement.value;
+          CatalogViewFiltering.tempFilters[name] = selectElement.value;
         } else {
-          delete CatalogView.attributeFilters[name];
+          delete CatalogViewFiltering.tempFilters[name];
         }
       });
       const clearButton = document.createElement("button");
@@ -311,6 +377,11 @@ const CatalogViewFiltering = {
     const queryParameters = new URLSearchParams(hashParts[1]);
     await this.applyQueryParams(queryParameters);
     CatalogView.updateSidebarActiveClass();
+    const attributesWrapper =
+      document.querySelector<HTMLDivElement>(".attribute-filters");
+    if (attributesWrapper) {
+      await this.renderAttributeFilters(attributesWrapper);
+    }
     await CatalogView.setTitle();
     await this.filterInform();
   },
@@ -341,7 +412,6 @@ const CatalogViewFiltering = {
       let valueText: string;
 
       if (Array.isArray(value)) {
-        // Калі значэння некалькі — лакалізуем кожнае
         valueText = value
           .map((value_) => {
             const found = attribute.type?.values.find((v) => v.key === value_);
@@ -383,7 +453,9 @@ const CatalogViewFiltering = {
       parameters.set("offset", CatalogView.offset.toString());
 
     for (const [key, value] of Object.entries(CatalogView.attributeFilters)) {
-      if (typeof value === "string") {
+      if (Array.isArray(value)) {
+        parameters.set(`attr_${key}`, value.join(","));
+      } else if (typeof value === "string") {
         parameters.set(`attr_${key}`, value);
       } else if (value !== null) {
         parameters.set(`attr_${key}`, String(value));
@@ -418,11 +490,15 @@ const CatalogViewFiltering = {
       ? Number(parameters.get("offset"))
       : 0;
 
-    const attributeFilters: Record<string, string> = {};
+    const attributeFilters: InAttributes = {};
+
     for (const [key, value] of parameters.entries()) {
       if (key.startsWith("attr_")) {
         const attributeName = key.slice(5);
-        attributeFilters[attributeName] = value;
+
+        attributeFilters[attributeName] = value.includes(",")
+          ? value.split(",")
+          : value;
 
         const input = CatalogView.container.querySelector<HTMLInputElement>(
           `#filter-input-${attributeName} input`,
@@ -433,6 +509,14 @@ const CatalogViewFiltering = {
       }
     }
     CatalogView.attributeFilters = attributeFilters;
+    CatalogViewFiltering.tempMinPrice = CatalogView.minPrice;
+    CatalogViewFiltering.tempMaxPrice = CatalogView.maxPrice;
+    CatalogViewFiltering.tempFilters = { ...CatalogView.attributeFilters };
+    const attributesWrapper =
+      document.querySelector<HTMLDivElement>(".attribute-filters");
+    if (attributesWrapper) {
+      await CatalogViewFiltering.renderAttributeFilters(attributesWrapper);
+    }
   },
 
   buildPath(): void {

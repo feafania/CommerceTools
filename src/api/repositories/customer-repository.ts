@@ -28,7 +28,7 @@ export const customerRepository = {
         return MappingHelpers.updateCustomer(oldCustomer, updatedCustomer);
       }
     } catch (error) {
-      console.error("Customer update failed:", error);
+      // console.error("Customer update failed:", error);
       throw error;
     }
   },

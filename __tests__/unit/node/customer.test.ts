@@ -54,7 +54,7 @@ describe("customerRepository.update", () => {
         { action: CustomerActionType.SetFirstName, firstName: "Johnny" },
         expect.objectContaining({
           action: CustomerActionType.SetDefaultBillingAddress,
-          addressId: "addr-1", // без addressKey
+          addressId: "addr-1",
         }),
         expect.objectContaining({ action: CustomerActionType.AddAddress }),
         expect.objectContaining({

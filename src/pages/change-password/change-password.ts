@@ -66,7 +66,7 @@ const ChangePassword = {
       class: "password-input",
       validationName: "password",
       disabled: false,
-      forbidValueChange: true,
+      forbidValueFromState: true,
     });
     const newEyeButton = createEyeButton("new-password");
     newPasswordContainer.append(newPassword, newEyeButton);
@@ -82,7 +82,7 @@ const ChangePassword = {
       class: "password-input",
       validationName: "password",
       disabled: false,
-      forbidValueChange: true,
+      forbidValueFromState: true,
     });
     const confirmEyeButton = createEyeButton("confirm-password");
     confirmContainer.append(confirmNewPassword, confirmEyeButton);

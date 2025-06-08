@@ -48,7 +48,7 @@ export default async function getCustomerToken(
 
     return (await response.json()) as TokenResponse;
   } catch (error) {
-    console.error("Error fetching customer token:", error);
+    // console.error("Error fetching customer token:", error);
     handleApiError(error);
   }
 }

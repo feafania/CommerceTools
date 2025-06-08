@@ -33,7 +33,7 @@ export async function updateCustomer(
 
     return response.body;
   } catch (error) {
-    console.error("Customer update failed:", error);
+    // console.error("Customer update failed:", error);
     handleApiError(error);
   }
 }

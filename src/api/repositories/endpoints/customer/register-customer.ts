@@ -31,7 +31,7 @@ export default async function registerCustomer(
 
     return response.body;
   } catch (error: unknown) {
-    console.error(`Registration failed for email "${draft.email}":`, error);
+    // console.error(`Registration failed for email "${draft.email}":`, error);
     handleApiError(error);
   }
 }
