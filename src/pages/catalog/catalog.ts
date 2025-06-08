@@ -1,4 +1,5 @@
 import "./catalog.css";
+import "./resize-filter.js";
 import productService from "@/api/services/product-service";
 // import ProductSlider from "@/components/product-slider/product-slider";
 import ProductCard from "@/components/product-card/product-card";
