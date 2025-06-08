@@ -87,7 +87,7 @@ export async function handleFailedResponse(
     }
   }
 
-  console.error(`${context} failed:`, errorData);
+  // console.error(`${context} failed:`, errorData);
 
   if (isCTApiError(errorData)) {
     const statusCode =

@@ -44,7 +44,7 @@ export default async function refreshCustomerToken(
 
     return (await response.json()) as TokenResponse;
   } catch (error) {
-    console.error("Error refreshing token:", error);
+    // console.error("Error refreshing token:", error);
     handleApiError(error);
   }
 }

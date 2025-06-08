@@ -34,7 +34,7 @@ export async function changeCustomerPassword(
 
     return response.body;
   } catch (error) {
-    console.error("Customer password change failed:", error);
+    // console.error("Customer password change failed:", error);
     handleApiError(error);
   }
 }

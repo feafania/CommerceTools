@@ -58,14 +58,12 @@ export default async function getProductList({
       fuzzyLevel: 2,
       priceCurrency: SETTINGS.currentCurrency,
     };
-    console.log("filters", filters);
 
     // if (searchText?.trim()) {
     queryArguments.filter = filters;
     // } else if (filters.length > 0) {
     //   queryArguments.where = filters.join(" and ");
     // }
-    console.log("queryArguments", queryArguments);
     // let response;
 
     const searchTerm = searchText?.trim();
@@ -87,7 +85,7 @@ export default async function getProductList({
 
     return response.body;
   } catch (error) {
-    console.error("Error fetching product list:", error);
+    // console.error("Error fetching product list:", error);
     handleApiError(error);
     return {
       limit: 0,

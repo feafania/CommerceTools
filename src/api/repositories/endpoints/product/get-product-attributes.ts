@@ -26,7 +26,7 @@ export default async function getProductAttributes(
 
     return response.body.masterVariant.attributes ?? [];
   } catch (error) {
-    console.error("Error fetching product attributes:", error);
+    // console.error("Error fetching product attributes:", error);
     handleApiError(error);
     return [];
   }

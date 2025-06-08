@@ -37,7 +37,6 @@ export default function createCheckbox(
     input.value = savedValue;
   }
   input.checked = input.value === "on";
-  console.log(input.checked);
 
   input.addEventListener("change", () => {
     input.value = input.checked ? "on" : "off";

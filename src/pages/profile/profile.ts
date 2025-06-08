@@ -200,8 +200,8 @@ const UserProfile = {
           this.disableGlobalEditingMode(this.containerElement);
         }
       }
-    } catch (error) {
-      console.error("Update failed", error);
+    } catch {
+      // console.error("Update failed", error);
     }
   },
 
@@ -1090,8 +1090,8 @@ const UserProfile = {
         if (result) {
           await showModalMessage(SETTINGS.label.userProfile.deleteAddress);
         }
-      } catch (error) {
-        console.error("Update failed", error);
+      } catch {
+        // console.error("Update failed", error);
       }
     }
   },

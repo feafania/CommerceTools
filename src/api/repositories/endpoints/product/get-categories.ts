@@ -30,7 +30,7 @@ export default async function getCategories(): Promise<
 
     return response.body;
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    // console.error("Error fetching categories:", error);
     handleApiError(error);
   }
 }

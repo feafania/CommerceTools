@@ -20,7 +20,7 @@ export default async function getProductTypes(): Promise<ProductType[]> {
 
     return response.body.results;
   } catch (error) {
-    console.error("Error fetching product types:", error);
+    // console.error("Error fetching product types:", error);
     handleApiError(error);
     return [];
   }

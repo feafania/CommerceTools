@@ -38,7 +38,7 @@ export default function localizeMessage(
 
   if (
     messageToLowerCase.includes("postal code") ||
-    messageToLowerCase.includes("zip сode") ||
+    messageToLowerCase.includes("zip code") ||
     messageToLowerCase.includes("postcode")
   )
     return SETTINGS.label.errorsTypes.invalidPostalCode;

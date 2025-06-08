@@ -24,7 +24,7 @@ export default async function getCategoryByKey(
 
     return response.body;
   } catch (error) {
-    console.error(`Error fetching category with key "${key}":`, error);
+    // console.error(`Error fetching category with key "${key}":`, error);
     handleApiError(error);
   }
 }

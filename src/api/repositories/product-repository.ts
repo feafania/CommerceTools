@@ -46,7 +46,7 @@ const productRepository = {
 
       return rootCategories;
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      // console.error("Error fetching categories:", error);
       throw error;
     }
   },
@@ -71,7 +71,7 @@ const productRepository = {
 
       return category;
     } catch (error) {
-      console.error("Error getting categories:", error);
+      // console.error("Error getting categories:", error);
       throw error;
     }
   },
@@ -100,8 +100,8 @@ const productRepository = {
         total: response?.total,
         results: productResult,
       };
-    } catch (error) {
-      console.error("Error getting product list:", error);
+    } catch {
+      // console.error("Error getting product list:", error);
       return this.emptyProductResponse();
     }
   },
@@ -116,7 +116,7 @@ const productRepository = {
         ? MappingHelpers.mapProductToInternal(response, currency)
         : undefined;
     } catch (error) {
-      console.error("Error getting product by key:", error);
+      // console.error("Error getting product by key:", error);
       throw error;
     }
   },
@@ -177,8 +177,8 @@ const productRepository = {
       }
 
       return this.emptyProductResponse();
-    } catch (error) {
-      console.error("Error getting products by category key:", error);
+    } catch {
+      // console.error("Error getting products by category key:", error);
       return this.emptyProductResponse();
     }
   },
@@ -190,7 +190,7 @@ const productRepository = {
         MappingHelpers.mapProductTypeToInternal(productType),
       );
     } catch (error) {
-      console.error("Error getting product types:", error);
+      // console.error("Error getting product types:", error);
       throw error;
     }
   },
@@ -202,7 +202,7 @@ const productRepository = {
         ? MappingHelpers.mapProductTypeToInternal(response)
         : undefined;
     } catch (error) {
-      console.error("Error getting product type by key:", error);
+      // console.error("Error getting product type by key:", error);
       throw error;
     }
   },
@@ -212,7 +212,7 @@ const productRepository = {
       const attributes = await getProductAttributes(productId);
       return MappingHelpers.mapAttributesArray(attributes);
     } catch (error) {
-      console.error("Error getting product attributes:", error);
+      // console.error("Error getting product attributes:", error);
       throw error;
     }
   },

@@ -53,8 +53,8 @@ class AuthService {
         authStore.setUser(undefined);
         return true;
       }
-    } catch (error) {
-      console.error("Logout failed:", error);
+    } catch {
+      // console.error("Logout failed:", error);
     }
     showModalMessage(`${SETTINGS.label.errors.logout}`);
     return false;
@@ -99,8 +99,8 @@ class AuthService {
         );
       }
       return accessRevoked;
-    } catch (error) {
-      console.error("Token revocation failed:", error);
+    } catch {
+      // console.error("Token revocation failed:", error);
       return false;
     }
   }
@@ -121,7 +121,7 @@ class AuthService {
           `${SETTINGS.label.errors.getCurrentUser}\n${error.message}`,
         );
       } else {
-        console.error("Get current user failed:", error);
+        // console.error("Get current user failed:", error);
       }
       return undefined;
     }
