@@ -1,4 +1,4 @@
-import { CountryValueType, InAttributes, LanguageCode } from "./types";
+import { CountryValueType, InAttributes, LanguageVariants } from "./types";
 
 import { CountryCode, PageType, SortDirection, SortName } from "@/types/enum";
 import AddressElement from "@/components/address/address";
@@ -7,6 +7,8 @@ type ControlBase = {
   type: string;
   label: string;
   name: string;
+  value: string;
+  forbidValueChange: boolean | undefined;
   placeholder: string;
   id: string;
   class: string | string[];
@@ -14,7 +16,6 @@ type ControlBase = {
   required: boolean;
   validationName?: string;
   relatedCountryField?: string;
-  value: string;
 };
 
 export interface ControlSelect extends ControlBase {
@@ -81,8 +82,8 @@ export interface CTApiError {
 export interface InCategory {
   id: string;
   key?: string;
-  name: string;
-  description?: string;
+  name: LanguageVariants;
+  description?: LanguageVariants;
   assets: InAsset[];
 }
 
@@ -97,8 +98,8 @@ export interface InAsset {
   id: string;
   key?: string;
   sources: InAssetSource[];
-  name: string;
-  description?: string;
+  name: LanguageVariants;
+  description?: LanguageVariants;
 }
 
 export interface InAddress {
@@ -136,17 +137,33 @@ export interface ProductListParameters {
 export interface InProduct {
   id: string;
   key?: string;
-  name: Record<LanguageCode, string>;
-  description?: Record<LanguageCode, string>;
+  name: LanguageVariants;
+  description?: LanguageVariants;
   images: ProductImage[];
   price: number; // main price in cents (without discount)
-  discountedPrice?: number | null;
+  currencyCode?: string;
+  discountedPrice?: number | undefined;
   isDiscounted: boolean;
-  categories?: string[];
-  attributes?: InAttributes;
+  discountPercent?: number | undefined;
+  categories: string[];
+  attributes: InAttributes;
   available: boolean;
   sku?: string;
   variantId?: number; // ID of main variant
+  variants: InVariant[];
+}
+
+export interface InVariant {
+  id: number;
+  sku?: string;
+  images: ProductImage[];
+  price?: number;
+  currencyCode?: string;
+  discountedPrice?: number | undefined;
+  isDiscounted: boolean;
+  discountPercent?: number | undefined;
+  attributes: InAttributes;
+  available: boolean;
 }
 
 export interface ProductImage {
@@ -156,6 +173,55 @@ export interface ProductImage {
     w: number;
     h: number;
   };
+}
+
+export interface InAttributeDefinition {
+  name: string;
+  label: LanguageVariants;
+  type?: string;
+  required: boolean;
+  isSearchable: boolean;
+}
+
+export interface InProductType {
+  id: string;
+  key?: string;
+  name: string;
+  description?: string;
+  attributes: InAttributeDefinition[];
+}
+
+export interface ProductSearchResult {
+  /**
+   *	The maximum number of results
+   *
+   *
+   */
+  readonly limit: number;
+  /**
+   *	The starting point for the retrieved
+   *
+   *
+   */
+  readonly offset: number;
+  /**
+   *	Actual number of results returned.
+   *
+   *
+   */
+  readonly count: number;
+  /**
+   *	Total number of results matching the query.
+   *
+   *
+   */
+  readonly total?: number;
+  /**
+   *	Products where at least one ProductVariant(ctp:api:type:ProductVariant)
+   *   matches the search query.
+   *
+   */
+  readonly results: InProduct[];
 }
 
 export interface AddressItem {

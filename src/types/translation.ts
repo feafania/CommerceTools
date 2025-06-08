@@ -8,6 +8,8 @@ export interface AppTranslation {
     signIn: string;
     registration: string;
     main: string;
+    catalog: string;
+    product: string;
     about: string;
     signOut: string;
     directions: {
@@ -19,7 +21,7 @@ export interface AppTranslation {
       toSignUp: string;
     };
     userProfile: string;
-    changepassword: string;
+    changePassword: string;
   };
   login: {
     email: string;
@@ -36,6 +38,43 @@ export interface AppTranslation {
     password: string;
     header: string;
     submit: string;
+  };
+  main: {
+    title: string;
+  };
+  catalog: {
+    search: string;
+    title: string;
+  };
+  product: {
+    title: string;
+    backButton: string;
+  };
+  userProfile: {
+    firstName: string;
+    lastName: string;
+    birthDay: string;
+    email: string;
+    password: string;
+    header: string;
+    editModeBtn: string;
+    editModeStop: string;
+    editPassword: string;
+    deleteAddress: string;
+    editUSer: string;
+    editAddress: string;
+    addAddress: string;
+    submitBtn: string;
+  };
+  changePassword: {
+    current: string;
+    newPassword: string;
+    confirmNewPassword: string;
+    formTitle: string;
+    success: string;
+    wrongConfirm: string;
+    wrongOldPassword: string;
+    emptyPassword: string;
   };
   address: {
     headers: AddressTypeMap;
@@ -54,9 +93,6 @@ export interface AppTranslation {
     addAdress: string;
     addressProfileTitle: string;
     addressesList: string;
-  };
-  main: {
-    title: string;
   };
   validation: {
     email: string;
@@ -115,31 +151,5 @@ export interface AppTranslation {
     onSignUp: string;
     onSignOut: string;
     nothingToUpdate: string;
-  };
-  userProfile: {
-    firstName: string;
-    lastName: string;
-    birthDay: string;
-    email: string;
-    password: string;
-    header: string;
-    editModeBtn: string;
-    editModeStop: string;
-    editPassword: string;
-    deleteAddress: string;
-    editUSer: string;
-    editAddress: string;
-    addAddress: string;
-    submitBtn: string;
-  };
-  changePassword: {
-    current: string;
-    newPassword: string;
-    confirmNewPassword: string;
-    formTitle: string;
-    success: string;
-    wrongConfirm: string;
-    wrongOldPassword: string;
-    emptyPassword: string;
   };
 }

@@ -24,10 +24,6 @@ export interface TokenResponse extends Omit<TokenType, "token_expires_in"> {
   token_type: "Bearer";
 }
 
-export interface BaseCustomerUpdateAction {
-  action: string;
-}
-
 export type QueryArguments = {
   /**
    * Maximum number of products to return in the response.
@@ -51,7 +47,7 @@ export type QueryArguments = {
    * Filters applied to narrow down the product list.
    * Example: ['variants.attributes.color.key:"red"'].
    */
-  filter?: string[];
+  where?: string;
 
   /**
    * Whether to include staged (unpublished) product data.
@@ -64,6 +60,11 @@ export type QueryArguments = {
    * Useful for forgiving typos in search input.
    */
   fuzzy?: boolean;
+
+  /**
+   * serch text.
+   */
+  searchText?: string;
 } & {
   /**
    * Full-text search query localized by language.

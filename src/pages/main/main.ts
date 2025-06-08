@@ -3,11 +3,14 @@ import "./main.css";
 import { SETTINGS } from "@/config/settings";
 import Header from "@/components/layout/header/header";
 import productService from "@/api/services/product-service";
+import { localizeName } from "@/utils/helpers";
+import CatalogView2 from "@/pages/catalog2/catalog";
+import PageRouter from "@/router/page-router";
+import { PageType } from "@/types/enum";
 
 const MainView = {
   async render() {
     const container = document.createElement("section");
-
     container.className = "view main-view";
 
     const aside = document.createElement("aside");
@@ -23,20 +26,24 @@ const MainView = {
     categoryList.className = "categories";
 
     const categories = await productService.getCategories();
+
     for (const cat of categories) {
       const li = document.createElement("div");
       li.className = "category-item";
 
       const liTitle = document.createElement("div");
       liTitle.className = "category-title";
-      liTitle.textContent = cat.name;
+      liTitle.textContent = localizeName(cat.name);
 
       const liPicture = document.createElement("div");
       liPicture.className = "category-pic";
 
       const picture = document.createElement("img");
-      picture.src = "assets/img/categories/" + cat.key + ".png";
-      picture.alt = cat.name;
+      picture.src = cat.assets[0].sources[0].uri;
+      picture.alt = localizeName(cat.name);
+      li.addEventListener("click", () =>
+        this.handleCategoryImageClick(cat.key),
+      );
 
       liPicture.append(picture);
       li.append(liPicture, liTitle);
@@ -50,6 +57,12 @@ const MainView = {
     container.append(aside, content);
 
     return container;
+  },
+  handleCategoryImageClick(categoryKey: string | undefined) {
+    if (categoryKey) {
+      CatalogView2.setSelectedCategoryKey(categoryKey);
+      PageRouter.navigateTo(PageType.catalog);
+    }
   },
 };
 

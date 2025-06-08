@@ -4,7 +4,6 @@ export default function localizeMessage(
   message: string,
   code: string = "",
 ): string {
-  console.error("localizeMessage got:", code, message);
   if (
     message.includes(
       "There is already an existing customer with the provided email",

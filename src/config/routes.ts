@@ -6,6 +6,8 @@ import renderAboutView from "@/pages/about/about";
 import NotFoundView from "@/pages/notfound/notfound";
 import LoginRegistrationView from "@/pages/login-registration/login-registration";
 import UserProfile from "@/pages/profile/profile";
+import CatalogView2 from "@/pages/catalog2/catalog";
+import ProductView from "@/pages/product/product";
 import ChangePassword from "@/pages/change-password/change-password";
 
 const routes: Partial<Record<PageType, RouteType>> = {
@@ -33,22 +35,22 @@ const routes: Partial<Record<PageType, RouteType>> = {
   },
   [PageType.catalog]: {
     canActivate: () => true,
-    render: () => Promise.resolve(document.createElement("div")),
+    render: CatalogView2.render.bind(CatalogView2),
   },
-  [PageType.detailed]: {
+  [PageType.product]: {
     canActivate: () => true,
-    render: () => Promise.resolve(document.createElement("div")),
+    render: ProductView.render.bind(ProductView),
   },
   [PageType.profile]: {
-    canActivate: () => true,
+    canActivate: () => !!authStore.user,
     render: UserProfile.render.bind(UserProfile),
   },
   [PageType.basket]: {
     canActivate: () => true,
     render: () => Promise.resolve(document.createElement("div")),
   },
-  [PageType.changepassword]: {
-    canActivate: () => true,
+  [PageType.changePassword]: {
+    canActivate: () => !!authStore.user,
     render: ChangePassword.render.bind(ChangePassword),
   },
 };

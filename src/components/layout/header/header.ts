@@ -8,6 +8,7 @@ import { SETTINGS } from "@/config/settings";
 import { LanguageCode, NavMenu } from "@/types/types";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { renderPage } from "@/utils/page-render";
+import ProductView from "@/pages/product/product";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -126,6 +127,19 @@ const Header = {
     return [
       { label: t.main, page: PageType.main, visible: true, disabled: false },
       {
+        label: t.catalog,
+        page: PageType.catalog,
+        visible: true,
+        disabled: false,
+      },
+      {
+        label: t.product,
+        page: PageType.product,
+        visible: Boolean(ProductView.productKey),
+        disabled: false,
+      },
+      { label: t.about, page: PageType.about, visible: false, disabled: false },
+      {
         label: t.signIn,
         page: PageType.login,
         visible: !isLoggedIn || type === "main",
@@ -137,15 +151,6 @@ const Header = {
         visible: !isLoggedIn || type === "main",
         disabled: isLoggedIn,
       },
-      { label: t.about, page: PageType.about, visible: false, disabled: true },
-      {
-        label: t.signOut,
-        page: PageType.notfound,
-        visible: isLoggedIn,
-        disabled: !isLoggedIn,
-      },
-
-      { label: t.about, page: PageType.about, visible: false, disabled: false },
       {
         label: t.userProfile,
         page: PageType.profile,
@@ -153,9 +158,15 @@ const Header = {
         disabled: !isLoggedIn,
       },
       {
-        label: t.changepassword,
-        page: PageType.changepassword,
+        label: t.changePassword,
+        page: PageType.changePassword,
         visible: false,
+        disabled: !isLoggedIn,
+      },
+      {
+        label: t.signOut,
+        page: PageType.notfound,
+        visible: isLoggedIn,
         disabled: !isLoggedIn,
       },
     ];

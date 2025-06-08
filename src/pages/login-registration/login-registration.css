@@ -1,25 +1,25 @@
-.view-container .view input {
-  border: 1px solid var(--border-color);
-}
-
-.form {
+.registration-form,
+.login-form {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   padding: 2rem;
+  border: 2px solid var(--border-color);
   border-radius: 0.75rem;
   background-color: var(--form-background);
-  box-shadow: 0 0 12px rgb(0 0 0 / 37%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.form.registration-form {
-  flex-direction: unset;
+.registration-form {
+  /*flex-direction: unset;*/
+  flex-direction: row;
   justify-content: space-between;
   flex-wrap: wrap;
 }
 
-.view {
+.registration-view,
+.login-view {
   max-width: 500px;
   width: 100%;
   display: flex;
@@ -30,7 +30,7 @@
   padding: 2rem;
 }
 
-.view.registration-view {
+.registration-view {
   max-width: 900px;
 }
 
@@ -48,18 +48,22 @@
   margin-bottom: 0;
 }
 
-.input-wrapper {
+.registration-view .input-wrapper,
+.login-view .input-wrapper {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  margin-bottom: 15px;
 }
 
-.input-label {
+.registration-view .input-label,
+.login-view .input-label {
   font-weight: 500;
   color: var(--text-color);
 }
 
-.input {
+.registration-view input,
+.login-view input {
   padding: 0.6rem 1rem;
   font-size: 1rem;
   border: 1px solid var(--border-color);
@@ -69,8 +73,16 @@
   max-width: 100%;
 }
 
-.input:focus {
+.registration-view .input:focus,
+.login-view input:focus {
   outline: 2px solid var(--main-color-hover);
+}
+
+.registration-view .input-wrapper,
+.login-view .input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .error-message {
@@ -92,59 +104,15 @@
   padding-bottom: 0;
 }
 
-.form .submit {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.input-wrapper {
-  margin-bottom: 15px;
-}
-
 .toggle-password-button:hover {
   background-color: unset;
 }
 
-.registration-form,
-.login-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 2rem;
-  border: 2px solid var(--border-color);
-  border-radius: 0.75rem;
-  background-color: var(--form-background);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.input-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.input {
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  background-color: var(--main-background);
-  color: var(--text-color);
-  max-width: 100%;
-}
-
-.input:focus {
-  outline: 2px solid var(--main-color-hover);
-}
-
-.error-message {
-  color: var(--validation-message);
-  font-size: 0.9rem;
-  margin-top: 0.2rem;
-}
-
 #submit-registration-login {
+  margin-left: auto;
+  margin-right: auto;
+  margin-inline: auto;
+  display: block;
   padding: 0.8rem 1rem;
   font-size: 1rem;
   background-color: var(--main-color);
@@ -223,7 +191,8 @@
     padding: 1rem;
   }
 
-  .input {
+  .registration-view .input-wrapper,
+  .login-view .input-wrapper {
     font-size: 0.7rem;
   }
 
@@ -237,9 +206,5 @@
 
   .error-message {
     font-size: 0.6rem;
-  }
-
-  .submit {
-    width: 100%;
   }
 }

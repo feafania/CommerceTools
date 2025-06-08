@@ -16,12 +16,20 @@ export async function handleOnSubmit(
   let result = true;
 
   for (const field of formFields) {
-    const rawValue = formData.get(field.name);
-    const element = form.querySelector<
+    let rawValue = formData.get(field.name) as string;
+    let element = form.querySelector<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >(`[name="${field.name}"]`);
     if (!element || element.offsetParent === null || element.disabled) {
-      continue;
+      element = form.querySelector<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >(`[data-validation-name="${field.name}"]`);
+      if (!element || element.offsetParent === null || element.disabled) {
+        continue;
+      }
+      if (rawValue === null) {
+        rawValue = element.value;
+      }
     }
     if (rawValue) {
       const value = rawValue.toString();

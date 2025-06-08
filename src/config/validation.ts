@@ -120,7 +120,7 @@ export const VALIDATION: ValidationType = {
     },
   },
 
-  postalCode: {
+  postalcode: {
     isValid: (input) => {
       if (typeof input === "string") {
         return Object.values(COUNTRY_CONFIG).some((config) =>

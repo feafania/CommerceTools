@@ -1,12 +1,13 @@
 import { SETTINGS } from "@/config/settings";
-import { CountryCodeMap, LanguageCode } from "@/types/types";
+import { CountryCodeMap, LanguageCode, LanguageVariants } from "@/types/types";
 import {
   InAddress,
   InCustomer,
   SelectType,
   StorageItem,
 } from "@/types/interfaces";
-import { AddressType, CountryCode } from "@/types/enum";
+import { AddressType, CountryCode, CurrencyCode } from "@/types/enum";
+import { CurrencySymbolMap } from "@/config/constants";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -180,4 +181,37 @@ export function deepEqual(a: unknown, b: unknown): boolean {
   }
 
   return true;
+}
+
+export function localizeName(variableName: string | LanguageVariants) {
+  if (typeof variableName === "string") return variableName;
+  if (variableName[SETTINGS.currentLang])
+    return variableName[SETTINGS.currentLang];
+  return variableName[SETTINGS.fallbackLanguage];
+}
+
+export function removeAllChildren(element: Element | undefined | null) {
+  if (element) {
+    while (element.firstChild) {
+      element.firstChild.remove();
+    }
+  }
+}
+
+export function formatPriceWithCurrency(
+  price: number,
+  currencyCode: CurrencyCode,
+): string {
+  const symbol = CurrencySymbolMap[currencyCode];
+  const amount = (price / 100).toFixed(2);
+
+  switch (currencyCode) {
+    case CurrencyCode.EUR:
+    case CurrencyCode.GBP: {
+      return `${symbol}${amount}`;
+    }
+    default: {
+      return `${amount} ${symbol}`;
+    }
+  }
 }

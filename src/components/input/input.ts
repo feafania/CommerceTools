@@ -31,14 +31,12 @@ export default function createInput(object: ControlConfig): HTMLDivElement {
   input.disabled = object.disabled || false;
   input.required = object.required || false;
 
-  let savedValue = getState(input.id);
-  if (typeof savedValue !== "string") {
-    savedValue = "";
+  const savedValue = getState(input.id);
+  if (object.value !== undefined) {
+    input.value = object.value;
+  } else if (typeof savedValue === "string" && !object.forbidValueChange) {
+    input.value = savedValue;
   }
-
-  // console.log(object);
-  // console.log("example");
-  input.value = object.value || savedValue;
 
   if (object.validationName) {
     input.dataset.validationName = object.validationName;

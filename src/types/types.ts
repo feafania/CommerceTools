@@ -1,6 +1,6 @@
 import translations from "@/config/interfaces";
 import { ProductListParameters, ValidationRule } from "@/types/interfaces";
-import { AddressType, CountryCode, FormType } from "@/types/enum";
+import { AddressType, CountryCode, CurrencyCode, FormType } from "@/types/enum";
 import { VALIDATION } from "@/config/validation";
 
 export type Listener = () => void;
@@ -9,7 +9,7 @@ export type LanguageCode = keyof typeof translations;
 
 export type RouteType = {
   canActivate: () => boolean;
-  render: () => Promise<HTMLElement>;
+  render: () => Promise<HTMLElement | undefined>;
 };
 
 export type ValidationType = Record<string, ValidationRule>;
@@ -21,6 +21,10 @@ export type CountryConfig = {
 
 export type CountryCodeMap = {
   [key in CountryCode]: string;
+};
+
+export type CurrencyCodeMap = {
+  [key in CurrencyCode]: string;
 };
 
 export type AddressTypeMap = {
@@ -49,3 +53,5 @@ export type InAttributes = Record<
   string,
   string | number | boolean | null | Array<string | number | boolean>
 >;
+
+export type LanguageVariants = Record<LanguageCode, string>;

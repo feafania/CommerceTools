@@ -12,7 +12,7 @@ export function createBasicAuth(): string {
 }
 
 export function createTokenRequestBody(
-  type: "password" | "refresh_token" | "anonymous",
+  type: "password" | "refresh_token" | "client_credentials",
   payload: {
     username?: string;
     password?: string;

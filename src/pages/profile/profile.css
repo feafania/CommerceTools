@@ -1,3 +1,132 @@
+body {
+  background: #fff;
+}
+
+#user-profile form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 2px solid var(--border-color);
+  border-radius: 0.75rem;
+  background-color: var(--form-background);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-view {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  padding: 2rem;
+}
+
+.form-group,
+.address-block .input-wrapper {
+  width: 47%;
+}
+
+.profile-address-container,
+.address-header {
+  width: 100%;
+}
+
+.address-block .input-label {
+  margin-bottom: 0;
+}
+
+#user-profile .input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 15px;
+}
+
+#user-profile .input-label {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+#user-profile input,
+#user-profile select {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--main-background);
+  color: var(--text-color);
+  max-width: 100%;
+}
+
+#user-profile input[type="text"],
+#user-profile select {
+  height: 42px;
+}
+
+#user-profile .input:focus {
+  outline: 2px solid var(--main-color-hover);
+}
+
+#user-profile .input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.error-message {
+  color: var(--validation-message);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password-button {
+  background: none;
+  position: absolute;
+  right: 0;
+  top: 43px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.toggle-password-button:hover {
+  background-color: unset;
+}
+
+#submit-profile {
+  margin-left: auto;
+  margin-right: auto;
+  margin-inline: auto;
+  display: block;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  background-color: var(--main-color);
+  color: var(--main-background);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+  max-width: 200px;
+  align-self: center;
+}
+
+#submit-profile:hover {
+  background-color: var(--main-color-hover);
+  transform: scale(1.05);
+}
+
+#submit-profile:active {
+  transform: scale(0.95);
+}
+
 .user-profile-view {
   max-width: none;
 }
@@ -20,10 +149,22 @@ input:disabled {
   margin-top: 50px;
 }
 
+#password-page {
+  margin-top: 20px;
+}
+
+.disabled-style {
+  background-color: transparent !important;
+  color: #999;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .address-block {
   box-shadow: none;
   background: none;
-  padding: 30px 0px;
+  padding: 30px 0;
 }
 
 .add-address-button {
