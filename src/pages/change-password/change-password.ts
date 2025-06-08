@@ -13,7 +13,7 @@ import showModalMessage from "@/components/modal-window/modal-window";
 const ChangePassword = {
   async render(): Promise<HTMLElement> {
     const container = document.createElement("div");
-    container.id = "user-profile";
+    container.id = "user-password-form";
     container.className = "view user-profile-view";
 
     const headerElement = document.createElement("h2");
