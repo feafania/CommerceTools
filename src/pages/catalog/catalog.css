@@ -9,13 +9,30 @@
   box-sizing: border-box;
 }
 
+.catalog-view input,
+.catalog-view select {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--main-background);
+  color: var(--text-color);
+  max-width: 100%;
+  height: 42px;
+}
+
+.catalog-view button {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .catalog-sidebar {
-  width: 200px;
+  width: 220px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   overflow-x: auto;
+  padding-bottom: 50px;
 }
 
 .catalog-content {
@@ -91,20 +108,22 @@
 }
 
 .catalog-sidebar-button.active {
-  background-color: var(--accent-color);
-  color: white;
-  border-color: #856e59;
+  background-color: var(--nav-active-color);
+  color: #000;
+  border-color: var(--nav-active-color);
   cursor: default;
   pointer-events: none;
 }
 
 .category-button {
   font-weight: bold;
+  margin-bottom: 0px;
 }
 
 .all-category-button {
   font-weight: bold;
   font-size: 1.1rem;
+  margin-bottom: 0px;
 }
 
 .category-group {
@@ -133,7 +152,7 @@
   font-size: 1rem;
   color: #333;
   background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
+  border: 1px solid #bcbcbc;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -147,10 +166,9 @@
 .page-button.active {
   background-color: var(--accent-color);
   color: white;
-  border-color: #856e59;
+  border-color: var(--accent-color);
   cursor: default;
   pointer-events: none;
-  box-shadow: 0 0 0 2px rgba(112, 58, 8, 0.25);
 }
 
 .filter-info {
@@ -193,24 +211,26 @@
 }
 
 .filter-title {
+  margin-top: 20px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 4px;
 }
 
 .filter-label {
-  font-size: 12px;
-  margin-top: 6px;
-}
-
-.attribute-filters,
-.attribute-filters * {
-  font-size: 12px !important;
+  font-size: 14px;
+  margin: 6px 0;
 }
 
 .attribute-filters {
   display: flex;
   flex-direction: column;
+  margin-top: 20px;
+}
+
+.select-clear-button {
+  padding: 0.65rem 1rem;
+  margin-left: 10px;
 }
 
 .apply-filters-btn.active {
@@ -222,19 +242,101 @@
   font-size: 12px;
   padding: 4px 8px;
   margin-top: 8px;
-  background-color: #333;
+  background-color: var(--accent-color);
   color: #fff;
-  border: 1px solid #555;
+  border: 1px solid var(--accent-color);
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.custom-filter-button:hover {
-  background-color: #555;
+.filters-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 5px;
+}
+
+.mobile-filter-toggle {
+  display: none;
+  position: relative;
+}
+
+.mobile-filter-toggle::after {
+  content: "";
+  background-image: url("/src/assets/img/icon-filter.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  content: "";
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+
+.mobile-filters-visible .mobile-filter-toggle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    45deg,
+    transparent 48%,
+    #d32f2f 48%,
+    #d32f2f 52%,
+    transparent 52%
+  );
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 10px;
+}
+
+.mobile-filters-hidden > div {
+  display: none;
+}
+
+.mobile-filters-visible > div {
+  width: 100%;
+}
+
+.mobile-filters-hidden .custom-filter-button {
+  display: none;
+}
+
+.custom-filter-button {
+  width: 40%;
+  padding: 10px;
+  margin-top: 25px;
+}
+
+.reset-filters-btn {
+  background-color: #bba7a7;
+}
+
+@media (max-width: 1000px) {
+  .product-list {
+    grid-template-columns: 1fr;
+    justify-content: center;
+  }
+  .product-card {
+    width: 100% !important;
+  }
 }
 
 @media (max-width: 768px) {
+  .mobile-filter-toggle {
+    display: block;
+  }
+  .filters-section {
+    justify-content: center;
+    width: 100%;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .filters-section > div {
+    width: 100%;
+  }
   .catalog-view {
     flex-direction: column;
     gap: 1rem;
@@ -298,7 +400,8 @@
   }
 
   .category-group {
-    flex: 1 1 calc(50% - 0.5rem);
+    flex: none;
+    width: 100%;
   }
 
   .all-category-button {
