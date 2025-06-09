@@ -21,6 +21,18 @@
   height: 42px;
 }
 
+.select-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+.catalog-view select {
+  max-width: 80%;
+  font-size: 0.85rem;
+}
+
 .catalog-view button {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -230,7 +242,6 @@
 
 .select-clear-button {
   padding: 0.65rem 1rem;
-  margin-left: 10px;
 }
 
 .apply-filters-btn.active {

@@ -26,11 +26,8 @@ export default class ProductImageSlider {
   }
 
   create(variant: "small" | "large" = "small"): HTMLDivElement {
-    if (variant === "large") {
-      this.container.classList.add("image-slider-large");
-    } else {
-      this.container.classList.add("image-slider-small");
-    }
+    this.container.className = "image-slider";
+    this.container.classList.add(`image-slider-${variant}`);
 
     if (this.images.length === 0) return this.container;
 
@@ -40,8 +37,9 @@ export default class ProductImageSlider {
     viewWrapper.className = "image-slider-view";
 
     const imgWrapper = document.createElement("div");
-    imgWrapper.className = "image-slider-view";
+    imgWrapper.className = "image-slider-img-wrapper";
     imgWrapper.append(this.imageElement);
+
     if (variant === "small") {
       imgWrapper.style.cursor = "pointer";
       imgWrapper.addEventListener("click", () => {
