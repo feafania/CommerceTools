@@ -54,21 +54,26 @@ export default async function getProductList({
       offset,
       sort,
       staged: true,
-      fuzzy: true,
-      fuzzyLevel: 2,
       priceCurrency: SETTINGS.currentCurrency,
+      filter: filters,
     };
 
     // if (searchText?.trim()) {
-    queryArguments.filter = filters;
+    // queryArguments.filter = filters;
     // } else if (filters.length > 0) {
     //   queryArguments.where = filters.join(" and ");
     // }
     // let response;
 
     const searchTerm = searchText?.trim();
-    if (searchTerm) {
+    if (searchTerm && searchTerm.length >= 3) {
       queryArguments[`text.${SETTINGS.currentLang}`] = `*${searchTerm}*`;
+      queryArguments.fuzzy = true;
+      queryArguments.fuzzyLevel = 2;
+    } else if (searchTerm) {
+      queryArguments[`text.${SETTINGS.currentLang}`] = `${searchTerm}`;
+      queryArguments.fuzzy = false;
+      queryArguments.fuzzyLevel = 0;
     }
 
     const response = await apiRoot
