@@ -24,10 +24,13 @@ import {
   InAttributes,
   LanguageCode,
   LanguageVariants,
+  SimpleAttributes,
+  StringRecords,
 } from "@/types/types";
 import { SETTINGS } from "@/config/settings";
 import {
   AddressType,
+  AttributeKeys,
   CurrencyCode,
   InAttributeTypeValues,
   SortName,
@@ -181,7 +184,7 @@ const MappingHelpers = {
     };
   },
 
-  mapLocalizedField(field?: Record<string, string>): LanguageVariants {
+  mapLocalizedField(field?: StringRecords): LanguageVariants {
     return (field ?? {}) as unknown as Record<LanguageCode, string>;
   },
 
@@ -349,6 +352,46 @@ const MappingHelpers = {
       searchText,
       filters,
     };
+  },
+
+  mapFilters(filter: SimpleAttributes): string[] {
+    const filterKey = Object.keys(filter)[0];
+    if (!filterKey) return [""];
+
+    const filterValue = filter[filterKey];
+    if (typeof filterValue === "number") {
+      switch (filterKey) {
+        case AttributeKeys.MinPrice: {
+          return [`variants.price.centAmount:range(${filterValue * 100} to*)`];
+        }
+        case AttributeKeys.MaxPrice: {
+          return [`variants.price.centAmount:range(* to ${filterValue * 100})`];
+        }
+      }
+    }
+
+    if (typeof filterValue === "object" && filterValue !== null) {
+      if (Array.isArray(filterValue)) {
+        const joined = filterValue.map((v) => `"${v}"`).join(",");
+        return [`variants.attributes.${filterKey}.key:${joined}`];
+      } else {
+        const result = [];
+        for (const [key, value] of Object.entries(filterValue)) {
+          if (Array.isArray(value)) {
+            const joined = value.map((v) => `"${v}"`).join(",");
+            result.push(`variants.attributes.${key}.key:${joined}`);
+          } else if (value !== null) {
+            result.push(`variants.attributes.${key}.key:"${value}"`);
+          }
+        }
+        return result;
+      }
+    }
+    if (typeof filterValue === "string" || typeof filterValue === "boolean") {
+      return [`variants.attributes.${filterKey}.key:"${filterValue}"`];
+    }
+
+    return [""];
   },
 };
 

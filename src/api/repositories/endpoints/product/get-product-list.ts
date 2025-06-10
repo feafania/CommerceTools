@@ -30,6 +30,7 @@ import { GetProductListParameters } from "@/types/types";
  *
  * const finalPrice = discounted ?? value;
  * const isDiscounted = !!price?.discounted;
+ * filter.query: variants.prices.discounted:exists
  */
 
 export default async function getProductList({
@@ -64,6 +65,11 @@ export default async function getProductList({
     //   queryArguments.where = filters.join(" and ");
     // }
     // let response;
+    // how to use search
+    // if (searchText?.trim()) {
+    //   const term = searchText.trim().replace(/"/g, '\\"');
+    //   where.push(`name(en-US contains "${term}")`);
+    // }
 
     const searchTerm = searchText?.trim();
     if (searchTerm && searchTerm.length >= 3) {

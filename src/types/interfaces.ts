@@ -1,7 +1,13 @@
-import { CountryValueType, InAttributes, LanguageVariants } from "./types";
+import {
+  CountryValueType,
+  InAttributes,
+  LanguageVariants,
+  StringRecords,
+} from "./types";
 
 import {
   CountryCode,
+  CurrencyCode,
   InAttributeTypeValues,
   PageType,
   SortDirection,
@@ -194,7 +200,7 @@ export interface InAttributeType {
   name: InAttributeTypeValues;
   values: {
     key: string;
-    label: string | Record<string, string>;
+    label: string | StringRecords;
   }[];
 }
 
@@ -247,4 +253,29 @@ export interface AddressItem {
   name: string;
   isDefaultShipping: boolean;
   isDefaultBilling: boolean;
+}
+
+export interface LineItem {
+  id: string;
+  productId: string;
+  name: LanguageVariants;
+  quantity: number;
+  price: number; // for 1 piece
+  totalPrice: number;
+  variantId: number;
+  sku?: string;
+  image?: string;
+}
+
+export interface InCart {
+  id: string;
+  version: number;
+  currency: CurrencyCode;
+  lineItems: LineItem[];
+  totalPrice: number;
+  subtotalPrice: number;
+  createdAt: string;
+  customerId?: string;
+  anonymousId?: string;
+  country?: CountryCode;
 }

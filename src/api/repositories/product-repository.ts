@@ -9,7 +9,11 @@ import {
   ProductSearchResult,
 } from "@/types/interfaces";
 import getProductList from "@/api/repositories/endpoints/product/get-product-list";
-import { GetProductListParameters, InAttributes } from "@/types/types";
+import {
+  GetProductListParameters,
+  InAttributes,
+  SimpleAttributes,
+} from "@/types/types";
 import getProductAttributes from "@/api/repositories/endpoints/product/get-product-attributes";
 import getProductTypes from "@/api/repositories/endpoints/product/get-product-types";
 import getProductByKey from "@/api/repositories/endpoints/product/get-product-by-key";
@@ -258,6 +262,10 @@ const productRepository = {
       total: 0,
       results: [],
     };
+  },
+
+  mapFilters(filter: SimpleAttributes): string[] {
+    return MappingHelpers.mapFilters(filter);
   },
 };
 

@@ -5,7 +5,11 @@ import {
   InProductType,
   ProductSearchResult,
 } from "@/types/interfaces";
-import { GetProductListParameters, InAttributes } from "@/types/types";
+import {
+  GetProductListParameters,
+  InAttributes,
+  SimpleAttributes,
+} from "@/types/types";
 
 class ProductService {
   async getCategories(): Promise<InCategory[]> {
@@ -81,6 +85,10 @@ class ProductService {
     } catch {
       return {};
     }
+  }
+
+  mapFilters(filter: SimpleAttributes): string[] {
+    return productRepository.mapFilters(filter);
   }
 }
 

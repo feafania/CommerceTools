@@ -10,7 +10,13 @@ import searchBar from "@/components/search-button/search-button";
 import { removeAllChildren } from "@/utils/helpers";
 import { InCategory, ProductListParameters } from "@/types/interfaces";
 import PageRouter from "@/router/page-router";
-import { CurrencyCode, PageType, SortDirection, SortName } from "@/types/enum";
+import {
+  AttributeKeys,
+  CurrencyCode,
+  PageType,
+  SortDirection,
+  SortName,
+} from "@/types/enum";
 import { AttributeMap, InAttributes, SortOptions } from "@/types/types";
 import CatalogViewFiltering from "@/pages/catalog/filtering";
 
@@ -396,23 +402,23 @@ const CatalogView = {
 
     if (this.minPrice !== undefined) {
       filters.push(
-        `variants.price.centAmount:range(${this.minPrice * 100} to*)`,
+        ...productService.mapFilters({
+          [AttributeKeys.MinPrice]: this.minPrice,
+        }),
       );
     }
     if (this.maxPrice !== undefined) {
       filters.push(
-        `variants.price.centAmount:range(* to ${this.maxPrice * 100})`,
+        ...productService.mapFilters({
+          [AttributeKeys.MaxPrice]: this.maxPrice,
+        }),
       );
     }
-
-    for (const [key, value] of Object.entries(this.attributeFilters)) {
-      if (Array.isArray(value)) {
-        const joined = value.map((v) => `"${v}"`).join(",");
-        filters.push(`variants.attributes.${key}.key:${joined}`);
-      } else {
-        filters.push(`variants.attributes.${key}.key:"${value}"`);
-      }
-    }
+    filters.push(
+      ...productService.mapFilters({
+        attributes: this.attributeFilters,
+      }),
+    );
 
     const { sortName, sortDirection } = this.getSortParameters();
     const requestParameters: ProductListParameters = {
@@ -427,32 +433,30 @@ const CatalogView = {
   },
 
   getSortParameters(): { sortName: SortName; sortDirection: SortDirection } {
-    switch (this.sortOption) {
-      case "price-asc": {
-        return {
-          sortName: SortName.PRICE,
-          sortDirection: SortDirection.ASC,
-        };
-      }
-      case "price-desc": {
-        return { sortName: SortName.PRICE, sortDirection: SortDirection.DESC };
-      }
-      case "name-asc": {
-        return {
-          sortName: SortName.NAME as SortName,
-          sortDirection: SortDirection.ASC,
-        };
-      }
-      case "name-desc": {
-        return {
-          sortName: SortName.NAME as SortName,
-          sortDirection: SortDirection.DESC,
-        };
-      }
-      default: {
-        return { sortName: SortName.PRICE, sortDirection: SortDirection.ASC };
-      }
+    const defaultSort = {
+      sortName: SortName.PRICE,
+      sortDirection: SortDirection.ASC,
+    };
+
+    if (!this.sortOption || typeof this.sortOption !== "string") {
+      return defaultSort;
     }
+
+    const parts = this.sortOption.split("-");
+    if (parts.length !== 2) {
+      return defaultSort;
+    }
+
+    const [sortName, sortDirection] = parts as [SortName, SortDirection];
+
+    return {
+      sortName: Object.values(SortName).includes(sortName)
+        ? sortName
+        : defaultSort.sortName,
+      sortDirection: Object.values(SortDirection).includes(sortDirection)
+        ? sortDirection
+        : defaultSort.sortDirection,
+    };
   },
 };
 
