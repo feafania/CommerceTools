@@ -188,6 +188,10 @@ const pl: AppTranslation = {
       "Ten konektor jest w trakcie procesu certyfikacji. Będzie dostępny po jego zakończeniu.",
     versionMismatch:
       "Błąd niezgodności wersji. Proszę odświeżyć i spróbować ponownie.",
+    lineItemNotFound: "Produkt nie został znaleziony w Koszyku",
+    insufficientStock: "Za mało towarów w magazynie",
+    anonymousIdConflict: "Błąd anonimowego użytkownika",
+    discountCodeInvalid: "Kod promocyjny nie jest odpowiedni",
   },
   errors: {
     login: "Logowanie nie powiodło się.",
@@ -199,6 +203,11 @@ const pl: AppTranslation = {
     updatePassword: "Nie udało się zaktualizować hasła klienta.",
     token: "Nie udało się zdobyć tokena.",
     getCurrentUser: "Nie udało się pobrać bieżącego użytkownika",
+    getCart: "Nie można dostać koszyka",
+    createCart: "Nie można utworzyć koszyka",
+    addItemToCart: "Nie można dodać produktu do koszyka",
+    removeItemFromCart: "Nie można usunąć przedmiotu z koszyka",
+    applyDiscountCode: "Nie można zastosować kodu promocyjnego",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",

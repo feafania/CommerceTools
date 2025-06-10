@@ -215,3 +215,12 @@ export function formatPriceWithCurrency(
     }
   }
 }
+
+export function formatDate(createdAt: string): string {
+  const date = new Date(createdAt);
+  return date.toLocaleDateString(SETTINGS.currentLang, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}

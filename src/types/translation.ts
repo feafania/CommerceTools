@@ -154,6 +154,10 @@ export interface AppTranslation {
     connectorFileNotValid: string;
     connectorInCertification: string;
     versionMismatch: string;
+    lineItemNotFound: string;
+    insufficientStock: string;
+    anonymousIdConflict: string;
+    discountCodeInvalid: string;
   };
   errors: {
     login: string;
@@ -164,6 +168,11 @@ export interface AppTranslation {
     updatePassword: string;
     token: string;
     getCurrentUser: string;
+    getCart: string;
+    createCart: string;
+    addItemToCart: string;
+    removeItemFromCart: string;
+    applyDiscountCode: string;
   };
   messages: {
     onSignIn: string;

@@ -2,6 +2,7 @@ import {
   Asset,
   Attribute,
   AttributeDefinition,
+  Cart,
   Category,
   CategoryReference,
   Customer,
@@ -14,8 +15,10 @@ import {
 import {
   InAddress,
   InAttributeDefinition,
+  InCart,
   InCategory,
   InCustomer,
+  InLineItem,
   InProduct,
   InProductType,
 } from "@/types/interfaces";
@@ -31,6 +34,7 @@ import { SETTINGS } from "@/config/settings";
 import {
   AddressType,
   AttributeKeys,
+  CountryCode,
   CurrencyCode,
   InAttributeTypeValues,
   SortName,
@@ -351,6 +355,36 @@ const MappingHelpers = {
       sortDirection,
       searchText,
       filters,
+    };
+  },
+
+  toInternalCart(cart: Cart): InCart {
+    return {
+      id: cart.id,
+      version: cart.version,
+      currency: cart.totalPrice.currencyCode as CurrencyCode,
+      lineItems: cart.lineItems.map(
+        (item): InLineItem => ({
+          id: item.id,
+          productId: item.productId,
+          name: item.name as LanguageVariants,
+          quantity: item.quantity,
+          price: item.price.value.centAmount,
+          totalPrice: item.totalPrice.centAmount,
+          variantId: item.variant.id,
+          sku: item.variant.sku,
+          image: item.variant.images?.[0]?.url,
+        }),
+      ),
+      totalPrice: cart.totalPrice.centAmount,
+      subtotalPrice: cart.lineItems.reduce(
+        (sum, item) => sum + item.price.value.centAmount * item.quantity,
+        0,
+      ),
+      createdAt: cart.createdAt,
+      customerId: cart.customerId,
+      anonymousId: cart.anonymousId,
+      country: cart.country as CountryCode,
     };
   },
 

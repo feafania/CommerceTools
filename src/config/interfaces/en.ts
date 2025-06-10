@@ -184,6 +184,10 @@ const en: AppTranslation = {
     connectorInCertification:
       "This connector is currently in certification. You’ll be able to use it once the process is complete.",
     versionMismatch: "Version mismatch error. Please reload and try again.",
+    lineItemNotFound: "The product was not found in the cart",
+    insufficientStock: "Not enough goods in stock",
+    anonymousIdConflict: "Anonymous user error",
+    discountCodeInvalid: "The promo code is not suitable",
   },
   errors: {
     login: "Login failed.",
@@ -194,6 +198,11 @@ const en: AppTranslation = {
     updatePassword: "Failed to update customer password.",
     token: "Failed to get token.",
     getCurrentUser: "Failed to get current user",
+    getCart: "Couldn't get the shopping cart",
+    createCart: "Couldn't create a shopping cart",
+    addItemToCart: "Couldn't add product to cart",
+    removeItemFromCart: "Couldn't remove an item from the shopping cart",
+    applyDiscountCode: "Couldn't apply promo code",
   },
   messages: {
     onSignIn: "You have successfully signed in.",

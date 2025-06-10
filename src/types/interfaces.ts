@@ -255,7 +255,7 @@ export interface AddressItem {
   isDefaultBilling: boolean;
 }
 
-export interface LineItem {
+export interface InLineItem {
   id: string;
   productId: string;
   name: LanguageVariants;
@@ -271,10 +271,10 @@ export interface InCart {
   id: string;
   version: number;
   currency: CurrencyCode;
-  lineItems: LineItem[];
-  totalPrice: number;
-  subtotalPrice: number;
-  createdAt: string;
+  lineItems: InLineItem[];
+  totalPrice: number; // Total price of the cart including all discounts, taxes, shipping, etc.
+  subtotalPrice: number; // unitPrice * quantity
+  createdAt: string; // new Date(cart.createdAt);
   customerId?: string;
   anonymousId?: string;
   country?: CountryCode;
