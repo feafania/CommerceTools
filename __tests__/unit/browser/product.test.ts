@@ -6,10 +6,13 @@ import {
   mockedCategories,
   productRepositoryResponse,
   emptyProductResult,
+  mockAttributes,
+  mockAttributesExpected,
 } from "../__mocks__/product.mock";
 
 import productService from "@/api/services/product-service";
 import productRepository from "@/api/repositories/product-repository";
+import { SimpleAttributes } from "@/types/types";
 
 jest.mock("@/api/repositories/product-repository");
 
@@ -170,5 +173,33 @@ describe("ProductService", () => {
       const result = await productService.getProductAttributes("invalid");
       expect(result).toEqual({});
     });
+  });
+});
+
+describe("mapFilters", () => {
+  it("should call repository mapFilters and return mapped filters", () => {
+    const input: SimpleAttributes = mockAttributes;
+    const expected = mockAttributesExpected;
+
+    const mockFunction = jest.fn().mockReturnValue(expected);
+    mockedRepository.mapFilters = mockFunction;
+
+    const result = productService.mapFilters(input);
+
+    expect(mockFunction).toHaveBeenCalledWith(input);
+    expect(result).toEqual(expected);
+  });
+
+  it("should return empty array when mapFilters returns empty", () => {
+    const input: SimpleAttributes = {};
+    const expected: string[] = [];
+
+    const mockFunction = jest.fn().mockReturnValue(expected);
+    mockedRepository.mapFilters = mockFunction;
+
+    const result = productService.mapFilters(input);
+
+    expect(mockFunction).toHaveBeenCalledWith(input);
+    expect(result).toEqual(expected);
   });
 });

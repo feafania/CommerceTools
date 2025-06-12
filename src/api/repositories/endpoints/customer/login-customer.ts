@@ -6,6 +6,7 @@ import {
 import { handleApiError } from "@/api/handle-api-error";
 import {
   createAnonymousClient,
+  createPasswordClient,
   // createPasswordClient,
 } from "@/api/repositories/build-client";
 
@@ -22,9 +23,10 @@ export default async function loginCustomer(
   anonymousCartId?: string,
 ): Promise<CustomerSignInResult | undefined> {
   try {
-    // Use anonymous session client
-    const client = createAnonymousClient();
-    // const client = createPasswordClient(email, password);
+    const isAnonymousFlow = Boolean(anonymousCartId);
+    const client = isAnonymousFlow
+      ? createAnonymousClient()
+      : createPasswordClient(email, password);
 
     const apiRoot = createApiBuilderFromCtpClient(client).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
@@ -37,12 +39,15 @@ export default async function loginCustomer(
         body: {
           email,
           password,
-          ...(anonymousCartId && {
-            anonymousCartId,
-            anonymousCartSignInMode: "MergeWithExistingCustomerCart",
-          }),
-          // activeCartSignInMode: "MergeWithExistingCustomerCart",
-          // or "UseAsNewActiveCustomerCart" (clear basket)
+          ...(isAnonymousFlow
+            ? {
+                anonymousCartId,
+                anonymousCartSignInMode: "MergeWithExistingCustomerCart",
+              }
+            : {
+                activeCartSignInMode: "MergeWithExistingCustomerCart",
+                // or "UseAsNewActiveCustomerCart" (clear basket)
+              }),
         },
       })
       .execute();

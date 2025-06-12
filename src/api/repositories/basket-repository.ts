@@ -67,12 +67,19 @@ const basketRepository = {
 
   async addItemToCart(
     cartId: string,
+    productId: string,
     variantId: number,
     quantity = SETTINGS.basketParameters.quantity,
     token?: string,
   ): Promise<InCart | undefined> {
     try {
-      const cart = await addItemToCart(cartId, variantId, quantity, token);
+      const cart = await addItemToCart(
+        cartId,
+        productId,
+        variantId,
+        quantity,
+        token,
+      );
       if (cart) {
         return MappingHelpers.toInternalCart(cart);
       }

@@ -15,7 +15,7 @@ import {
   getProductTypes,
 } from "@/api/repositories/endpoints/product";
 import { InProduct, ProductSearchResult } from "@/types/interfaces";
-import { InAttributes } from "@/types/types";
+import { InAttributes, SimpleAttributes } from "@/types/types";
 import MappingHelpers from "@/api/repositories/mapping-helpers";
 
 // mocked functions
@@ -235,3 +235,9 @@ export const emptyProductResult = {
   total: 0,
   results: [],
 };
+
+export const mockAttributes: SimpleAttributes = { color: ["red"], size: ["M"] };
+export const mockAttributesExpected = [
+  "variants.attributes.color:red",
+  "variants.attributes.size:M",
+];

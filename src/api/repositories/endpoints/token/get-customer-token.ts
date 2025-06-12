@@ -16,10 +16,12 @@ export default async function getCustomerToken(
   const basicAuth = createBasicAuth();
 
   const scope = buildScopes(projectKey, [
+    "manage_orders",
     "manage_my_orders",
     "manage_my_profile",
-    "view_published_products",
     "manage_my_shopping_lists",
+    "view_published_products",
+    "view_discount_codes",
   ]);
 
   const body = createTokenRequestBody("password", {

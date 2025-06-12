@@ -13,9 +13,11 @@ export default async function getAnonToken(): Promise<
   const basicAuth = createBasicAuth();
 
   const scope = buildScopes(projectKey, [
-    "view_products",
+    "manage_orders",
     "manage_my_orders",
+    "view_products",
     "create_anonymous_token",
+    "view_discount_codes",
   ]);
 
   const body = createTokenRequestBody("client_credentials", {

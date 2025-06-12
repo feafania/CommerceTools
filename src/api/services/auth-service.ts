@@ -16,7 +16,11 @@ class AuthService {
   ): Promise<InCustomer | FieldErrorType[] | undefined> {
     try {
       const cart = basketStore.getCart();
-      const anonymousCartId = cart?.id;
+
+      const isAnonymous =
+        !tokenStore.accessToken || cart?.anonymousId !== undefined;
+
+      const anonymousCartId = isAnonymous ? cart?.id : undefined;
 
       const result = await authRepository.login(
         email,
@@ -144,7 +148,7 @@ class AuthService {
           `${SETTINGS.label.errors.getCurrentUser}\n${error.message}`,
         );
       } else {
-        // console.error("Get current user failed:", error);
+        console.error("Get current user failed:", error);
       }
       return undefined;
     }

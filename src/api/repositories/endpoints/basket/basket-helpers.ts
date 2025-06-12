@@ -36,13 +36,16 @@ export default async function getCartUpdateApi(
       throw new Error("Cart not found");
     }
 
-    const post = token
-      ? api.me().carts().withId({ ID: cart.id }).post
-      : api.carts().withId({ ID: cart.id }).post;
+    const post: CartPostFunction = (payload) =>
+      (token
+        ? api.me().carts().withId({ ID: cart.id })
+        : api.carts().withId({ ID: cart.id })
+      ).post(payload);
 
     return { cart, post };
   } catch (error) {
     console.error("Getting update API failed:", error);
     handleApiError(error);
+    throw error;
   }
 }

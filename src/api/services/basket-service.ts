@@ -5,6 +5,7 @@ import { ApiError } from "@/api/handle-api-error";
 import showModalMessage from "@/components/modal-window/modal-window";
 import authService from "@/api/services/auth-service";
 import basketStore from "@/stores/basket-store";
+import productRepository from "@/api/repositories/product-repository";
 
 class BasketService {
   async getCart(): Promise<InCart | undefined> {
@@ -35,15 +36,21 @@ class BasketService {
   }
 
   async addItemToCart(
+    productKey: string,
     variantId: number,
     quantity = SETTINGS.basketParameters.quantity,
   ): Promise<InCart | undefined> {
     try {
+      const product = await productRepository.getProductByKey(productKey);
+      if (!product) {
+        throw new Error(`Product with key "${productKey}" not found`);
+      }
       const token = await authService.getToken();
       const cartId = basketStore.getCart()?.id;
       if (!cartId) throw new Error("Cart ID not found");
       const updatedCart = await basketRepository.addItemToCart(
         cartId,
+        product.id,
         variantId,
         quantity,
         token,

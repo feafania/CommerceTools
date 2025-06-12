@@ -6,6 +6,7 @@ import { handleApiError } from "@/api/handle-api-error";
 
 export default async function addItemToCart(
   cartId: string,
+  productId: string,
   variantId: number,
   quantity: number = SETTINGS.basketParameters.quantity,
   token?: string,
@@ -14,6 +15,7 @@ export default async function addItemToCart(
     const { cart, post } = await getCartUpdateApi(cartId, token);
     const action: CartAddLineItemAction = {
       action: "addLineItem",
+      productId,
       variantId,
       quantity,
     };

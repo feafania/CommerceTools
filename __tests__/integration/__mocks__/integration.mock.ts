@@ -6,10 +6,11 @@ export const testPassword = "StrongPass123!";
 export const testKeys = {
   category: "rwd",
   product: "dandrwd",
+  productId: "c4ea9a97-5806-4c06-9bd1-a0ccb1c934bc",
   productType: "printed-pictures",
   productVariantId: 1,
-  discountCode: "DISCOUNT10",
-  customerId: "customer-id-123",
+  discountCode: "3YbN",
+  customerId: "547acab2-be1b-4281-9e07-0309a06d7756",
 };
 
 export function getTestDraft(): MyCustomerDraft {
