@@ -7,8 +7,8 @@ import {
   createAnonymousClient,
   createExistingTokenClient,
 } from "@/api/repositories/build-client";
-import getCustomerCart from "@/api/repositories/endpoints/basket/get-customer-cart";
-import getAnonymousCart from "@/api/repositories/endpoints/basket/get-anonymous-cart";
+import getCustomerCart from "@/api/repositories/endpoints/basket/cart/get-customer-cart";
+import getAnonymousCart from "@/api/repositories/endpoints/basket/cart/get-anonymous-cart";
 import { CartPostFunction } from "@/types/api-types";
 import { handleApiError } from "@/api/handle-api-error";
 

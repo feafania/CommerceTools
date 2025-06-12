@@ -12,6 +12,7 @@ import MappingHelpers from "@/api/repositories/mapping-helpers";
 import {
   addItemToCart,
   applyDiscountCodeToCart,
+  changeCartItemQuantity,
   createAnonymousCart,
   createCustomerCart,
   deleteAnonymousCart,
@@ -19,12 +20,25 @@ import {
   getAnonymousCart,
   getCustomerCart,
   removeItemFromCart,
+  recalculateCart,
 } from "@/api/repositories/endpoints/basket";
 import { CountryCode, CurrencyCode } from "@/types/enum";
 
-jest.mock("@/api/repositories/endpoints/basket");
-
 jest.mock("@/api/repositories/mapping-helpers");
+
+jest.mock("@/api/repositories/endpoints/basket", () => ({
+  addItemToCart: jest.fn(),
+  applyDiscountCodeToCart: jest.fn(),
+  createAnonymousCart: jest.fn(),
+  createCustomerCart: jest.fn(),
+  deleteAnonymousCart: jest.fn(),
+  deleteCustomerCart: jest.fn(),
+  getAnonymousCart: jest.fn(),
+  getCustomerCart: jest.fn(),
+  removeItemFromCart: jest.fn(),
+  changeCartItemQuantity: jest.fn(),
+  recalculateCart: jest.fn(),
+}));
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -106,6 +120,30 @@ describe("basketRepository", () => {
     });
   });
 
+  describe("recalculateCart", () => {
+    it("should recalculate cart and map the result", async () => {
+      (recalculateCart as jest.Mock).mockResolvedValue(mockedCartApiResponse);
+
+      const cart = await basketRepository.recalculateCart(
+        mockedCartApiResponse.id,
+        mockedCartApiResponse.version,
+        true,
+        mockToken,
+      );
+
+      expect(recalculateCart).toHaveBeenCalledWith(
+        mockedCartApiResponse.id,
+        mockedCartApiResponse.version,
+        true,
+        mockToken,
+      );
+      expect(MappingHelpers.toInternalCart).toHaveBeenCalledWith(
+        mockedCartApiResponse,
+      );
+      expect(cart).toEqual(mockedInternalCart);
+    });
+  });
+
   describe("addItemToCart", () => {
     it("should add item and map result", async () => {
       (addItemToCart as jest.Mock).mockResolvedValue(mockedCartApiResponse);
@@ -146,6 +184,29 @@ describe("basketRepository", () => {
         mockedCartApiResponse.id,
         lineItemId,
         mockedBasketProduct.removedQuantity,
+        mockToken,
+      );
+      expect(cart).toEqual(mockedInternalCart);
+    });
+  });
+
+  describe("changeItemQuantity", () => {
+    it("should change item quantity and return updated cart", async () => {
+      (changeCartItemQuantity as jest.Mock).mockResolvedValue(
+        mockedCartApiResponse,
+      );
+
+      const cart = await basketRepository.changeItemQuantity(
+        mockedCartApiResponse.id,
+        lineItemId,
+        3,
+        mockToken,
+      );
+
+      expect(changeCartItemQuantity).toHaveBeenCalledWith(
+        mockedCartApiResponse.id,
+        lineItemId,
+        3,
         mockToken,
       );
       expect(cart).toEqual(mockedInternalCart);

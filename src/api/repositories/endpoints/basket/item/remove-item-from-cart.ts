@@ -6,7 +6,7 @@ import { handleApiError } from "@/api/handle-api-error";
 export default async function removeItemFromCart(
   cartId: string,
   lineItemId: string,
-  quantity: number | undefined = undefined,
+  quantity: number = 0,
   token?: string,
 ): Promise<Cart | undefined> {
   try {
@@ -15,7 +15,7 @@ export default async function removeItemFromCart(
     const action: CartRemoveLineItemAction = {
       action: "removeLineItem",
       lineItemId,
-      ...(quantity === undefined ? {} : { quantity }),
+      quantity,
     };
 
     const response = await post({

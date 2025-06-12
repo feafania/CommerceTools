@@ -4,12 +4,14 @@ import { SETTINGS } from "@/config/settings";
 import {
   addItemToCart,
   applyDiscountCodeToCart,
+  changeCartItemQuantity,
   createAnonymousCart,
   createCustomerCart,
   deleteAnonymousCart,
   deleteCustomerCart,
   getAnonymousCart,
   getCustomerCart,
+  recalculateCart,
   removeItemFromCart,
 } from "@/api/repositories/endpoints/basket";
 
@@ -65,6 +67,28 @@ const basketRepository = {
     }
   },
 
+  async recalculateCart(
+    cartId: string,
+    version: number,
+    updateProductData: boolean = false,
+    token?: string,
+  ): Promise<InCart | undefined> {
+    try {
+      const cart = await recalculateCart(
+        cartId,
+        version,
+        updateProductData,
+        token,
+      );
+      if (cart) {
+        return MappingHelpers.toInternalCart(cart);
+      }
+    } catch (error) {
+      console.error("Error recalculating cart:", error);
+      throw error;
+    }
+  },
+
   async addItemToCart(
     cartId: string,
     productId: string,
@@ -107,6 +131,28 @@ const basketRepository = {
       }
     } catch (error) {
       console.error("Error removing item from cart:", error);
+      throw error;
+    }
+  },
+
+  async changeItemQuantity(
+    cartId: string,
+    lineItemId: string,
+    quantity: number,
+    token?: string,
+  ): Promise<InCart | undefined> {
+    try {
+      const cart = await changeCartItemQuantity(
+        cartId,
+        lineItemId,
+        quantity,
+        token,
+      );
+      if (cart) {
+        return MappingHelpers.toInternalCart(cart);
+      }
+    } catch (error) {
+      console.error("Error changing item quantity:", error);
       throw error;
     }
   },

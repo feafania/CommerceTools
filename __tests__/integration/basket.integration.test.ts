@@ -9,6 +9,7 @@ import {
 import {
   addItemToCart,
   applyDiscountCodeToCart,
+  changeCartItemQuantity,
   createAnonymousCart,
   createCustomerCart,
   deleteAnonymousCart,
@@ -16,6 +17,7 @@ import {
   getAnonymousCart,
   getCartUpdateApi,
   getCustomerCart,
+  recalculateCart,
   removeItemFromCart,
 } from "@/api/repositories/endpoints/basket";
 import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
@@ -139,5 +141,48 @@ describe("Cart API endpoints", () => {
     await expect(
       deleteCustomerCart(customerCart.id, customerCart.version, token),
     ).resolves.toBeUndefined();
+  });
+
+  it("should change quantity of an item in the customer cart", async () => {
+    if (customerCart.lineItems.length === 0) {
+      const response = await addItemToCart(
+        customerCart.id,
+        testKeys.productId,
+        testKeys.productVariantId,
+        1,
+        token,
+      );
+      customerCart = response!;
+    }
+
+    const lineItem = customerCart.lineItems[0];
+
+    const updatedCart = await changeCartItemQuantity(
+      customerCart.id,
+      lineItem.id,
+      2,
+      token,
+    );
+
+    expect(updatedCart).toBeDefined();
+    const updatedItem = updatedCart!.lineItems.find(
+      (li) => li.id === lineItem.id,
+    );
+    expect(updatedItem?.quantity).toBe(2);
+
+    customerCart = updatedCart!;
+  });
+
+  it("should recalculate the customer cart with updateProductData", async () => {
+    const updatedCart = await recalculateCart(
+      customerCart.id,
+      customerCart.version,
+      true,
+      token,
+    );
+
+    expect(updatedCart).toBeDefined();
+    expect(updatedCart!.version).toBeGreaterThan(customerCart.version);
+    customerCart = updatedCart!;
   });
 });

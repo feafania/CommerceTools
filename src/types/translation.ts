@@ -171,10 +171,12 @@ export interface AppTranslation {
     getCurrentUser: string;
     getCart: string;
     createCart: string;
-    addItemToCart: string;
-    removeItemFromCart: string;
     applyDiscountCode: string;
     deleteCart: string;
+    recalculateCart: string;
+    addItemToCart: string;
+    removeItemFromCart: string;
+    changeItemQuantity: string;
   };
   messages: {
     onSignIn: string;

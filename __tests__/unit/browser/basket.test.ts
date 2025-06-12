@@ -171,3 +171,73 @@ describe("deleteCart", () => {
     expect(showModalMessage).toHaveBeenCalled();
   });
 });
+
+describe("recalculateCart", () => {
+  it("should recalculate and return updated cart", async () => {
+    const token = "token";
+    (authService.getToken as jest.Mock).mockResolvedValue(token);
+    (basketStore.getCart as jest.Mock).mockReturnValue(mockedInternalCart);
+    (basketRepository.recalculateCart as jest.Mock).mockResolvedValue(
+      mockedInternalCart,
+    );
+
+    const result = await basketService.recalculateCart(true);
+
+    expect(basketRepository.recalculateCart).toHaveBeenCalledWith(
+      mockedInternalCart.id,
+      mockedInternalCart.version,
+      true,
+      token,
+    );
+    expect(basketStore.setCart).toHaveBeenCalledWith(mockedInternalCart);
+    expect(result).toEqual(mockedInternalCart);
+  });
+
+  it("should show modal on error", async () => {
+    (authService.getToken as jest.Mock).mockResolvedValue("token");
+    (basketStore.getCart as jest.Mock).mockReturnValue(mockedInternalCart);
+    (basketRepository.recalculateCart as jest.Mock).mockRejectedValue(
+      new Error("fail"),
+    );
+
+    const result = await basketService.recalculateCart();
+
+    expect(showModalMessage).toHaveBeenCalled();
+    expect(result).toBeUndefined();
+  });
+});
+
+describe("changeItemQuantity", () => {
+  it("should change item quantity and return updated cart", async () => {
+    const token = "token";
+    (authService.getToken as jest.Mock).mockResolvedValue(token);
+    (basketStore.getCart as jest.Mock).mockReturnValue(mockedInternalCart);
+    (basketRepository.changeItemQuantity as jest.Mock).mockResolvedValue(
+      mockedInternalCart,
+    );
+
+    const result = await basketService.changeItemQuantity(lineItemId, 3);
+
+    expect(basketRepository.changeItemQuantity).toHaveBeenCalledWith(
+      mockedInternalCart.id,
+      lineItemId,
+      3,
+      token,
+    );
+    expect(basketStore.setCart).toHaveBeenCalledWith(mockedInternalCart);
+    expect(result).toEqual(mockedInternalCart);
+  });
+
+  it("should show modal on error", async () => {
+    (authService.getToken as jest.Mock).mockResolvedValue("token");
+    (basketStore.getCart as jest.Mock).mockReturnValue(mockedInternalCart);
+    (basketRepository.changeItemQuantity as jest.Mock).mockRejectedValue(
+      new Error("fail"),
+    );
+
+    const result = await basketService.changeItemQuantity(lineItemId, 0);
+
+    expect(showModalMessage).toHaveBeenCalled();
+    expect(result).toBeUndefined();
+  });
+});

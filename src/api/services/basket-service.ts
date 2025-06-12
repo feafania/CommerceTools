@@ -35,6 +35,29 @@ class BasketService {
     }
   }
 
+  async recalculateCart(
+    updateProductData = false,
+  ): Promise<InCart | undefined> {
+    try {
+      const token = await authService.getToken();
+      const cart = basketStore.getCart();
+      if (!cart?.id || cart.version === undefined)
+        throw new Error("Cart ID or version is missing");
+
+      const updatedCart = await basketRepository.recalculateCart(
+        cart.id,
+        cart.version,
+        updateProductData,
+        token,
+      );
+
+      basketStore.setCart(updatedCart);
+      return updatedCart;
+    } catch (error) {
+      this.handleError(error, SETTINGS.label.errors.recalculateCart);
+    }
+  }
+
   async addItemToCart(
     productKey: string,
     variantId: number | undefined = undefined, // If not set, refers to the Master Variant.
@@ -87,6 +110,29 @@ class BasketService {
       return updatedCart;
     } catch (error) {
       this.handleError(error, SETTINGS.label.errors.removeItemFromCart);
+    }
+  }
+
+  async changeItemQuantity(
+    lineItemId: string,
+    quantity: number, // If 0, the Line Item is removed from the Cart.
+  ): Promise<InCart | undefined> {
+    try {
+      const token = await authService.getToken();
+      const cartId = basketStore.getCart()?.id;
+      if (!cartId) throw new Error("Cart ID not found");
+
+      const updatedCart = await basketRepository.changeItemQuantity(
+        cartId,
+        lineItemId,
+        quantity,
+        token,
+      );
+
+      basketStore.setCart(updatedCart);
+      return updatedCart;
+    } catch (error) {
+      this.handleError(error, SETTINGS.label.errors.changeItemQuantity);
     }
   }
 
