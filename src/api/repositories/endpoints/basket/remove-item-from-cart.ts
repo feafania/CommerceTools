@@ -2,12 +2,11 @@ import { Cart, CartRemoveLineItemAction } from "@commercetools/platform-sdk";
 
 import getCartUpdateApi from "@/api/repositories/endpoints/basket/basket-helpers";
 import { handleApiError } from "@/api/handle-api-error";
-import { SETTINGS } from "@/config/settings";
 
 export default async function removeItemFromCart(
   cartId: string,
   lineItemId: string,
-  quantity: number = SETTINGS.basketParameters.quantity,
+  quantity: number | undefined = undefined,
   token?: string,
 ): Promise<Cart | undefined> {
   try {
@@ -16,7 +15,7 @@ export default async function removeItemFromCart(
     const action: CartRemoveLineItemAction = {
       action: "removeLineItem",
       lineItemId,
-      quantity,
+      ...(quantity === undefined ? {} : { quantity }),
     };
 
     const response = await post({

@@ -7,7 +7,7 @@ import { handleApiError } from "@/api/handle-api-error";
 export default async function addItemToCart(
   cartId: string,
   productId: string,
-  variantId: number,
+  variantId: number | undefined,
   quantity: number = SETTINGS.basketParameters.quantity,
   token?: string,
 ): Promise<Cart | undefined> {
@@ -16,7 +16,7 @@ export default async function addItemToCart(
     const action: CartAddLineItemAction = {
       action: "addLineItem",
       productId,
-      variantId,
+      ...(variantId === undefined ? {} : { variantId }),
       quantity,
     };
 

@@ -37,7 +37,7 @@ class BasketService {
 
   async addItemToCart(
     productKey: string,
-    variantId: number,
+    variantId: number | undefined = undefined, // If not set, refers to the Master Variant.
     quantity = SETTINGS.basketParameters.quantity,
   ): Promise<InCart | undefined> {
     try {
@@ -62,9 +62,14 @@ class BasketService {
     }
   }
 
+  /** @quantity
+   * If not set, the ShoppingListLineItem is removed from the ShoppingList.
+   * If this value matches or exceeds the current quantity of the ShoppingListLineItem,
+   * the ShoppingListLineItem is removed from the ShoppingList.
+   */
   async removeItemFromCart(
     lineItemId: string,
-    quantity = SETTINGS.basketParameters.quantity,
+    quantity: number | undefined = undefined,
   ): Promise<InCart | undefined> {
     try {
       const token = await authService.getToken();

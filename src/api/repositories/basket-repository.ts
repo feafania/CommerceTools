@@ -68,7 +68,7 @@ const basketRepository = {
   async addItemToCart(
     cartId: string,
     productId: string,
-    variantId: number,
+    variantId: number | undefined = undefined,
     quantity = SETTINGS.basketParameters.quantity,
     token?: string,
   ): Promise<InCart | undefined> {
@@ -92,7 +92,7 @@ const basketRepository = {
   async removeItemFromCart(
     cartId: string,
     lineItemId: string,
-    quantity = SETTINGS.basketParameters.quantity,
+    quantity: number | undefined = undefined,
     token?: string,
   ): Promise<InCart | undefined> {
     try {
