@@ -6,6 +6,8 @@ import { SETTINGS } from "@/config/settings";
 import authStore from "@/stores/auth-store";
 import { tokenStore } from "@/stores/token-store";
 import { FieldErrorType } from "@/types/types";
+import basketStore from "@/stores/basket-store";
+import basketService from "@/api/services/basket-service";
 
 class AuthService {
   async login(
@@ -13,11 +15,27 @@ class AuthService {
     password: string,
   ): Promise<InCustomer | FieldErrorType[] | undefined> {
     try {
-      const result = await authRepository.login(email, password);
+      const cart = basketStore.getCart();
+      const anonymousCartId = cart?.id;
+
+      const result = await authRepository.login(
+        email,
+        password,
+        anonymousCartId,
+      );
+
       if (!result) return;
 
-      const { customer, token } = result;
+      const { customer, token, cart: mergedCart } = result;
+
       authStore.setUser(customer, token);
+
+      if (mergedCart) {
+        basketStore.setCart(mergedCart);
+      } else {
+        const userCart = await basketService.createCart();
+        if (userCart) basketStore.setCart(userCart);
+      }
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
@@ -51,6 +69,11 @@ class AuthService {
       const revokeToken = await this.revokeToken();
       if (revokeToken) {
         authStore.setUser(undefined);
+        basketStore.clearCart();
+
+        const anonymousCart = await basketService.createCart();
+        if (anonymousCart) basketStore.setCart(anonymousCart);
+
         return true;
       }
     } catch {
@@ -122,6 +145,24 @@ class AuthService {
         );
       } else {
         // console.error("Get current user failed:", error);
+      }
+      return undefined;
+    }
+  }
+
+  async getToken(): Promise<string | undefined> {
+    try {
+      if (!tokenStore.accessToken) return undefined;
+
+      if (tokenStore.isTokenExpired()) {
+        await this.refreshToken();
+      }
+
+      return tokenStore.accessToken;
+    } catch (error) {
+      console.error("getting token failed:", error);
+      if (error instanceof ApiError) {
+        showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
       }
       return undefined;
     }

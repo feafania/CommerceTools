@@ -1,12 +1,15 @@
 import { randomUUID } from "node:crypto";
 
-import { MyCustomerDraft } from "@commercetools/platform-sdk";
+import { CartDraft, MyCustomerDraft } from "@commercetools/platform-sdk";
 
 export const testPassword = "StrongPass123!";
 export const testKeys = {
-  category: "dsr",
-  product: "rshsrs",
-  productType: "door-signs",
+  category: "rwd",
+  product: "dandrwd",
+  productType: "printed-pictures",
+  productVariantId: 1,
+  discountCode: "DISCOUNT10",
+  customerId: "customer-id-123",
 };
 
 export function getTestDraft(): MyCustomerDraft {
@@ -53,3 +56,8 @@ export const testAddresses = [
 export function getRandomPassword(): string {
   return `P@ssw0rd-${Date.now()}`;
 }
+
+export const cartDraft: CartDraft = {
+  currency: "EUR",
+  lineItems: [],
+};

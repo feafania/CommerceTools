@@ -6,3 +6,5 @@ export { default as createCustomerCart } from "./create-customer-cart";
 export { default as getAnonymousCart } from "./get-anonymous-cart";
 export { default as getCustomerCart } from "./get-customer-cart";
 export { default as removeItemFromCart } from "./remove-item-from-cart";
+export { default as deleteAnonymousCart } from "./delete-anonymous-cart";
+export { default as deleteCustomerCart } from "./delete-customer-cart";

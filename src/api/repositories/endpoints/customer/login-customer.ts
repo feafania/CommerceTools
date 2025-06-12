@@ -1,15 +1,31 @@
-import { CustomerSignInResult } from "@commercetools/platform-sdk";
-import { createApiBuilderFromCtpClient } from "@commercetools/platform-sdk";
+import {
+  CustomerSignInResult,
+  createApiBuilderFromCtpClient,
+} from "@commercetools/platform-sdk";
 
 import { handleApiError } from "@/api/handle-api-error";
-import { createPasswordClient } from "@/api/repositories/build-client";
+import {
+  createAnonymousClient,
+  // createPasswordClient,
+} from "@/api/repositories/build-client";
 
+/**
+ * Login customer using anonymous session to merge carts.
+ *
+ * @param email
+ * @param password
+ * @param anonymousCartId - optional anonymous cart to merge
+ */
 export default async function loginCustomer(
   email: string,
   password: string,
-): Promise<CustomerSignInResult> {
+  anonymousCartId?: string,
+): Promise<CustomerSignInResult | undefined> {
   try {
-    const client = createPasswordClient(email, password);
+    // Use anonymous session client
+    const client = createAnonymousClient();
+    // const client = createPasswordClient(email, password);
+
     const apiRoot = createApiBuilderFromCtpClient(client).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });
@@ -21,7 +37,11 @@ export default async function loginCustomer(
         body: {
           email,
           password,
-          activeCartSignInMode: "MergeWithExistingCustomerCart",
+          ...(anonymousCartId && {
+            anonymousCartId,
+            anonymousCartSignInMode: "MergeWithExistingCustomerCart",
+          }),
+          // activeCartSignInMode: "MergeWithExistingCustomerCart",
           // or "UseAsNewActiveCustomerCart" (clear basket)
         },
       })
@@ -29,7 +49,6 @@ export default async function loginCustomer(
 
     return response.body;
   } catch (error: unknown) {
-    // console.error(`Login with email "${email}" failed:`, error);
     handleApiError(error);
   }
 }

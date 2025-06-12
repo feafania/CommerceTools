@@ -74,7 +74,11 @@ describe("authRepository", () => {
       const { email, password } = inMockCustomer;
       const result = await authRepository.login(email, password!);
 
-      expect(mockedLoginCustomer).toHaveBeenCalledWith(email, password);
+      expect(mockedLoginCustomer).toHaveBeenCalledWith(
+        email,
+        password,
+        undefined,
+      );
       expect(mockedGetCustomerToken).toHaveBeenCalledWith(email, password);
 
       expect(result).toHaveProperty("customer");

@@ -158,6 +158,7 @@ export interface AppTranslation {
     insufficientStock: string;
     anonymousIdConflict: string;
     discountCodeInvalid: string;
+    invalidOperation: string;
   };
   errors: {
     login: string;
@@ -173,6 +174,7 @@ export interface AppTranslation {
     addItemToCart: string;
     removeItemFromCart: string;
     applyDiscountCode: string;
+    deleteCart: string;
   };
   messages: {
     onSignIn: string;

@@ -20,6 +20,7 @@ jest.mock("@/api/services/product-service", () => ({
   getProductList: jest.fn(),
   getProductsByCategoryKey: jest.fn(),
   getProductTypes: jest.fn().mockResolvedValue([]),
+  mapFilters: jest.fn().mockReturnValue([]),
 }));
 
 const mockCategories = [

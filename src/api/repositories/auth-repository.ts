@@ -1,4 +1,4 @@
-import { InCustomer } from "@/types/interfaces";
+import { InCart, InCustomer } from "@/types/interfaces";
 import { calculateTokenExpiry } from "@/utils/helpers";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
@@ -13,9 +13,12 @@ const authRepository = {
   async login(
     email: string,
     password: string,
-  ): Promise<{ customer: InCustomer; token: TokenType } | undefined> {
+    anonymousCartId?: string,
+  ): Promise<
+    { customer: InCustomer; token: TokenType; cart?: InCart } | undefined
+  > {
     try {
-      const response = await loginCustomer(email, password);
+      const response = await loginCustomer(email, password, anonymousCartId);
       const tokenData = await getCustomerToken(email, password);
 
       if (response && tokenData?.access_token) {
@@ -23,6 +26,11 @@ const authRepository = {
           response.customer,
           password,
         );
+
+        const cart = response.cart
+          ? MappingHelpers.toInternalCart(response.cart)
+          : undefined;
+
         return {
           customer,
           token: {
@@ -30,6 +38,7 @@ const authRepository = {
             ["refresh_token"]: tokenData.refresh_token,
             ["token_expires_in"]: calculateTokenExpiry(tokenData.expires_in),
           },
+          cart,
         };
       }
     } catch (error) {

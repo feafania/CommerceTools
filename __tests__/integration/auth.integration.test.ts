@@ -24,7 +24,9 @@ describe("Auth Integration", () => {
       testLoginDraft.password,
     );
     expect(result).toBeDefined();
-    expect(result.customer.email).toBe(testLoginDraft.email);
+    if (result) {
+      expect(result.customer.email).toBe(testLoginDraft.email);
+    }
   });
 
   it("should obtain a valid access token after login", async () => {

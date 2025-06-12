@@ -188,6 +188,7 @@ const en: AppTranslation = {
     insufficientStock: "Not enough goods in stock",
     anonymousIdConflict: "Anonymous user error",
     discountCodeInvalid: "The promo code is not suitable",
+    invalidOperation: "It is impossible to perform the action.",
   },
   errors: {
     login: "Login failed.",
@@ -203,6 +204,7 @@ const en: AppTranslation = {
     addItemToCart: "Couldn't add product to cart",
     removeItemFromCart: "Couldn't remove an item from the shopping cart",
     applyDiscountCode: "Couldn't apply promo code",
+    deleteCart: "Couldn't delete the shopping cart",
   },
   messages: {
     onSignIn: "You have successfully signed in.",

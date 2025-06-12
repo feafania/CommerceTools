@@ -192,6 +192,7 @@ const pl: AppTranslation = {
     insufficientStock: "Za mało towarów w magazynie",
     anonymousIdConflict: "Błąd anonimowego użytkownika",
     discountCodeInvalid: "Kod promocyjny nie jest odpowiedni",
+    invalidOperation: "It is impossible to perform the action.",
   },
   errors: {
     login: "Logowanie nie powiodło się.",
@@ -208,6 +209,7 @@ const pl: AppTranslation = {
     addItemToCart: "Nie można dodać produktu do koszyka",
     removeItemFromCart: "Nie można usunąć przedmiotu z koszyka",
     applyDiscountCode: "Nie można zastosować kodu promocyjnego",
+    deleteCart: "Nie można usunąć koszyka",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",

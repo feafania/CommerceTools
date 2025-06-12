@@ -6,6 +6,8 @@ import {
   applyDiscountCodeToCart,
   createAnonymousCart,
   createCustomerCart,
+  deleteAnonymousCart,
+  deleteCustomerCart,
   getAnonymousCart,
   getCustomerCart,
   removeItemFromCart,
@@ -83,7 +85,7 @@ const basketRepository = {
   async removeItemFromCart(
     cartId: string,
     lineItemId: string,
-    quantity = 1,
+    quantity = SETTINGS.basketParameters.quantity,
     token?: string,
   ): Promise<InCart | undefined> {
     try {
@@ -120,6 +122,21 @@ const basketRepository = {
       }
     } catch (error) {
       console.error("Error applying discount code:", error);
+      throw error;
+    }
+  },
+
+  async deleteCart(
+    cartId: string,
+    version: number,
+    token?: string,
+  ): Promise<void> {
+    try {
+      await (token
+        ? deleteCustomerCart(cartId, version, token)
+        : deleteAnonymousCart(cartId, version));
+    } catch (error) {
+      console.error("Error deleting cart:", error);
       throw error;
     }
   },

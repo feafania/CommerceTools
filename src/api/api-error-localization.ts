@@ -73,7 +73,7 @@ function localizeByCode(code: string): string | undefined {
   if (code.includes("invalid_customer_account_credentials"))
     return SETTINGS.label.errorsTypes.credentials;
 
-  if (code.includes("InvalidJsonInput"))
+  if (code.includes("InvalidJsonInput") || code.includes("InvalidInput"))
     return SETTINGS.label.errorsTypes.invalidJson;
 
   if (code.includes("InvalidQueryParam"))
@@ -133,4 +133,10 @@ function localizeByCode(code: string): string | undefined {
 
   if (code.includes("DiscountCodeNonApplicable"))
     return SETTINGS.label.errorsTypes.discountCodeInvalid;
+
+  if (code.includes("InvalidOperation"))
+    return SETTINGS.label.errorsTypes.invalidOperation;
+
+  if (code.includes("InternalServerError"))
+    return SETTINGS.label.errorsTypes.serverError;
 }

@@ -2,11 +2,12 @@ import { Cart, CartRemoveLineItemAction } from "@commercetools/platform-sdk";
 
 import getCartUpdateApi from "@/api/repositories/endpoints/basket/basket-helpers";
 import { handleApiError } from "@/api/handle-api-error";
+import { SETTINGS } from "@/config/settings";
 
 export default async function removeItemFromCart(
   cartId: string,
   lineItemId: string,
-  quantity: number = 1,
+  quantity: number = SETTINGS.basketParameters.quantity,
   token?: string,
 ): Promise<Cart | undefined> {
   try {

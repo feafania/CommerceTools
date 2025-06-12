@@ -3,79 +3,113 @@ import { InCart } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
 import { ApiError } from "@/api/handle-api-error";
 import showModalMessage from "@/components/modal-window/modal-window";
+import authService from "@/api/services/auth-service";
+import basketStore from "@/stores/basket-store";
 
 class BasketService {
-  async getCart(cartId?: string, token?: string): Promise<InCart | undefined> {
+  async getCart(): Promise<InCart | undefined> {
     try {
-      return await basketRepository.getCart(cartId, token);
+      const token = await authService.getToken();
+      const cart = basketStore.getCart();
+
+      return await basketRepository.getCart(cart?.id, token);
     } catch {
       return undefined;
     }
   }
 
   async createCart(parameters?: {
-    currency: string;
+    currency?: string;
     country?: string;
-    customerToken?: string;
   }): Promise<InCart | undefined> {
     try {
-      return await basketRepository.createCart(parameters);
+      const token = await authService.getToken();
+      return await basketRepository.createCart({
+        currency: parameters?.currency || SETTINGS.currentCurrency,
+        country: parameters?.country,
+        customerToken: token,
+      });
     } catch (error) {
       this.handleError(error, SETTINGS.label.errors.createCart);
     }
   }
 
   async addItemToCart(
-    cartId: string,
     variantId: number,
     quantity = SETTINGS.basketParameters.quantity,
-    token?: string,
   ): Promise<InCart | undefined> {
     try {
-      return await basketRepository.addItemToCart(
+      const token = await authService.getToken();
+      const cartId = basketStore.getCart()?.id;
+      if (!cartId) throw new Error("Cart ID not found");
+      const updatedCart = await basketRepository.addItemToCart(
         cartId,
         variantId,
         quantity,
         token,
       );
+      basketStore.setCart(updatedCart);
+      return updatedCart;
     } catch (error) {
       this.handleError(error, SETTINGS.label.errors.addItemToCart);
     }
   }
 
   async removeItemFromCart(
-    cartId: string,
     lineItemId: string,
-    quantity = 1,
-    token?: string,
+    quantity = SETTINGS.basketParameters.quantity,
   ): Promise<InCart | undefined> {
     try {
-      return await basketRepository.removeItemFromCart(
+      const token = await authService.getToken();
+      const cartId = basketStore.getCart()?.id;
+      if (!cartId) throw new Error("Cart ID not found");
+
+      const updatedCart = await basketRepository.removeItemFromCart(
         cartId,
         lineItemId,
         quantity,
         token,
       );
+
+      basketStore.setCart(updatedCart);
+      return updatedCart;
     } catch (error) {
       this.handleError(error, SETTINGS.label.errors.removeItemFromCart);
     }
   }
 
-  async applyDiscountCode(
-    cartId: string,
-    discountCode: string,
-    version: number,
-    token?: string,
-  ): Promise<InCart | undefined> {
+  async applyDiscountCode(discountCode: string): Promise<InCart | undefined> {
     try {
-      return await basketRepository.applyDiscountCode(
-        cartId,
+      const token = await authService.getToken();
+      const cart = basketStore.getCart();
+      if (!cart?.id || cart.version === undefined)
+        throw new Error("Cart ID or version is missing");
+
+      const updatedCart = await basketRepository.applyDiscountCode(
+        cart.id,
         discountCode,
-        version,
+        cart.version,
         token,
       );
+
+      basketStore.setCart(updatedCart);
+      return updatedCart;
     } catch (error) {
       this.handleError(error, SETTINGS.label.errors.applyDiscountCode);
+    }
+  }
+
+  async deleteCart(): Promise<void> {
+    try {
+      const token = await authService.getToken();
+      const cart = basketStore.getCart();
+      if (!cart?.id || cart.version === undefined)
+        throw new Error("Cart ID or version is missing");
+
+      await basketRepository.deleteCart(cart.id, cart.version, token);
+      basketStore.clearCart();
+    } catch (error) {
+      this.handleError(error, SETTINGS.label.errors.deleteCart);
     }
   }
 
