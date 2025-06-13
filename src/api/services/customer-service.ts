@@ -42,6 +42,7 @@ class CustomerService {
   }
 
   async changePassword(
+    oldPassword: string | undefined,
     newPassword: string,
   ): Promise<InCustomer | FieldErrorType[] | undefined> {
     try {
@@ -52,21 +53,21 @@ class CustomerService {
       const token = tokenStore.accessToken;
       const user = authStore.user;
 
-      if (!token || !user || !user.password || user.version === undefined) {
+      if (!token || !user || !oldPassword || user.version === undefined) {
         return undefined;
       }
 
       const updatedCustomer = await customerRepository.changePassword(
         user.version,
-        user.password,
+        oldPassword,
         newPassword,
         token,
       );
-
       if (updatedCustomer) {
         return await authService.login(user.email, newPassword);
       }
     } catch (error) {
+      console.log(error);
       if (error instanceof ApiError) {
         showModalMessage(
           `${SETTINGS.label.errors.updatePassword}\n${error.message}`,

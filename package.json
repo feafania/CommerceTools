@@ -27,6 +27,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^29.5.14",
+    "@types/js-cookie": "^3.0.6",
     "copy-webpack-plugin": "^13.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
@@ -68,6 +69,7 @@
     "@commercetools/sdk-client-v2": "^3.0.0",
     "cross-fetch": "^4.1.0",
     "dotenv": "^16.5.0",
+    "js-cookie": "^3.0.5",
     "process": "^0.11.10"
   }
 }

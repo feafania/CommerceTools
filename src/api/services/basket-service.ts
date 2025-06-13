@@ -11,12 +11,25 @@ class BasketService {
   async getCart(): Promise<InCart | undefined> {
     try {
       const token = await authService.getToken();
-      const cart = basketStore.getCart();
-
-      return await basketRepository.getCart(cart?.id, token);
+      let cart = basketStore.getCart();
+      if (!cart) {
+        cart = await this.createCart();
+        basketStore.setCart(cart);
+      }
+      if (cart) {
+        return await basketRepository.getCart(cart?.id, token);
+      }
     } catch {
       return undefined;
     }
+  }
+
+  async getCartId(): Promise<string> {
+    const cart = await this.getCart();
+    if (!cart) throw new Error("Cart not found");
+    const cartId = cart.id;
+    if (!cartId) throw new Error("Cart ID not found");
+    return cartId;
   }
 
   async createCart(parameters?: {
@@ -69,8 +82,7 @@ class BasketService {
         throw new Error(`Product with key "${productKey}" not found`);
       }
       const token = await authService.getToken();
-      const cartId = basketStore.getCart()?.id;
-      if (!cartId) throw new Error("Cart ID not found");
+      const cartId = await this.getCartId();
       const updatedCart = await basketRepository.addItemToCart(
         cartId,
         product.id,
@@ -96,8 +108,7 @@ class BasketService {
   ): Promise<InCart | undefined> {
     try {
       const token = await authService.getToken();
-      const cartId = basketStore.getCart()?.id;
-      if (!cartId) throw new Error("Cart ID not found");
+      const cartId = await this.getCartId();
 
       const updatedCart = await basketRepository.removeItemFromCart(
         cartId,
@@ -119,8 +130,7 @@ class BasketService {
   ): Promise<InCart | undefined> {
     try {
       const token = await authService.getToken();
-      const cartId = basketStore.getCart()?.id;
-      if (!cartId) throw new Error("Cart ID not found");
+      const cartId = await this.getCartId();
 
       const updatedCart = await basketRepository.changeItemQuantity(
         cartId,
@@ -139,7 +149,9 @@ class BasketService {
   async applyDiscountCode(discountCode: string): Promise<InCart | undefined> {
     try {
       const token = await authService.getToken();
-      const cart = basketStore.getCart();
+      const cart = await this.getCart();
+      if (!cart) throw new Error("Cart is missing");
+
       if (!cart?.id || cart.version === undefined)
         throw new Error("Cart ID or version is missing");
 

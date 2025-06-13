@@ -130,7 +130,7 @@ describe("customerService.changePassword", () => {
     );
     (authService.login as jest.Mock).mockResolvedValue(oldCustomer);
 
-    await customerService.changePassword(newPassword);
+    await customerService.changePassword(oldCustomer.password!, newPassword);
 
     expect(authService.refreshToken).toHaveBeenCalled();
   });
@@ -140,7 +140,10 @@ describe("customerService.changePassword", () => {
       .spyOn(tokenStore, "accessToken", "get")
       .mockReturnValue(JSON.parse("null"));
 
-    const result = await customerService.changePassword(newPassword);
+    const result = await customerService.changePassword(
+      oldCustomer.password!,
+      newPassword,
+    );
 
     expect(customerRepository.changePassword).not.toHaveBeenCalled();
     expect(result).toBeUndefined();
@@ -148,17 +151,20 @@ describe("customerService.changePassword", () => {
 
   it("should not proceed and return undefined if user is missing or has no password", async () => {
     authStore.setUser(undefined);
-    let result = await customerService.changePassword(newPassword);
+    let result = await customerService.changePassword(undefined, newPassword);
     expect(customerRepository.changePassword).not.toHaveBeenCalled();
     expect(result).toBeUndefined();
 
     authStore.setUser({ ...oldCustomer, password: undefined });
-    result = await customerService.changePassword(newPassword);
+    result = await customerService.changePassword(undefined, newPassword);
     expect(customerRepository.changePassword).not.toHaveBeenCalled();
     expect(result).toBeUndefined();
 
     authStore.setUser({ ...oldCustomer, version: undefined });
-    result = await customerService.changePassword(newPassword);
+    result = await customerService.changePassword(
+      oldCustomer.password!,
+      newPassword,
+    );
     expect(customerRepository.changePassword).not.toHaveBeenCalled();
     expect(result).toBeUndefined();
   });
@@ -169,11 +175,14 @@ describe("customerService.changePassword", () => {
     );
     (authService.login as jest.Mock).mockResolvedValue(oldCustomer);
 
-    const result = await customerService.changePassword(newPassword);
+    const result = await customerService.changePassword(
+      oldCustomer.password!,
+      newPassword,
+    );
 
     expect(customerRepository.changePassword).toHaveBeenCalledWith(
       oldCustomer.version,
-      authStore.user!.password,
+      oldCustomer.password!,
       newPassword,
       "mocked-token",
     );
@@ -190,7 +199,10 @@ describe("customerService.changePassword", () => {
 
     (customerRepository.changePassword as jest.Mock).mockRejectedValue(error);
 
-    const result = await customerService.changePassword(newPassword);
+    const result = await customerService.changePassword(
+      oldCustomer.password!,
+      newPassword,
+    );
 
     expect(showModalMessage).toHaveBeenCalledWith(
       expect.stringContaining("Bad Request"),
@@ -205,7 +217,10 @@ describe("customerService.changePassword", () => {
       unknownError,
     );
 
-    const result = await customerService.changePassword(newPassword);
+    const result = await customerService.changePassword(
+      oldCustomer.password!,
+      newPassword,
+    );
 
     expect(showModalMessage).not.toHaveBeenCalled();
     expect(result).toBeUndefined();

@@ -18,3 +18,5 @@ export const CurrencySymbolMap: Record<CurrencyCode, string> = {
   [CurrencyCode.GBP]: "£",
   [CurrencyCode.PLN]: "zł",
 };
+
+export const COOCKIE_LIFE: number = 7;

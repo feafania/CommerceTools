@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+
 import { SETTINGS } from "@/config/settings";
 import { CountryCodeMap, LanguageCode, LanguageVariants } from "@/types/types";
 import {
@@ -7,7 +9,7 @@ import {
   StorageItem,
 } from "@/types/interfaces";
 import { AddressType, CountryCode, CurrencyCode } from "@/types/enum";
-import { CurrencySymbolMap } from "@/config/constants";
+import { COOCKIE_LIFE, CurrencySymbolMap } from "@/config/constants";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -223,4 +225,25 @@ export function formatDate(createdAt: string): string {
     month: "long",
     year: "numeric",
   });
+}
+
+export function setCookie(
+  name: string,
+  value: string,
+  days: number = COOCKIE_LIFE,
+): void {
+  Cookies.set(name, value, {
+    expires: days,
+    secure: true, // only for HTTPS
+    sameSite: "Lax", // CSRF protection
+    path: "/", // available on the entire site
+  });
+}
+
+export function getCookie(name: string): string | undefined {
+  return Cookies.get(name);
+}
+
+export function removeCookie(name: string) {
+  Cookies.remove(name, { path: "/" });
 }

@@ -128,7 +128,7 @@ const ChangePassword = {
     const newPassword = formData.get("new-password") as string;
     const confirmPassword = formData.get("confirm-password") as string;
 
-    if (currentPasswordUser !== currentPasswordForm) {
+    if (currentPasswordUser !== currentPasswordForm && currentPasswordUser) {
       showModalMessage(SETTINGS.label.changePassword.wrongOldPassword);
       return;
     }
@@ -145,11 +145,16 @@ const ChangePassword = {
     const isValid = handleOnSubmit(form, FormType.PASSWORD);
     if (!isValid) return;
 
-    const result = await customerService.changePassword(newPassword);
+    const result = await customerService.changePassword(
+      currentPasswordForm,
+      newPassword,
+    );
 
     if (Array.isArray(result)) {
       const message = result[0]?.message;
-      await showModalMessage(message);
+      if (message) {
+        await showModalMessage(message);
+      }
     } else if (result) {
       await showModalMessage(SETTINGS.label.changePassword.success);
       PageRouter.navigateTo(PageType.profile);
