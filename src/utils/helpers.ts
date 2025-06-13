@@ -10,6 +10,10 @@ import {
 } from "@/types/interfaces";
 import { AddressType, CountryCode, CurrencyCode } from "@/types/enum";
 import { COOCKIE_LIFE, CurrencySymbolMap } from "@/config/constants";
+import { tokenStore } from "@/stores/token-store";
+import authService from "@/api/services/auth-service";
+import authStore from "@/stores/auth-store";
+import basketService from "@/api/services/basket-service";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -246,4 +250,27 @@ export function getCookie(name: string): string | undefined {
 
 export function removeCookie(name: string) {
   Cookies.remove(name, { path: "/" });
+}
+
+export async function loadUser() {
+  tokenStore.loadFromCookies();
+
+  if (tokenStore.isTokenExpired() && tokenStore.refreshToken) {
+    try {
+      await authService.refreshToken();
+    } catch {
+      authStore.setUser(undefined);
+    }
+  }
+
+  if (tokenStore.accessToken) {
+    try {
+      await authService.getMe();
+      if (authStore.user) {
+        await basketService.getCart();
+      }
+    } catch (error) {
+      console.error("Couldn't get the user:", error);
+    }
+  }
 }

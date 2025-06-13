@@ -27,17 +27,6 @@
   font-size: 2rem;
 }
 
-.nav-link.active {
-  background: var(--nav-active-color);
-  cursor: default;
-}
-
-.nav-link.disabled {
-  pointer-events: none;
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .header-username {
   font-weight: bold;
   font-size: 2rem;
@@ -65,6 +54,8 @@
 
 .nav-list li {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav-link {
@@ -76,6 +67,8 @@
   cursor: pointer;
   padding: 5px 10px !important;
   border-radius: 10px;
+  text-align: center;
+  display: block;
 }
 
 .nav-link:hover:not(.active) {
@@ -85,6 +78,29 @@
 .nav-link:active:not(.active) {
   opacity: 0.8;
 }
+
+.nav-link.active {
+  background: var(--nav-active-color);
+  cursor: default;
+}
+
+.nav-link.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nav-basket {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--main-color) !important;
+}
+
 
 .nav-link:hover {
   text-decoration: none;
@@ -185,6 +201,11 @@
     font-size: 25px;
     margin-top: 20px;
   }
+  .nav-list li {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+  }
   .nav-list {
     flex-direction: column;
     gap: 20px;
@@ -201,6 +222,10 @@
   }
   .header-logo {
     width: 75%;
+  }
+  .nav-basket {
+    font-size: 2rem;
+
   }
 }
 

@@ -22,6 +22,7 @@ const pl: AppTranslation = {
     },
     userProfile: "Profil Użytkownika",
     changePassword: "Zmień hasło",
+    basket: "Kosz",
   },
   login: {
     email: "Adres e-mail",
@@ -94,6 +95,9 @@ const pl: AppTranslation = {
     success: "Twoje hasło zostało pomyślnie zmienione",
     wrongOldPassword: "Błędne aktualne hasło",
     emptyPassword: "Pole hasła jest puste",
+  },
+  basket: {
+    title: "Kosz",
   },
   address: {
     headers: {

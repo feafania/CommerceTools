@@ -22,6 +22,7 @@ const en: AppTranslation = {
     },
     userProfile: "User Profile",
     changePassword: "Change password",
+    basket: "Basket",
   },
   login: {
     email: "Email address",
@@ -94,6 +95,9 @@ const en: AppTranslation = {
     success: "Your password was successfully changed",
     wrongOldPassword: "Wrong current password",
     emptyPassword: "Password field is empty",
+  },
+  basket: {
+    title: "Basket",
   },
   address: {
     headers: {

@@ -22,6 +22,7 @@ export interface AppTranslation {
     };
     userProfile: string;
     changePassword: string;
+    basket: string;
   };
   login: {
     email: string;
@@ -94,6 +95,9 @@ export interface AppTranslation {
     wrongConfirm: string;
     wrongOldPassword: string;
     emptyPassword: string;
+  };
+  basket: {
+    title: string;
   };
   address: {
     headers: AddressTypeMap;

@@ -4,15 +4,20 @@ import { formatPriceWithCurrency, localizeName } from "@/utils/helpers";
 import { CARD_SETTINGS } from "@/config/constants";
 import { CurrencyCode, PageType, SliderType } from "@/types/enum";
 import CatalogView from "@/pages/catalog/catalog";
+import basketStore from "@/stores/basket-store";
+import { Basket } from "@/components/basket/basket";
+import basketService from "@/api/services/basket-service";
 
 export default class ProductCard {
   card: HTMLDivElement;
+  #basket: Basket | undefined;
 
   constructor(
     private product: InProduct,
     private variant: SliderType = SliderType.Cards,
   ) {
     this.card = document.createElement("div");
+    this.#basket = undefined;
   }
   create(): HTMLDivElement {
     this.card.className = "product-card";
@@ -39,13 +44,56 @@ export default class ProductCard {
         globalThis.location.hash = `${PageType.product}/${this.product.key}`;
       });
 
-      this.card.append(
-        imgWrapper,
-        ProductCard.renderProductInformation(this.product),
-      );
+      const infoBlock = ProductCard.renderProductInformation(this.product);
+      const addToCartButton = this.createAddToCartButton();
+
+      this.card.append(imgWrapper, infoBlock, addToCartButton);
     }
 
     return this.card;
+  }
+
+  private createAddToCartButton(): HTMLButtonElement {
+    this.#basket = new Basket();
+    const button = this.#basket!.element;
+
+    const cart = basketStore.getCart();
+    const alreadyInCart = cart?.lineItems?.some(
+      (item) => item.productId === this.product.id,
+    );
+
+    if (alreadyInCart) {
+      button.disabled = true;
+      button.classList.add("in-cart");
+      button.title = "Already in cart";
+    }
+
+    button.addEventListener("click", async (event_) => {
+      event_.stopPropagation();
+
+      button.disabled = true;
+      button.innerHTML = `<span class="loading-spinner"></span>`;
+
+      try {
+        await basketService.addItemToCart(this.product.key!);
+        button.innerHTML = `<i class="fas fa-check"></i>`;
+        button.classList.add("in-cart");
+        button.title = "Added to cart";
+      } catch (error) {
+        console.error("Error adding item:", error);
+        button.innerHTML = `<i class="fas fa-times"></i>`;
+        button.title = "Error adding to cart";
+        button.disabled = false;
+      }
+
+      setTimeout(() => {
+        if (!button.classList.contains("in-cart")) {
+          button.innerHTML = `<i class="fas fa-cart-plus"></i>`;
+        }
+      }, 2000);
+    });
+
+    return button;
   }
 
   static renderProductInformation(product: InProduct): HTMLElement {
