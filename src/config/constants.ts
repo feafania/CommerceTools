@@ -20,3 +20,4 @@ export const CurrencySymbolMap: Record<CurrencyCode, string> = {
 };
 
 export const COOCKIE_LIFE: number = 7;
+export const SCROLL_HEIGHT: number = 300;

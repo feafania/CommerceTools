@@ -128,13 +128,13 @@
 
 .category-button {
   font-weight: bold;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .all-category-button {
   font-weight: bold;
   font-size: 1.1rem;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .category-group {
@@ -243,6 +243,15 @@
   padding: 0.65rem 1rem;
 }
 
+.sort-dropdown-wrapper {
+  display: inline-block;
+}
+
+.sort-dropdown {
+  width: auto;
+  min-width: max-content;
+}
+
 .apply-filters-btn.active {
   background-color: var(--accent-color);
   color: white;
@@ -322,6 +331,31 @@
 
 .reset-filters-btn {
   background-color: #bba7a7;
+}
+
+.lazy-loader {
+  height: 50px;
+}
+
+.scroll-to-top {
+  background-color: #333;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  z-index: 1000;
+  font-size: 20px;
+  text-align: center;
+  line-height: 48px;
+  cursor: pointer;
+  padding: 0;
 }
 
 @media (max-width: 1000px) {

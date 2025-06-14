@@ -96,8 +96,12 @@ const en: AppTranslation = {
     wrongOldPassword: "Wrong current password",
     emptyPassword: "Password field is empty",
   },
-  basket: {
+  basketButton: {
     title: "Basket",
+    addToCard: "Add to cart",
+    alreadyInCard: "Already in cart",
+    addedToCard: "Added to cart",
+    errorAddingToCart: "Error adding to cart",
   },
   address: {
     headers: {

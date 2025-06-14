@@ -99,7 +99,8 @@ const Header = {
 
       if (page === PageType.basket) {
         const basket = new Basket();
-        link.append(basket.icon);
+        basket.subscribeOnCount();
+        link.append(basket.element);
         link.classList.add("nav-basket");
       } else {
         link.textContent = label;
@@ -147,7 +148,6 @@ const Header = {
         visible: Boolean(ProductView.productKey),
         disabled: false,
       },
-      { label: t.about, page: PageType.about, visible: false, disabled: false },
       {
         label: t.signIn,
         page: PageType.login,
@@ -178,6 +178,7 @@ const Header = {
         visible: isLoggedIn,
         disabled: !isLoggedIn,
       },
+      { label: t.about, page: PageType.about, visible: true, disabled: false },
       {
         label: t.basket,
         page: PageType.basket,

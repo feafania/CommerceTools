@@ -4,6 +4,7 @@ import createMain from "@/components/layout/main/main";
 import createFooter from "@/components/layout/footer/footer";
 import PageRouter from "@/router/page-router";
 import { loadUser } from "@/utils/helpers";
+import CatalogView from "@/pages/catalog/catalog";
 
 export default async function initApp(root: HTMLElement) {
   root.innerHTML = "";
@@ -16,6 +17,7 @@ export default async function initApp(root: HTMLElement) {
   root.append(header, main, footer);
 
   globalThis.addEventListener("languageChanged", () => {
+    CatalogView.isSamePage = false;
     Header.setTitle();
     Header.renderNav();
     PageRouter.handleRoute();

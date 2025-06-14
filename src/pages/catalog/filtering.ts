@@ -3,9 +3,10 @@ import { SETTINGS } from "@/config/settings";
 import CatalogView from "@/pages/catalog/catalog";
 import { AttributeMap, InAttributes, SortOptions } from "@/types/types";
 import { InAttributeTypeValues, LabelPosition, PageType } from "@/types/enum";
-import { localizeName } from "@/utils/helpers";
+import { isMobile, localizeName } from "@/utils/helpers";
 import createSelect from "@/components/select/select";
 import createCheckbox from "@/components/checkbox/checkbox";
+import searchBar from "@/components/search-button/search-button";
 
 const CatalogViewFiltering = {
   tempFilters: {} as InAttributes,
@@ -486,9 +487,10 @@ const CatalogViewFiltering = {
 
     CatalogView.currentQuery = parameters.get("q") || "";
     CatalogView.sortOption = parameters.get("sort") as SortOptions;
-    CatalogView.offset = parameters.has("offset")
-      ? Number(parameters.get("offset"))
-      : 0;
+    CatalogView.offset =
+      parameters.has("offset") && !isMobile()
+        ? Number(parameters.get("offset"))
+        : 0;
 
     const attributeFilters: InAttributes = {};
 
@@ -516,6 +518,14 @@ const CatalogViewFiltering = {
       document.querySelector<HTMLDivElement>(".attribute-filters");
     if (attributesWrapper) {
       await CatalogViewFiltering.renderAttributeFilters(attributesWrapper);
+    }
+    if (searchBar?.searchInput) {
+      searchBar.searchInput.value = CatalogView.currentQuery || "";
+    }
+    const sortDropdown =
+      CatalogView.container.querySelector<HTMLSelectElement>(".sort-dropdown");
+    if (sortDropdown) {
+      sortDropdown.value = CatalogView.sortOption || "";
     }
   },
 

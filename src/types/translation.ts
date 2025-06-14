@@ -96,8 +96,12 @@ export interface AppTranslation {
     wrongOldPassword: string;
     emptyPassword: string;
   };
-  basket: {
+  basketButton: {
     title: string;
+    addToCard: string;
+    alreadyInCard: string;
+    addedToCard: string;
+    errorAddingToCart: string;
   };
   address: {
     headers: AddressTypeMap;

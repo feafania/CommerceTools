@@ -22,7 +22,7 @@ const pl: AppTranslation = {
     },
     userProfile: "Profil Użytkownika",
     changePassword: "Zmień hasło",
-    basket: "Kosz",
+    basket: "Koszyk",
   },
   login: {
     email: "Adres e-mail",
@@ -96,8 +96,12 @@ const pl: AppTranslation = {
     wrongOldPassword: "Błędne aktualne hasło",
     emptyPassword: "Pole hasła jest puste",
   },
-  basket: {
-    title: "Kosz",
+  basketButton: {
+    title: "Koszyk",
+    addToCard: "Dodaj do koszyka",
+    alreadyInCard: "Już w Koszyku",
+    addedToCard: "Dodano do koszyka",
+    errorAddingToCart: "Błąd dodawania do koszyka",
   },
   address: {
     headers: {

@@ -38,6 +38,7 @@ export default class ProductCard {
       const img = document.createElement("img");
       img.src = this.product.images[0]?.url;
       img.alt = localizeName(this.product.name);
+      img.loading = "lazy";
       imgWrapper.append(img);
       this.card.addEventListener("click", () => {
         CatalogView.isSamePage = false;
@@ -55,42 +56,33 @@ export default class ProductCard {
 
   private createAddToCartButton(): HTMLButtonElement {
     this.#basket = new Basket();
-    const button = this.#basket!.element;
+    if (!this.#basket) return document.createElement("button");
+
+    const button = this.#basket.element;
 
     const cart = basketStore.getCart();
-    const alreadyInCart = cart?.lineItems?.some(
+    this.#basket.isInCart = !!cart?.lineItems?.some(
       (item) => item.productId === this.product.id,
     );
-
-    if (alreadyInCart) {
-      button.disabled = true;
-      button.classList.add("in-cart");
-      button.title = "Already in cart";
-    }
+    this.#basket.addItem();
 
     button.addEventListener("click", async (event_) => {
       event_.stopPropagation();
-
-      button.disabled = true;
-      button.innerHTML = `<span class="loading-spinner"></span>`;
+      this.#basket?.load();
 
       try {
         await basketService.addItemToCart(this.product.key!);
-        button.innerHTML = `<i class="fas fa-check"></i>`;
-        button.classList.add("in-cart");
-        button.title = "Added to cart";
+        this.#basket?.addedToCart();
       } catch (error) {
         console.error("Error adding item:", error);
-        button.innerHTML = `<i class="fas fa-times"></i>`;
-        button.title = "Error adding to cart";
-        button.disabled = false;
+        this.#basket?.errorAddingToCart();
       }
 
       setTimeout(() => {
         if (!button.classList.contains("in-cart")) {
-          button.innerHTML = `<i class="fas fa-cart-plus"></i>`;
+          this.#basket?.addItem();
         }
-      }, 2000);
+      }, 1000);
     });
 
     return button;

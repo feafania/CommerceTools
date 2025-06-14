@@ -7,7 +7,7 @@ import productService from "@/api/services/product-service";
 import ProductCard from "@/components/product-card/product-card";
 import { SETTINGS } from "@/config/settings";
 import searchBar from "@/components/search-button/search-button";
-import { removeAllChildren } from "@/utils/helpers";
+import { isMobile, removeAllChildren } from "@/utils/helpers";
 import { InCategory, ProductListParameters } from "@/types/interfaces";
 import PageRouter from "@/router/page-router";
 import {
@@ -19,6 +19,8 @@ import {
 } from "@/types/enum";
 import { AttributeMap, InAttributes, SortOptions } from "@/types/types";
 import CatalogViewFiltering from "@/pages/catalog/filtering";
+import Filtering from "@/pages/catalog/filtering";
+import { SCROLL_HEIGHT } from "@/config/constants";
 
 const CatalogView = {
   container: document.createElement("section"),
@@ -38,16 +40,21 @@ const CatalogView = {
   maxPrice: undefined as number | undefined,
   attributeFilters: {} as InAttributes,
   availableAttributes: new Map() as AttributeMap,
+  lazyLoaderElement: document.createElement("div"),
+  wasMobile: false as boolean,
+  scrollToTopButton: document.createElement("button"),
+  lazyObserver: undefined as IntersectionObserver | undefined,
   // sliderWrapper: document.createElement("div"),
 
   async render(): Promise<HTMLElement | undefined> {
     if (this.isSamePage) {
       this.isSamePage = false;
       await CatalogViewFiltering.applyFiltering();
-      await this.renderProducts();
+      await this.renderProducts(this.wasMobile);
       mobileFilterToggle.refresh();
       return;
     }
+    this.wasMobile = isMobile();
     removeAllChildren(this.container);
     this.container.className = "view catalog-view";
 
@@ -64,36 +71,18 @@ const CatalogView = {
 
       const sidebar = await this.renderSideBar();
 
-      const contentWrapper = document.createElement("div");
-      contentWrapper.className = "catalog-content";
-
-      const headerWrapper = document.createElement("div");
-      headerWrapper.className = "catalog-header";
-      this.filterInfo.className = "filter-info";
-      this.filterInfo.textContent =
-        SETTINGS.label.catalog.filters.filtersApplied;
-
-      const currencySelect = this.createCurrencyDropdown();
-
-      headerWrapper.append(this.title, currencySelect);
-
       // this.sliderWrapper.className = "product-slider";
       this.productList = document.createElement("div");
       this.productList.className = "product-list";
 
       this.paginationWrapper.className = "pagination";
-
-      contentWrapper.append(
-        headerWrapper,
-        this.filterInfo,
-        this.renderSearchSort(),
-        this.paginationWrapper,
-        this.productList,
-      ); // this.sliderWrapper,
+      const contentWrapper = this.createContentWrapper();
       this.container.append(sidebar, contentWrapper);
 
       await CatalogViewFiltering.applyFiltering();
-      await this.renderProducts();
+      await this.renderProducts(this.wasMobile);
+      this.setupResizeHandler();
+      this.setupScrollToTopButton();
 
       setTimeout(() => {
         mobileFilterToggle.refresh();
@@ -104,6 +93,39 @@ const CatalogView = {
       this.setSelectedCategoryKey(undefined);
       await PageRouter.renderPage(PageType.notfound);
     }
+  },
+
+  createContentWrapper(): HTMLDivElement {
+    const contentWrapper = document.createElement("div");
+    contentWrapper.className = "catalog-content";
+
+    const headerWrapper = document.createElement("div");
+    headerWrapper.className = "catalog-header";
+    this.filterInfo.className = "filter-info";
+
+    const currencySelect = this.createCurrencyDropdown();
+
+    headerWrapper.append(this.title, currencySelect);
+
+    contentWrapper.append(
+      headerWrapper,
+      this.filterInfo,
+      this.renderSearchSort(),
+      this.paginationWrapper,
+      this.productList,
+    ); // this.sliderWrapper,
+
+    if (this.container.contains(this.lazyLoaderElement)) {
+      this.lazyLoaderElement.remove();
+    }
+    this.container.append(this.lazyLoaderElement);
+    if (this.wasMobile) {
+      this.lazyLoaderElement = document.createElement("div");
+      this.lazyLoaderElement.className = "lazy-loader";
+      this.container.append(this.lazyLoaderElement);
+      this.setupLazyLoading();
+    }
+    return contentWrapper;
   },
 
   setSelectedCategoryKey(key: string | undefined): void {
@@ -119,7 +141,7 @@ const CatalogView = {
       searchBar.setDebounce(() => {
         this.currentQuery = searchBar.searchInput.value.trim();
         this.offset = 0; // Reset offset when searching
-        this.renderProducts();
+        this.renderProducts(isMobile());
       }, 400);
     });
 
@@ -128,14 +150,18 @@ const CatalogView = {
     return wrapper;
   },
 
-  async renderProducts() {
+  async renderProducts(append = false) {
     if (!this.productList) {
       this.productList = document.createElement("div");
       this.productList.className = "product-list";
       this.container.append(this.productList);
     }
 
-    removeAllChildren(this.productList);
+    if (!append || this.offset === 0) {
+      removeAllChildren(this.productList);
+    } else {
+      this.offset = 0;
+    }
 
     const requestParameters: ProductListParameters = this.createParameters();
 
@@ -158,7 +184,9 @@ const CatalogView = {
     // const newSlider = new ProductSlider(products);
     // newSlider.create();
     // this.sliderWrapper.append(newSlider.container);
-    this.renderPagination();
+    if (!isMobile()) {
+      this.renderPagination();
+    }
   },
 
   async renderSideBar() {
@@ -230,11 +258,34 @@ const CatalogView = {
 
       pageButton.addEventListener("click", () => {
         this.offset = page * this.limit;
-        this.renderProducts();
+        // CatalogView.isSamePage = true;
+        // Filtering.buildPath();
+        this.renderProducts(isMobile());
       });
 
       this.paginationWrapper.append(pageButton);
     }
+  },
+
+  setupLazyLoading() {
+    if (this.lazyObserver) {
+      this.lazyObserver.disconnect();
+    }
+    this.lazyObserver = new IntersectionObserver(
+      async (entries) => {
+        if (entries[0].isIntersecting) {
+          this.offset += this.limit;
+          if (this.offset < this.total) {
+            await this.renderProducts(true);
+          }
+        }
+      },
+      {
+        rootMargin: "100px",
+      },
+    );
+
+    this.lazyObserver.observe(this.lazyLoaderElement);
   },
 
   async onCategoryChange(category: InCategory | undefined) {
@@ -316,7 +367,8 @@ const CatalogView = {
     select.addEventListener("change", () => {
       this.sortOption = select.value as SortOptions;
       this.offset = 0;
-      this.renderProducts();
+      CatalogView.isSamePage = true;
+      Filtering.buildPath();
     });
 
     wrapper.append(select);
@@ -340,7 +392,8 @@ const CatalogView = {
     select.addEventListener("change", () => {
       SETTINGS.currentCurrency = select.value as CurrencyCode;
       this.offset = 0;
-      this.renderProducts();
+      CatalogView.isSamePage = true;
+      Filtering.buildPath();
     });
 
     return select;
@@ -457,6 +510,65 @@ const CatalogView = {
         ? sortDirection
         : defaultSort.sortDirection,
     };
+  },
+
+  setupResizeHandler() {
+    window.addEventListener("resize", async () => {
+      const isCurrentlyMobile = isMobile();
+      if (CatalogView.wasMobile !== isCurrentlyMobile) {
+        CatalogView.wasMobile = isCurrentlyMobile;
+        CatalogView.offset = 0;
+
+        removeAllChildren(CatalogView.productList);
+        removeAllChildren(CatalogView.paginationWrapper);
+
+        if (isCurrentlyMobile) {
+          CatalogView.lazyLoaderElement.className = "lazy-loader";
+          if (!CatalogView.container.contains(CatalogView.lazyLoaderElement)) {
+            CatalogView.container.append(CatalogView.lazyLoaderElement);
+          }
+          await CatalogView.renderProducts(isCurrentlyMobile);
+          CatalogView.setupLazyLoading();
+        } else {
+          if (CatalogView.container.contains(CatalogView.lazyLoaderElement)) {
+            CatalogView.lazyLoaderElement.remove();
+          }
+          await CatalogView.renderProducts(isCurrentlyMobile);
+          CatalogView.renderPagination();
+        }
+      }
+    });
+  },
+
+  setupScrollToTopButton() {
+    this.scrollToTopButton.className = "scroll-to-top";
+    this.scrollToTopButton.textContent = "↑";
+
+    this.scrollToTopButton.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    window.addEventListener("scroll", () => {
+      this.updateScrollToTopButtonVisibility();
+    });
+
+    window.addEventListener("resize", () => {
+      this.updateScrollToTopButtonVisibility();
+    });
+
+    this.updateScrollToTopButtonVisibility();
+
+    document.body.append(this.scrollToTopButton);
+  },
+
+  updateScrollToTopButtonVisibility() {
+    if (!isMobile()) {
+      this.scrollToTopButton.style.display = "none";
+      return;
+    }
+
+    this.scrollToTopButton.style.display =
+      window.scrollY > SCROLL_HEIGHT ? "block" : "none";
   },
 };
 

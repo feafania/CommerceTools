@@ -274,3 +274,5 @@ export async function loadUser() {
     }
   }
 }
+
+export const isMobile = () => window.innerWidth <= 1000;
