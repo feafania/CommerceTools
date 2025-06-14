@@ -101,7 +101,6 @@
   color: var(--main-color) !important;
 }
 
-
 .nav-link:hover {
   text-decoration: none;
   text-transform: none;
@@ -225,7 +224,6 @@
   }
   .nav-basket {
     font-size: 2rem;
-
   }
 }
 
