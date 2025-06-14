@@ -9,6 +9,7 @@ import UserProfile from "@/pages/profile/profile";
 import CatalogView from "@/pages/catalog/catalog";
 import ProductView from "@/pages/product/product";
 import ChangePassword from "@/pages/change-password/change-password";
+import Basket from "@/pages/basket/basket";
 
 const routes: Partial<Record<PageType, RouteType>> = {
   [PageType.login]: {
@@ -47,7 +48,7 @@ const routes: Partial<Record<PageType, RouteType>> = {
   },
   [PageType.basket]: {
     canActivate: () => true,
-    render: () => Promise.resolve(document.createElement("div")),
+    render: Basket.render.bind(Basket),
   },
   [PageType.changePassword]: {
     canActivate: () => !!authStore.user,
