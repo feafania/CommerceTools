@@ -1,0 +1,49 @@
+.basket-header h2 {
+  text-align: center;
+}
+
+.basket-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  border: 2px solid var(--border-color);
+  border-radius: 0.75rem;
+  background-color: var(--form-background);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 17%;
+}
+
+.basket-item img {
+  width: 20% !important;
+  height: auto !important;
+}
+
+.item-details {
+  width: 50%;
+}
+
+.item-total {
+  width: 5%;
+}
+
+.remove-btn {
+  width: 10%;
+}
+
+.summary-line {
+  font-size: 25px;
+  margin-top: 30px;
+}
+.summary-total {
+  font-size: 25px;
+  margin: 0 2px 30px;
+}
