@@ -27,6 +27,7 @@ const CatalogView = {
   title: document.createElement("h1"),
   paginationWrapper: document.createElement("div"),
   productList: document.createElement("div"),
+  productWrapper: document.createElement("div"),
   filterInfo: document.createElement("div"),
   selectedCategoryKey: undefined as string | undefined,
   categories: [] as InCategory[],
@@ -80,8 +81,11 @@ const CatalogView = {
       const sidebar = await this.renderSideBar();
 
       // this.sliderWrapper.className = "product-slider";
+      this.productWrapper = document.createElement("div");
+      this.productList.className = "product-wrapper";
       this.productList = document.createElement("div");
       this.productList.className = "product-list";
+      this.productWrapper.append(this.productList);
 
       this.paginationWrapper.className = "pagination";
       const contentWrapper = this.createContentWrapper();
@@ -124,7 +128,7 @@ const CatalogView = {
       this.filterInfo,
       this.renderSearchSort(),
       this.paginationWrapper,
-      this.productList,
+      this.productWrapper,
     ); // this.sliderWrapper,
 
     return contentWrapper;
@@ -136,10 +140,13 @@ const CatalogView = {
     const searchComponent = searchBar.render();
 
     searchBar.searchInput.addEventListener("input", () => {
-      searchBar.setDebounce(() => {
-        this.currentQuery = searchBar.searchInput.value.trim();
-        this.offset = 0; // Reset offset when searching
-        this.renderProducts();
+      searchBar.setDebounce(async () => {
+        const newQuery = searchBar.searchInput.value.trim();
+        if (newQuery !== this.currentQuery) {
+          this.currentQuery = newQuery;
+          this.offset = 0;
+          await this.handleRenderProducts();
+        }
       }, 400);
     });
 
@@ -157,12 +164,10 @@ const CatalogView = {
 
     if (!append || this.offset === 0) {
       removeAllChildren(this.productList);
-    } else {
       if (this.offset > this.total) {
         this.offset = 0;
       }
     }
-
     const requestParameters: ProductListParameters = this.createParameters();
 
     const response = this.selectedCategoryKey
@@ -378,10 +383,10 @@ const CatalogView = {
       select.append(option);
     }
 
-    select.addEventListener("change", () => {
+    select.addEventListener("change", async () => {
       SETTINGS.currentCurrency = select.value as CurrencyCode;
       this.offset = 0;
-      this.renderProducts();
+      await this.handleRenderProducts();
     });
 
     return select;
@@ -509,25 +514,31 @@ const CatalogView = {
       const isCurrentlyMobile = isMobile();
       if (this.wasMobile !== isCurrentlyMobile) {
         this.wasMobile = isCurrentlyMobile;
-
-        this.removeLazyLoadingElement();
-        removeAllChildren(this.productList);
-        removeAllChildren(this.paginationWrapper);
-        this.offset = 0;
-
-        if (isCurrentlyMobile) {
-          await this.renderProducts();
-          this.appendLazyLoadingElement();
-        } else {
-          await this.renderProducts();
-          this.renderPagination();
-        }
+        this.handleRenderProducts();
       }
     });
   },
 
-  removeLazyLoadingElement() {
-    if (this.container.contains(this.lazyLoaderElement)) {
+  async handleRenderProducts() {
+    await this.removeLazyLoadingElement();
+    removeAllChildren(this.productList);
+    removeAllChildren(this.paginationWrapper);
+    this.offset = 0;
+
+    await this.renderProducts();
+    if (isMobile() && this.offset + this.limit < this.total) {
+      this.appendLazyLoadingElement();
+    } else {
+      this.renderPagination();
+    }
+  },
+
+  async removeLazyLoadingElement() {
+    if (this.lazyObserver) {
+      this.lazyObserver.disconnect();
+      this.lazyObserver = undefined;
+    }
+    if (this.productWrapper.contains(this.lazyLoaderElement)) {
       this.lazyLoaderElement.remove();
     }
   },
@@ -535,8 +546,8 @@ const CatalogView = {
   appendLazyLoadingElement() {
     this.lazyLoaderElement = document.createElement("div");
     this.lazyLoaderElement.className = "lazy-loader";
-    if (!this.container.contains(this.lazyLoaderElement)) {
-      this.container.append(this.lazyLoaderElement);
+    if (!this.productWrapper.contains(this.lazyLoaderElement)) {
+      this.productWrapper.append(this.lazyLoaderElement);
     }
     this.setupLazyLoading();
   },
@@ -544,18 +555,33 @@ const CatalogView = {
   setupLazyLoading() {
     if (this.lazyObserver) {
       this.lazyObserver.disconnect();
+      this.lazyObserver = undefined;
     }
     this.lazyObserver = new IntersectionObserver(
       async (entries) => {
         if (entries[0].isIntersecting && isMobile()) {
+          await new Promise((resolve) => setTimeout(resolve, 200));
+
+          if (this.offset + this.limit >= this.total) {
+            this.lazyLoaderElement.remove();
+            return;
+          }
+
           this.offset += this.limit;
-          if (this.offset < this.total) {
-            await this.renderProducts(true);
+          await this.renderProducts(true);
+
+          if (this.offset + this.limit >= this.total) {
+            this.lazyLoaderElement.remove();
+            if (this.lazyObserver) {
+              this.lazyObserver.disconnect();
+            }
           }
         }
       },
       {
-        rootMargin: "100px",
+        root: undefined,
+        rootMargin: "200px",
+        threshold: 0.1,
       },
     );
 

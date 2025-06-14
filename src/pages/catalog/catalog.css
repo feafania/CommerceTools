@@ -79,6 +79,11 @@
   gap: 2rem;
 }
 
+.product-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .product-list {
   display: grid;
   gap: 1.5rem;
