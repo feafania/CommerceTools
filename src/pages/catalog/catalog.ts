@@ -247,22 +247,17 @@ const CatalogView = {
 
     const totalPages = Math.ceil(this.total / this.limit);
     if (totalPages <= 1) return;
-    console.log(totalPages);
 
     for (let page = 0; page < totalPages; page++) {
-      console.log("page", page, page * this.limit, this.offset);
       const pageButton = document.createElement("button");
       pageButton.className = "page-button";
       pageButton.textContent = (page + 1).toString();
       if (page * this.limit === this.offset) {
         pageButton.classList.add("active");
-        console.log("active", page);
       }
 
       pageButton.addEventListener("click", () => {
         this.offset = page * this.limit;
-        // CatalogView.isSamePage = true;
-        // Filtering.buildPath();
         this.renderProducts();
       });
 
@@ -385,8 +380,8 @@ const CatalogView = {
 
     select.addEventListener("change", () => {
       SETTINGS.currentCurrency = select.value as CurrencyCode;
-      CatalogView.isSamePage = true;
-      Filtering.buildPath();
+      this.offset = 0;
+      this.renderProducts();
     });
 
     return select;
@@ -585,7 +580,7 @@ const CatalogView = {
 
     this.updateScrollToTopButtonVisibility();
 
-    document.body.append(this.scrollToTopButton);
+    this.container.append(this.scrollToTopButton);
   },
 
   updateScrollToTopButtonVisibility() {

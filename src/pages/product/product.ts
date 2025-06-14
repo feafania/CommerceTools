@@ -18,7 +18,6 @@ const ProductView = {
 
   async render(): Promise<HTMLElement | undefined> {
     removeAllChildren(this.container);
-    window.scrollTo(0, 0);
     this.container.className = "view product-view";
 
     try {
@@ -41,6 +40,9 @@ const ProductView = {
       layoutWrapper.append(slider.create("small"));
 
       this.container.append(layoutWrapper);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 10);
       return this.container;
     } catch {
       await PageRouter.renderPage(PageType.notfound);
