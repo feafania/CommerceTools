@@ -13,7 +13,7 @@
 .catalog-view select {
   padding: 0.6rem 1rem;
   font-size: 1rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--intut-border-color);
   border-radius: 0.5rem;
   background-color: var(--main-background);
   color: var(--text-color);
@@ -250,6 +250,7 @@
 .sort-dropdown {
   width: auto;
   min-width: max-content;
+  font-size: 1rem !important;
 }
 
 .apply-filters-btn.active {

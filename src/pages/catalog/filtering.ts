@@ -442,6 +442,9 @@ const CatalogViewFiltering = {
   },
 
   buildQueryParams(): string {
+    if (isMobile()) {
+      CatalogView.offset = 0;
+    }
     const parameters = new URLSearchParams();
 
     if (CatalogView.minPrice !== undefined)

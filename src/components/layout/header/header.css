@@ -12,6 +12,7 @@
 
 .header-actions {
   display: flex;
+  align-items: center;
   gap: 20px;
 }
 
@@ -240,6 +241,7 @@
   }
   .nav-basket {
     font-size: 2rem;
+    padding: 0;
   }
 }
 

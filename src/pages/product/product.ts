@@ -18,6 +18,7 @@ const ProductView = {
 
   async render(): Promise<HTMLElement | undefined> {
     removeAllChildren(this.container);
+    window.scrollTo(0, 0);
     this.container.className = "view product-view";
 
     try {

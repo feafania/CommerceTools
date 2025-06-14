@@ -32,7 +32,7 @@ const CatalogView = {
   categories: [] as InCategory[],
   isSamePage: false,
   total: 0,
-  limit: 9,
+  limit: 6,
   offset: 0,
   currentQuery: "",
   sortOption: undefined as SortOptions,
@@ -40,21 +40,29 @@ const CatalogView = {
   maxPrice: undefined as number | undefined,
   attributeFilters: {} as InAttributes,
   availableAttributes: new Map() as AttributeMap,
-  lazyLoaderElement: document.createElement("div"),
-  wasMobile: false as boolean,
   scrollToTopButton: document.createElement("button"),
+  lazyLoaderElement: document.createElement("div"),
   lazyObserver: undefined as IntersectionObserver | undefined,
+  wasMobile: false as boolean,
   // sliderWrapper: document.createElement("div"),
 
   async render(): Promise<HTMLElement | undefined> {
+    this.removeLazyLoadingElement();
+    this.wasMobile = isMobile();
+    if (this.wasMobile) {
+      this.offset = 0;
+    }
     if (this.isSamePage) {
       this.isSamePage = false;
       await CatalogViewFiltering.applyFiltering();
-      await this.renderProducts(this.wasMobile);
+      await this.renderProducts();
+      if (this.wasMobile) {
+        this.appendLazyLoadingElement();
+        this.setupLazyLoading();
+      }
       mobileFilterToggle.refresh();
       return;
     }
-    this.wasMobile = isMobile();
     removeAllChildren(this.container);
     this.container.className = "view catalog-view";
 
@@ -78,9 +86,13 @@ const CatalogView = {
       this.paginationWrapper.className = "pagination";
       const contentWrapper = this.createContentWrapper();
       this.container.append(sidebar, contentWrapper);
+      if (this.wasMobile) {
+        this.appendLazyLoadingElement();
+        this.setupLazyLoading();
+      }
 
       await CatalogViewFiltering.applyFiltering();
-      await this.renderProducts(this.wasMobile);
+      await this.renderProducts();
       this.setupResizeHandler();
       this.setupScrollToTopButton();
 
@@ -115,21 +127,7 @@ const CatalogView = {
       this.productList,
     ); // this.sliderWrapper,
 
-    if (this.container.contains(this.lazyLoaderElement)) {
-      this.lazyLoaderElement.remove();
-    }
-    this.container.append(this.lazyLoaderElement);
-    if (this.wasMobile) {
-      this.lazyLoaderElement = document.createElement("div");
-      this.lazyLoaderElement.className = "lazy-loader";
-      this.container.append(this.lazyLoaderElement);
-      this.setupLazyLoading();
-    }
     return contentWrapper;
-  },
-
-  setSelectedCategoryKey(key: string | undefined): void {
-    this.selectedCategoryKey = key;
   },
 
   renderSearchSort(): HTMLDivElement {
@@ -141,7 +139,7 @@ const CatalogView = {
       searchBar.setDebounce(() => {
         this.currentQuery = searchBar.searchInput.value.trim();
         this.offset = 0; // Reset offset when searching
-        this.renderProducts(isMobile());
+        this.renderProducts();
       }, 400);
     });
 
@@ -160,7 +158,9 @@ const CatalogView = {
     if (!append || this.offset === 0) {
       removeAllChildren(this.productList);
     } else {
-      this.offset = 0;
+      if (this.offset > this.total) {
+        this.offset = 0;
+      }
     }
 
     const requestParameters: ProductListParameters = this.createParameters();
@@ -247,45 +247,27 @@ const CatalogView = {
 
     const totalPages = Math.ceil(this.total / this.limit);
     if (totalPages <= 1) return;
+    console.log(totalPages);
 
     for (let page = 0; page < totalPages; page++) {
+      console.log("page", page, page * this.limit, this.offset);
       const pageButton = document.createElement("button");
       pageButton.className = "page-button";
       pageButton.textContent = (page + 1).toString();
       if (page * this.limit === this.offset) {
         pageButton.classList.add("active");
+        console.log("active", page);
       }
 
       pageButton.addEventListener("click", () => {
         this.offset = page * this.limit;
         // CatalogView.isSamePage = true;
         // Filtering.buildPath();
-        this.renderProducts(isMobile());
+        this.renderProducts();
       });
 
       this.paginationWrapper.append(pageButton);
     }
-  },
-
-  setupLazyLoading() {
-    if (this.lazyObserver) {
-      this.lazyObserver.disconnect();
-    }
-    this.lazyObserver = new IntersectionObserver(
-      async (entries) => {
-        if (entries[0].isIntersecting) {
-          this.offset += this.limit;
-          if (this.offset < this.total) {
-            await this.renderProducts(true);
-          }
-        }
-      },
-      {
-        rootMargin: "100px",
-      },
-    );
-
-    this.lazyObserver.observe(this.lazyLoaderElement);
   },
 
   async onCategoryChange(category: InCategory | undefined) {
@@ -349,10 +331,22 @@ const CatalogView = {
 
     const options: { value: string; label: string }[] = [
       { value: "", label: SETTINGS.label.catalog.sort.default },
-      { value: "price-asc", label: SETTINGS.label.catalog.sort.priceAsc },
-      { value: "price-desc", label: SETTINGS.label.catalog.sort.priceDesc },
-      { value: "name-asc", label: SETTINGS.label.catalog.sort.nameAsc },
-      { value: "name-desc", label: SETTINGS.label.catalog.sort.nameDesc },
+      {
+        value: `${SortName.PRICE}-${SortDirection.ASC}`,
+        label: SETTINGS.label.catalog.sort.priceAsc,
+      },
+      {
+        value: `${SortName.PRICE}-${SortDirection.DESC}`,
+        label: SETTINGS.label.catalog.sort.priceDesc,
+      },
+      {
+        value: `${SortName.NAME}-${SortDirection.ASC}`,
+        label: SETTINGS.label.catalog.sort.nameAsc,
+      },
+      {
+        value: `${SortName.NAME}-${SortDirection.DESC}`,
+        label: SETTINGS.label.catalog.sort.nameDesc,
+      },
     ];
 
     for (const opt of options) {
@@ -391,7 +385,6 @@ const CatalogView = {
 
     select.addEventListener("change", () => {
       SETTINGS.currentCurrency = select.value as CurrencyCode;
-      this.offset = 0;
       CatalogView.isSamePage = true;
       Filtering.buildPath();
     });
@@ -512,32 +505,66 @@ const CatalogView = {
     };
   },
 
+  setSelectedCategoryKey(key: string | undefined): void {
+    this.selectedCategoryKey = key;
+  },
+
   setupResizeHandler() {
     window.addEventListener("resize", async () => {
       const isCurrentlyMobile = isMobile();
-      if (CatalogView.wasMobile !== isCurrentlyMobile) {
-        CatalogView.wasMobile = isCurrentlyMobile;
-        CatalogView.offset = 0;
+      if (this.wasMobile !== isCurrentlyMobile) {
+        this.wasMobile = isCurrentlyMobile;
 
-        removeAllChildren(CatalogView.productList);
-        removeAllChildren(CatalogView.paginationWrapper);
+        this.removeLazyLoadingElement();
+        removeAllChildren(this.productList);
+        removeAllChildren(this.paginationWrapper);
+        this.offset = 0;
 
         if (isCurrentlyMobile) {
-          CatalogView.lazyLoaderElement.className = "lazy-loader";
-          if (!CatalogView.container.contains(CatalogView.lazyLoaderElement)) {
-            CatalogView.container.append(CatalogView.lazyLoaderElement);
-          }
-          await CatalogView.renderProducts(isCurrentlyMobile);
-          CatalogView.setupLazyLoading();
+          await this.renderProducts();
+          this.appendLazyLoadingElement();
         } else {
-          if (CatalogView.container.contains(CatalogView.lazyLoaderElement)) {
-            CatalogView.lazyLoaderElement.remove();
-          }
-          await CatalogView.renderProducts(isCurrentlyMobile);
-          CatalogView.renderPagination();
+          await this.renderProducts();
+          this.renderPagination();
         }
       }
     });
+  },
+
+  removeLazyLoadingElement() {
+    if (this.container.contains(this.lazyLoaderElement)) {
+      this.lazyLoaderElement.remove();
+    }
+  },
+
+  appendLazyLoadingElement() {
+    this.lazyLoaderElement = document.createElement("div");
+    this.lazyLoaderElement.className = "lazy-loader";
+    if (!this.container.contains(this.lazyLoaderElement)) {
+      this.container.append(this.lazyLoaderElement);
+    }
+    this.setupLazyLoading();
+  },
+
+  setupLazyLoading() {
+    if (this.lazyObserver) {
+      this.lazyObserver.disconnect();
+    }
+    this.lazyObserver = new IntersectionObserver(
+      async (entries) => {
+        if (entries[0].isIntersecting && isMobile()) {
+          this.offset += this.limit;
+          if (this.offset < this.total) {
+            await this.renderProducts(true);
+          }
+        }
+      },
+      {
+        rootMargin: "100px",
+      },
+    );
+
+    this.lazyObserver.observe(this.lazyLoaderElement);
   },
 
   setupScrollToTopButton() {
