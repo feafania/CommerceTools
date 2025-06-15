@@ -2,6 +2,7 @@ import "./basket.css";
 import { InLineItem } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
 import BasketService from "@/api/services/basket-service";
+import basketService from "@/api/services/basket-service";
 
 interface CartData {
   id: string;
@@ -21,7 +22,6 @@ const Basket = {
     try {
       const cartResponse = await BasketService.getCart();
       this.cartData = cartResponse;
-      console.log(this.cartData);
 
       this.products = [];
       if (cartResponse?.lineItems) {
@@ -152,6 +152,7 @@ const Basket = {
         );
       }
     }
+    console.log(basketService.getCart());
 
     const container = document.createElement("div");
     container.className = "basket-container";

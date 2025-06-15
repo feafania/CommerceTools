@@ -5,6 +5,7 @@ import createFooter from "@/components/layout/footer/footer";
 import PageRouter from "@/router/page-router";
 import { loadUser } from "@/utils/helpers";
 import CatalogView from "@/pages/catalog/catalog";
+import globalOverlay from "@/components/global-overlay/global-overlay";
 
 export default async function initApp(root: HTMLElement) {
   root.innerHTML = "";
@@ -13,8 +14,9 @@ export default async function initApp(root: HTMLElement) {
   const header = Header.create();
   const main = createMain();
   const footer = createFooter();
+  const overlay = globalOverlay.create();
 
-  root.append(header, main, footer);
+  root.append(header, main, footer, overlay);
 
   globalThis.addEventListener("languageChanged", () => {
     CatalogView.isSamePage = false;

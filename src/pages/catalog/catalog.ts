@@ -21,6 +21,7 @@ import { AttributeMap, InAttributes, SortOptions } from "@/types/types";
 import CatalogViewFiltering from "@/pages/catalog/filtering";
 import Filtering from "@/pages/catalog/filtering";
 import { SCROLL_HEIGHT } from "@/config/constants";
+import globalOverlay from "@/components/global-overlay/global-overlay";
 
 const CatalogView = {
   container: document.createElement("section"),
@@ -156,41 +157,46 @@ const CatalogView = {
   },
 
   async renderProducts(append = false) {
-    if (!this.productList) {
-      this.productList = document.createElement("div");
-      this.productList.className = "product-list";
-      this.container.append(this.productList);
-    }
-
-    if (!append || this.offset === 0) {
-      removeAllChildren(this.productList);
-      if (this.offset > this.total) {
-        this.offset = 0;
+    globalOverlay.show();
+    try {
+      if (!this.productList) {
+        this.productList = document.createElement("div");
+        this.productList.className = "product-list";
+        this.container.append(this.productList);
       }
-    }
-    const requestParameters: ProductListParameters = this.createParameters();
 
-    const response = this.selectedCategoryKey
-      ? await productService.getProductsByCategoryKey(
-          this.selectedCategoryKey,
-          requestParameters,
-        )
-      : await productService.getProductList(requestParameters);
+      if (!append || this.offset === 0) {
+        removeAllChildren(this.productList);
+        if (this.offset > this.total) {
+          this.offset = 0;
+        }
+      }
+      const requestParameters: ProductListParameters = this.createParameters();
 
-    const products = response.results;
-    this.total = response.total ?? 0;
+      const response = this.selectedCategoryKey
+        ? await productService.getProductsByCategoryKey(
+            this.selectedCategoryKey,
+            requestParameters,
+          )
+        : await productService.getProductList(requestParameters);
 
-    for (const product of products) {
-      const card = new ProductCard(product);
-      this.productList.append(card.create());
-    }
+      const products = response.results;
+      this.total = response.total ?? 0;
 
-    // removeAllChildren(this.sliderWrapper);
-    // const newSlider = new ProductSlider(products);
-    // newSlider.create();
-    // this.sliderWrapper.append(newSlider.container);
-    if (!isMobile()) {
-      this.renderPagination();
+      for (const product of products) {
+        const card = new ProductCard(product);
+        this.productList.append(card.create());
+      }
+
+      // removeAllChildren(this.sliderWrapper);
+      // const newSlider = new ProductSlider(products);
+      // newSlider.create();
+      // this.sliderWrapper.append(newSlider.container);
+      if (!isMobile()) {
+        this.renderPagination();
+      }
+    } finally {
+      globalOverlay.hide();
     }
   },
 

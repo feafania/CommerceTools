@@ -7,6 +7,7 @@ import CatalogView from "@/pages/catalog/catalog";
 import basketStore from "@/stores/basket-store";
 import { Basket } from "@/components/basket/basket";
 import basketService from "@/api/services/basket-service";
+import globalOverlay from "@/components/global-overlay/global-overlay";
 
 export default class ProductCard {
   card: HTMLDivElement;
@@ -68,6 +69,7 @@ export default class ProductCard {
 
     button.addEventListener("click", async (event_) => {
       event_.stopPropagation();
+      globalOverlay.show();
       this.#basket?.load();
 
       try {
@@ -76,13 +78,14 @@ export default class ProductCard {
       } catch (error) {
         console.error("Error adding item:", error);
         this.#basket?.errorAddingToCart();
+      } finally {
+        setTimeout(() => {
+          globalOverlay.hide();
+          if (!button.classList.contains("in-cart")) {
+            this.#basket?.addItem();
+          }
+        }, 1000);
       }
-
-      setTimeout(() => {
-        if (!button.classList.contains("in-cart")) {
-          this.#basket?.addItem();
-        }
-      }, 1000);
     });
 
     return button;
