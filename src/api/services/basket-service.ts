@@ -12,13 +12,19 @@ class BasketService {
     try {
       const token = await authService.getToken();
       let cart = basketStore.getCart();
+      console.log("store", cart, cart?.id);
+
+      cart = await (cart
+        ? basketRepository.getCart(cart.id, token)
+        : basketRepository.getCart(undefined, token));
+      console.log("get", cart);
+
       if (!cart) {
         cart = await this.createCart();
-        basketStore.setCart(cart);
       }
-      if (cart) {
-        return await basketRepository.getCart(cart?.id, token);
-      }
+
+      basketStore.setCart(cart);
+      return cart;
     } catch {
       return undefined;
     }

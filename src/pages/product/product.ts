@@ -224,7 +224,7 @@ const ProductView = {
 
     if (isInCart) {
       const removeButton = document.createElement("button");
-      removeButton.className = "remove-from-cart-btn";
+      removeButton.className = "product-remove-from-cart-btn";
       removeButton.textContent = "Remove from Cart";
       removeButton.addEventListener("click", async () => {
         await this.removeFromCart();
@@ -232,7 +232,7 @@ const ProductView = {
       container.append(removeButton);
     } else {
       const addButton = document.createElement("button");
-      addButton.className = "add-to-cart-btn";
+      addButton.className = "product-add-to-cart-btn";
       addButton.textContent = "Add to Cart";
       addButton.addEventListener("click", async () => {
         await this.addToCart();
@@ -318,7 +318,7 @@ const ProductView = {
     if (!lineItem) return;
 
     const infoContainer = document.createElement("div");
-    infoContainer.className = "cart-item-info";
+    infoContainer.className = "product-cart-item-info";
 
     infoContainer.innerHTML = `
       <p>This item is in your cart (Quantity: ${lineItem.quantity})</p>
