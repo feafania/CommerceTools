@@ -10,6 +10,7 @@ import {
 } from "@/types/interfaces";
 import { AddressType, CountryCode, CurrencyCode } from "@/types/enum";
 import {
+  CART_ID_STORAGE_KEY,
   COOCKIE_LIFE,
   CurrencySymbolMap,
   MOBILE_WIDTH,
@@ -281,6 +282,11 @@ export async function loadUser() {
       }
     } catch (error) {
       console.error("Couldn't get the user:", error);
+    }
+  } else {
+    const cartId = getLocalState(CART_ID_STORAGE_KEY);
+    if (cartId) {
+      await basketService.getCart(cartId);
     }
   }
 }

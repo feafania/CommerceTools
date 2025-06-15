@@ -14,6 +14,7 @@ import { isInCustomer } from "@/utils/type-guards";
 import { InAddress, InCustomer } from "@/types/interfaces";
 import createCheckbox from "@/components/checkbox/checkbox";
 import { getState } from "@/utils/helpers";
+import globalOverlay from "@/components/global-overlay/global-overlay";
 
 const LoginRegistrationView = {
   shippingAddressElement: undefined as AddressElement | undefined,
@@ -237,6 +238,7 @@ const LoginRegistrationView = {
     const password = formData.get("password") as string;
 
     const customer = this.setCustomer(formData);
+    globalOverlay.show();
     const user = await AuthService.register(customer);
     if (user && isInCustomer(user)) {
       const response = await AuthService.login(email, password);
@@ -249,6 +251,7 @@ const LoginRegistrationView = {
       Header.setUsername();
       showModalMessage(SETTINGS.label.messages.onSignUp);
     }
+    globalOverlay.hide();
   },
 
   async onLoginSubmit(event: SubmitEvent) {
@@ -260,7 +263,9 @@ const LoginRegistrationView = {
     const formData = new FormData(form);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    globalOverlay.show();
     const user = await AuthService.login(email, password);
+    globalOverlay.hide();
     if (user && isInCustomer(user)) {
       PageRouter.navigateTo(PageType.main);
       showModalMessage(SETTINGS.label.messages.onSignIn);

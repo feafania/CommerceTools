@@ -8,27 +8,32 @@ import basketStore from "@/stores/basket-store";
 import productRepository from "@/api/repositories/product-repository";
 
 class BasketService {
-  async getCart(): Promise<InCart | undefined> {
+  async getCart(cartId?: string): Promise<InCart | undefined> {
     try {
       let cart: InCart | undefined = basketStore.getCart();
-      if (cart && cart.currency === SETTINGS.currentCurrency) {
+      if (!cartId && cart && cart.currency === SETTINGS.currentCurrency) {
         return cart;
       }
       const token = await authService.getToken();
 
-      if (cart) {
-        cart = await basketRepository.getCart(cart.id, token);
-        if (cart && cart?.currency !== SETTINGS.currentCurrency) {
-          const mergedCart = await this.mergeCartWithNewCurrency(cart, token);
-          basketStore.setCart(mergedCart);
-          return mergedCart;
-        }
+      if (cart || cartId) {
+        try {
+          cart = await basketRepository.getCart(cartId ?? cart!.id, token);
+          if (cart && cart?.currency !== SETTINGS.currentCurrency) {
+            const mergedCart = await this.mergeCartWithNewCurrency(cart, token);
+            basketStore.setCart(mergedCart);
+            return mergedCart;
+          }
 
-        basketStore.setCart(cart);
-        return cart;
+          basketStore.setCart(cart);
+          return cart;
+        } catch {}
       }
 
-      cart = await basketRepository.getCart(undefined, token);
+      try {
+        cart = await basketRepository.getCart(undefined, token);
+      } catch {}
+
       if (!cart) {
         cart = await this.createCart();
       }
@@ -40,8 +45,13 @@ class BasketService {
     }
   }
 
-  async getCartId(): Promise<string> {
-    const cart = await this.getCart();
+  async getCartId(): Promise<string | undefined> {
+    let cart: InCart | undefined;
+    try {
+      cart = await this.getCart();
+    } catch {
+      cart = await this.createCart();
+    }
     if (!cart) throw new Error("Cart not found");
     const cartId = cart.id;
     if (!cartId) throw new Error("Cart ID not found");
@@ -98,7 +108,14 @@ class BasketService {
         throw new Error(`Product with key "${productKey}" not found`);
       }
       const token = await authService.getToken();
-      const cartId = await this.getCartId();
+      let cartId = await this.getCartId();
+      if (!cartId) {
+        const cart = await this.createCart();
+        if (!cart) {
+          throw new Error(`Cart not found`);
+        }
+        cartId = cart?.id;
+      }
       const updatedCart = await basketRepository.addItemToCart(
         cartId,
         product.id,
@@ -124,7 +141,14 @@ class BasketService {
   ): Promise<InCart | undefined> {
     try {
       const token = await authService.getToken();
-      const cartId = await this.getCartId();
+      let cartId = await this.getCartId();
+      if (!cartId) {
+        const cart = await this.createCart();
+        if (!cart) {
+          throw new Error(`Cart not found`);
+        }
+        cartId = cart?.id;
+      }
 
       const updatedCart = await basketRepository.removeItemFromCart(
         cartId,
@@ -146,7 +170,14 @@ class BasketService {
   ): Promise<InCart | undefined> {
     try {
       const token = await authService.getToken();
-      const cartId = await this.getCartId();
+      let cartId = await this.getCartId();
+      if (!cartId) {
+        const cart = await this.createCart();
+        if (!cart) {
+          throw new Error(`Cart not found`);
+        }
+        cartId = cart?.id;
+      }
 
       const updatedCart = await basketRepository.changeItemQuantity(
         cartId,

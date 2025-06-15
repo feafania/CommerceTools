@@ -73,8 +73,10 @@ export default class ProductCard {
       this.#basket?.load();
 
       try {
-        await basketService.addItemToCart(this.product.key!);
-        this.#basket?.addedToCart();
+        const newCart = await basketService.addItemToCart(this.product.key!);
+        if (newCart) {
+          this.#basket?.addedToCart();
+        }
       } catch (error) {
         console.error("Error adding item:", error);
         this.#basket?.errorAddingToCart();

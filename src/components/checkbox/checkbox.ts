@@ -6,7 +6,7 @@ import { LabelPosition } from "@/types/enum";
 
 export default function createCheckbox(
   object: ControlConfig,
-  labelPosition: LabelPosition = LabelPosition.Right,
+  labelPosition: LabelPosition = LabelPosition.Left,
 ): HTMLDivElement {
   const classNames = classesToArray(object.class);
 
