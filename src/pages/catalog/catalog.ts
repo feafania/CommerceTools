@@ -7,7 +7,7 @@ import productService from "@/api/services/product-service";
 import ProductCard from "@/components/product-card/product-card";
 import { SETTINGS } from "@/config/settings";
 import searchBar from "@/components/search-button/search-button";
-import { isMobile, removeAllChildren } from "@/utils/helpers";
+import { isMobile, removeAllChildren, saveLocalState } from "@/utils/helpers";
 import { InCategory, ProductListParameters } from "@/types/interfaces";
 import PageRouter from "@/router/page-router";
 import {
@@ -22,6 +22,7 @@ import CatalogViewFiltering from "@/pages/catalog/filtering";
 import Filtering from "@/pages/catalog/filtering";
 import { SCROLL_HEIGHT } from "@/config/constants";
 import globalOverlay from "@/components/global-overlay/global-overlay";
+import basketService from "@/api/services/basket-service";
 
 const CatalogView = {
   container: document.createElement("section"),
@@ -391,7 +392,11 @@ const CatalogView = {
 
     select.addEventListener("change", async () => {
       SETTINGS.currentCurrency = select.value as CurrencyCode;
+      saveLocalState({ key: "curr", value: SETTINGS.currentCurrency });
       this.offset = 0;
+      globalOverlay.show();
+      await basketService.getCart();
+      globalOverlay.hide();
       await this.handleRenderProducts();
     });
 

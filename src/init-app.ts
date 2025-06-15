@@ -3,8 +3,7 @@ import Header from "@/components/layout/header/header";
 import createMain from "@/components/layout/main/main";
 import createFooter from "@/components/layout/footer/footer";
 import PageRouter from "@/router/page-router";
-import { loadUser } from "@/utils/helpers";
-import CatalogView from "@/pages/catalog/catalog";
+import { loadUser, onLanguageChange } from "@/utils/helpers";
 import globalOverlay from "@/components/global-overlay/global-overlay";
 
 export default async function initApp(root: HTMLElement) {
@@ -19,10 +18,7 @@ export default async function initApp(root: HTMLElement) {
   root.append(header, main, footer, overlay);
 
   globalThis.addEventListener("languageChanged", () => {
-    CatalogView.isSamePage = false;
-    Header.setTitle();
-    Header.renderNav();
-    PageRouter.handleRoute();
+    onLanguageChange();
   });
 
   PageRouter.init();

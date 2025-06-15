@@ -11,18 +11,24 @@ class BasketService {
   async getCart(): Promise<InCart | undefined> {
     try {
       let cart: InCart | undefined = basketStore.getCart();
-      if (cart) {
+      if (cart && cart.currency === SETTINGS.currentCurrency) {
         return cart;
       }
       const token = await authService.getToken();
-      cart = basketStore.getCart();
-      console.log("store", cart, cart?.id);
 
-      cart = await (cart
-        ? basketRepository.getCart(cart.id, token)
-        : basketRepository.getCart(undefined, token));
-      console.log("get", cart);
+      if (cart) {
+        cart = await basketRepository.getCart(cart.id, token);
+        if (cart && cart?.currency !== SETTINGS.currentCurrency) {
+          const mergedCart = await this.mergeCartWithNewCurrency(cart, token);
+          basketStore.setCart(mergedCart);
+          return mergedCart;
+        }
 
+        basketStore.setCart(cart);
+        return cart;
+      }
+
+      cart = await basketRepository.getCart(undefined, token);
       if (!cart) {
         cart = await this.createCart();
       }
@@ -200,6 +206,39 @@ class BasketService {
       showModalMessage(fallbackMessage);
       console.error("Unexpected error in basket service:", error);
     }
+  }
+
+  private async mergeCartWithNewCurrency(
+    oldCart: InCart,
+    token: string | undefined,
+  ): Promise<InCart> {
+    const newCart = await this.createCart({
+      currency: SETTINGS.currentCurrency,
+      country: oldCart.country,
+    });
+
+    if (!newCart?.id) {
+      throw new Error("Cannot create a new cart for merging.");
+    }
+
+    for (const item of oldCart.lineItems) {
+      await basketRepository.addItemToCart(
+        newCart.id,
+        item.productId,
+        item.variantId,
+        item.quantity,
+        token,
+      );
+    }
+
+    if (oldCart.id && oldCart.version !== undefined) {
+      await basketRepository.deleteCart(oldCart.id, oldCart.version, token);
+    }
+
+    const mergedCart = await basketRepository.getCart(newCart.id, token);
+    if (!mergedCart) throw new Error("Merged cart retrieval failed.");
+
+    return mergedCart;
   }
 }
 
