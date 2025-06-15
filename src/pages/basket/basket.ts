@@ -21,6 +21,7 @@ const Basket = {
     try {
       const cartResponse = await BasketService.getCart();
       this.cartData = cartResponse;
+      console.log(this.cartData);
 
       this.products = [];
       if (cartResponse?.lineItems) {
