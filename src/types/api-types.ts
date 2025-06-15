@@ -95,6 +95,12 @@ export type QueryArguments = {
    * Example: "EUR", "USD", etc.
    */
   priceCurrency?: string;
+
+  /**
+   * Expands referenced resources, e.g. `productType`, `categories[*]`.
+   * Example: ["productType", "categories[*]"]
+   */
+  expand?: string | string[];
 };
 
 export type CartPostFunction = (arguments_: {

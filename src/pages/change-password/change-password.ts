@@ -100,7 +100,7 @@ const ChangePassword = {
   createCancelButton(): HTMLElement {
     const cancelButton = createButton({
       type: "button",
-      name: "Cancel",
+      name: SETTINGS.label.changePassword.cancel,
       id: "cancel",
     }) as HTMLButtonElement;
 
@@ -113,7 +113,7 @@ const ChangePassword = {
   createSaveButton(): HTMLElement {
     const saveButton = createButton({
       type: "submit",
-      name: "Save",
+      name: SETTINGS.label.changePassword.save,
       id: "save",
     }) as HTMLButtonElement;
 

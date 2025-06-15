@@ -145,6 +145,7 @@ export interface ProductListParameters {
   sortDirection: SortDirection;
   searchText?: string;
   filters?: string[];
+  expand?: string[];
 }
 
 export interface InProduct {
@@ -164,6 +165,7 @@ export interface InProduct {
   sku?: string;
   variantId?: number; // ID of main variant
   variants: InVariant[];
+  productTypeKey?: string;
 }
 
 export interface InVariant {

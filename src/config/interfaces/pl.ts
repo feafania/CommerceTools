@@ -69,6 +69,16 @@ const pl: AppTranslation = {
   product: {
     title: "Szczegóły Produkta",
     backButton: "Powrót do katalogu",
+    selectVariant: "Wybierz wariant:",
+    defaultVariant: "Wariant domyślny",
+    addToCart: "Dodaj do koszyka",
+    removeFromCart: "Usuń z koszyka",
+    addedToCart: "Produkt został pomyślnie dodany do koszyka!",
+    removedFromCart: "Produkt został pomyślnie usunięty z koszyka!",
+    quantity: "Ilość",
+    variantID: "Identyfikator wariantu",
+    itemInCart: "Ten przedmiot znajduje się w Twoim koszyku",
+    itemsInCart: "Te przedmioty znajdują się w Twoim koszyku",
   },
   userProfile: {
     firstName: "Imię",
@@ -95,6 +105,8 @@ const pl: AppTranslation = {
     success: "Twoje hasło zostało pomyślnie zmienione",
     wrongOldPassword: "Błędne aktualne hasło",
     emptyPassword: "Pole hasła jest puste",
+    save: "Zapisz",
+    cancel: "Anuluj",
   },
   basketButton: {
     title: "Koszyk",

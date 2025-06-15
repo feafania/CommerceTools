@@ -21,6 +21,7 @@ import {
   InLineItem,
   InProduct,
   InProductType,
+  InVariant,
 } from "@/types/interfaces";
 import {
   GetProductListParameters,
@@ -39,7 +40,7 @@ import {
   InAttributeTypeValues,
   SortName,
 } from "@/types/enum";
-import { findDefaultAddressIndex } from "@/utils/helpers";
+import { findDefaultAddressIndex, localizeName } from "@/utils/helpers";
 
 const MappingHelpers = {
   mapProductToInternal(
@@ -94,6 +95,7 @@ const MappingHelpers = {
             attributes: this.mapAttributesArray(variant.attributes ?? []),
           };
         }) ?? [],
+      productTypeKey: product.productType?.obj?.key,
     };
   },
 
@@ -426,6 +428,39 @@ const MappingHelpers = {
     }
 
     return [""];
+  },
+
+  getVariantDescription(
+    variant: InVariant | InProduct,
+    productType: InProductType | undefined,
+  ): string {
+    if (!variant.attributes) return SETTINGS.label.product.defaultVariant;
+
+    try {
+      const attributes: string[] = [];
+
+      for (const [key, value] of Object.entries(variant.attributes)) {
+        const attributeDefinition: InAttributeDefinition | undefined =
+          productType?.attributes.find((attribute) => attribute.name === key);
+
+        const attributeLabel =
+          attributeDefinition?.label?.[SETTINGS.currentLang] ?? key;
+
+        if (typeof value === "object" && value !== null && "label" in value) {
+          const labelValue = value.label;
+
+          if (typeof labelValue === "object" && labelValue !== null) {
+            const localized = localizeName(labelValue);
+            if (localized) attributes.push(`${attributeLabel}: ${localized}`);
+          } else if (typeof labelValue === "string") {
+            attributes.push(`${attributeLabel}: ${labelValue}`);
+          }
+        }
+      }
+      return attributes.join(", ") || SETTINGS.label.product.defaultVariant;
+    } catch {
+      return SETTINGS.label.product.defaultVariant;
+    }
   },
 };
 

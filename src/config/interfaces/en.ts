@@ -69,6 +69,16 @@ const en: AppTranslation = {
   product: {
     title: "Detailed Product",
     backButton: "Back to Catalog",
+    selectVariant: "Select variant:",
+    defaultVariant: "Default variant",
+    addToCart: "Add to Cart",
+    removeFromCart: "Remove from Cart",
+    addedToCart: "Product was successfully added to cart!",
+    removedFromCart: "Product was successfully removed from cart!",
+    quantity: "Quantity",
+    variantID: "Variant ID",
+    itemInCart: "This item is in your cart",
+    itemsInCart: "These items are in your cart",
   },
   userProfile: {
     firstName: "First name",
@@ -95,6 +105,8 @@ const en: AppTranslation = {
     success: "Your password was successfully changed",
     wrongOldPassword: "Wrong current password",
     emptyPassword: "Password field is empty",
+    save: "Save",
+    cancel: "Cancel",
   },
   basketButton: {
     title: "Basket",

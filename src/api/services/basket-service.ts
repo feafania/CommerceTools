@@ -10,8 +10,12 @@ import productRepository from "@/api/repositories/product-repository";
 class BasketService {
   async getCart(): Promise<InCart | undefined> {
     try {
+      let cart: InCart | undefined = basketStore.getCart();
+      if (cart) {
+        return cart;
+      }
       const token = await authService.getToken();
-      let cart = basketStore.getCart();
+      cart = basketStore.getCart();
       console.log("store", cart, cart?.id);
 
       cart = await (cart

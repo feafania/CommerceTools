@@ -1,5 +1,5 @@
 import "./product-card.css";
-import { InProduct } from "@/types/interfaces";
+import { InProduct, InVariant } from "@/types/interfaces";
 import { formatPriceWithCurrency, localizeName } from "@/utils/helpers";
 import { CARD_SETTINGS } from "@/config/constants";
 import { CurrencyCode, PageType, SliderType } from "@/types/enum";
@@ -91,7 +91,10 @@ export default class ProductCard {
     return button;
   }
 
-  static renderProductInformation(product: InProduct): HTMLElement {
+  static renderProductInformation(
+    product: InProduct,
+    variant: InVariant | undefined = undefined,
+  ): HTMLElement {
     const cardInformaion = document.createElement("div");
     const title = document.createElement("h3");
     title.className = "product-title";
@@ -101,25 +104,34 @@ export default class ProductCard {
     description.className = "product-description";
     description.textContent = localizeName(product.description || {});
 
+    const price = ProductCard.renderPrice(product, variant);
+
+    cardInformaion.append(title, description, price);
+    return cardInformaion;
+  }
+
+  static renderPrice(
+    product: InProduct,
+    variant: InVariant | undefined,
+  ): HTMLDivElement {
+    const renderVariant: InVariant | InProduct = variant ?? product;
     const price = document.createElement("div");
     price.className = "price";
-
-    const currency = product.currencyCode as CurrencyCode;
+    const currency = renderVariant.currencyCode as CurrencyCode;
 
     price.innerHTML =
-      product.isDiscounted && product.discountedPrice
+      renderVariant.isDiscounted && renderVariant.discountedPrice
         ? `
         <span class="price-discounted">
-          ${formatPriceWithCurrency(product.discountedPrice, currency)}
+          ${formatPriceWithCurrency(renderVariant.discountedPrice, currency)}
         </span>
         <span class="price-original">
-          ${formatPriceWithCurrency(product.price, currency)}
+          ${formatPriceWithCurrency(renderVariant.price, currency)}
         </span>
       `
         : `<span class="price-regular">
-          ${formatPriceWithCurrency(product.price, currency)}
+          ${formatPriceWithCurrency(renderVariant.price, currency)}
           </span>`;
-    cardInformaion.append(title, description, price);
-    return cardInformaion;
+    return price;
   }
 }

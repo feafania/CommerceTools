@@ -6,6 +6,7 @@ import {
   InCategory,
   InProduct,
   InProductType,
+  InVariant,
   ProductSearchResult,
 } from "@/types/interfaces";
 import getProductList from "@/api/repositories/endpoints/product/get-product-list";
@@ -266,6 +267,13 @@ const productRepository = {
 
   mapFilters(filter: SimpleAttributes): string[] {
     return MappingHelpers.mapFilters(filter);
+  },
+
+  getVariantDescription(
+    variant: InVariant | InProduct,
+    productType: InProductType | undefined,
+  ): string {
+    return MappingHelpers.getVariantDescription(variant, productType);
   },
 };
 

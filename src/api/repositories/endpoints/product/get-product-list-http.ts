@@ -12,6 +12,7 @@ export default async function getProductListHttp({
   sortDirection = SETTINGS.productListParameters.sortDirection,
   searchText,
   filters = [],
+  expand = [],
 }: GetProductListParameters = {}) {
   try {
     const lang = SETTINGS.currentLang;
@@ -47,6 +48,10 @@ export default async function getProductListHttp({
     }
     for (const filter of filters) {
       parameters.append("filter", filter);
+    }
+    parameters.append("expand", "productType");
+    for (const item of expand) {
+      parameters.append("expand", item);
     }
     url = `${url}/search`;
     // } else {

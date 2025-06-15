@@ -57,6 +57,7 @@ export default async function getProductList({
       staged: true,
       priceCurrency: SETTINGS.currentCurrency,
       filter: filters,
+      expand: ["productType"],
     };
 
     // if (searchText?.trim()) {

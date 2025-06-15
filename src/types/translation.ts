@@ -69,6 +69,16 @@ export interface AppTranslation {
   product: {
     title: string;
     backButton: string;
+    selectVariant: string;
+    defaultVariant: string;
+    addToCart: string;
+    removeFromCart: string;
+    addedToCart: string;
+    removedFromCart: string;
+    quantity: string;
+    variantID: string;
+    itemInCart: string;
+    itemsInCart: string;
   };
   userProfile: {
     firstName: string;
@@ -95,6 +105,8 @@ export interface AppTranslation {
     wrongConfirm: string;
     wrongOldPassword: string;
     emptyPassword: string;
+    save: string;
+    cancel: string;
   };
   basketButton: {
     title: string;

@@ -33,13 +33,9 @@ class AuthService {
       const { customer, token, cart: mergedCart } = result;
 
       authStore.setUser(customer, token);
+      basketStore.setCart(mergedCart);
+      await basketService.getCart();
 
-      if (mergedCart) {
-        basketStore.setCart(mergedCart);
-      } else {
-        const userCart = await basketService.createCart();
-        if (userCart) basketStore.setCart(userCart);
-      }
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {

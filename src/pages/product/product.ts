@@ -1,6 +1,11 @@
 import "./product.css";
-import { localizeName, removeAllChildren } from "@/utils/helpers";
-import { InCart, InProduct, InVariant } from "@/types/interfaces";
+import { removeAllChildren } from "@/utils/helpers";
+import {
+  InLineItem,
+  InProduct,
+  InProductType,
+  InVariant,
+} from "@/types/interfaces";
 import productService from "@/api/services/product-service";
 import PageRouter from "@/router/page-router";
 import { PageType } from "@/types/enum";
@@ -11,14 +16,18 @@ import CatalogViewFiltering from "@/pages/catalog/filtering";
 import CatalogView from "@/pages/catalog/catalog";
 import basketService from "@/api/services/basket-service";
 import basketStore from "@/stores/basket-store";
+import createButton from "@/components/button/button";
+import createInput from "@/components/input/input";
+import showModalMessage from "@/components/modal-window/modal-window";
+import globalOverlay from "@/components/global-overlay/global-overlay";
 
 const ProductView = {
   productKey: undefined as string | undefined,
   product: undefined as InProduct | undefined,
+  productType: undefined as InProductType | undefined,
   container: document.createElement("section"),
   productSection: document.createElement("div"),
   selectedVariantId: undefined as number | undefined,
-  currentCart: undefined as InCart | undefined,
 
   async render(): Promise<HTMLElement | undefined> {
     removeAllChildren(this.container);
@@ -33,7 +42,9 @@ const ProductView = {
       if (!this.product) {
         throw new Error("Product not found");
       }
-      this.currentCart = await basketStore.getCart();
+      this.productType = await productService.getProductTypeByKey(
+        this.product.productTypeKey,
+      );
       this.selectedVariantId = this.product.variantId;
 
       const layoutWrapper = document.createElement("div");
@@ -70,34 +81,40 @@ const ProductView = {
       const title = document.createElement("h1");
       title.textContent = SETTINGS.label.product.title;
 
-      const backButton = document.createElement("button");
-      backButton.textContent = `← ${SETTINGS.label.product.backButton}`;
-      backButton.className = "back-to-catalog-btn";
-      backButton.addEventListener("click", () => {
-        CatalogView.isSamePage = false;
-        CatalogViewFiltering.buildPath();
-      });
+      const backButton = createButton(
+        {
+          name: `← ${SETTINGS.label.product.backButton}`,
+          class: "back-to-catalog-btn",
+        },
+        () => {
+          CatalogView.isSamePage = false;
+          CatalogViewFiltering.buildPath();
+        },
+      );
 
       headerRow.append(title, backButton);
       this.productSection.append(headerRow);
 
+      const selectedVariant = this.product.variants.find(
+        (variant) => variant.id === this.selectedVariantId,
+      );
       const productInformation = ProductCard.renderProductInformation(
         this.product,
+        selectedVariant,
       );
 
       this.productSection.append(productInformation);
-      // Variant selection if available
+
       if (this.product.variants.length > 0) {
         const variantSelector = this.createVariantSelector();
         this.productSection.append(variantSelector);
       }
 
-      // Add/Remove from cart button
       const cartButton = this.createCartButton();
       this.productSection.append(cartButton);
 
       // Display cart info if product is in cart
-      this.displayCartItemInfo();
+      await this.displayCartItemInfo();
     }
   },
 
@@ -118,7 +135,9 @@ const ProductView = {
       };
     }
 
-    return this.product.variants.find((v) => v.id === this.selectedVariantId);
+    return this.product.variants.find(
+      (variant) => variant.id === this.selectedVariantId,
+    );
   },
 
   createVariantSelector(): HTMLElement {
@@ -128,47 +147,25 @@ const ProductView = {
     container.className = "variant-selector";
 
     const label = document.createElement("label");
-    label.textContent = "Select variant:";
+    label.textContent = SETTINGS.label.product.selectVariant;
     container.append(label);
 
-    const currency = SETTINGS.currentCurrency;
-
-    // Фільтруем усе валідныя варыянты
-    const validVariants: (InVariant | InProduct)[] = [];
-
-    if (
-      this.product.variantId &&
-      this.product.currencyCode === currency &&
-      typeof this.product.price === "number" &&
-      this.product.price !== 0
-    ) {
-      validVariants.push(this.product);
-    }
-
-    for (const variant of this.product.variants) {
-      if (
-        variant.currencyCode === currency &&
-        typeof variant.price === "number" &&
-        variant.price !== 0
-      ) {
-        validVariants.push(variant);
-      }
-    }
+    const validVariants = this.getValidVariants();
 
     if (validVariants.length === 1) {
       const variant: InVariant | InProduct = validVariants[0];
-
-      const variantId =
-        "id" in variant ? variant.id : (variant as InProduct).variantId;
+      const variantId = "variantId" in variant ? variant.variantId : variant.id;
+      if (!variantId) return container;
 
       this.selectedVariantId = variantId as number;
 
-      const input = document.createElement("input");
-      input.type = "text";
-      input.disabled = true;
-      input.className = "variant-display";
-      input.value = this.getVariantDescription(variant);
-
+      const input = createInput({
+        type: "text",
+        disabled: true,
+        class: "variant-display",
+        value: productService.getVariantDescription(variant, this.productType),
+        forbidValueFromState: true,
+      });
       container.append(input);
       return container;
     }
@@ -177,10 +174,15 @@ const ProductView = {
     select.className = "variant-select";
 
     for (const variant of validVariants) {
+      const variantId = "variantId" in variant ? variant.variantId : variant.id;
+      if (!variantId) continue;
       const option = document.createElement("option");
-      option.value = variant.id.toString();
-      option.textContent = this.getVariantDescription(variant);
-      option.selected = this.selectedVariantId === variant.id;
+      option.value = variantId.toString();
+      option.textContent = productService.getVariantDescription(
+        variant,
+        this.productType,
+      );
+      option.selected = this.selectedVariantId === variantId;
       select.append(option);
     }
 
@@ -195,25 +197,27 @@ const ProductView = {
     return container;
   },
 
-  getVariantDescription(variant: InVariant | InProduct): string {
-    if (!variant.attributes) return "Default variant";
-
-    const attributes: string[] = [];
-
-    for (const [key, value] of Object.entries(variant.attributes)) {
-      if (typeof value === "object" && value !== null && "label" in value) {
-        const labelValue = value.label;
-
-        if (typeof labelValue === "object" && labelValue !== null) {
-          const localized = localizeName(labelValue);
-          if (localized) attributes.push(`${key}: ${localized}`);
-        } else if (typeof labelValue === "string") {
-          attributes.push(`${key}: ${labelValue}`);
-        }
+  getValidVariants(): (InVariant | InProduct)[] {
+    const currency = SETTINGS.currentCurrency;
+    if (!this.product) return [];
+    const validVariants: (InVariant | InProduct)[] = [];
+    if (
+      this.product.variantId &&
+      this.product.currencyCode === currency &&
+      this.product.price !== 0
+    ) {
+      validVariants.push(this.product);
+    }
+    for (const variant of this.product.variants) {
+      if (
+        variant.currencyCode === currency &&
+        typeof variant.price === "number" &&
+        variant.price !== 0
+      ) {
+        validVariants.push(variant);
       }
     }
-
-    return attributes.join(", ") || "Default variant";
+    return validVariants;
   },
 
   createCartButton(): HTMLElement {
@@ -223,20 +227,26 @@ const ProductView = {
     const isInCart = this.isProductInCart();
 
     if (isInCart) {
-      const removeButton = document.createElement("button");
-      removeButton.className = "product-remove-from-cart-btn";
-      removeButton.textContent = "Remove from Cart";
-      removeButton.addEventListener("click", async () => {
-        await this.removeFromCart();
-      });
+      const removeButton = createButton(
+        {
+          class: "product-remove-from-cart-btn",
+          name: `${SETTINGS.label.product.removeFromCart}`,
+        },
+        async () => {
+          await this.removeFromCart();
+        },
+      );
       container.append(removeButton);
     } else {
-      const addButton = document.createElement("button");
-      addButton.className = "product-add-to-cart-btn";
-      addButton.textContent = "Add to Cart";
-      addButton.addEventListener("click", async () => {
-        await this.addToCart();
-      });
+      const addButton = createButton(
+        {
+          class: "product-add-to-cart-btn",
+          name: `${SETTINGS.label.product.addToCart}`,
+        },
+        async () => {
+          await this.addToCart();
+        },
+      );
       container.append(addButton);
     }
 
@@ -244,9 +254,10 @@ const ProductView = {
   },
 
   isProductInCart(): boolean {
-    if (!this.product || !this.currentCart) return false;
+    const currentCart = basketStore.getCart();
+    if (!this.product || !currentCart) return false;
 
-    return this.currentCart.lineItems.some(
+    return currentCart.lineItems.some(
       (item) =>
         item.productId === this.product?.id &&
         item.variantId === this.selectedVariantId,
@@ -256,34 +267,31 @@ const ProductView = {
   async addToCart(): Promise<void> {
     if (!this.product || !this.selectedVariantId) return;
 
-    try {
-      const variant = this.getSelectedVariant();
-      if (!variant) return;
+    globalOverlay.show();
 
+    try {
       await basketService.addItemToCart(
         this.product.key || this.product.id,
         this.selectedVariantId,
-        1, // quantity
       );
 
-      // Refresh cart and UI
-      this.currentCart = await basketService.getCart();
-      basketStore.setCart(this.currentCart);
       await this.renderProduct();
-
-      // Show success message
-      this.showMessage("Product added to cart!", "success");
+      showModalMessage(SETTINGS.label.product.addedToCart);
     } catch (error) {
-      console.error("Error adding to cart:", error);
-      this.showMessage("Failed to add product to cart", "error");
+      console.error("Error adding product to cart:", error);
+    } finally {
+      globalOverlay.hide();
     }
   },
 
   async removeFromCart(): Promise<void> {
-    if (!this.product || !this.currentCart) return;
+    const currentCart = await basketService.getCart();
+    if (!this.product || !currentCart) return;
+
+    globalOverlay.show();
 
     try {
-      const lineItem = this.currentCart.lineItems.find(
+      const lineItem = currentCart.lineItems.find(
         (item) =>
           item.productId === this.product?.id &&
           item.variantId === this.selectedVariantId,
@@ -291,53 +299,68 @@ const ProductView = {
 
       if (!lineItem) return;
 
-      await basketService.changeItemQuantity(lineItem.id, 0);
+      await basketService.removeItemFromCart(lineItem.id, lineItem.quantity);
 
-      // Refresh cart and UI
-      this.currentCart = await basketService.getCart();
-      basketStore.setCart(this.currentCart);
       await this.renderProduct();
-
-      // Show success message
-      this.showMessage("Product removed from cart!", "success");
+      showModalMessage(SETTINGS.label.product.removedFromCart);
     } catch (error) {
-      console.error("Error removing from cart:", error);
-      this.showMessage("Failed to remove product from cart", "error");
+      console.error("Error removing product from cart:", error);
+    } finally {
+      globalOverlay.hide();
     }
   },
 
-  displayCartItemInfo(): void {
-    if (!this.product || !this.currentCart) return;
+  async displayCartItemInfo() {
+    const currentCart = await basketService.getCart();
+    if (!this.product || !currentCart) return;
 
-    const lineItem = this.currentCart.lineItems.find(
-      (item) =>
-        item.productId === this.product?.id &&
-        item.variantId === this.selectedVariantId,
+    const matchingItems = currentCart.lineItems.filter(
+      (item) => item.productId === this.product?.id,
     );
 
-    if (!lineItem) return;
+    if (matchingItems.length === 0) return;
 
     const infoContainer = document.createElement("div");
     infoContainer.className = "product-cart-item-info";
 
-    infoContainer.innerHTML = `
-      <p>This item is in your cart (Quantity: ${lineItem.quantity})</p>
+    if (matchingItems.length === 1) {
+      const item = matchingItems[0];
+      const variantDescription = this.findVariantDescription(item);
+
+      infoContainer.innerHTML = `
+      <p>${SETTINGS.label.product.itemInCart}
+       (${SETTINGS.label.product.quantity}: ${item.quantity})</p>
+      <p>${variantDescription}</p>
     `;
+    } else {
+      infoContainer.innerHTML = `<p><strong>${SETTINGS.label.product.itemsInCart}:</strong></p>`;
+      const list = document.createElement("ul");
+
+      for (const item of matchingItems) {
+        const variantDescription = this.findVariantDescription(item);
+
+        const li = document.createElement("li");
+        li.textContent = `${variantDescription} 
+        – ${SETTINGS.label.product.quantity}: ${item.quantity}`;
+        list.append(li);
+      }
+
+      infoContainer.append(list);
+    }
 
     this.productSection.append(infoContainer);
   },
 
-  showMessage(message: string, type: "success" | "error"): void {
-    const messageElement = document.createElement("div");
-    messageElement.className = `product-message ${type}`;
-    messageElement.textContent = message;
+  findVariantDescription(item: InLineItem): string {
+    if (!this.product) return "";
+    const variant =
+      item.variantId === this.product.variantId
+        ? this.product
+        : this.product.variants.find((v) => v.id === item.variantId);
 
-    this.productSection.append(messageElement);
-
-    // Remove message after 3 seconds
-    setTimeout(() => {
-      messageElement.remove();
-    }, 3000);
+    return variant
+      ? productService.getVariantDescription(variant, this.productType)
+      : `${SETTINGS.label.product.variantID}: ${item.variantId}`;
   },
 };
 

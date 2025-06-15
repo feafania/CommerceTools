@@ -3,6 +3,7 @@ import {
   InCategory,
   InProduct,
   InProductType,
+  InVariant,
   ProductSearchResult,
 } from "@/types/interfaces";
 import {
@@ -71,7 +72,10 @@ class ProductService {
     }
   }
 
-  async getProductTypeByKey(key: string): Promise<InProductType | undefined> {
+  async getProductTypeByKey(
+    key: string | undefined,
+  ): Promise<InProductType | undefined> {
+    if (!key) return undefined;
     try {
       return await productRepository.getProductTypeByKey(key);
     } catch {
@@ -89,6 +93,13 @@ class ProductService {
 
   mapFilters(filter: SimpleAttributes): string[] {
     return productRepository.mapFilters(filter);
+  }
+
+  getVariantDescription(
+    variant: InVariant | InProduct,
+    productType: InProductType | undefined,
+  ): string {
+    return productRepository.getVariantDescription(variant, productType);
   }
 }
 

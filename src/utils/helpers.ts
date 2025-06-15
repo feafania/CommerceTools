@@ -14,6 +14,7 @@ import { tokenStore } from "@/stores/token-store";
 import authService from "@/api/services/auth-service";
 import authStore from "@/stores/auth-store";
 import basketService from "@/api/services/basket-service";
+import basketStore from "@/stores/basket-store";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -205,9 +206,10 @@ export function removeAllChildren(element: Element | undefined | null) {
 }
 
 export function formatPriceWithCurrency(
-  price: number,
+  price: number | undefined,
   currencyCode: CurrencyCode,
 ): string {
+  if (price === undefined) return "";
   const symbol = CurrencySymbolMap[currencyCode];
   const amount = (price / 100).toFixed(2);
 
@@ -265,6 +267,7 @@ export async function loadUser() {
 
   if (tokenStore.accessToken) {
     try {
+      basketStore.clearCart();
       await authService.getMe();
       if (authStore.user) {
         await basketService.getCart();

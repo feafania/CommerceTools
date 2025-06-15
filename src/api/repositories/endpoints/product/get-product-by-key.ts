@@ -18,7 +18,12 @@ export default async function getProductByKey(
     const response = await apiRoot
       .productProjections()
       .withKey({ key })
-      .get({ queryArgs: { staged: true } })
+      .get({
+        queryArgs: {
+          staged: true,
+          expand: ["productType"],
+        },
+      })
       .execute();
 
     return response.body;
