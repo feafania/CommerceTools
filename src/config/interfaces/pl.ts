@@ -98,6 +98,11 @@ const pl: AppTranslation = {
   },
   basket: {
     title: "Kosz",
+    clear: "Wyczyść kosz",
+    remove: "Usuń",
+    totalItems: "Łączna liczba elementów",
+    total: "CAŁKOWITY",
+    emptyText: "Twój koszyk jest pusty",
   },
   address: {
     headers: {
