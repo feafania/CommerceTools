@@ -3,6 +3,8 @@ import {
   MyCustomerUpdateAction,
 } from "@commercetools/platform-sdk";
 
+import { mockSETTINGS } from "../common.mock";
+
 import {
   getTestDraft,
   testAddresses,
@@ -12,6 +14,10 @@ import {
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
 import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
+
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
 
 describe("Update Customer Addresses Integration", () => {
   let result: CustomerSignInResult;

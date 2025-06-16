@@ -1,9 +1,15 @@
+import { mockSETTINGS } from "../common.mock";
+
 import { getTestDraft, testLoginDraft } from "./__mocks__/integration.mock";
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
 import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
 import getMe from "@/api/repositories/endpoints/customer/get-me";
+
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
 
 describe("Auth Integration", () => {
   const testDraft = getTestDraft();

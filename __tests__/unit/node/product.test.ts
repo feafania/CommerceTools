@@ -1,3 +1,4 @@
+import { mockSETTINGS } from "../../common.mock";
 import {
   categoriesApiResponse,
   CategoryByKeyApiResponse,
@@ -20,6 +21,39 @@ jest.mock("@/api/repositories/endpoints/product/get-product-by-key");
 jest.mock("@/api/repositories/endpoints/product/get-product-types");
 jest.mock("@/api/repositories/endpoints/product/get-product-type-by-key");
 jest.mock("@/api/repositories/endpoints/product/get-product-attributes");
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+jest.mock("@/pages/catalog/catalog", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/utils/page-render", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/config/routes", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/search-button/search-button", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/layout/header/header", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
 
 import { InCategory } from "@/types/interfaces";
 import productRepository from "@/api/repositories/product-repository";

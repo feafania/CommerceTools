@@ -241,3 +241,21 @@ export const mockAttributesExpected = [
   "variants.attributes.color:red",
   "variants.attributes.size:M",
 ];
+
+export const mockCategories = [
+  {
+    id: "1",
+    key: "electronics",
+    name: { en: "Electronics" },
+    assets: [],
+    children: [
+      {
+        id: "2",
+        key: "phones",
+        name: { en: "Phones" },
+        assets: [],
+        children: [],
+      },
+    ],
+  },
+];

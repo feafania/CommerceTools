@@ -50,7 +50,7 @@ const CatalogView = {
   // sliderWrapper: document.createElement("div"),
 
   async render(): Promise<HTMLElement | undefined> {
-    this.removeLazyLoadingElement();
+    await this.removeLazyLoadingElement();
     this.wasMobile = isMobile();
     if (this.wasMobile) {
       this.offset = 0;
@@ -63,7 +63,7 @@ const CatalogView = {
         this.appendLazyLoadingElement();
         this.setupLazyLoading();
       }
-      mobileFilterToggle.refresh();
+      mobileFilterToggle!.refresh();
       return;
     }
     removeAllChildren(this.container);
@@ -103,7 +103,7 @@ const CatalogView = {
       this.setupScrollToTopButton();
 
       setTimeout(() => {
-        mobileFilterToggle.refresh();
+        mobileFilterToggle!.refresh();
       }, 0);
 
       return this.container;
@@ -283,7 +283,7 @@ const CatalogView = {
     this.isSamePage = true;
     CatalogViewFiltering.buildPath();
     setTimeout(() => {
-      mobileFilterToggle.refresh();
+      mobileFilterToggle!.refresh();
     }, 0);
   },
 

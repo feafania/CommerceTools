@@ -20,9 +20,6 @@ import authService from "@/api/services/auth-service";
 import authStore from "@/stores/auth-store";
 import basketService from "@/api/services/basket-service";
 import basketStore from "@/stores/basket-store";
-import CatalogView from "@/pages/catalog/catalog";
-import Header from "@/components/layout/header/header";
-import PageRouter from "@/router/page-router";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -292,10 +289,3 @@ export async function loadUser() {
 }
 
 export const isMobile = () => window.innerWidth <= MOBILE_WIDTH;
-
-export async function onLanguageChange() {
-  CatalogView.isSamePage = false;
-  Header.setTitle();
-  Header.renderNav();
-  await PageRouter.handleRoute();
-}

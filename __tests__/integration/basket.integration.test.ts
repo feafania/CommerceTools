@@ -1,5 +1,7 @@
 import { Cart } from "@commercetools/platform-sdk";
 
+import { mockSETTINGS } from "../common.mock";
+
 import {
   cartDraft,
   testKeys,
@@ -22,6 +24,10 @@ import {
 } from "@/api/repositories/endpoints/basket";
 import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
 import getMe from "@/api/repositories/endpoints/customer/get-me";
+
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
 
 describe("Cart API endpoints", () => {
   let anonymousCart: Cart;

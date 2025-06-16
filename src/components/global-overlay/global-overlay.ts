@@ -1,9 +1,12 @@
 import "./global-overlay.css";
 
 const globalOverlay = {
-  overlay: document.createElement("div") as HTMLDivElement,
+  overlay: undefined as HTMLDivElement | undefined,
   create(): HTMLDivElement {
-    this.overlay.id = "global-overlay";
+    if (!this.overlay) {
+      this.overlay = document.createElement("div");
+      this.overlay.id = "global-overlay";
+    }
     return this.overlay;
   },
 

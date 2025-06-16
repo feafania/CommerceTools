@@ -1,3 +1,4 @@
+import { mockSETTINGS } from "../../common.mock";
 import {
   discountCode,
   lineItemId,
@@ -39,6 +40,39 @@ jest.mock("@/api/repositories/endpoints/basket", () => ({
   changeCartItemQuantity: jest.fn(),
   recalculateCart: jest.fn(),
 }));
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+jest.mock("@/pages/catalog/catalog", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/utils/page-render", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/config/routes", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/search-button/search-button", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/layout/header/header", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
 
 beforeEach(() => {
   jest.clearAllMocks();

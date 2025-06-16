@@ -1,3 +1,4 @@
+import { mockSETTINGS } from "../../common.mock";
 import {
   mockedInternalProductList,
   mappedInProduct,
@@ -15,6 +16,12 @@ import productRepository from "@/api/repositories/product-repository";
 import { SimpleAttributes } from "@/types/types";
 
 jest.mock("@/api/repositories/product-repository");
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+
+jest.mock("@/assets/svg/eye-password-hide.inline.svg", () => "mocked-svg");
+jest.mock("@/assets/svg/eye-password-show.inline.svg", () => "mocked-svg");
 
 const mockedRepository = productRepository as jest.Mocked<
   typeof productRepository

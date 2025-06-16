@@ -1,3 +1,5 @@
+import { mockSETTINGS } from "../common.mock";
+
 import { testKeys } from "./__mocks__/integration.mock";
 
 import {
@@ -10,6 +12,19 @@ import {
   getCategoryByKey,
 } from "@/api/repositories/endpoints/product";
 import productRepository from "@/api/repositories/product-repository";
+
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+
+jest.mock("@/api/repositories/mapping-helpers", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/assets/svg/eye-password-hide.inline.svg", () => "mocked-svg");
+jest.mock("@/assets/svg/eye-password-show.inline.svg", () => "mocked-svg");
 
 describe("Product API endpoints", () => {
   it("should fetch raw categories", async () => {

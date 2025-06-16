@@ -3,11 +3,16 @@ import {
   MyCustomerUpdateAction,
 } from "@commercetools/platform-sdk";
 
+import { mockSETTINGS } from "../common.mock";
+
 import {
   getRandomPassword,
   getTestDraft,
   testPassword,
 } from "./__mocks__/integration.mock";
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
