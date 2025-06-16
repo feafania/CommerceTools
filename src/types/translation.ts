@@ -98,6 +98,11 @@ export interface AppTranslation {
   };
   basket: {
     title: string;
+    clear: string;
+    remove: string;
+    totalItems: string;
+    total: string;
+    emptyText: string;
   };
   address: {
     headers: AddressTypeMap;

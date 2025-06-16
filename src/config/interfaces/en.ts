@@ -98,6 +98,11 @@ const en: AppTranslation = {
   },
   basket: {
     title: "Basket",
+    clear: "Clear basket",
+    remove: "Remove",
+    totalItems: "Total items",
+    total: "TOTAL",
+    emptyText: "Your basket is empty",
   },
   address: {
     headers: {
