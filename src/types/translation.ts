@@ -137,7 +137,7 @@ export interface AppTranslation {
     };
     editAddress: string;
     editAddressStop: string;
-    addAdress: string;
+    addAddress: string;
     addressProfileTitle: string;
     addressesList: string;
   };

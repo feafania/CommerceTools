@@ -7,6 +7,7 @@ import { tokenStore } from "@/stores/token-store";
 import authService from "@/api/services/auth-service";
 import customerRepository from "@/api/repositories/customer-repository";
 import { FieldErrorType } from "@/types/types";
+import { anonymousSessionStore } from "@/stores/anonymous-session-store";
 
 class CustomerService {
   async update(newCustomer: InCustomer): Promise<InCustomer | undefined> {
@@ -64,10 +65,12 @@ class CustomerService {
         token,
       );
       if (updatedCustomer) {
+        tokenStore.clearToken();
+        anonymousSessionStore.clear();
+        await authService.initAnonymousSession();
         return await authService.login(user.email, newPassword);
       }
     } catch (error) {
-      console.log(error);
       if (error instanceof ApiError) {
         showModalMessage(
           `${SETTINGS.label.errors.updatePassword}\n${error.message}`,

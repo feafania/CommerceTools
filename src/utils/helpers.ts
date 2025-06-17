@@ -280,6 +280,7 @@ export async function loadUser() {
           await basketService.getCart();
           return;
         }
+        return;
       } catch (error) {
         console.error("Couldn't get the user:", error);
       }
@@ -292,11 +293,12 @@ export async function loadUser() {
       const cart = await basketService.getCart();
       if (!cart) {
         anonymousSessionStore.clear();
-        authService.initAnonymousSession();
+        await authService.initAnonymousSession();
       }
       return;
     }
 
+    anonymousSessionStore.clear();
     await authService.initAnonymousSession();
     await basketService.getCart();
   } catch (error) {

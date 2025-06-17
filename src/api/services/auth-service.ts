@@ -32,9 +32,7 @@ class AuthService {
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
-        showModalMessage(
-          `${SETTINGS.label.errors.updateCustomer}\n${error.message}`,
-        );
+        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
         return error.invalidFields;
       }
     }
@@ -134,9 +132,10 @@ class AuthService {
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
-        showModalMessage(
-          `${SETTINGS.label.errors.getCurrentUser}\n${error.message}`,
-        );
+        // showModalMessage(
+        //   `${SETTINGS.label.errors.getCurrentUser}\n${error.message}`,
+        // );
+        authStore.setUser(undefined);
       } else {
         console.error("Get current user failed:", error);
       }
@@ -167,12 +166,12 @@ class AuthService {
       if (!anonymousSessionStore.accessToken) return undefined;
 
       if (anonymousSessionStore.isTokenExpired()) {
-        this.initAnonymousSession();
+        await this.initAnonymousSession();
       }
 
       return anonymousSessionStore.accessToken;
     } catch (error) {
-      console.error("getting anonimous token failed:", error);
+      console.error("getting anonymous token failed:", error);
       if (error instanceof ApiError) {
         showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
       }

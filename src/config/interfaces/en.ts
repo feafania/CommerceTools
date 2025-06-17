@@ -149,7 +149,7 @@ const en: AppTranslation = {
     },
     editAddress: "Edit",
     editAddressStop: "Stop editing",
-    addAdress: "+ Add adress",
+    addAddress: "+ Add address",
     addressProfileTitle: "Address",
     addressesList: "Addresses",
   },

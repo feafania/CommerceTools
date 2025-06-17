@@ -150,7 +150,7 @@ const pl: AppTranslation = {
     },
     editAddress: "Edytuj",
     editAddressStop: "Zatrzymaj edycję",
-    addAdress: "+ Dodaj adres",
+    addAddress: "+ Dodaj adres",
     addressProfileTitle: "Adres",
     addressesList: "Adresy",
   },

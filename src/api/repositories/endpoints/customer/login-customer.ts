@@ -3,8 +3,6 @@ import {
   createApiBuilderFromCtpClient,
 } from "@commercetools/platform-sdk";
 
-import getCustomerCart from "../basket/cart/get-customer-cart";
-
 import { handleApiError } from "@/api/handle-api-error";
 import {
   createExistingTokenClient,
@@ -49,10 +47,6 @@ export default async function loginCustomer(
       //       // or "UseAsNewActiveCustomerCart" (clear basket)
       //     }),
     };
-    if (token) {
-      console.log("anonimous cart", await getCustomerCart(token));
-    }
-    console.log("body", body);
     const response = await apiRoot
       .me()
       .login()
@@ -60,7 +54,6 @@ export default async function loginCustomer(
         body,
       })
       .execute();
-    console.log("returned answer", response.body.cart);
 
     return response.body;
   } catch (error: unknown) {
