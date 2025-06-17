@@ -3,26 +3,21 @@ import {
   createApiBuilderFromCtpClient,
 } from "@commercetools/platform-sdk";
 
-import {
-  createAnonymousClient,
-  createExistingTokenClient,
-} from "@/api/repositories/build-client";
+import { createExistingTokenClient } from "@/api/repositories/build-client";
 import getCustomerCart from "@/api/repositories/endpoints/basket/cart/get-customer-cart";
-import getAnonymousCart from "@/api/repositories/endpoints/basket/cart/get-anonymous-cart";
+import getCartById from "@/api/repositories/endpoints/basket/cart/get-cart-by-id";
 import { CartPostFunction } from "@/types/api-types";
 import { handleApiError } from "@/api/handle-api-error";
 
 export default async function getCartUpdateApi(
   cartId: string,
-  token?: string,
+  token: string,
 ): Promise<{
   cart: Cart;
   post: CartPostFunction;
 }> {
   try {
-    const ctpClient = token
-      ? createExistingTokenClient(token)
-      : createAnonymousClient();
+    const ctpClient = createExistingTokenClient(token);
 
     const api = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
@@ -30,7 +25,7 @@ export default async function getCartUpdateApi(
 
     const cart = token
       ? await getCustomerCart(token)
-      : await getAnonymousCart(cartId);
+      : await getCartById(cartId, token);
 
     if (!cart) {
       throw new Error("Cart not found");

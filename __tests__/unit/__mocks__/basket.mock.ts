@@ -3,6 +3,7 @@ export const mockedInternalCart = {
   id: mockedCartApiResponse.id,
   version: 1,
   items: [],
+  currency: "EUR",
 };
 export const mockedBasketProduct = {
   id: "product123",

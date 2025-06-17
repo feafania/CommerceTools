@@ -3,9 +3,11 @@ import {
   createApiBuilderFromCtpClient,
 } from "@commercetools/platform-sdk";
 
+import getCustomerCart from "../basket/cart/get-customer-cart";
+
 import { handleApiError } from "@/api/handle-api-error";
 import {
-  createAnonymousClient,
+  createExistingTokenClient,
   createPasswordClient,
   // createPasswordClient,
 } from "@/api/repositories/build-client";
@@ -20,37 +22,45 @@ import {
 export default async function loginCustomer(
   email: string,
   password: string,
-  anonymousCartId?: string,
+  token?: string,
 ): Promise<CustomerSignInResult | undefined> {
   try {
-    const isAnonymousFlow = Boolean(anonymousCartId);
-    const client = isAnonymousFlow
-      ? createAnonymousClient()
+    const ctpClient = token
+      ? createExistingTokenClient(token)
       : createPasswordClient(email, password);
 
-    const apiRoot = createApiBuilderFromCtpClient(client).withProjectKey({
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });
-
+    const body = {
+      email,
+      password,
+      activeCartSignInMode: "MergeWithExistingCustomerCart",
+      // ...(isAnonymousFlow
+      //   ? {
+      //       anonymousCart: {
+      //         id: anonymousCartId,
+      //         typeId: "cart",
+      //       },
+      //       anonymousCartSignInMode: "MergeWithExistingCustomerCart",
+      //     }
+      //   : {
+      //       activeCartSignInMode: "MergeWithExistingCustomerCart",
+      //       // or "UseAsNewActiveCustomerCart" (clear basket)
+      //     }),
+    };
+    if (token) {
+      console.log("anonimous cart", await getCustomerCart(token));
+    }
+    console.log("body", body);
     const response = await apiRoot
       .me()
       .login()
       .post({
-        body: {
-          email,
-          password,
-          ...(isAnonymousFlow
-            ? {
-                anonymousCartId,
-                anonymousCartSignInMode: "MergeWithExistingCustomerCart",
-              }
-            : {
-                activeCartSignInMode: "MergeWithExistingCustomerCart",
-                // or "UseAsNewActiveCustomerCart" (clear basket)
-              }),
-        },
+        body,
       })
       .execute();
+    console.log("returned answer", response.body.cart);
 
     return response.body;
   } catch (error: unknown) {

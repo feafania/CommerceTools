@@ -3,14 +3,14 @@ import {
   ProductType,
 } from "@commercetools/platform-sdk";
 
-import { createAnonymousClient } from "@/api/repositories/build-client";
+import { createCredentialsClient } from "@/api/repositories/build-client";
 import { handleApiError } from "@/api/handle-api-error";
 
 export default async function getProductTypeByKey(
   key: string,
 ): Promise<ProductType | undefined> {
   try {
-    const ctpClient = createAnonymousClient();
+    const ctpClient = createCredentialsClient();
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });

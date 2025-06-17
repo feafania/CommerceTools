@@ -18,6 +18,7 @@ export default async function getCustomerToken(
   const scope = buildScopes(projectKey, [
     "manage_orders",
     "manage_my_orders",
+    "view_products",
     "manage_my_profile",
     "manage_my_shopping_lists",
     "view_published_products",

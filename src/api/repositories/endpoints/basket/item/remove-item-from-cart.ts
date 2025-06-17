@@ -7,7 +7,7 @@ export default async function removeItemFromCart(
   cartId: string,
   lineItemId: string,
   quantity: number = 0,
-  token?: string,
+  token: string,
 ): Promise<Cart | undefined> {
   try {
     const { cart, post } = await getCartUpdateApi(cartId, token);

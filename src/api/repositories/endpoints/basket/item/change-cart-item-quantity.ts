@@ -10,7 +10,7 @@ export default async function changeCartItemQuantity(
   cartId: string,
   lineItemId: string,
   quantity: number,
-  token?: string,
+  token: string,
 ): Promise<Cart | undefined> {
   try {
     const { cart, post } = await getCartUpdateApi(cartId, token);

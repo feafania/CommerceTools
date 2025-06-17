@@ -14,11 +14,8 @@ import {
   addItemToCart,
   applyDiscountCodeToCart,
   changeCartItemQuantity,
-  createAnonymousCart,
   createCustomerCart,
-  deleteAnonymousCart,
   deleteCustomerCart,
-  getAnonymousCart,
   getCustomerCart,
   removeItemFromCart,
   recalculateCart,
@@ -86,7 +83,7 @@ describe("basketRepository", () => {
     it("should return customer cart if token provided", async () => {
       (getCustomerCart as jest.Mock).mockResolvedValue(mockedCartApiResponse);
 
-      const cart = await basketRepository.getCart(undefined, mockToken);
+      const cart = await basketRepository.getCart(mockToken);
 
       expect(getCustomerCart).toHaveBeenCalledWith(mockToken);
       expect(MappingHelpers.toInternalCart).toHaveBeenCalledWith(
@@ -95,24 +92,15 @@ describe("basketRepository", () => {
       expect(cart).toEqual(mockedInternalCart);
     });
 
-    it("should return anonymous cart if cartId provided", async () => {
-      (getAnonymousCart as jest.Mock).mockResolvedValue(mockedCartApiResponse);
-
-      const cart = await basketRepository.getCart(mockedCartApiResponse.id);
-
-      expect(getAnonymousCart).toHaveBeenCalledWith(mockedCartApiResponse.id);
-      expect(cart).toEqual(mockedInternalCart);
-    });
-
     it("should create new cart if none found", async () => {
       (getCustomerCart as jest.Mock).mockResolvedValue(JSON.parse("null"));
-      (createAnonymousCart as jest.Mock).mockResolvedValue(
+      (createCustomerCart as jest.Mock).mockResolvedValue(
         mockedCartApiResponse,
       );
 
-      const cart = await basketRepository.getCart(undefined, mockToken);
+      const cart = await basketRepository.getCart(mockToken);
 
-      expect(createAnonymousCart).toHaveBeenCalled();
+      expect(createCustomerCart).toHaveBeenCalled();
       expect(cart).toEqual(mockedInternalCart);
     });
   });
@@ -133,23 +121,6 @@ describe("basketRepository", () => {
         { currency: CurrencyCode.EUR, country: CountryCode.PL },
         mockToken,
       );
-      expect(cart).toEqual(mockedInternalCart);
-    });
-
-    it("should create anonymous cart when no token provided", async () => {
-      (createAnonymousCart as jest.Mock).mockResolvedValue(
-        mockedCartApiResponse,
-      );
-
-      const cart = await basketRepository.createCart({
-        currency: CurrencyCode.EUR,
-        country: CountryCode.PL,
-      });
-
-      expect(createAnonymousCart).toHaveBeenCalledWith({
-        currency: CurrencyCode.EUR,
-        country: CountryCode.PL,
-      });
       expect(cart).toEqual(mockedInternalCart);
     });
   });
@@ -278,18 +249,6 @@ describe("basketRepository", () => {
         mockedCartApiResponse.id,
         mockedCartApiResponse.version,
         mockToken,
-      );
-    });
-
-    it("should delete anonymous cart if no token", async () => {
-      await basketRepository.deleteCart(
-        mockedCartApiResponse.id,
-        mockedCartApiResponse.version,
-      );
-
-      expect(deleteAnonymousCart).toHaveBeenCalledWith(
-        mockedCartApiResponse.id,
-        mockedCartApiResponse.version,
       );
     });
   });

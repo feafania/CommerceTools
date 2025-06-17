@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import {
   CustomerSignInResult,
   MyCustomerUpdateAction,
@@ -14,6 +15,7 @@ import {
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
 import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
+import getAnonToken from "@/api/repositories/endpoints/token/get-anonymous-token";
 
 jest.mock("@/config/settings", () => ({
   SETTINGS: mockSETTINGS,
@@ -26,7 +28,10 @@ describe("Update Customer Addresses Integration", () => {
 
   beforeAll(async () => {
     const testDraft = getTestDraft();
-    result = await registerCustomer(testDraft);
+    const anon = await getAnonToken(uuidv4());
+    const anonToken = anon?.access_token;
+    if (!anonToken) throw new Error("Failed to get anonymous token");
+    result = await registerCustomer(testDraft, anonToken);
     expect(result).toBeDefined();
 
     const tokenResponse = await getCustomerToken(testDraft.email, testPassword);

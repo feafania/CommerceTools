@@ -8,6 +8,7 @@ import { tokenStore } from "@/stores/token-store";
 import { FieldErrorType } from "@/types/types";
 import basketStore from "@/stores/basket-store";
 import basketService from "@/api/services/basket-service";
+import { anonymousSessionStore } from "@/stores/anonymous-session-store";
 
 class AuthService {
   async login(
@@ -15,24 +16,16 @@ class AuthService {
     password: string,
   ): Promise<InCustomer | FieldErrorType[] | undefined> {
     try {
-      const cart = basketStore.getCart();
-
-      const isAnonymous =
-        !tokenStore.accessToken || cart?.anonymousId !== undefined;
-
-      const anonymousCartId = isAnonymous ? cart?.id : undefined;
-
-      const result = await authRepository.login(
-        email,
-        password,
-        anonymousCartId,
-      );
+      const accessToken =
+        tokenStore.accessToken ?? anonymousSessionStore.accessToken!;
+      const result = await authRepository.login(email, password, accessToken);
 
       if (!result) return;
 
       const { customer, token, cart: mergedCart } = result;
 
       authStore.setUser(customer, token);
+      anonymousSessionStore.clear();
       basketStore.setCart(mergedCart);
       await basketService.getCart();
 
@@ -51,8 +44,12 @@ class AuthService {
     data: InCustomer,
   ): Promise<InCustomer | FieldErrorType[] | undefined> {
     try {
-      const customer: InCustomer | undefined =
-        await authRepository.register(data);
+      const accessToken =
+        tokenStore.accessToken ?? anonymousSessionStore.accessToken!;
+      const customer: InCustomer | undefined = await authRepository.register(
+        data,
+        accessToken,
+      );
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
@@ -71,14 +68,15 @@ class AuthService {
         authStore.setUser(undefined);
         basketStore.clearCart();
 
-        const anonymousCart = await basketService.createCart();
-        if (anonymousCart) basketStore.setCart(anonymousCart);
+        anonymousSessionStore.clear();
+        await this.initAnonymousSession();
 
         return true;
       }
     } catch {
       // console.error("Logout failed:", error);
     }
+
     showModalMessage(`${SETTINGS.label.errors.logout}`);
     return false;
   }
@@ -165,6 +163,48 @@ class AuthService {
         showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
       }
       return undefined;
+    }
+  }
+
+  async getAnonToken(): Promise<string | undefined> {
+    try {
+      if (!anonymousSessionStore.accessToken) return undefined;
+
+      if (anonymousSessionStore.isTokenExpired()) {
+        this.initAnonymousSession();
+      }
+
+      return anonymousSessionStore.accessToken;
+    } catch (error) {
+      console.error("getting anonimous token failed:", error);
+      if (error instanceof ApiError) {
+        showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
+      }
+      return undefined;
+    }
+  }
+
+  async initAnonymousSession(): Promise<void> {
+    const { id: anonymousId } = anonymousSessionStore;
+    try {
+      const token = await authRepository.getAnonToken(anonymousId);
+
+      if (!token) {
+        showModalMessage(`${SETTINGS.label.errors.token}`);
+        return;
+      }
+
+      anonymousSessionStore.setToken(token);
+
+      const cart = await basketService.createCart();
+      if (cart) {
+        basketStore.setCart(cart);
+      }
+    } catch (error) {
+      console.error("Anonymous session init failed:", error);
+      if (error instanceof ApiError) {
+        showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
+      }
     }
   }
 }

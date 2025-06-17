@@ -3,14 +3,15 @@ import {
   createApiBuilderFromCtpClient,
 } from "@commercetools/platform-sdk";
 
-import { createAnonymousClient } from "@/api/repositories/build-client";
+import { createExistingTokenClient } from "@/api/repositories/build-client";
 import { handleApiError } from "@/api/handle-api-error";
 
-export default async function getAnonymousCart(
+export default async function getCartById(
   cartId: string,
+  token: string,
 ): Promise<Cart | undefined> {
   try {
-    const ctpClient = createAnonymousClient();
+    const ctpClient = createExistingTokenClient(token);
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });
@@ -21,7 +22,7 @@ export default async function getAnonymousCart(
       .execute();
     return response.body;
   } catch (error) {
-    console.error("Getting anonymous cart failed:", error);
+    console.error("Getting cart by id failed:", error);
     handleApiError(error);
   }
 }

@@ -36,9 +36,13 @@ jest.mock("@/api/repositories/basket-repository", () => ({
 }));
 
 describe("getCart", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   it("should return cart from repository", async () => {
     const token = "fake-token";
     (authService.getToken as jest.Mock).mockResolvedValue(token);
+    (authService.getAnonToken as jest.Mock).mockResolvedValue(token);
     (basketStore.getCart as jest.Mock).mockReturnValue(mockedInternalCart);
     (basketRepository.getCart as jest.Mock).mockResolvedValue(
       mockedInternalCart,
@@ -50,6 +54,13 @@ describe("getCart", () => {
 
   it("should return undefined on error", async () => {
     (authService.getToken as jest.Mock).mockRejectedValue(new Error("Error"));
+    (authService.getAnonToken as jest.Mock).mockRejectedValue(
+      new Error("Error"),
+    );
+    (basketStore.getCart as jest.Mock).mockReturnValue(JSON.parse("null"));
+    (basketRepository.getCart as jest.Mock).mockResolvedValue(
+      JSON.parse("null"),
+    );
     const result = await basketService.getCart();
     expect(result).toBeUndefined();
   });

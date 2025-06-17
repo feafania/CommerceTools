@@ -1,7 +1,12 @@
 import Cookies from "js-cookie";
 
 import { TokenType } from "@/types/api-types";
-import { COOCKIE_LIFE } from "@/config/constants";
+import {
+  COOKIE_LIFE,
+  CUSTOMER_EXPIRE_IN,
+  CUSTOMER_REFRESH_TOKEN_KEY,
+  CUSTOMER_TOKEN_KEY,
+} from "@/config/constants";
 
 export class TokenStore {
   #token: TokenType | undefined;
@@ -18,14 +23,14 @@ export class TokenStore {
     this.#token = token;
 
     Cookies.set("access_token", token.access_token, {
-      expires: COOCKIE_LIFE,
+      expires: COOKIE_LIFE,
       path: "/",
       secure: true,
       sameSite: "Lax",
     });
 
     Cookies.set("refresh_token", token.refresh_token, {
-      expires: COOCKIE_LIFE,
+      expires: COOKIE_LIFE,
       path: "/",
       secure: true,
       sameSite: "Lax",
@@ -37,9 +42,9 @@ export class TokenStore {
   clearToken() {
     this.#token = undefined;
 
-    Cookies.remove("access_token", { path: "/" });
-    Cookies.remove("refresh_token", { path: "/" });
-    Cookies.remove("token_expires_in", { path: "/" });
+    Cookies.remove(CUSTOMER_TOKEN_KEY, { path: "/" });
+    Cookies.remove(CUSTOMER_REFRESH_TOKEN_KEY, { path: "/" });
+    Cookies.remove(CUSTOMER_EXPIRE_IN, { path: "/" });
   }
 
   isTokenExpired() {
@@ -48,13 +53,13 @@ export class TokenStore {
   }
 
   loadFromCookies() {
-    const accessToken = Cookies.get("access_token");
-    const refreshToken = Cookies.get("refresh_token");
-    const tokenExpiresIn = Cookies.get("token_expires_in");
+    const accessToken = Cookies.get(CUSTOMER_TOKEN_KEY);
+    const refreshToken = Cookies.get(CUSTOMER_REFRESH_TOKEN_KEY);
+    const tokenExpiresIn = Cookies.get(CUSTOMER_EXPIRE_IN);
 
     if (accessToken && refreshToken && tokenExpiresIn) {
       this.#token = {
-        ["access_token"]: accessToken,
+        [CUSTOMER_TOKEN_KEY]: accessToken,
         ["refresh_token"]: refreshToken,
         ["token_expires_in"]: String(Number.parseInt(tokenExpiresIn, 10)),
       };

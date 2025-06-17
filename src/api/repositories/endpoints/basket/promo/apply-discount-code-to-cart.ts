@@ -1,24 +1,19 @@
 import { createApiBuilderFromCtpClient } from "@commercetools/platform-sdk";
 import { Cart, CartUpdateAction } from "@commercetools/platform-sdk";
 
-import {
-  createAnonymousClient,
-  createExistingTokenClient,
-} from "@/api/repositories/build-client";
+import { createExistingTokenClient } from "@/api/repositories/build-client";
 import { handleApiError } from "@/api/handle-api-error";
 
 export default async function applyDiscountCodeToCart(
   cartId: string,
   discountCode: string,
   version: number,
-  token?: string,
+  token: string,
 ): Promise<Cart> {
   try {
-    const client = token
-      ? createExistingTokenClient(token)
-      : createAnonymousClient();
+    const ctpClient = createExistingTokenClient(token);
 
-    const apiRoot = createApiBuilderFromCtpClient(client).withProjectKey({
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });
 

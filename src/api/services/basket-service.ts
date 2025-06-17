@@ -11,31 +11,37 @@ class BasketService {
   async getCart(cartId?: string): Promise<InCart | undefined> {
     try {
       let cart: InCart | undefined = basketStore.getCart();
-      if (!cartId && cart && cart.currency === SETTINGS.currentCurrency) {
+      if (
+        (!cartId || cart?.id === cartId) &&
+        cart &&
+        cart.currency === SETTINGS.currentCurrency
+      ) {
         return cart;
       }
-      const token = await authService.getToken();
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
 
-      if (cart || cartId) {
+      if (cartId && token) {
         try {
-          cart = await basketRepository.getCart(cartId ?? cart!.id, token);
-          if (cart && cart?.currency !== SETTINGS.currentCurrency) {
-            const mergedCart = await this.mergeCartWithNewCurrency(cart, token);
-            basketStore.setCart(mergedCart);
-            return mergedCart;
-          }
-
-          basketStore.setCart(cart);
-          return cart;
+          cart = await basketRepository.getCartById(cartId ?? cart!.id, token);
+        } catch {}
+      }
+      if (!cart && token) {
+        try {
+          cart = await basketRepository.getCart(token);
         } catch {}
       }
 
-      try {
-        cart = await basketRepository.getCart(undefined, token);
-      } catch {}
-
       if (!cart) {
         cart = await this.createCart();
+      }
+
+      if (cart && cart?.currency !== SETTINGS.currentCurrency) {
+        const mergedCart = await this.mergeCartWithNewCurrency(cart, token);
+        basketStore.setCart(mergedCart);
+        return mergedCart;
       }
 
       basketStore.setCart(cart);
@@ -63,12 +69,17 @@ class BasketService {
     country?: string;
   }): Promise<InCart | undefined> {
     try {
-      const token = await authService.getToken();
-      return await basketRepository.createCart({
-        currency: parameters?.currency || SETTINGS.currentCurrency,
-        country: parameters?.country,
-        customerToken: token,
-      });
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
+      if (token) {
+        return await basketRepository.createCart({
+          currency: parameters?.currency || SETTINGS.currentCurrency,
+          country: parameters?.country,
+          customerToken: token,
+        });
+      }
     } catch (error) {
       this.handleError(error, SETTINGS.label.errors.createCart);
     }
@@ -78,17 +89,24 @@ class BasketService {
     updateProductData = false,
   ): Promise<InCart | undefined> {
     try {
-      const token = await authService.getToken();
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
       const cart = basketStore.getCart();
       if (!cart?.id || cart.version === undefined)
         throw new Error("Cart ID or version is missing");
 
-      const updatedCart = await basketRepository.recalculateCart(
-        cart.id,
-        cart.version,
-        updateProductData,
-        token,
-      );
+      let updatedCart: InCart | undefined;
+
+      if (token) {
+        updatedCart = await basketRepository.recalculateCart(
+          cart.id,
+          cart.version,
+          updateProductData,
+          token,
+        );
+      }
 
       basketStore.setCart(updatedCart);
       return updatedCart;
@@ -107,7 +125,13 @@ class BasketService {
       if (!product) {
         throw new Error(`Product with key "${productKey}" not found`);
       }
-      const token = await authService.getToken();
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
+      if (!token) {
+        throw new Error(`Can not add item without token`);
+      }
       let cartId = await this.getCartId();
       if (!cartId) {
         const cart = await this.createCart();
@@ -140,7 +164,13 @@ class BasketService {
     quantity: number | undefined = undefined,
   ): Promise<InCart | undefined> {
     try {
-      const token = await authService.getToken();
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
+      if (!token) {
+        throw new Error(`Can not remove item without token`);
+      }
       let cartId = await this.getCartId();
       if (!cartId) {
         const cart = await this.createCart();
@@ -169,7 +199,13 @@ class BasketService {
     quantity: number, // If 0, the Line Item is removed from the Cart.
   ): Promise<InCart | undefined> {
     try {
-      const token = await authService.getToken();
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
+      if (!token) {
+        throw new Error(`Can not change item without token`);
+      }
       let cartId = await this.getCartId();
       if (!cartId) {
         const cart = await this.createCart();
@@ -195,7 +231,13 @@ class BasketService {
 
   async applyDiscountCode(discountCode: string): Promise<InCart | undefined> {
     try {
-      const token = await authService.getToken();
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
+      if (!token) {
+        throw new Error(`Can not apply promocode without token`);
+      }
       const cart = await this.getCart();
       if (!cart) throw new Error("Cart is missing");
 
@@ -218,7 +260,13 @@ class BasketService {
 
   async deleteCart(): Promise<void> {
     try {
-      const token = await authService.getToken();
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
+      if (!token) {
+        throw new Error(`Can not remove cart without token`);
+      }
       const cart = basketStore.getCart();
       if (!cart?.id || cart.version === undefined)
         throw new Error("Cart ID or version is missing");
@@ -251,6 +299,9 @@ class BasketService {
     if (!newCart?.id) {
       throw new Error("Cannot create a new cart for merging.");
     }
+    if (!token) {
+      throw new Error("Cannot create a new cart for merging without token.");
+    }
 
     for (const item of oldCart.lineItems) {
       await basketRepository.addItemToCart(
@@ -266,7 +317,7 @@ class BasketService {
       await basketRepository.deleteCart(oldCart.id, oldCart.version, token);
     }
 
-    const mergedCart = await basketRepository.getCart(newCart.id, token);
+    const mergedCart = await basketRepository.getCart(token);
     if (!mergedCart) throw new Error("Merged cart retrieval failed.");
 
     return mergedCart;

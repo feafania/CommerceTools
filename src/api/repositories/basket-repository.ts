@@ -5,56 +5,65 @@ import {
   addItemToCart,
   applyDiscountCodeToCart,
   changeCartItemQuantity,
-  createAnonymousCart,
   createCustomerCart,
-  deleteAnonymousCart,
   deleteCustomerCart,
-  getAnonymousCart,
+  getCartById,
   getCustomerCart,
   recalculateCart,
   removeItemFromCart,
 } from "@/api/repositories/endpoints/basket";
 
 const basketRepository = {
-  async getCart(
-    cartId?: string,
-    customerToken?: string,
-  ): Promise<InCart | undefined> {
+  async getCart(customerToken: string): Promise<InCart | undefined> {
     try {
       let cart;
       if (customerToken) {
         cart = await getCustomerCart(customerToken);
       }
-      if (cartId) {
-        cart = await getAnonymousCart(cartId);
-      }
       return cart
         ? MappingHelpers.toInternalCart(cart)
-        : await this.createCart();
+        : await this.createCart({
+            customerToken,
+            currency: SETTINGS.currentCurrency,
+          });
     } catch (error) {
       console.error("Error getting cart:", error);
       throw error;
     }
   },
 
-  async createCart(parameters?: {
+  async getCartById(
+    cartId: string,
+    customerToken: string,
+  ): Promise<InCart | undefined> {
+    try {
+      const cart = await getCartById(cartId, customerToken);
+      return cart
+        ? MappingHelpers.toInternalCart(cart)
+        : await this.createCart({
+            customerToken,
+            currency: SETTINGS.currentCurrency,
+          });
+    } catch (error) {
+      console.error("Error getting cart:", error);
+      throw error;
+    }
+  },
+
+  async createCart(parameters: {
+    customerToken: string;
     currency: string;
     country?: string;
-    customerToken?: string;
   }): Promise<InCart | undefined> {
     try {
-      const { currency, country, customerToken } = parameters ?? {
-        currency: SETTINGS.currentCurrency,
-      };
+      const { currency, country, customerToken } = parameters;
 
       const baseDraft = {
         currency,
         country,
       };
 
-      const cart = await (customerToken
-        ? createCustomerCart(baseDraft, customerToken)
-        : createAnonymousCart(baseDraft));
+      const cart = await createCustomerCart(baseDraft, customerToken);
 
       if (cart) {
         return MappingHelpers.toInternalCart(cart);
@@ -71,7 +80,7 @@ const basketRepository = {
     cartId: string,
     version: number,
     updateProductData: boolean = false,
-    token?: string,
+    token: string,
   ): Promise<InCart | undefined> {
     try {
       const cart = await recalculateCart(
@@ -94,7 +103,7 @@ const basketRepository = {
     productId: string,
     variantId: number | undefined = undefined,
     quantity = SETTINGS.basketParameters.quantity,
-    token?: string,
+    token: string,
   ): Promise<InCart | undefined> {
     try {
       const cart = await addItemToCart(
@@ -117,7 +126,7 @@ const basketRepository = {
     cartId: string,
     lineItemId: string,
     quantity: number | undefined = undefined,
-    token?: string,
+    token: string,
   ): Promise<InCart | undefined> {
     try {
       const cart = await removeItemFromCart(
@@ -139,7 +148,7 @@ const basketRepository = {
     cartId: string,
     lineItemId: string,
     quantity: number,
-    token?: string,
+    token: string,
   ): Promise<InCart | undefined> {
     try {
       const cart = await changeCartItemQuantity(
@@ -161,7 +170,7 @@ const basketRepository = {
     cartId: string,
     discountCode: string,
     version: number,
-    token?: string,
+    token: string,
   ): Promise<InCart | undefined> {
     try {
       const cart = await applyDiscountCodeToCart(
@@ -182,12 +191,10 @@ const basketRepository = {
   async deleteCart(
     cartId: string,
     version: number,
-    token?: string,
+    token: string,
   ): Promise<void> {
     try {
-      await (token
-        ? deleteCustomerCart(cartId, version, token)
-        : deleteAnonymousCart(cartId, version));
+      await deleteCustomerCart(cartId, version, token);
     } catch (error) {
       console.error("Error deleting cart:", error);
       throw error;

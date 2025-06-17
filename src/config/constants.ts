@@ -19,7 +19,14 @@ export const CurrencySymbolMap: Record<CurrencyCode, string> = {
   [CurrencyCode.PLN]: "zł",
 };
 
-export const COOCKIE_LIFE: number = 7;
+export const COOKIE_LIFE: number = 7;
 export const SCROLL_HEIGHT: number = 300;
 export const MOBILE_WIDTH: number = 1000;
 export const CART_ID_STORAGE_KEY: string = "cartID";
+
+export const ANONYMOUS_ID_KEY = "anonymous_id";
+export const ANONYMOUS_TOKEN_KEY = "anonymous_token";
+export const ANONYMOUS_REFRESH_TOKEN_KEY = "anonymous_refresh_token";
+export const CUSTOMER_TOKEN_KEY = "access_token";
+export const CUSTOMER_REFRESH_TOKEN_KEY = "refresh_token";
+export const CUSTOMER_EXPIRE_IN = "token_expires_in";

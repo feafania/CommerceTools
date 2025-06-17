@@ -8,17 +8,18 @@ import revokeCustomerToken from "@/api/repositories/endpoints/token/revoke-token
 import { TokenKeys, TokenType } from "@/types/api-types";
 import getMe from "@/api/repositories/endpoints/customer/get-me";
 import MappingHelpers from "@/api/repositories/mapping-helpers";
+import getAnonToken from "@/api/repositories/endpoints/token/get-anonymous-token";
 
 const authRepository = {
   async login(
     email: string,
     password: string,
-    anonymousCartId?: string,
+    token: string,
   ): Promise<
     { customer: InCustomer; token: TokenType; cart?: InCart } | undefined
   > {
     try {
-      const response = await loginCustomer(email, password, anonymousCartId);
+      const response = await loginCustomer(email, password, token);
       const tokenData = await getCustomerToken(email, password);
 
       if (response && tokenData?.access_token) {
@@ -46,10 +47,13 @@ const authRepository = {
     }
   },
 
-  async register(data: InCustomer): Promise<InCustomer | undefined> {
+  async register(
+    data: InCustomer,
+    token: string,
+  ): Promise<InCustomer | undefined> {
     try {
       const draft = MappingHelpers.toMyCustomerDraft(data);
-      const response = await registerCustomer(draft);
+      const response = await registerCustomer(draft, token);
       if (response) {
         const customer = response.customer;
         return MappingHelpers.toInternalCustomer(customer, data.password);
@@ -94,6 +98,26 @@ const authRepository = {
       if (customer) {
         return MappingHelpers.toInternalCustomer(customer, "");
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async getAnonToken(anonymousId: string): Promise<TokenType | undefined> {
+    try {
+      const rawToken = await getAnonToken(anonymousId);
+
+      if (rawToken?.access_token) {
+        const token: TokenType = {
+          ["access_token"]: rawToken.access_token,
+          ["refresh_token"]: rawToken.refresh_token,
+          ["token_expires_in"]: String(Date.now() + rawToken.expires_in * 1000),
+        };
+
+        return token;
+      }
+
+      return undefined;
     } catch (error) {
       throw error;
     }

@@ -76,10 +76,14 @@ describe("authRepository", () => {
 
   describe("register", () => {
     it("should call registerCustomer and return a transformed customer", async () => {
-      const result = await authRepository.register(inMockCustomer);
+      const result = await authRepository.register(
+        inMockCustomer,
+        token.access_token,
+      );
 
       expect(mockedRegisterCustomer).toHaveBeenCalledWith(
         MappingHelpers.toMyCustomerDraft(inMockCustomer),
+        token.access_token,
       );
       expect(result).toEqual(
         MappingHelpers.toInternalCustomer(
@@ -94,9 +98,9 @@ describe("authRepository", () => {
         new Error("Register failed"),
       );
 
-      await expect(authRepository.register(inMockCustomer)).rejects.toThrow(
-        "Register failed",
-      );
+      await expect(
+        authRepository.register(inMockCustomer, token.access_token),
+      ).rejects.toThrow("Register failed");
     });
   });
 
@@ -109,12 +113,16 @@ describe("authRepository", () => {
     });
     it("should call loginCustomer and return a transformed customer", async () => {
       const { email, password } = inMockCustomer;
-      const result = await authRepository.login(email, password!);
+      const result = await authRepository.login(
+        email,
+        password!,
+        token.access_token,
+      );
 
       expect(mockedLoginCustomer).toHaveBeenCalledWith(
         email,
         password,
-        undefined,
+        token.access_token,
       );
       expect(mockedGetCustomerToken).toHaveBeenCalledWith(email, password);
 
@@ -134,7 +142,11 @@ describe("authRepository", () => {
       mockedLoginCustomer.mockRejectedValueOnce(new Error("Login failed"));
 
       await expect(
-        authRepository.login(mockCustomer.email, mockCustomer.password!),
+        authRepository.login(
+          mockCustomer.email,
+          mockCustomer.password!,
+          token.access_token,
+        ),
       ).rejects.toThrow("Login failed");
     });
   });

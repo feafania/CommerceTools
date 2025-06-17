@@ -4,10 +4,7 @@ import {
   createApiBuilderFromCtpClient,
 } from "@commercetools/platform-sdk";
 
-import {
-  createAnonymousClient,
-  createExistingTokenClient,
-} from "@/api/repositories/build-client";
+import { createExistingTokenClient } from "@/api/repositories/build-client";
 import { handleApiError } from "@/api/handle-api-error";
 
 /**
@@ -17,14 +14,12 @@ export default async function recalculateCart(
   cartId: string,
   version: number,
   updateProductData: boolean = false,
-  token?: string,
+  token: string,
 ): Promise<Cart | undefined> {
   try {
-    const client = token
-      ? createExistingTokenClient(token)
-      : createAnonymousClient();
+    const ctpClient = createExistingTokenClient(token);
 
-    const apiRoot = createApiBuilderFromCtpClient(client).withProjectKey({
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });
 

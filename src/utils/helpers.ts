@@ -11,7 +11,7 @@ import {
 import { AddressType, CountryCode, CurrencyCode } from "@/types/enum";
 import {
   CART_ID_STORAGE_KEY,
-  COOCKIE_LIFE,
+  COOKIE_LIFE,
   CurrencySymbolMap,
   MOBILE_WIDTH,
 } from "@/config/constants";
@@ -20,6 +20,7 @@ import authService from "@/api/services/auth-service";
 import authStore from "@/stores/auth-store";
 import basketService from "@/api/services/basket-service";
 import basketStore from "@/stores/basket-store";
+import { anonymousSessionStore } from "@/stores/anonymous-session-store";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -241,7 +242,7 @@ export function formatDate(createdAt: string): string {
 export function setCookie(
   name: string,
   value: string,
-  days: number = COOCKIE_LIFE,
+  days: number = COOKIE_LIFE,
 ): void {
   Cookies.set(name, value, {
     expires: days,
@@ -260,31 +261,44 @@ export function removeCookie(name: string) {
 }
 
 export async function loadUser() {
-  tokenStore.loadFromCookies();
+  try {
+    tokenStore.loadFromCookies();
 
-  if (tokenStore.isTokenExpired() && tokenStore.refreshToken) {
-    try {
-      await authService.refreshToken();
-    } catch {
-      authStore.setUser(undefined);
-    }
-  }
-
-  if (tokenStore.accessToken) {
-    try {
-      basketStore.clearCart();
-      await authService.getMe();
-      if (authStore.user) {
-        await basketService.getCart();
+    if (tokenStore.isTokenExpired() && tokenStore.refreshToken) {
+      try {
+        await authService.refreshToken();
+      } catch {
+        authStore.setUser(undefined);
       }
-    } catch (error) {
-      console.error("Couldn't get the user:", error);
     }
-  } else {
-    const cartId = getLocalState(CART_ID_STORAGE_KEY);
-    if (cartId) {
-      await basketService.getCart(cartId);
+
+    if (tokenStore.accessToken) {
+      basketStore.clearCart();
+
+      try {
+        await authService.getMe();
+        if (authStore.user) {
+          await basketService.getCart();
+          return;
+        }
+      } catch (error) {
+        console.error("Couldn't get the user:", error);
+      }
     }
+
+    if (
+      anonymousSessionStore.accessToken &&
+      !anonymousSessionStore.isTokenExpired()
+    ) {
+      const cartId = getLocalState(CART_ID_STORAGE_KEY);
+      await basketService.getCart(cartId ?? undefined);
+      return;
+    }
+
+    await authService.initAnonymousSession();
+    await basketService.getCart();
+  } catch (error) {
+    console.error("loadUser failed:", error);
   }
 }
 

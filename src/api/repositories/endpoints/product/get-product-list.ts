@@ -3,7 +3,7 @@ import {
   createApiBuilderFromCtpClient,
 } from "@commercetools/platform-sdk";
 
-import { createAnonymousClient } from "@/api/repositories/build-client";
+import { createCredentialsClient } from "@/api/repositories/build-client";
 import { handleApiError } from "@/api/handle-api-error";
 import { QueryArguments } from "@/types/api-types";
 import { SETTINGS } from "@/config/settings";
@@ -44,7 +44,7 @@ export default async function getProductList({
   ProductProjectionPagedSearchResponse | undefined
 > {
   try {
-    const ctpClient = createAnonymousClient();
+    const ctpClient = createCredentialsClient();
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });
@@ -97,7 +97,7 @@ export default async function getProductList({
 
     return response.body;
   } catch (error) {
-    // console.error("Error fetching product list:", error);
+    console.error("Error fetching product list:", error);
     handleApiError(error);
     return {
       limit: 0,

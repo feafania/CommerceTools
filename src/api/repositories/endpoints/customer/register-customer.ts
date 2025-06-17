@@ -5,16 +5,17 @@ import {
 } from "@commercetools/platform-sdk";
 
 import { handleApiError } from "@/api/handle-api-error";
-import { createAnonymousClient } from "@/api/repositories/build-client";
+import { createExistingTokenClient } from "@/api/repositories/build-client";
 
 export default async function registerCustomer(
   draft: MyCustomerDraft,
+  token: string,
 ): Promise<CustomerSignInResult> {
   try {
-    const anonymousClient = createAnonymousClient();
-    const apiRoot = createApiBuilderFromCtpClient(
-      anonymousClient,
-    ).withProjectKey({ projectKey: process.env.CTP_PROJECT_KEY! });
+    const ctpClient = createExistingTokenClient(token);
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: process.env.CTP_PROJECT_KEY!,
+    });
 
     const response = await apiRoot
       .me()

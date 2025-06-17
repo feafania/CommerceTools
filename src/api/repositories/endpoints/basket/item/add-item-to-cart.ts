@@ -9,7 +9,7 @@ export default async function addItemToCart(
   productId: string,
   variantId: number | undefined,
   quantity: number = SETTINGS.basketParameters.quantity,
-  token?: string,
+  token: string,
 ): Promise<Cart | undefined> {
   try {
     const { cart, post } = await getCartUpdateApi(cartId, token);

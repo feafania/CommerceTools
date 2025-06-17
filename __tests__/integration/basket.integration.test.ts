@@ -1,4 +1,5 @@
 import { Cart } from "@commercetools/platform-sdk";
+import { v4 as uuidv4 } from "uuid";
 
 import { mockSETTINGS } from "../common.mock";
 
@@ -12,11 +13,8 @@ import {
   addItemToCart,
   applyDiscountCodeToCart,
   changeCartItemQuantity,
-  createAnonymousCart,
   createCustomerCart,
-  deleteAnonymousCart,
   deleteCustomerCart,
-  getAnonymousCart,
   getCartUpdateApi,
   getCustomerCart,
   recalculateCart,
@@ -24,6 +22,7 @@ import {
 } from "@/api/repositories/endpoints/basket";
 import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
 import getMe from "@/api/repositories/endpoints/customer/get-me";
+import getAnonToken from "@/api/repositories/endpoints/token/get-anonymous-token";
 
 jest.mock("@/config/settings", () => ({
   SETTINGS: mockSETTINGS,
@@ -32,11 +31,19 @@ jest.mock("@/config/settings", () => ({
 describe("Cart API endpoints", () => {
   let anonymousCart: Cart;
   let token: string;
+  let anonymousToken: string;
   let customerCart: Cart;
   beforeAll(async () => {
-    const createdCart = await createAnonymousCart(cartDraft);
+    const anon = await getAnonToken(uuidv4());
+    if (!anon?.access_token) {
+      throw new Error("Failed to obtain anonymous access token");
+    }
+    anonymousToken = anon.access_token!;
+
+    const createdCart = await createCustomerCart(cartDraft, anonymousToken);
     if (!createdCart) throw new Error("Failed to create anonymous cart");
     anonymousCart = createdCart;
+    console.log(anonymousCart);
 
     const tokenResponse = await getCustomerToken(
       testLoginDraft.email,
@@ -61,6 +68,7 @@ describe("Cart API endpoints", () => {
       testKeys.productId,
       testKeys.productVariantId,
       1,
+      anonymousToken,
     );
     expect(response).toBeDefined();
     expect(response?.lineItems.length).toBeGreaterThan(0);
@@ -97,7 +105,10 @@ describe("Cart API endpoints", () => {
   });
 
   it("should update the anonymous cart using getCartUpdateApi", async () => {
-    const { cart, post } = await getCartUpdateApi(anonymousCart.id);
+    const { cart, post } = await getCartUpdateApi(
+      anonymousCart.id,
+      anonymousToken,
+    );
     const updated = await post({
       body: {
         version: cart.version,
@@ -110,7 +121,7 @@ describe("Cart API endpoints", () => {
   });
 
   it("should get anonymous cart by ID", async () => {
-    const response = await getAnonymousCart(anonymousCart.id);
+    const response = await getCustomerCart(anonymousToken);
     expect(response).toBeDefined();
     expect(response?.id).toBe(anonymousCart.id);
   });
@@ -139,7 +150,11 @@ describe("Cart API endpoints", () => {
 
   it("should delete anonymous cart", async () => {
     await expect(
-      deleteAnonymousCart(anonymousCart.id, anonymousCart.version),
+      deleteCustomerCart(
+        anonymousCart.id,
+        anonymousCart.version,
+        anonymousToken,
+      ),
     ).resolves.toBeUndefined();
   });
 
