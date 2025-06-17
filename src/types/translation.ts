@@ -103,6 +103,10 @@ export interface AppTranslation {
     totalItems: string;
     total: string;
     emptyText: string;
+    apply: string;
+    applySuccess: string;
+    applyError: string;
+    promocodeDiscount: string;
   };
   address: {
     headers: AddressTypeMap;

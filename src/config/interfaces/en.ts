@@ -103,6 +103,10 @@ const en: AppTranslation = {
     totalItems: "Total items",
     total: "TOTAL",
     emptyText: "Your basket is empty",
+    apply: "Aply",
+    applySuccess: "Promocode applied",
+    applyError: "Not avaliable",
+    promocodeDiscount: "Discount",
   },
   address: {
     headers: {

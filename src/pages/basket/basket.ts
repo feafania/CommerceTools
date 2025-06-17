@@ -3,6 +3,7 @@ import { InLineItem, InCart } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
 import BasketService from "@/api/services/basket-service";
 import { removeAllChildren } from "@/utils/helpers";
+//import showModalMessage from "@/components/modal-window/modal-window";
 
 const Basket = {
   products: [] as InLineItem[],
@@ -13,6 +14,11 @@ const Basket = {
   isInitialized: false,
   isLoading: false, // to check did we load new basket list
   clearButton: document.createElement("button"), // to delete clear btn if deleted all items
+  promocodeInput: document.createElement("input"),
+  promocodeButton: document.createElement("button"),
+  promocodeContainer: document.createElement("div"),
+  appliedPromocode: undefined as string | undefined,
+  promocodeDiscount: 0, // discount percentage
 
   setLoadingState(loading: boolean): void {
     this.isLoading = loading;
@@ -139,17 +145,60 @@ const Basket = {
     `;
   },
 
-  createBasketSummaryHTML(): string {
+  createPromocodeHTML(): string {
+    const appliedText = this.appliedPromocode
+      ? `<span class="promocode-applied">Applied: 
+      ${this.appliedPromocode} (-${this.promocodeDiscount}%)</span>`
+      : "";
+
     return `
+      <div class="promocode-section">
+        <div class="promocode-input-group">
+          <input 
+            type="text" 
+            class="promocode-input" 
+            placeholder="Enter promocode"
+            value=""
+          >
+          <button class="promocode-btn">Apply</button>
+        </div>
+        ${appliedText}
+        <div class="promocode-message"></div>
+      </div>
+    `;
+  },
+
+  createBasketSummaryHTML(): string {
+    const subtotal = this.calculateSubtotal();
+    const discount = this.calculateDiscount();
+    const total = subtotal - discount;
+
+    let summaryHTML = `
       <div class="basket-summary">
         <div class="summary-line">
           <span>${SETTINGS.label.basket.totalItems}: ${this.getTotalItems()}</span>
         </div>
+        <div class="summary-line">
+          <span>Subtotal: ${this.formatPrice(subtotal)}</span>
+        </div>
+    `;
+
+    if (discount > 0) {
+      summaryHTML += `
+        <div class="summary-line discount">
+          <span>Discount: -${this.formatPrice(discount)}</span>
+        </div>
+      `;
+    }
+
+    summaryHTML += `
         <div class="summary-total">
-          <strong>${SETTINGS.label.basket.total}: ${this.getTotalFormatted()}</strong>
+          <strong>${SETTINGS.label.basket.total}: ${this.formatPrice(total)}</strong>
         </div>
       </div>
     `;
+
+    return summaryHTML;
   },
 
   renderBasketItems(): void {
@@ -169,6 +218,17 @@ const Basket = {
     }
   },
 
+  renderPromocode(): void {
+    if (!this.promocodeContainer) return;
+
+    removeAllChildren(this.promocodeContainer);
+
+    if (!this.isEmpty()) {
+      this.promocodeContainer.innerHTML = this.createPromocodeHTML();
+      this.attachPromocodeEventListeners();
+    }
+  },
+
   renderBasketSummary(): void {
     if (!this.basketSummaryContainer) return;
 
@@ -181,6 +241,7 @@ const Basket = {
 
   updateBasketDisplay(): void {
     this.renderBasketItems();
+    this.renderPromocode();
     this.renderBasketSummary();
     if (this.clearButton) {
       this.clearButton.style.display = this.isEmpty() ? "none" : "";
@@ -209,6 +270,9 @@ const Basket = {
         this.basketItemsContainer = document.createElement("div");
         this.basketItemsContainer.className = "basket-items";
 
+        this.promocodeContainer = document.createElement("div");
+        this.promocodeContainer.className = "promocode-container";
+
         this.basketSummaryContainer = document.createElement("div");
 
         this.clearButton = document.createElement("button");
@@ -219,6 +283,7 @@ const Basket = {
         this.container.append(
           header,
           this.basketItemsContainer,
+          this.promocodeContainer,
           this.basketSummaryContainer,
           this.clearButton,
         );
@@ -228,6 +293,69 @@ const Basket = {
     }
 
     return this.container;
+  },
+
+  attachPromocodeEventListeners(): void {
+    const promocodeButton =
+      this.promocodeContainer.querySelector(".promocode-btn");
+    const promocodeInput = this.promocodeContainer.querySelector(
+      ".promocode-input",
+    ) as HTMLInputElement;
+
+    if (promocodeButton && promocodeInput) {
+      promocodeButton.addEventListener("click", () =>
+        this.handlePromocodeSubmit(),
+      );
+      promocodeInput.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+          this.handlePromocodeSubmit();
+        }
+      });
+    }
+  },
+
+  handlePromocodeSubmit(): void {
+    if (this.isLoading) return;
+
+    const promocodeInput = this.promocodeContainer.querySelector(
+      ".promocode-input",
+    ) as HTMLInputElement;
+    const messageElement =
+      this.promocodeContainer.querySelector(".promocode-message");
+
+    if (!promocodeInput || !messageElement) return;
+
+    const enteredCode = promocodeInput.value.trim();
+
+    if (!enteredCode) {
+      this.showPromocodeMessage("Please enter a promocode", "error");
+      return;
+    }
+
+    if (enteredCode === "3YbN") {
+      this.appliedPromocode = enteredCode;
+      this.promocodeDiscount = 10; // 10% discount
+      promocodeInput.value = "";
+      this.showPromocodeMessage("Promocode applied successfully!", "success");
+      this.updateBasketDisplay();
+    } else {
+      this.showPromocodeMessage("Invalid promocode", "error");
+    }
+  },
+
+  showPromocodeMessage(message: string, type: "success" | "error"): void {
+    const messageElement =
+      this.promocodeContainer.querySelector(".promocode-message");
+    if (messageElement) {
+      messageElement.textContent = message;
+      messageElement.className = `promocode-message ${type}`;
+
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        messageElement.textContent = "";
+        messageElement.className = "promocode-message";
+      }, 3000);
+    }
   },
 
   handleQuantityInputChange(container: HTMLElement): void {
@@ -429,10 +557,24 @@ const Basket = {
     }
   },
 
-  calculateTotal(): number {
+  calculateSubtotal(): number {
     return this.products.reduce((total, product) => {
       return total + product.totalPrice;
     }, 0);
+  },
+
+  calculateDiscount(): number {
+    if (!this.appliedPromocode || this.promocodeDiscount === 0) {
+      return 0;
+    }
+    const subtotal = this.calculateSubtotal();
+    return Math.round((subtotal * this.promocodeDiscount) / 100);
+  },
+
+  calculateTotal(): number {
+    const subtotal = this.calculateSubtotal();
+    const discount = this.calculateDiscount();
+    return subtotal - discount;
   },
 
   getTotalFormatted(currencyCode?: string): string {
@@ -479,6 +621,8 @@ const Basket = {
 
       this.products = [];
       this.cartData = undefined;
+      this.appliedPromocode = undefined;
+      this.promocodeDiscount = 0;
 
       this.updateBasketDisplay();
       return true;
@@ -492,11 +636,14 @@ const Basket = {
 
   getSummary(): {
     totalItems: number;
+    subtotal: number;
+    discount: number;
     totalPrice: number;
     totalPriceFormatted: string;
     cartId?: string;
     currency?: string;
     createdAt?: string;
+    appliedPromocode?: string | undefined;
     products: Array<{
       id: string;
       name: string;
@@ -508,11 +655,14 @@ const Basket = {
   } {
     return {
       totalItems: this.getTotalItems(),
+      subtotal: this.calculateSubtotal(),
+      discount: this.calculateDiscount(),
       totalPrice: this.calculateTotal(),
       totalPriceFormatted: this.getTotalFormatted(),
       cartId: this.cartData?.id,
       currency: this.cartData?.currency,
       createdAt: this.cartData?.createdAt,
+      appliedPromocode: this.appliedPromocode,
       products: this.products.map((product) => {
         const productName =
           product.name[SETTINGS.currentLang] || product.name.en || "Product";
