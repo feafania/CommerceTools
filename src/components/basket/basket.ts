@@ -43,7 +43,8 @@ export class Basket {
 
   setCartCount() {
     const cart = basketStore.getCart();
-    const count = cart?.lineItems?.length ?? 0;
+    const count =
+      cart?.lineItems?.reduce((total, item) => total + item.quantity, 0) ?? 0;
     this.updateCounter(count);
   }
 

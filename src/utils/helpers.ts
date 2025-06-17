@@ -10,7 +10,6 @@ import {
 } from "@/types/interfaces";
 import { AddressType, CountryCode, CurrencyCode } from "@/types/enum";
 import {
-  CART_ID_STORAGE_KEY,
   COOKIE_LIFE,
   CurrencySymbolMap,
   MOBILE_WIDTH,
@@ -290,8 +289,11 @@ export async function loadUser() {
       anonymousSessionStore.accessToken &&
       !anonymousSessionStore.isTokenExpired()
     ) {
-      const cartId = getLocalState(CART_ID_STORAGE_KEY);
-      await basketService.getCart(cartId ?? undefined);
+      const cart = await basketService.getCart();
+      if (!cart) {
+        anonymousSessionStore.clear();
+        authService.initAnonymousSession();
+      }
       return;
     }
 

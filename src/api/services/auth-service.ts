@@ -44,12 +44,8 @@ class AuthService {
     data: InCustomer,
   ): Promise<InCustomer | FieldErrorType[] | undefined> {
     try {
-      const accessToken =
-        tokenStore.accessToken ?? anonymousSessionStore.accessToken!;
-      const customer: InCustomer | undefined = await authRepository.register(
-        data,
-        accessToken,
-      );
+      const customer: InCustomer | undefined =
+        await authRepository.register(data);
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {

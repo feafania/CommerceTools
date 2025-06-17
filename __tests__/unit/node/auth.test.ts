@@ -76,14 +76,10 @@ describe("authRepository", () => {
 
   describe("register", () => {
     it("should call registerCustomer and return a transformed customer", async () => {
-      const result = await authRepository.register(
-        inMockCustomer,
-        token.access_token,
-      );
+      const result = await authRepository.register(inMockCustomer);
 
       expect(mockedRegisterCustomer).toHaveBeenCalledWith(
         MappingHelpers.toMyCustomerDraft(inMockCustomer),
-        token.access_token,
       );
       expect(result).toEqual(
         MappingHelpers.toInternalCustomer(
@@ -98,9 +94,9 @@ describe("authRepository", () => {
         new Error("Register failed"),
       );
 
-      await expect(
-        authRepository.register(inMockCustomer, token.access_token),
-      ).rejects.toThrow("Register failed");
+      await expect(authRepository.register(inMockCustomer)).rejects.toThrow(
+        "Register failed",
+      );
     });
   });
 

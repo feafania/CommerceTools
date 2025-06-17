@@ -5,14 +5,13 @@ import {
 } from "@commercetools/platform-sdk";
 
 import { handleApiError } from "@/api/handle-api-error";
-import { createExistingTokenClient } from "@/api/repositories/build-client";
+import { createCredentialsClient } from "@/api/repositories/build-client";
 
 export default async function registerCustomer(
   draft: MyCustomerDraft,
-  token: string,
 ): Promise<CustomerSignInResult> {
   try {
-    const ctpClient = createExistingTokenClient(token);
+    const ctpClient = createCredentialsClient();
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
       projectKey: process.env.CTP_PROJECT_KEY!,
     });

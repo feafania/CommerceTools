@@ -2,7 +2,6 @@ import {
   MyCustomerDraft,
   MyCustomerUpdateAction,
 } from "@commercetools/platform-sdk";
-import { v4 as uuidv4 } from "uuid";
 
 import { mockSETTINGS } from "../common.mock";
 
@@ -20,7 +19,6 @@ import { updateCustomer } from "@/api/repositories/endpoints/customer/update-cus
 import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
 import { changeCustomerPassword } from "@/api/repositories/endpoints/customer/change-password";
 import getMe from "@/api/repositories/endpoints/customer/get-me";
-import getAnonToken from "@/api/repositories/endpoints/token/get-anonymous-token";
 
 describe("Update Customer Integration", () => {
   let version: number;
@@ -30,11 +28,8 @@ describe("Update Customer Integration", () => {
 
   const setupCustomer = async (): Promise<void> => {
     const draft: MyCustomerDraft = getTestDraft();
-    const anon = await getAnonToken(uuidv4());
-    const anonymousToken = anon?.access_token;
-    if (!anonymousToken) throw new Error("Failed to get anonymous token");
 
-    await registerCustomer(draft, anonymousToken);
+    await registerCustomer(draft);
 
     email = draft.email;
     currentPassword = draft.password ?? testPassword;
@@ -109,12 +104,8 @@ describe("Update Customer Integration", () => {
       ...secondDraft,
       email: `duplicate-${Date.now()}@example.com`,
     };
-    const anon = await getAnonToken(uuidv4());
-    const anonymousToken = anon?.access_token;
-    if (!anonymousToken)
-      throw new Error("Failed to get anonymous token for second customer");
 
-    await registerCustomer(modifiedSecondDraft, anonymousToken);
+    await registerCustomer(modifiedSecondDraft);
     await new Promise((r) => setTimeout(r, 1000));
     const actions: MyCustomerUpdateAction[] = [
       {

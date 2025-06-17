@@ -47,13 +47,10 @@ const authRepository = {
     }
   },
 
-  async register(
-    data: InCustomer,
-    token: string,
-  ): Promise<InCustomer | undefined> {
+  async register(data: InCustomer): Promise<InCustomer | undefined> {
     try {
       const draft = MappingHelpers.toMyCustomerDraft(data);
-      const response = await registerCustomer(draft, token);
+      const response = await registerCustomer(draft);
       if (response) {
         const customer = response.customer;
         return MappingHelpers.toInternalCustomer(customer, data.password);
