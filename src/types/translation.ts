@@ -115,6 +115,14 @@ export interface AppTranslation {
     addedToCard: string;
     errorAddingToCart: string;
   };
+  basket: {
+    title: string;
+    clear: string;
+    remove: string;
+    totalItems: string;
+    total: string;
+    emptyText: string;
+  };
   address: {
     headers: AddressTypeMap;
     country: string;

@@ -1,22 +1,56 @@
 import "./basket.css";
-import { InLineItem } from "@/types/interfaces";
+import { InLineItem, InCart } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
 import BasketService from "@/api/services/basket-service";
-import basketService from "@/api/services/basket-service";
-
-interface CartData {
-  id: string;
-  version: number;
-  currency: string;
-  lineItems: InLineItem[];
-  totalPrice: number;
-  subtotalPrice: number;
-  createdAt: string;
-}
+import { removeAllChildren } from "@/utils/helpers";
 
 const Basket = {
   products: [] as InLineItem[],
-  cartData: undefined as CartData | undefined,
+  cartData: undefined as InCart | undefined,
+  container: document.createElement("div"),
+  basketItemsContainer: document.createElement("div"),
+  basketSummaryContainer: document.createElement("div"),
+  isInitialized: false,
+  isLoading: false, // to check did we load new basket list
+  clearButton: document.createElement("button"), // to delete clear btn if deleted all items
+
+  setLoadingState(loading: boolean): void {
+    this.isLoading = loading;
+    this.updateLoadingUI();
+  },
+
+  updateLoadingUI(): void {
+    const allButtons = this.container.querySelectorAll("button");
+    const allInputs = this.container.querySelectorAll("input");
+
+    if (this.isLoading) {
+      for (const button of allButtons) {
+        button.disabled = true;
+        button.classList.add("loading-disabled");
+      }
+      for (const input of allInputs) {
+        (input as HTMLInputElement).disabled = true;
+        input.classList.add("loading-disabled");
+      }
+
+      if (this.basketItemsContainer) {
+        this.basketItemsContainer.classList.add("loading");
+      }
+    } else {
+      for (const button of allButtons) {
+        button.disabled = false;
+        button.classList.remove("loading-disabled");
+      }
+      for (const input of allInputs) {
+        (input as HTMLInputElement).disabled = false;
+        input.classList.remove("loading-disabled");
+      }
+
+      if (this.basketItemsContainer) {
+        this.basketItemsContainer.classList.remove("loading");
+      }
+    }
+  },
 
   async initializeWithBasketService(): Promise<void> {
     try {
@@ -50,8 +84,8 @@ const Basket = {
   createEmptyBasketHTML(): string {
     return `
       <div class="empty-basket">
-        <h2>Your basket is empty</h2>
-        <p>Add some products to get started!</p>
+        <h2>${SETTINGS.label.basket.emptyText}</h2>
+        <a href="/#catalog">Catalog</a>
       </div>
     `;
   },
@@ -99,127 +133,166 @@ const Basket = {
           <span>${this.formatPrice(itemTotal)}</span>
         </div>
         <button class="remove-btn" data-product-id="${product.id}">
-          Remove
+          ${SETTINGS.label.basket.remove}
         </button>
       </div>
     `;
-  },
-
-  createBasketItemsHTML(): string {
-    let basketItemsHTML = "";
-    for (const product of this.products) {
-      basketItemsHTML += this.createProductItemHTML(product);
-    }
-    return basketItemsHTML;
   },
 
   createBasketSummaryHTML(): string {
     return `
       <div class="basket-summary">
         <div class="summary-line">
-          <span>Total Items: ${this.getTotalItems()}</span>
+          <span>${SETTINGS.label.basket.totalItems}: ${this.getTotalItems()}</span>
         </div>
         <div class="summary-total">
-          <strong>TOTAL: ${this.getTotalFormatted()}</strong>
+          <strong>${SETTINGS.label.basket.total}: ${this.getTotalFormatted()}</strong>
         </div>
       </div>
     `;
   },
 
-  createBasketHTML(): string {
+  renderBasketItems(): void {
+    if (!this.basketItemsContainer) return;
+
+    removeAllChildren(this.basketItemsContainer);
+
     if (this.isEmpty()) {
-      return this.createEmptyBasketHTML();
+      this.basketItemsContainer.innerHTML = this.createEmptyBasketHTML();
+      return;
     }
 
-    return `
-      <div class="basket-header">
-        <h2>Shopping Basket</h2>
-      </div>
-      <div class="basket-items">
-        ${this.createBasketItemsHTML()}
-      </div>
-      ${this.createBasketSummaryHTML()}
-      <button class="clear-basket-btn">Clear Basket</button>
-    `;
+    for (const product of this.products) {
+      const itemElement = document.createElement("div");
+      itemElement.innerHTML = this.createProductItemHTML(product);
+      this.basketItemsContainer.append(itemElement.firstElementChild!);
+    }
+  },
+
+  renderBasketSummary(): void {
+    if (!this.basketSummaryContainer) return;
+
+    removeAllChildren(this.basketSummaryContainer);
+
+    if (!this.isEmpty()) {
+      this.basketSummaryContainer.innerHTML = this.createBasketSummaryHTML();
+    }
+  },
+
+  updateBasketDisplay(): void {
+    this.renderBasketItems();
+    this.renderBasketSummary();
+    if (this.clearButton) {
+      this.clearButton.style.display = this.isEmpty() ? "none" : "";
+    }
+    this.attachEventListeners(this.container);
+
+    this.updateLoadingUI();
   },
 
   async render(): Promise<HTMLElement | undefined> {
-    if (this.products.length === 0) {
+    if (!this.isInitialized) {
       await this.initializeWithBasketService();
-      if (this.products.length === 0) {
-        console.error(
-          "No items from BasketService, falling back to catalog products",
+      this.isInitialized = true;
+    }
+
+    if (!this.container.hasChildNodes()) {
+      this.container.className = "basket-container";
+
+      if (this.isEmpty()) {
+        this.container.innerHTML = this.createEmptyBasketHTML();
+      } else {
+        const header = document.createElement("div");
+        header.className = "basket-header";
+        header.innerHTML = "<h2>" + SETTINGS.label.basket.title + "</h2>";
+
+        this.basketItemsContainer = document.createElement("div");
+        this.basketItemsContainer.className = "basket-items";
+
+        this.basketSummaryContainer = document.createElement("div");
+
+        this.clearButton = document.createElement("button");
+        this.clearButton.className = "clear-basket-btn";
+        this.clearButton.textContent = SETTINGS.label.basket.clear;
+        this.clearButton.addEventListener("click", () => this.clearBasket());
+
+        this.container.append(
+          header,
+          this.basketItemsContainer,
+          this.basketSummaryContainer,
+          this.clearButton,
         );
       }
-    }
-    console.log(basketService.getCart());
 
-    const container = document.createElement("div");
-    container.className = "basket-container";
-    if (this.isEmpty()) {
-      container.innerHTML = this.createEmptyBasketHTML();
-    } else {
-      container.innerHTML = this.createBasketHTML();
-      this.attachEventListeners(container);
+      this.updateBasketDisplay();
     }
 
-    return container;
+    return this.container;
   },
 
   handleQuantityInputChange(container: HTMLElement): void {
     const quantityInputs = container.querySelectorAll(".quantity-input");
     for (const input of quantityInputs) {
-      input.addEventListener("change", async (event) => {
-        const target = event.target as HTMLInputElement;
-        const productId = target.dataset.productId;
-        const newQuantity = Number.parseInt(target.value, 10);
+      input.removeEventListener("change", this.quantityInputHandler);
+      input.addEventListener("change", this.quantityInputHandler.bind(this));
+    }
+  },
 
-        if (productId && !Number.isNaN(newQuantity)) {
-          const success = await this.updateQuantity(productId, newQuantity);
-          if (success) {
-            const currentContainer = document.querySelector(
-              ".basket-container",
-            ) as HTMLElement;
-            if (currentContainer) {
-              await this.refreshBasketDisplay(currentContainer);
-            }
-          }
+  async quantityInputHandler(event: Event): Promise<void> {
+    if (this.isLoading) {
+      return;
+    }
+
+    const target = event.target as HTMLInputElement;
+    const productId = target.dataset.productId;
+    const newQuantity = Number.parseInt(target.value, 10);
+
+    if (productId && !Number.isNaN(newQuantity)) {
+      this.setLoadingState(true);
+      try {
+        const success = await this.updateQuantity(productId, newQuantity);
+        if (success) {
+          this.updateBasketDisplay();
         }
-      });
+      } finally {
+        this.setLoadingState(false);
+      }
     }
   },
 
   handleQuantityButtonClick(container: HTMLElement): void {
     const quantityButtons = container.querySelectorAll(".quantity-btn");
     for (const button of quantityButtons) {
-      button.addEventListener("click", async (event) => {
-        const clickedButton = event.target as HTMLButtonElement;
-        const action = clickedButton.dataset.action;
-        const itemElement = clickedButton.closest(
-          ".basket-item",
-        ) as HTMLElement;
-        const productId = itemElement.dataset.productId;
-        const input = itemElement.querySelector(
-          ".quantity-input",
-        ) as HTMLInputElement;
-        const currentQuantity = Number.parseInt(input.value, 10);
+      button.removeEventListener("click", this.quantityButtonHandler);
+      button.addEventListener("click", this.quantityButtonHandler.bind(this));
+    }
+  },
 
-        if (productId) {
-          const newQuantity = this.calculateNewQuantity(
-            action,
-            currentQuantity,
-          );
-          const success = await this.updateQuantity(productId, newQuantity);
-          if (success) {
-            const currentContainer = document.querySelector(
-              ".basket-container",
-            ) as HTMLElement;
-            if (currentContainer) {
-              await this.refreshBasketDisplay(currentContainer);
-            }
-          }
+  async quantityButtonHandler(event: Event): Promise<void> {
+    if (this.isLoading) {
+      return;
+    }
+
+    const clickedButton = event.target as HTMLButtonElement;
+    const action = clickedButton.dataset.action;
+    const itemElement = clickedButton.closest(".basket-item") as HTMLElement;
+    const productId = itemElement.dataset.productId;
+    const input = itemElement.querySelector(
+      ".quantity-input",
+    ) as HTMLInputElement;
+    const currentQuantity = Number.parseInt(input.value, 10);
+
+    if (productId) {
+      this.setLoadingState(true);
+      try {
+        const newQuantity = this.calculateNewQuantity(action, currentQuantity);
+        const success = await this.updateQuantity(productId, newQuantity);
+        if (success) {
+          this.updateBasketDisplay();
         }
-      });
+      } finally {
+        this.setLoadingState(false);
+      }
     }
   },
 
@@ -239,22 +312,29 @@ const Basket = {
   handleRemoveButtonClick(container: HTMLElement): void {
     const removeButtons = container.querySelectorAll(".remove-btn");
     for (const button of removeButtons) {
-      button.addEventListener("click", async (event) => {
-        const clickedButton = event.target as HTMLButtonElement;
-        const productId = clickedButton.dataset.productId;
+      button.removeEventListener("click", this.removeButtonHandler);
+      button.addEventListener("click", this.removeButtonHandler.bind(this));
+    }
+  },
 
-        if (productId) {
-          const success = await this.removeProduct(productId);
-          if (success) {
-            const currentContainer = document.querySelector(
-              ".basket-container",
-            ) as HTMLElement;
-            if (currentContainer) {
-              await this.refreshBasketDisplay(currentContainer);
-            }
-          }
+  async removeButtonHandler(event: Event): Promise<void> {
+    if (this.isLoading) {
+      return;
+    }
+
+    const clickedButton = event.target as HTMLButtonElement;
+    const productId = clickedButton.dataset.productId;
+
+    if (productId) {
+      this.setLoadingState(true);
+      try {
+        const success = await this.removeProduct(productId);
+        if (success) {
+          this.updateBasketDisplay();
         }
-      });
+      } finally {
+        this.setLoadingState(false);
+      }
     }
   },
 
@@ -262,23 +342,6 @@ const Basket = {
     this.handleQuantityInputChange(container);
     this.handleQuantityButtonClick(container);
     this.handleRemoveButtonClick(container);
-
-    const clearBasketButton = container.querySelector(
-      ".clear-basket-btn",
-    ) as HTMLButtonElement;
-    if (clearBasketButton) {
-      clearBasketButton.addEventListener("click", () => {
-        this.clearBasket();
-      });
-    }
-  },
-
-  refreshBasketDisplay(container: HTMLElement): void {
-    this.render().then((newContainer) => {
-      if (newContainer && container.parentNode) {
-        container.parentNode.replaceChild(newContainer, container);
-      }
-    });
   },
 
   getProducts(): InLineItem[] {
@@ -315,16 +378,10 @@ const Basket = {
 
         if (newQuantity === 0) {
           this.products.splice(productIndex, 1);
-          console.log(
-            `Product with ID ${productId} removed from basket (quantity set to 0)`,
-          );
         } else {
           this.products[productIndex].quantity = newQuantity;
           this.products[productIndex].totalPrice =
             this.products[productIndex].price * newQuantity;
-          console.log(
-            `Product with ID ${productId} quantity updated to ${newQuantity}`,
-          );
         }
 
         return true;
@@ -401,10 +458,16 @@ const Basket = {
   },
 
   async clearBasket(): Promise<boolean> {
+    if (this.isLoading) {
+      return false;
+    }
+
     try {
       if (this.products.length === 0) {
         return true;
       }
+
+      this.setLoadingState(true);
 
       for (const product of this.products) {
         const result = await BasketService.changeItemQuantity(product.id, 0);
@@ -417,18 +480,13 @@ const Basket = {
       this.products = [];
       this.cartData = undefined;
 
-      const currentContainer = document.querySelector(
-        ".basket-container",
-      ) as HTMLElement;
-      if (currentContainer) {
-        await this.refreshBasketDisplay(currentContainer);
-      }
-
-      console.log("Basket cleared successfully");
+      this.updateBasketDisplay();
       return true;
     } catch (error) {
       console.error("Error clearing basket:", error);
       return false;
+    } finally {
+      this.setLoadingState(false);
     }
   },
 
@@ -485,12 +543,18 @@ const Basket = {
     return product.price;
   },
 
-  getCartData(): CartData | undefined {
+  getCartData(): InCart | undefined {
     return this.cartData;
   },
 
   async reloadFromBasketService(): Promise<void> {
-    await this.initializeWithBasketService();
+    this.setLoadingState(true);
+    try {
+      await this.initializeWithBasketService();
+      this.updateBasketDisplay();
+    } finally {
+      this.setLoadingState(false);
+    }
   },
 };
 

@@ -115,6 +115,14 @@ const en: AppTranslation = {
     addedToCard: "Added to cart",
     errorAddingToCart: "Error adding to cart",
   },
+  basket: {
+    title: "Basket",
+    clear: "Clear basket",
+    remove: "Remove",
+    totalItems: "Total items",
+    total: "TOTAL",
+    emptyText: "Your basket is empty",
+  },
   address: {
     headers: {
       billing: "Billing address",

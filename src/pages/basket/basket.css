@@ -27,6 +27,22 @@
   height: auto !important;
 }
 
+.empty-basket a {
+  text-align: center;
+  width: 100%;
+  display: block;
+  background: var(--accent-color);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 20px;
+}
+
+.empty-basket a:hover {
+  text-decoration: none;
+  background: #67513d;
+}
+
 .item-details {
   width: 50%;
 }

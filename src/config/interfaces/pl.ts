@@ -115,6 +115,14 @@ const pl: AppTranslation = {
     addedToCard: "Dodano do koszyka",
     errorAddingToCart: "Błąd dodawania do koszyka",
   },
+  basket: {
+    title: "Kosz",
+    clear: "Wyczyść kosz",
+    remove: "Usuń",
+    totalItems: "Łączna liczba elementów",
+    total: "CAŁKOWITY",
+    emptyText: "Twój koszyk jest pusty",
+  },
   address: {
     headers: {
       billing: "Adres do faktury",
