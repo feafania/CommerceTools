@@ -123,10 +123,12 @@ const pl: AppTranslation = {
     totalItems: "Łączna liczba elementów",
     total: "CAŁKOWITY",
     emptyText: "Twój koszyk jest pusty",
-    apply: "Aply",
-    applySuccess: "Promocode applied",
-    applyError: "Not avaliable",
-    promocodeDiscount: "Discount",
+    promocodeInput: "Wprowadź kod promocyjny",
+    applyPromocode: "Zastosuj",
+    applied: "Zastosowano",
+    invalid: "Nieprawidłowy kod promocyjny",
+    success: "Kod promocyjny został zastosowany pomyślnie",
+    error: "Wprowadź kod promocyjny",
   },
   address: {
     headers: {
