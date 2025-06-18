@@ -122,6 +122,12 @@ export interface AppTranslation {
     totalItems: string;
     total: string;
     emptyText: string;
+    promocodeInput: string;
+    applyPromocode: string;
+    applied: string;
+    invalid: string;
+    success: string;
+    error: string;
   };
   address: {
     headers: AddressTypeMap;

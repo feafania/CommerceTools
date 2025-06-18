@@ -122,6 +122,12 @@ const en: AppTranslation = {
     totalItems: "Total items",
     total: "TOTAL",
     emptyText: "Your basket is empty",
+    promocodeInput: "Enter promocode",
+    applyPromocode: "Apply",
+    applied: "Applied",
+    invalid: "Invalid promocode",
+    success: "Promocode applied successfully",
+    error: "Please enter a promocode",
   },
   address: {
     headers: {
