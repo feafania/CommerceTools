@@ -3,6 +3,7 @@ import { InLineItem, InCart } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
 import BasketService from "@/api/services/basket-service";
 import { removeAllChildren } from "@/utils/helpers";
+import showModalMessage from "@/components/modal-window/modal-window";
 
 const Basket = {
   products: [] as InLineItem[],
@@ -287,9 +288,7 @@ const Basket = {
       });
     }
   },
-  handlePromocodeSubmit(): void {
-    if (this.isLoading) return;
-
+  async handlePromocodeSubmit(): Promise<void> {
     const promocodeInput = this.promocodeContainer.querySelector(
       ".promocode-input",
     ) as HTMLInputElement;
@@ -300,34 +299,19 @@ const Basket = {
 
     const enteredCode = promocodeInput.value.trim();
 
-    if (!enteredCode) {
-      this.showPromocodeMessage(SETTINGS.label.basket.error, "error");
-      return;
-    }
-
-    if (enteredCode === "3YbN") {
-      this.appliedPromocode = enteredCode;
-      this.promocodeDiscount = 10;
-      promocodeInput.value = "";
-      this.showPromocodeMessage(SETTINGS.label.basket.success, "success");
-      this.updateBasketDisplay();
-    } else {
-      this.showPromocodeMessage(SETTINGS.label.basket.invalid, "error");
-    }
-  },
-
-  showPromocodeMessage(message: string, type: "success" | "error"): void {
-    const messageElement =
-      this.promocodeContainer.querySelector(".promocode-message");
-    if (messageElement) {
-      messageElement.textContent = message;
-      messageElement.className = `promocode-message ${type}`;
-
-      // Clear message after 3 seconds
-      setTimeout(() => {
-        messageElement.textContent = "";
-        messageElement.className = "promocode-message";
-      }, 3000);
+    try {
+      const updatedCart = await BasketService.applyDiscountCode(enteredCode);
+      if (updatedCart) {
+        this.cartData = updatedCart;
+        await this.initializeWithBasketService();
+        promocodeInput.value = "";
+        showModalMessage(SETTINGS.label.basket.success);
+        this.updateBasketDisplay();
+      }
+    } catch (error) {
+      console.error("Error applying promocode:", error);
+    } finally {
+      this.setLoadingState(false);
     }
   },
 
@@ -544,15 +528,19 @@ const Basket = {
     return Math.round((subtotal * this.promocodeDiscount) / 100);
   },
 
+  async calculateTotalFromAPI(): Promise<number> {
+    const currentCart = await BasketService.getCart();
+    return currentCart?.totalPrice || 0;
+  },
+
   calculateTotal(): number {
-    return this.products.reduce((total, product) => {
-      return total + product.totalPrice;
-    }, 0);
+    return this.cartData?.totalPrice || 0;
   },
 
   getTotalFormatted(currencyCode?: string): string {
     const currency =
       currencyCode || this.cartData?.currency || SETTINGS.currentCurrency;
+
     const total = this.calculateTotal();
     return this.formatPrice(total, currency);
   },
