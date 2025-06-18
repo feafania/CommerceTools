@@ -43,6 +43,7 @@ export const mockSETTINGS = {
       addItemToCart: "Couldn't add product to cart",
       removeItemFromCart: "Couldn't remove an item from the shopping cart",
       changeItemQuantity: "Couldn't change an item from the shopping cart",
+      getPromoCodes: "Failed to get promo-codes",
     },
     basketButton: {
       title: "Basket",
@@ -60,6 +61,7 @@ export const mockSETTINGS = {
   },
   basketParameters: {
     quantity: 1,
+    promoLimit: 10,
   },
   currentCurrency: "EUR",
   currentLang: "en",

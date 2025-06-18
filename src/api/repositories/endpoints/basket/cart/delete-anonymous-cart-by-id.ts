@@ -3,7 +3,7 @@ import { createApiBuilderFromCtpClient } from "@commercetools/platform-sdk";
 import { handleApiError } from "@/api/handle-api-error";
 import { createExistingTokenClient } from "@/api/repositories/build-client";
 
-export default async function deleteCartById(
+export default async function deleteAnonymousCartById(
   cartId: string,
   version: number,
   token: string,

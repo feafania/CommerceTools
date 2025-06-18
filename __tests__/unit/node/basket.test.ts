@@ -1,10 +1,12 @@
 import { mockSETTINGS } from "../../common.mock";
 import {
   discountCode,
+  expiredDiscountCode,
   lineItemId,
   mockedBasketProduct,
   mockedCartApiResponse,
   mockedInternalCart,
+  validDiscountCode,
 } from "../__mocks__/basket.mock";
 import { mockToken } from "../__mocks__/customer.mock";
 
@@ -19,6 +21,7 @@ import {
   getCustomerCart,
   removeItemFromCart,
   recalculateCart,
+  getActiveDiscountCodes,
 } from "@/api/repositories/endpoints/basket";
 import { CountryCode, CurrencyCode } from "@/types/enum";
 
@@ -36,6 +39,7 @@ jest.mock("@/api/repositories/endpoints/basket", () => ({
   removeItemFromCart: jest.fn(),
   changeCartItemQuantity: jest.fn(),
   recalculateCart: jest.fn(),
+  getActiveDiscountCodes: jest.fn(),
 }));
 jest.mock("@/config/settings", () => ({
   SETTINGS: mockSETTINGS,
@@ -249,6 +253,50 @@ describe("basketRepository", () => {
         mockedCartApiResponse.id,
         mockedCartApiResponse.version,
         mockToken,
+      );
+    });
+  });
+
+  describe("basketRepository.getActiveDiscountCodes", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+
+      (getActiveDiscountCodes as jest.Mock).mockResolvedValue([
+        validDiscountCode,
+        expiredDiscountCode,
+      ]);
+
+      (MappingHelpers.toInternalDiscountCode as jest.Mock).mockReturnValue({
+        code: "WELCOME10",
+      });
+    });
+    it("should return mapped valid discount codes", async () => {
+      const result = await basketRepository.getActiveDiscountCodes(10);
+
+      expect(result).toBeDefined();
+      expect(result).toEqual([{ code: "WELCOME10" }]);
+      expect(MappingHelpers.toInternalDiscountCode).toHaveBeenCalledTimes(1);
+      expect(MappingHelpers.toInternalDiscountCode).toHaveBeenCalledWith(
+        validDiscountCode,
+      );
+    });
+
+    it("should return undefined if API returns nothing", async () => {
+      (getActiveDiscountCodes as jest.Mock).mockResolvedValue(
+        JSON.parse("null"),
+      );
+
+      const result = await basketRepository.getActiveDiscountCodes(5);
+      expect(result).toBeUndefined();
+    });
+
+    it("should throw error if API call fails", async () => {
+      (getActiveDiscountCodes as jest.Mock).mockRejectedValue(
+        new Error("fail"),
+      );
+
+      await expect(basketRepository.getActiveDiscountCodes(5)).rejects.toThrow(
+        "fail",
       );
     });
   });

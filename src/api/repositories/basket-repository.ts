@@ -1,4 +1,6 @@
-import { InCart } from "@/types/interfaces";
+import { DiscountCode } from "@commercetools/platform-sdk";
+
+import { InCart, InDiscountCode } from "@/types/interfaces";
 import MappingHelpers from "@/api/repositories/mapping-helpers";
 import { SETTINGS } from "@/config/settings";
 import {
@@ -6,11 +8,13 @@ import {
   applyDiscountCodeToCart,
   changeCartItemQuantity,
   createCustomerCart,
+  deleteAnonymousCartById,
   deleteCustomerCart,
   getCartById,
   getCustomerCart,
   recalculateCart,
   removeItemFromCart,
+  getActiveDiscountCodes,
 } from "@/api/repositories/endpoints/basket";
 
 const basketRepository = {
@@ -197,6 +201,73 @@ const basketRepository = {
       await deleteCustomerCart(cartId, version, token);
     } catch (error) {
       console.error("Error deleting cart:", error);
+      throw error;
+    }
+  },
+
+  async deleteAnonymousCart(
+    cartId: string,
+    version: number,
+    token: string,
+  ): Promise<void> {
+    try {
+      await deleteAnonymousCartById(cartId, version, token);
+    } catch (error) {
+      console.error("Error deleting cart:", error);
+      throw error;
+    }
+  },
+
+  async getActiveDiscountCodes(
+    limit: number,
+  ): Promise<InDiscountCode[] | undefined> {
+    try {
+      const discountCodes = await getActiveDiscountCodes(limit);
+      const now = new Date();
+
+      if (discountCodes) {
+        const validDiscountCodes = discountCodes.filter((code) => {
+          return (
+            code.isActive &&
+            (code.maxApplications ?? 1) > 0 &&
+            (code.maxApplicationsPerCustomer ?? 1) > 0 &&
+            code.cartDiscounts?.every((cd) => {
+              const expanded = cd.obj;
+              if (!expanded) return false;
+
+              const from = expanded.validFrom
+                ? new Date(expanded.validFrom)
+                : undefined;
+              const until = expanded.validUntil
+                ? new Date(expanded.validUntil)
+                : undefined;
+
+              return (!from || from <= now) && (!until || until >= now);
+            })
+          );
+        });
+
+        const uniqueByCartDiscount = new Map<string, DiscountCode>();
+
+        for (const code of validDiscountCodes) {
+          const discountIds = (code.cartDiscounts || [])
+            .map((cd) => cd.id)
+            .sort()
+            .join(",");
+
+          if (!uniqueByCartDiscount.has(discountIds)) {
+            uniqueByCartDiscount.set(discountIds, code);
+          }
+        }
+
+        return [...uniqueByCartDiscount.values()].map((code) =>
+          MappingHelpers.toInternalDiscountCode(code),
+        );
+      }
+
+      return undefined;
+    } catch (error) {
+      console.error("Error creating cart:", error);
       throw error;
     }
   },

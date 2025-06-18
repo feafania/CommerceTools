@@ -42,6 +42,7 @@ const en: AppTranslation = {
   },
   main: {
     title: "Welcome to our shop",
+    promocodes: "Take advantage of our latest promotions ",
   },
   catalog: {
     search: "Search...",
@@ -235,6 +236,7 @@ const en: AppTranslation = {
     addItemToCart: "Couldn't add product to cart",
     removeItemFromCart: "Couldn't remove an item from the shopping cart",
     changeItemQuantity: "Couldn't change an item from the shopping cart",
+    getPromoCodes: "Failed to get promo-codes",
   },
   messages: {
     onSignIn: "You have successfully signed in.",

@@ -6,6 +6,7 @@ import {
   Category,
   CategoryReference,
   Customer,
+  DiscountCode,
   MyCustomerDraft,
   Price,
   ProductProjection,
@@ -16,8 +17,10 @@ import {
   InAddress,
   InAttributeDefinition,
   InCart,
+  InCartDiscount,
   InCategory,
   InCustomer,
+  InDiscountCode,
   InLineItem,
   InProduct,
   InProductType,
@@ -390,6 +393,36 @@ const MappingHelpers = {
       customerId: cart.customerId,
       anonymousId: cart.anonymousId,
       country: cart.country as CountryCode,
+    };
+  },
+
+  toInternalDiscountCode(code: DiscountCode): InDiscountCode {
+    return {
+      id: code.id,
+      code: code.code,
+      key: code.key,
+      name: code.name,
+      description: code.description,
+      isActive: code.isActive,
+      maxApplications: code.maxApplications,
+      maxApplicationsPerCustomer: code.maxApplicationsPerCustomer,
+      cartPredicate: code.cartPredicate,
+      groups: code.groups,
+      cartDiscounts: code.cartDiscounts
+        ?.map((cd) => {
+          const object = cd.obj;
+          return object
+            ? {
+                id: object.id,
+                name: object.name,
+                description: object.description,
+                validFrom: object.validFrom,
+                validUntil: object.validUntil,
+                isActive: object.isActive,
+              }
+            : undefined;
+        })
+        .filter(Boolean) as InCartDiscount[],
     };
   },
 

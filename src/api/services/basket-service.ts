@@ -1,5 +1,5 @@
 import basketRepository from "@/api/repositories/basket-repository";
-import { InCart } from "@/types/interfaces";
+import { InCart, InDiscountCode } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
 import { ApiError } from "@/api/handle-api-error";
 import showModalMessage from "@/components/modal-window/modal-window";
@@ -275,6 +275,16 @@ class BasketService {
       basketStore.clearCart();
     } catch (error) {
       this.handleError(error, SETTINGS.label.errors.deleteCart);
+    }
+  }
+
+  async getActiveDiscountCodes(): Promise<InDiscountCode[] | undefined> {
+    try {
+      return await basketRepository.getActiveDiscountCodes(
+        SETTINGS.basketParameters.promoLimit,
+      );
+    } catch (error) {
+      this.handleError(error, SETTINGS.label.errors.getPromoCodes);
     }
   }
 

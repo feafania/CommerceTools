@@ -42,6 +42,7 @@ const pl: AppTranslation = {
   },
   main: {
     title: "Zapraszamy do naszego sklepu",
+    promocodes: "Skorzystaj z naszych najnowszych promocji",
   },
   catalog: {
     search: "Szukaj...",
@@ -240,6 +241,7 @@ const pl: AppTranslation = {
     addItemToCart: "Nie można dodać przedmiotu do koszyka",
     removeItemFromCart: "Nie można usunąć przedmiotu z koszyka",
     changeItemQuantity: "Nie można zmienić przedmiotu z koszyka",
+    getPromoCodes: "Nie udało się uzyskać kodów promocyjnych",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",

@@ -281,3 +281,26 @@ export interface InCart {
   anonymousId?: string;
   country?: CountryCode;
 }
+
+export interface InCartDiscount {
+  id: string;
+  name?: Record<string, string>;
+  description?: Record<string, string>;
+  validFrom?: string;
+  validUntil?: string;
+  isActive: boolean;
+}
+
+export interface InDiscountCode {
+  id: string;
+  code: string;
+  key?: string;
+  name?: LanguageVariants;
+  description?: LanguageVariants;
+  isActive: boolean;
+  maxApplications?: number;
+  maxApplicationsPerCustomer?: number;
+  cartPredicate?: string;
+  groups?: string[];
+  cartDiscounts?: InCartDiscount[];
+}

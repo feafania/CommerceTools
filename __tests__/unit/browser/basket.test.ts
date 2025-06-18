@@ -1,6 +1,7 @@
 import {
   discountCode,
   lineItemId,
+  mockDiscountCodes,
   mockedInternalCart,
 } from "../__mocks__/basket.mock";
 import { mockSETTINGS } from "../../common.mock";
@@ -32,6 +33,7 @@ jest.mock("@/api/repositories/basket-repository", () => ({
     changeItemQuantity: jest.fn(),
     applyDiscountCode: jest.fn(),
     deleteCart: jest.fn(),
+    getActiveDiscountCodes: jest.fn(),
   },
 }));
 
@@ -270,6 +272,43 @@ describe("BasketService", () => {
       );
 
       const result = await basketService.changeItemQuantity(lineItemId, 0);
+
+      expect(showModalMessage).toHaveBeenCalled();
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("getActiveDiscountCodes", () => {
+    it("should return active discount codes", async () => {
+      (basketRepository.getActiveDiscountCodes as jest.Mock).mockResolvedValue(
+        mockDiscountCodes,
+      );
+
+      const result = await basketService.getActiveDiscountCodes();
+
+      expect(result).toEqual(mockDiscountCodes);
+      expect(basketRepository.getActiveDiscountCodes).toHaveBeenCalledWith(
+        mockSETTINGS.basketParameters.promoLimit,
+      );
+    });
+
+    it("should return undefined when no discount codes found", async () => {
+      const mockUndefined = undefined;
+      (basketRepository.getActiveDiscountCodes as jest.Mock).mockResolvedValue(
+        mockUndefined,
+      );
+
+      const result = await basketService.getActiveDiscountCodes();
+
+      expect(result).toBeUndefined();
+    });
+
+    it("should handle unknown error and show only fallback", async () => {
+      (basketRepository.getActiveDiscountCodes as jest.Mock).mockRejectedValue(
+        new Error("fail"),
+      );
+
+      const result = await basketService.getActiveDiscountCodes();
 
       expect(showModalMessage).toHaveBeenCalled();
       expect(result).toBeUndefined();

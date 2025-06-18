@@ -42,6 +42,7 @@ export interface AppTranslation {
   };
   main: {
     title: string;
+    promocodes: string;
   };
   catalog: {
     search: string;
@@ -205,6 +206,7 @@ export interface AppTranslation {
     addItemToCart: string;
     removeItemFromCart: string;
     changeItemQuantity: string;
+    getPromoCodes: string;
   };
   messages: {
     onSignIn: string;

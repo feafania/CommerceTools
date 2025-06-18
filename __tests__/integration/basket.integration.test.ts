@@ -1,4 +1,4 @@
-import { Cart } from "@commercetools/platform-sdk";
+import { Cart, DiscountCode } from "@commercetools/platform-sdk";
 import { v4 as uuidv4 } from "uuid";
 
 import { mockSETTINGS } from "../common.mock";
@@ -15,6 +15,7 @@ import {
   changeCartItemQuantity,
   createCustomerCart,
   deleteCustomerCart,
+  getActiveDiscountCodes,
   getCartUpdateApi,
   getCustomerCart,
   recalculateCart,
@@ -205,5 +206,25 @@ describe("Cart API endpoints", () => {
     expect(updatedCart).toBeDefined();
     expect(updatedCart!.version).toBeGreaterThan(customerCart.version);
     customerCart = updatedCart!;
+  });
+});
+
+describe("getActiveDiscountCodes", () => {
+  it("should return an array of active discount codes with expanded cart discounts", async () => {
+    const limit = 10;
+    const result = await getActiveDiscountCodes(limit);
+
+    expect(result).toBeDefined();
+    expect(Array.isArray(result)).toBe(true);
+
+    for (const code of result as DiscountCode[]) {
+      expect(code.isActive).toBe(true);
+      expect(code.cartDiscounts?.length).toBeGreaterThan(0);
+      for (const cartDiscountReference of code.cartDiscounts) {
+        expect(cartDiscountReference.obj).toBeDefined();
+        expect(cartDiscountReference.obj?.id).toBeDefined();
+        expect(cartDiscountReference.obj?.isActive).toBeDefined();
+      }
+    }
   });
 });

@@ -32,6 +32,7 @@ export const SETTINGS = {
   } as ProductListParameters,
   basketParameters: {
     quantity: 1,
+    promoLimit: 5,
   },
   currentCurrency: defaultCurrency,
   fallbackCurrency: defaultCurrency,
