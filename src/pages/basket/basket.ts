@@ -10,7 +10,6 @@ const Basket = {
   container: document.createElement("div"),
   basketItemsContainer: document.createElement("div"),
   basketSummaryContainer: document.createElement("div"),
-  isInitialized: false,
   isLoading: false, // to check did we load new basket list
   clearButton: document.createElement("button"), // to delete clear btn if deleted all items
 
@@ -54,7 +53,9 @@ const Basket = {
 
   async initializeWithBasketService(): Promise<void> {
     try {
+      console.log("get cart");
       const cartResponse = await BasketService.getCart();
+      console.log(cartResponse);
       this.cartData = cartResponse;
 
       this.products = [];
@@ -191,41 +192,35 @@ const Basket = {
   },
 
   async render(): Promise<HTMLElement | undefined> {
-    if (!this.isInitialized) {
-      await this.initializeWithBasketService();
-      this.isInitialized = true;
-    }
+    await this.initializeWithBasketService();
 
     if (!this.container.hasChildNodes()) {
       this.container.className = "basket-container";
 
-      if (this.isEmpty()) {
-        this.container.innerHTML = this.createEmptyBasketHTML();
-      } else {
-        const header = document.createElement("div");
-        header.className = "basket-header";
-        header.innerHTML = "<h2>" + SETTINGS.label.basket.title + "</h2>";
+      const header = document.createElement("div");
+      header.className = "basket-header";
+      header.innerHTML = "<h2>" + SETTINGS.label.basket.title + "</h2>";
 
-        this.basketItemsContainer = document.createElement("div");
-        this.basketItemsContainer.className = "basket-items";
+      this.basketItemsContainer = document.createElement("div");
+      this.basketItemsContainer.className = "basket-items";
 
-        this.basketSummaryContainer = document.createElement("div");
+      this.basketSummaryContainer = document.createElement("div");
 
-        this.clearButton = document.createElement("button");
-        this.clearButton.className = "clear-basket-btn";
-        this.clearButton.textContent = SETTINGS.label.basket.clear;
-        this.clearButton.addEventListener("click", () => this.clearBasket());
+      this.clearButton = document.createElement("button");
+      this.clearButton.className = "clear-basket-btn";
+      this.clearButton.textContent = SETTINGS.label.basket.clear;
+      this.clearButton.addEventListener("click", () => this.clearBasket());
 
-        this.container.append(
-          header,
-          this.basketItemsContainer,
-          this.basketSummaryContainer,
-          this.clearButton,
-        );
-      }
-
-      this.updateBasketDisplay();
+      this.container.append(
+        header,
+        this.basketItemsContainer,
+        this.basketSummaryContainer,
+        this.clearButton,
+      );
     }
+
+    // Always update the display with current data
+    this.updateBasketDisplay();
 
     return this.container;
   },
