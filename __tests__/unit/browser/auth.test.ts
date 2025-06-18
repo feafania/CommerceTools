@@ -216,15 +216,15 @@ describe("authService.getMe", () => {
     });
   });
 
-  it("should show modal error when ApiError thrown", async () => {
+  it("should reset user to undefined when ApiError is thrown", async () => {
     const mockError = new ApiError(500, "Server error");
     (authRepository.getMe as jest.Mock).mockRejectedValueOnce(mockError);
 
+    const setUserSpy = jest.spyOn(authStore, "setUser");
+
     const result = await authService.getMe();
 
-    expect(showModalMessage).toHaveBeenCalledWith(
-      expect.stringContaining("Server error"),
-    );
+    expect(setUserSpy).toHaveBeenCalledWith(undefined);
     expect(result).toBeUndefined();
   });
 

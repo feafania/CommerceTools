@@ -10,6 +10,7 @@ import {
   getProductTypeByKey,
   getCategories,
   getCategoryByKey,
+  getProductById,
 } from "@/api/repositories/endpoints/product";
 import productRepository from "@/api/repositories/product-repository";
 
@@ -80,6 +81,14 @@ describe("Product API endpoints", () => {
     expect(response).toBeDefined();
     if (!response) return;
     expect(response.key).toBe(testKeys.product);
+  });
+
+  it("should fetch product by id", async () => {
+    const response = await getProductById(testKeys.productId);
+
+    expect(response).toBeDefined();
+    if (!response) return;
+    expect(response.id).toBe(testKeys.productId);
   });
 
   it("should fetch product type by key", async () => {

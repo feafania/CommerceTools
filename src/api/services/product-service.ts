@@ -50,6 +50,14 @@ class ProductService {
     }
   }
 
+  async getProductById(id: string): Promise<InProduct | undefined> {
+    try {
+      return await productRepository.getProductById(id);
+    } catch {
+      return undefined;
+    }
+  }
+
   async getProductsByCategoryKey(
     categoryKey: string,
     parameters: GetProductListParameters = {},

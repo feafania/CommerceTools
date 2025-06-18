@@ -22,6 +22,7 @@ import getProductTypeByKey from "@/api/repositories/endpoints/product/get-produc
 import { SETTINGS } from "@/config/settings";
 import { CurrencyCode } from "@/types/enum";
 import MappingHelpers from "@/api/repositories/mapping-helpers";
+import getProductById from "@/api/repositories/endpoints/product/get-product-by-id";
 // import getProductListHttp from "@/api/repositories/endpoints/product/get-product-list-http";
 
 const productRepository = {
@@ -122,6 +123,21 @@ const productRepository = {
         : undefined;
     } catch (error) {
       // console.error("Error getting product by key:", error);
+      throw error;
+    }
+  },
+
+  async getProductById(
+    id: string,
+    currency: CurrencyCode = SETTINGS.currentCurrency,
+  ): Promise<InProduct | undefined> {
+    try {
+      const response = await getProductById(id);
+      return response
+        ? MappingHelpers.mapProductToInternal(response, currency)
+        : undefined;
+    } catch (error) {
+      // console.error("Error getting product by ID:", error);
       throw error;
     }
   },

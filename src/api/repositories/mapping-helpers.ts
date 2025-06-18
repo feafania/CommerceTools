@@ -82,7 +82,10 @@ const MappingHelpers = {
           return {
             id: variant.id,
             sku: variant.sku,
-            images: variant.images ?? [],
+            images:
+              (variant.images && variant.images.length > 0
+                ? variant.images
+                : product.masterVariant?.images) ?? [],
             price: vPrice,
             discountedPrice: vDiscountedPrice,
             isDiscounted: vIsDiscounted,

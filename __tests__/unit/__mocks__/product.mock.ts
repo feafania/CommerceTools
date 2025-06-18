@@ -10,6 +10,7 @@ import {
   getCategoryByKey,
   getProductAttributes,
   getProductByKey,
+  getProductById,
   getProductList,
   getProductTypeByKey,
   getProductTypes,
@@ -30,6 +31,9 @@ export const mockedGetProductList = getProductList as jest.MockedFunction<
 >;
 export const mockedGetProductByKey = getProductByKey as jest.MockedFunction<
   typeof getProductByKey
+>;
+export const mockedGetProductById = getProductById as jest.MockedFunction<
+  typeof getProductById
 >;
 export const mockedGetProductTypes = getProductTypes as jest.MockedFunction<
   typeof getProductTypes

@@ -104,6 +104,22 @@ describe("ProductService", () => {
     });
   });
 
+  describe("getProductById", () => {
+    it("should return product by id", async () => {
+      mockedRepository.getProductById.mockResolvedValue(mappedInProduct);
+
+      const result = await productService.getProductById("prod1");
+      expect(result).toEqual(mappedInProduct);
+    });
+
+    it("should return undefined on error", async () => {
+      mockedRepository.getProductById.mockRejectedValue(new Error("Error"));
+
+      const result = await productService.getProductById("invalid");
+      expect(result).toBeUndefined();
+    });
+  });
+
   describe("getProductsByCategoryKey", () => {
     it("should return products filtered by category key", async () => {
       mockedRepository.getProductsByCategoryKey.mockResolvedValue(

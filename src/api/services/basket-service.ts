@@ -33,7 +33,6 @@ class BasketService {
           cart = await basketRepository.getCart(token);
         } catch {}
       }
-      console.log("cart when getting", cart);
 
       if (!cart) {
         cart = await this.createCart();
