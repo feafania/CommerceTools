@@ -12,6 +12,11 @@ const Basket = {
   basketSummaryContainer: document.createElement("div"),
   isLoading: false, // to check did we load new basket list
   clearButton: document.createElement("button"), // to delete clear btn if deleted all items
+  promocodeInput: document.createElement("input"),
+  promocodeButton: document.createElement("button"),
+  promocodeContainer: document.createElement("div"),
+  appliedPromocode: undefined as string | undefined,
+  promocodeDiscount: 0, // discount percentage
 
   setLoadingState(loading: boolean): void {
     this.isLoading = loading;
@@ -140,6 +145,29 @@ const Basket = {
     `;
   },
 
+  createPromocodeHTML(): string {
+    const appliedText = this.appliedPromocode
+      ? `<span class="promocode-applied">${SETTINGS.label.basket.applied}: 
+      ${this.appliedPromocode} (-${this.promocodeDiscount}%)</span>`
+      : "";
+
+    return `
+      <div class="promocode-section">
+        <div class="promocode-input-group">
+          <input 
+            type="text" 
+            class="promocode-input" 
+            placeholder="${SETTINGS.label.basket.promocodeInput}"
+            value=""
+          >
+          <button class="promocode-btn">${SETTINGS.label.basket.applyPromocode}</button>
+        </div>
+        ${appliedText}
+        <div class="promocode-message"></div>
+      </div>
+    `;
+  },
+
   createBasketSummaryHTML(): string {
     return `
       <div class="basket-summary">
@@ -170,6 +198,17 @@ const Basket = {
     }
   },
 
+  renderPromocode(): void {
+    if (!this.promocodeContainer) return;
+
+    removeAllChildren(this.promocodeContainer);
+
+    if (!this.isEmpty()) {
+      this.promocodeContainer.innerHTML = this.createPromocodeHTML();
+      this.attachPromocodeEventListeners();
+    }
+  },
+
   renderBasketSummary(): void {
     if (!this.basketSummaryContainer) return;
 
@@ -182,6 +221,7 @@ const Basket = {
 
   updateBasketDisplay(): void {
     this.renderBasketItems();
+    this.renderPromocode();
     this.renderBasketSummary();
     if (this.clearButton) {
       this.clearButton.style.display = this.isEmpty() ? "none" : "";
@@ -204,6 +244,9 @@ const Basket = {
       this.basketItemsContainer = document.createElement("div");
       this.basketItemsContainer.className = "basket-items";
 
+      this.promocodeContainer = document.createElement("div");
+      this.promocodeContainer.className = "promocode-container";
+
       this.basketSummaryContainer = document.createElement("div");
 
       this.clearButton = document.createElement("button");
@@ -214,6 +257,7 @@ const Basket = {
       this.container.append(
         header,
         this.basketItemsContainer,
+        this.promocodeContainer,
         this.basketSummaryContainer,
         this.clearButton,
       );
@@ -223,6 +267,68 @@ const Basket = {
     this.updateBasketDisplay();
 
     return this.container;
+  },
+
+  attachPromocodeEventListeners(): void {
+    const promocodeButton =
+      this.promocodeContainer.querySelector(".promocode-btn");
+    const promocodeInput = this.promocodeContainer.querySelector(
+      ".promocode-input",
+    ) as HTMLInputElement;
+
+    if (promocodeButton && promocodeInput) {
+      promocodeButton.addEventListener("click", () =>
+        this.handlePromocodeSubmit(),
+      );
+      promocodeInput.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+          this.handlePromocodeSubmit();
+        }
+      });
+    }
+  },
+  handlePromocodeSubmit(): void {
+    if (this.isLoading) return;
+
+    const promocodeInput = this.promocodeContainer.querySelector(
+      ".promocode-input",
+    ) as HTMLInputElement;
+    const messageElement =
+      this.promocodeContainer.querySelector(".promocode-message");
+
+    if (!promocodeInput || !messageElement) return;
+
+    const enteredCode = promocodeInput.value.trim();
+
+    if (!enteredCode) {
+      this.showPromocodeMessage(SETTINGS.label.basket.error, "error");
+      return;
+    }
+
+    if (enteredCode === "3YbN") {
+      this.appliedPromocode = enteredCode;
+      this.promocodeDiscount = 10;
+      promocodeInput.value = "";
+      this.showPromocodeMessage(SETTINGS.label.basket.success, "success");
+      this.updateBasketDisplay();
+    } else {
+      this.showPromocodeMessage(SETTINGS.label.basket.invalid, "error");
+    }
+  },
+
+  showPromocodeMessage(message: string, type: "success" | "error"): void {
+    const messageElement =
+      this.promocodeContainer.querySelector(".promocode-message");
+    if (messageElement) {
+      messageElement.textContent = message;
+      messageElement.className = `promocode-message ${type}`;
+
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        messageElement.textContent = "";
+        messageElement.className = "promocode-message";
+      }, 3000);
+    }
   },
 
   handleQuantityInputChange(container: HTMLElement): void {
@@ -424,6 +530,20 @@ const Basket = {
     }
   },
 
+  calculateSubtotal(): number {
+    return this.products.reduce((total, product) => {
+      return total + product.totalPrice;
+    }, 0);
+  },
+
+  calculateDiscount(): number {
+    if (!this.appliedPromocode || this.promocodeDiscount === 0) {
+      return 0;
+    }
+    const subtotal = this.calculateSubtotal();
+    return Math.round((subtotal * this.promocodeDiscount) / 100);
+  },
+
   calculateTotal(): number {
     return this.products.reduce((total, product) => {
       return total + product.totalPrice;
@@ -474,6 +594,8 @@ const Basket = {
 
       this.products = [];
       this.cartData = undefined;
+      this.appliedPromocode = undefined;
+      this.promocodeDiscount = 0;
 
       this.updateBasketDisplay();
       return true;
@@ -492,6 +614,7 @@ const Basket = {
     cartId?: string;
     currency?: string;
     createdAt?: string;
+    appliedPromocode?: string | undefined;
     products: Array<{
       id: string;
       name: string;
@@ -508,6 +631,7 @@ const Basket = {
       cartId: this.cartData?.id,
       currency: this.cartData?.currency,
       createdAt: this.cartData?.createdAt,
+      appliedPromocode: this.appliedPromocode,
       products: this.products.map((product) => {
         const productName =
           product.name[SETTINGS.currentLang] || product.name.en || "Product";
