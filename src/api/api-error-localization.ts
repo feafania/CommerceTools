@@ -27,6 +27,20 @@ export default function localizeMessage(
     return SETTINGS.label.errorsTypes.credentials;
   }
 
+  if (
+    messageToLowerCase.includes("line item") &&
+    messageToLowerCase.includes("not found")
+  ) {
+    return SETTINGS.label.errorsTypes.lineItemNotFound;
+  }
+
+  if (
+    messageToLowerCase.includes("not available") ||
+    messageToLowerCase.includes("insufficient stock")
+  ) {
+    return SETTINGS.label.errorsTypes.insufficientStock;
+  }
+
   if (messageToLowerCase.includes("duplicate"))
     return SETTINGS.label.errorsTypes.duplicate;
 
@@ -59,7 +73,7 @@ function localizeByCode(code: string): string | undefined {
   if (code.includes("invalid_customer_account_credentials"))
     return SETTINGS.label.errorsTypes.credentials;
 
-  if (code.includes("InvalidJsonInput"))
+  if (code.includes("InvalidJsonInput") || code.includes("InvalidInput"))
     return SETTINGS.label.errorsTypes.invalidJson;
 
   if (code.includes("InvalidQueryParam"))
@@ -107,4 +121,22 @@ function localizeByCode(code: string): string | undefined {
 
   if (code.includes("ConnectorStagedInCertification"))
     return SETTINGS.label.errorsTypes.connectorInCertification;
+
+  if (code.includes("LineItemNotFound"))
+    return SETTINGS.label.errorsTypes.lineItemNotFound;
+
+  if (code.includes("InsufficientStock"))
+    return SETTINGS.label.errorsTypes.insufficientStock;
+
+  if (code.includes("AnonymousIdAlreadyInUse"))
+    return SETTINGS.label.errorsTypes.anonymousIdConflict;
+
+  if (code.includes("DiscountCodeNonApplicable"))
+    return SETTINGS.label.errorsTypes.discountCodeInvalid;
+
+  if (code.includes("InvalidOperation"))
+    return SETTINGS.label.errorsTypes.invalidOperation;
+
+  if (code.includes("InternalServerError"))
+    return SETTINGS.label.errorsTypes.serverError;
 }

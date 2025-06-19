@@ -1,4 +1,4 @@
-import { InCustomer } from "@/types/interfaces";
+import { InCart, InCustomer } from "@/types/interfaces";
 import { calculateTokenExpiry } from "@/utils/helpers";
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import loginCustomer from "@/api/repositories/endpoints/customer/login-customer";
@@ -8,14 +8,18 @@ import revokeCustomerToken from "@/api/repositories/endpoints/token/revoke-token
 import { TokenKeys, TokenType } from "@/types/api-types";
 import getMe from "@/api/repositories/endpoints/customer/get-me";
 import MappingHelpers from "@/api/repositories/mapping-helpers";
+import getAnonToken from "@/api/repositories/endpoints/token/get-anonymous-token";
 
 const authRepository = {
   async login(
     email: string,
     password: string,
-  ): Promise<{ customer: InCustomer; token: TokenType } | undefined> {
+    token: string,
+  ): Promise<
+    { customer: InCustomer; token: TokenType; cart?: InCart } | undefined
+  > {
     try {
-      const response = await loginCustomer(email, password);
+      const response = await loginCustomer(email, password, token);
       const tokenData = await getCustomerToken(email, password);
 
       if (response && tokenData?.access_token) {
@@ -23,6 +27,11 @@ const authRepository = {
           response.customer,
           password,
         );
+
+        const cart = response.cart
+          ? MappingHelpers.toInternalCart(response.cart)
+          : undefined;
+
         return {
           customer,
           token: {
@@ -30,6 +39,7 @@ const authRepository = {
             ["refresh_token"]: tokenData.refresh_token,
             ["token_expires_in"]: calculateTokenExpiry(tokenData.expires_in),
           },
+          cart,
         };
       }
     } catch (error) {
@@ -85,6 +95,26 @@ const authRepository = {
       if (customer) {
         return MappingHelpers.toInternalCustomer(customer, "");
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async getAnonToken(anonymousId: string): Promise<TokenType | undefined> {
+    try {
+      const rawToken = await getAnonToken(anonymousId);
+
+      if (rawToken?.access_token) {
+        const token: TokenType = {
+          ["access_token"]: rawToken.access_token,
+          ["refresh_token"]: rawToken.refresh_token,
+          ["token_expires_in"]: String(Date.now() + rawToken.expires_in * 1000),
+        };
+
+        return token;
+      }
+
+      return undefined;
     } catch (error) {
       throw error;
     }

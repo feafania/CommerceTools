@@ -93,3 +93,8 @@
 .price-regular {
   color: #333;
 }
+
+.product-card:hover .add-to-cart-btn:disabled {
+  transform: none;
+  box-shadow: none;
+}

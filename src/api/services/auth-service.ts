@@ -6,6 +6,9 @@ import { SETTINGS } from "@/config/settings";
 import authStore from "@/stores/auth-store";
 import { tokenStore } from "@/stores/token-store";
 import { FieldErrorType } from "@/types/types";
+import basketStore from "@/stores/basket-store";
+import basketService from "@/api/services/basket-service";
+import { anonymousSessionStore } from "@/stores/anonymous-session-store";
 
 class AuthService {
   async login(
@@ -13,17 +16,23 @@ class AuthService {
     password: string,
   ): Promise<InCustomer | FieldErrorType[] | undefined> {
     try {
-      const result = await authRepository.login(email, password);
+      const accessToken =
+        tokenStore.accessToken ?? anonymousSessionStore.accessToken!;
+      const result = await authRepository.login(email, password, accessToken);
+
       if (!result) return;
 
-      const { customer, token } = result;
+      const { customer, token, cart: mergedCart } = result;
+
       authStore.setUser(customer, token);
+      anonymousSessionStore.clear();
+      basketStore.setCart(mergedCart);
+      await basketService.getCart();
+
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
-        showModalMessage(
-          `${SETTINGS.label.errors.updateCustomer}\n${error.message}`,
-        );
+        showModalMessage(`${SETTINGS.label.errors.login}\n${error.message}`);
         return error.invalidFields;
       }
     }
@@ -51,11 +60,17 @@ class AuthService {
       const revokeToken = await this.revokeToken();
       if (revokeToken) {
         authStore.setUser(undefined);
+        basketStore.clearCart();
+
+        anonymousSessionStore.clear();
+        await this.initAnonymousSession();
+
         return true;
       }
     } catch {
       // console.error("Logout failed:", error);
     }
+
     showModalMessage(`${SETTINGS.label.errors.logout}`);
     return false;
   }
@@ -117,13 +132,74 @@ class AuthService {
       return customer;
     } catch (error) {
       if (error instanceof ApiError) {
-        showModalMessage(
-          `${SETTINGS.label.errors.getCurrentUser}\n${error.message}`,
-        );
+        // showModalMessage(
+        //   `${SETTINGS.label.errors.getCurrentUser}\n${error.message}`,
+        // );
+        authStore.setUser(undefined);
       } else {
-        // console.error("Get current user failed:", error);
+        console.error("Get current user failed:", error);
       }
       return undefined;
+    }
+  }
+
+  async getToken(): Promise<string | undefined> {
+    try {
+      if (!tokenStore.accessToken) return undefined;
+
+      if (tokenStore.isTokenExpired()) {
+        await this.refreshToken();
+      }
+
+      return tokenStore.accessToken;
+    } catch (error) {
+      // console.error("getting token failed:", error);
+      if (error instanceof ApiError) {
+        showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
+      }
+      return undefined;
+    }
+  }
+
+  async getAnonToken(): Promise<string | undefined> {
+    try {
+      if (!anonymousSessionStore.accessToken) return undefined;
+
+      if (anonymousSessionStore.isTokenExpired()) {
+        await this.initAnonymousSession();
+      }
+
+      return anonymousSessionStore.accessToken;
+    } catch (error) {
+      // console.error("getting anonymous token failed:", error);
+      if (error instanceof ApiError) {
+        showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
+      }
+      return undefined;
+    }
+  }
+
+  async initAnonymousSession(): Promise<void> {
+    const { id: anonymousId } = anonymousSessionStore;
+    try {
+      const token = await authRepository.getAnonToken(anonymousId);
+
+      if (!token) {
+        showModalMessage(`${SETTINGS.label.errors.token}`);
+        return;
+      }
+
+      anonymousSessionStore.setToken(token);
+
+      const cart = await basketService.createCart();
+      if (cart) {
+        basketStore.setCart(cart);
+      }
+    } catch (error) {
+      // console.error("Anonymous session init failed:", error);
+      if (error instanceof ApiError) {
+        showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
+      }
     }
   }
 }

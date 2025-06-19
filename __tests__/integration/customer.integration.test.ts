@@ -3,11 +3,16 @@ import {
   MyCustomerUpdateAction,
 } from "@commercetools/platform-sdk";
 
+import { mockSETTINGS } from "../common.mock";
+
 import {
   getRandomPassword,
   getTestDraft,
   testPassword,
 } from "./__mocks__/integration.mock";
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
 import { updateCustomer } from "@/api/repositories/endpoints/customer/update-customer";
@@ -23,7 +28,9 @@ describe("Update Customer Integration", () => {
 
   const setupCustomer = async (): Promise<void> => {
     const draft: MyCustomerDraft = getTestDraft();
+
     await registerCustomer(draft);
+
     email = draft.email;
     currentPassword = draft.password ?? testPassword;
 
@@ -97,6 +104,7 @@ describe("Update Customer Integration", () => {
       ...secondDraft,
       email: `duplicate-${Date.now()}@example.com`,
     };
+
     await registerCustomer(modifiedSecondDraft);
     await new Promise((r) => setTimeout(r, 1000));
     const actions: MyCustomerUpdateAction[] = [

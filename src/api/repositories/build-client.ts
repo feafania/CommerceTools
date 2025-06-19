@@ -33,7 +33,7 @@ function createClientBuilder() {
 }
 
 // 1. Client for Client Credentials Flow (system)
-export function createAnonymousClient() {
+export function createCredentialsClient() {
   return createClientBuilder()
     .withClientCredentialsFlow({
       ...baseAuthOptions,

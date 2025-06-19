@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+
 import { SETTINGS } from "@/config/settings";
 import { CountryCodeMap, LanguageCode, LanguageVariants } from "@/types/types";
 import {
@@ -7,7 +9,17 @@ import {
   StorageItem,
 } from "@/types/interfaces";
 import { AddressType, CountryCode, CurrencyCode } from "@/types/enum";
-import { CurrencySymbolMap } from "@/config/constants";
+import {
+  COOKIE_LIFE,
+  CurrencySymbolMap,
+  MOBILE_WIDTH,
+} from "@/config/constants";
+import { tokenStore } from "@/stores/token-store";
+import authService from "@/api/services/auth-service";
+import authStore from "@/stores/auth-store";
+import basketService from "@/api/services/basket-service";
+import basketStore from "@/stores/basket-store";
+import { anonymousSessionStore } from "@/stores/anonymous-session-store";
 
 export function saveState(object: StorageItem) {
   sessionStorage.setItem(object.key, object.value);
@@ -199,9 +211,10 @@ export function removeAllChildren(element: Element | undefined | null) {
 }
 
 export function formatPriceWithCurrency(
-  price: number,
+  price: number | undefined,
   currencyCode: CurrencyCode,
 ): string {
+  if (price === undefined) return "";
   const symbol = CurrencySymbolMap[currencyCode];
   const amount = (price / 100).toFixed(2);
 
@@ -215,3 +228,82 @@ export function formatPriceWithCurrency(
     }
   }
 }
+
+export function formatDate(createdAt: string): string {
+  const date = new Date(createdAt);
+  return date.toLocaleDateString(SETTINGS.currentLang, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+export function setCookie(
+  name: string,
+  value: string,
+  days: number = COOKIE_LIFE,
+): void {
+  Cookies.set(name, value, {
+    expires: days,
+    secure: true, // only for HTTPS
+    sameSite: "Lax", // CSRF protection
+    path: "/", // available on the entire site
+  });
+}
+
+export function getCookie(name: string): string | undefined {
+  return Cookies.get(name);
+}
+
+export function removeCookie(name: string) {
+  Cookies.remove(name, { path: "/" });
+}
+
+export async function loadUser() {
+  try {
+    tokenStore.loadFromCookies();
+
+    if (tokenStore.isTokenExpired() && tokenStore.refreshToken) {
+      try {
+        await authService.refreshToken();
+      } catch {
+        authStore.setUser(undefined);
+      }
+    }
+
+    if (tokenStore.accessToken) {
+      basketStore.clearCart();
+
+      try {
+        await authService.getMe();
+        if (authStore.user) {
+          await basketService.getCart();
+          return;
+        }
+        return;
+      } catch {
+        // console.error("Couldn't get the user:", error);
+      }
+    }
+
+    if (
+      anonymousSessionStore.accessToken &&
+      !anonymousSessionStore.isTokenExpired()
+    ) {
+      const cart = await basketService.getCart();
+      if (!cart) {
+        anonymousSessionStore.clear();
+        await authService.initAnonymousSession();
+      }
+      return;
+    }
+
+    anonymousSessionStore.clear();
+    await authService.initAnonymousSession();
+    await basketService.getCart();
+  } catch {
+    // console.error("loadUser failed:", error);
+  }
+}
+
+export const isMobile = () => window.innerWidth <= MOBILE_WIDTH;

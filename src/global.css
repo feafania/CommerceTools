@@ -3,7 +3,7 @@
   --form-background: #ffffff37;
   --main-background: #f9f9f9;
   --text-color: #1b1b1b;
-  --main-color: #d4ac89;
+  --main-color: #d8b98e;
   --modal-text-color: #453c2d;
   --main-color-hover: #bd9979;
   --validation-message: #e63946;
@@ -11,6 +11,9 @@
   --accent-color: #a78a70;
   --dark-gray: #333333;
   --light-gray: #f0f0f0;
+  --intut-border-color: #cccccc;
+  --danger-color: #d9534f;
+  --primary-color: #9f7750;
 }
 
 * {

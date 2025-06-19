@@ -1,3 +1,4 @@
+import { mockSETTINGS } from "../../common.mock";
 import {
   categoriesApiResponse,
   CategoryByKeyApiResponse,
@@ -13,13 +14,48 @@ import {
   mockedProductList,
   mockedProductType,
   mockedAttributes,
+  mockedGetProductById,
 } from "../__mocks__/product.mock";
 
 jest.mock("@/api/repositories/endpoints/product/get-product-list");
 jest.mock("@/api/repositories/endpoints/product/get-product-by-key");
+jest.mock("@/api/repositories/endpoints/product/get-product-by-id");
 jest.mock("@/api/repositories/endpoints/product/get-product-types");
 jest.mock("@/api/repositories/endpoints/product/get-product-type-by-key");
 jest.mock("@/api/repositories/endpoints/product/get-product-attributes");
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+jest.mock("@/pages/catalog/catalog", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/utils/page-render", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/config/routes", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/search-button/search-button", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/layout/header/header", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
 
 import { InCategory } from "@/types/interfaces";
 import productRepository from "@/api/repositories/product-repository";
@@ -36,6 +72,7 @@ describe("product categories", () => {
     mockedGetProductByKey.mockReset();
     mockedGetProductTypes.mockReset();
     mockedGetProductTypeByKey.mockReset();
+    mockedGetProductById.mockReset();
     mockedGetProductAttributes.mockReset();
   });
 
@@ -101,7 +138,33 @@ describe("product categories", () => {
   it("should fetch product by key and map to internal format", async () => {
     mockedGetProductByKey.mockResolvedValue(mockedProductProjection);
 
-    const product = await productRepository.getProductByKey("key1");
+    const product = await productRepository.getProductByKey(
+      mockedProductProjection.key!,
+    );
+
+    const expected = MappingHelpers.mapProductToInternal(
+      mockedProductProjection,
+    );
+
+    expect(product).toMatchObject({
+      id: expected.id,
+      key: expected.key,
+      name: expected.name,
+      description: expected.description,
+      price: expected.price,
+      discountedPrice: expected.discountedPrice,
+      categories: expected.categories,
+      available: expected.available,
+      sku: expected.sku,
+    });
+  });
+
+  it("should fetch product by id and map to internal format", async () => {
+    mockedGetProductById.mockResolvedValue(mockedProductProjection);
+
+    const product = await productRepository.getProductById(
+      mockedProductProjection.id,
+    );
 
     const expected = MappingHelpers.mapProductToInternal(
       mockedProductProjection,

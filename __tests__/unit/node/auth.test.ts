@@ -1,3 +1,4 @@
+import { mockSETTINGS } from "../../common.mock";
 import {
   mockedRegisterCustomer,
   mockedLoginCustomer,
@@ -20,6 +21,42 @@ jest.mock("@/api/repositories/endpoints/customer/login-customer");
 jest.mock("@/api/repositories/endpoints/token/get-customer-token");
 jest.mock("@/api/repositories/endpoints/token/revoke-token");
 jest.mock("@/api/repositories/endpoints/customer/get-me");
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+jest.mock("@/pages/catalog/catalog", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/utils/page-render", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/config/routes", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/search-button/search-button", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/layout/header/header", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+
+jest.mock("@/assets/svg/eye-password-hide.inline.svg", () => "mocked-svg");
+jest.mock("@/assets/svg/eye-password-show.inline.svg", () => "mocked-svg");
 
 const inMockCustomer = MappingHelpers.toInternalCustomer(
   mockCustomer,
@@ -72,9 +109,17 @@ describe("authRepository", () => {
     });
     it("should call loginCustomer and return a transformed customer", async () => {
       const { email, password } = inMockCustomer;
-      const result = await authRepository.login(email, password!);
+      const result = await authRepository.login(
+        email,
+        password!,
+        token.access_token,
+      );
 
-      expect(mockedLoginCustomer).toHaveBeenCalledWith(email, password);
+      expect(mockedLoginCustomer).toHaveBeenCalledWith(
+        email,
+        password,
+        token.access_token,
+      );
       expect(mockedGetCustomerToken).toHaveBeenCalledWith(email, password);
 
       expect(result).toHaveProperty("customer");
@@ -93,7 +138,11 @@ describe("authRepository", () => {
       mockedLoginCustomer.mockRejectedValueOnce(new Error("Login failed"));
 
       await expect(
-        authRepository.login(mockCustomer.email, mockCustomer.password!),
+        authRepository.login(
+          mockCustomer.email,
+          mockCustomer.password!,
+          token.access_token,
+        ),
       ).rejects.toThrow("Login failed");
     });
   });

@@ -7,6 +7,7 @@ import { tokenStore } from "@/stores/token-store";
 import authService from "@/api/services/auth-service";
 import customerRepository from "@/api/repositories/customer-repository";
 import { FieldErrorType } from "@/types/types";
+import { anonymousSessionStore } from "@/stores/anonymous-session-store";
 
 class CustomerService {
   async update(newCustomer: InCustomer): Promise<InCustomer | undefined> {
@@ -42,6 +43,7 @@ class CustomerService {
   }
 
   async changePassword(
+    oldPassword: string | undefined,
     newPassword: string,
   ): Promise<InCustomer | FieldErrorType[] | undefined> {
     try {
@@ -52,18 +54,20 @@ class CustomerService {
       const token = tokenStore.accessToken;
       const user = authStore.user;
 
-      if (!token || !user || !user.password || user.version === undefined) {
+      if (!token || !user || !oldPassword || user.version === undefined) {
         return undefined;
       }
 
       const updatedCustomer = await customerRepository.changePassword(
         user.version,
-        user.password,
+        oldPassword,
         newPassword,
         token,
       );
-
       if (updatedCustomer) {
+        tokenStore.clearToken();
+        anonymousSessionStore.clear();
+        await authService.initAnonymousSession();
         return await authService.login(user.email, newPassword);
       }
     } catch (error) {

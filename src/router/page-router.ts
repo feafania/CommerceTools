@@ -79,8 +79,8 @@ const PageRouter = {
     let newPage = page;
 
     if (!routes[page]?.canActivate()) {
-      newPage = PageType.main;
-      PageRouter.navigateTo(PageType.main);
+      newPage = page === PageType.profile ? PageType.login : PageType.main;
+      PageRouter.navigateTo(newPage);
     }
     await renderPage(newPage);
   },

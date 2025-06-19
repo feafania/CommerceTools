@@ -30,6 +30,10 @@ export const SETTINGS = {
     sortName: SortName.NAME,
     sortDirection: SortDirection.ASC,
   } as ProductListParameters,
+  basketParameters: {
+    quantity: 1,
+    promoLimit: 5,
+  },
   currentCurrency: defaultCurrency,
   fallbackCurrency: defaultCurrency,
 };

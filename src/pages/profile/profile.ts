@@ -966,7 +966,7 @@ const UserProfile = {
   createAddButton(): HTMLElement {
     const addAddressButton = createButton({
       type: "button",
-      name: SETTINGS.label.address.addAdress,
+      name: SETTINGS.label.address.addAddress,
       id: "add-address-button",
       class: "add-address-button",
     }) as HTMLButtonElement;

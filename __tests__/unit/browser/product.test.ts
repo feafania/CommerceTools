@@ -1,3 +1,4 @@
+import { mockSETTINGS } from "../../common.mock";
 import {
   mockedInternalProductList,
   mappedInProduct,
@@ -6,12 +7,21 @@ import {
   mockedCategories,
   productRepositoryResponse,
   emptyProductResult,
+  mockAttributes,
+  mockAttributesExpected,
 } from "../__mocks__/product.mock";
 
 import productService from "@/api/services/product-service";
 import productRepository from "@/api/repositories/product-repository";
+import { SimpleAttributes } from "@/types/types";
 
 jest.mock("@/api/repositories/product-repository");
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+
+jest.mock("@/assets/svg/eye-password-hide.inline.svg", () => "mocked-svg");
+jest.mock("@/assets/svg/eye-password-show.inline.svg", () => "mocked-svg");
 
 const mockedRepository = productRepository as jest.Mocked<
   typeof productRepository
@@ -94,6 +104,22 @@ describe("ProductService", () => {
     });
   });
 
+  describe("getProductById", () => {
+    it("should return product by id", async () => {
+      mockedRepository.getProductById.mockResolvedValue(mappedInProduct);
+
+      const result = await productService.getProductById("prod1");
+      expect(result).toEqual(mappedInProduct);
+    });
+
+    it("should return undefined on error", async () => {
+      mockedRepository.getProductById.mockRejectedValue(new Error("Error"));
+
+      const result = await productService.getProductById("invalid");
+      expect(result).toBeUndefined();
+    });
+  });
+
   describe("getProductsByCategoryKey", () => {
     it("should return products filtered by category key", async () => {
       mockedRepository.getProductsByCategoryKey.mockResolvedValue(
@@ -170,5 +196,33 @@ describe("ProductService", () => {
       const result = await productService.getProductAttributes("invalid");
       expect(result).toEqual({});
     });
+  });
+});
+
+describe("mapFilters", () => {
+  it("should call repository mapFilters and return mapped filters", () => {
+    const input: SimpleAttributes = mockAttributes;
+    const expected = mockAttributesExpected;
+
+    const mockFunction = jest.fn().mockReturnValue(expected);
+    mockedRepository.mapFilters = mockFunction;
+
+    const result = productService.mapFilters(input);
+
+    expect(mockFunction).toHaveBeenCalledWith(input);
+    expect(result).toEqual(expected);
+  });
+
+  it("should return empty array when mapFilters returns empty", () => {
+    const input: SimpleAttributes = {};
+    const expected: string[] = [];
+
+    const mockFunction = jest.fn().mockReturnValue(expected);
+    mockedRepository.mapFilters = mockFunction;
+
+    const result = productService.mapFilters(input);
+
+    expect(mockFunction).toHaveBeenCalledWith(input);
+    expect(result).toEqual(expected);
   });
 });

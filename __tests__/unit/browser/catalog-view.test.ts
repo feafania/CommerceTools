@@ -1,8 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-
-import { productRepositoryResponse } from "../__mocks__/product.mock";
+import { mockSETTINGS } from "../../common.mock";
+import {
+  mockCategories,
+  productRepositoryResponse,
+} from "../__mocks__/product.mock";
 
 import productService from "@/api/services/product-service";
 import { SETTINGS } from "@/config/settings";
@@ -10,35 +13,30 @@ import { CurrencyCode, PageType } from "@/types/enum";
 import CatalogView from "@/pages/catalog/catalog";
 import PageRouter from "@/router/page-router";
 
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+
 jest.mock("@/router/page-router", () => ({
   __esModule: true,
   default: { renderPage: jest.fn() },
 }));
+
 jest.mock("@/api/services/product-service", () => ({
   getCategories: jest.fn(),
   getCategoryByKey: jest.fn(),
   getProductList: jest.fn(),
   getProductsByCategoryKey: jest.fn(),
   getProductTypes: jest.fn().mockResolvedValue([]),
+  mapFilters: jest.fn().mockReturnValue([]),
+}));
+jest.mock("@/utils/helpers", () => ({
+  ...jest.requireActual("@/utils/helpers"),
+  isMobile: jest.fn(() => false),
 }));
 
-const mockCategories = [
-  {
-    id: "1",
-    key: "electronics",
-    name: { en: "Electronics" },
-    assets: [],
-    children: [
-      {
-        id: "2",
-        key: "phones",
-        name: { en: "Phones" },
-        assets: [],
-        children: [],
-      },
-    ],
-  },
-];
+jest.mock("@/assets/svg/eye-password-hide.inline.svg", () => "mocked-svg");
+jest.mock("@/assets/svg/eye-password-show.inline.svg", () => "mocked-svg");
 
 describe("CatalogView", () => {
   beforeEach(() => {
@@ -57,6 +55,9 @@ describe("CatalogView", () => {
     CatalogView.productList = document.createElement("div");
     CatalogView.sortOption = undefined;
     CatalogView.categories = [];
+    CatalogView.wasMobile = false;
+    CatalogView.lazyObserver = undefined;
+    CatalogView.lazyLoaderElement = document.createElement("div");
     (productService.getCategories as jest.Mock).mockResolvedValue(
       mockCategories,
     );
@@ -71,6 +72,7 @@ describe("CatalogView", () => {
     );
     SETTINGS.currentLang = "en";
     SETTINGS.currentCurrency = "EUR" as CurrencyCode;
+    CatalogView.title = document.createElement("h1");
   });
 
   it("renders full catalog page with no category", async () => {
@@ -91,6 +93,7 @@ describe("CatalogView", () => {
       id: "1",
       key: "electronics",
       name: { en: "Electronics" },
+      assets: [],
     });
 
     (productService.getProductsByCategoryKey as jest.Mock).mockResolvedValue({
@@ -115,7 +118,7 @@ describe("CatalogView", () => {
     sortSelect.dispatchEvent(new Event("change"));
 
     expect(CatalogView.sortOption).toBe("price-desc");
-    expect(productService.getProductList).toHaveBeenCalledTimes(2); // initial + after sort
+    expect(productService.getProductList).toHaveBeenCalledTimes(1);
   });
 
   it("paginates correctly", async () => {
@@ -156,7 +159,7 @@ describe("CatalogView", () => {
     jest.advanceTimersByTime(400);
 
     expect(CatalogView.currentQuery).toBe("test");
-    expect(productService.getProductList).toHaveBeenCalledTimes(2);
+    expect(productService.getProductList).toHaveBeenCalledTimes(1);
 
     jest.useRealTimers();
   });
@@ -166,7 +169,7 @@ describe("CatalogView", () => {
     await CatalogView.render();
     await CatalogView.onCategoryChange(category);
 
-    expect(location.hash).toBe(`#catalog/${category.key}`);
+    expect(location.hash).toBe(`#catalog/${category.key}?sort=price-desc`);
   });
 
   it("falls back to notfound if category not found", async () => {

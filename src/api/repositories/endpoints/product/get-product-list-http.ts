@@ -5,19 +5,23 @@ import { GetProductListParameters } from "@/types/types";
 import { handleApiError } from "@/api/handle-api-error";
 import getAnonToken from "@/api/repositories/endpoints/token/get-anonymous-token";
 
-export default async function getProductListHttp({
-  limit = SETTINGS.productListParameters.limit,
-  offset = SETTINGS.productListParameters.offset,
-  sortName = `${SETTINGS.productListParameters.sortName}.${SETTINGS.currentLang}`,
-  sortDirection = SETTINGS.productListParameters.sortDirection,
-  searchText,
-  filters = [],
-}: GetProductListParameters = {}) {
+export default async function getProductListHttp(
+  anonymousId: string,
+  {
+    limit = SETTINGS.productListParameters.limit,
+    offset = SETTINGS.productListParameters.offset,
+    sortName = `${SETTINGS.productListParameters.sortName}.${SETTINGS.currentLang}`,
+    sortDirection = SETTINGS.productListParameters.sortDirection,
+    searchText,
+    filters = [],
+    expand = [],
+  }: GetProductListParameters = {},
+) {
   try {
     const lang = SETTINGS.currentLang;
     const sort = `${sortName} ${sortDirection}`;
 
-    const token = await getAnonToken();
+    const token = await getAnonToken(anonymousId);
     if (!token) {
       return emptyResult();
     }
@@ -47,6 +51,10 @@ export default async function getProductListHttp({
     }
     for (const filter of filters) {
       parameters.append("filter", filter);
+    }
+    parameters.append("expand", "productType");
+    for (const item of expand) {
+      parameters.append("expand", item);
     }
     url = `${url}/search`;
     // } else {

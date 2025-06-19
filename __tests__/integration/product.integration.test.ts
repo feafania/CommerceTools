@@ -1,3 +1,5 @@
+import { mockSETTINGS } from "../common.mock";
+
 import { testKeys } from "./__mocks__/integration.mock";
 
 import {
@@ -8,8 +10,22 @@ import {
   getProductTypeByKey,
   getCategories,
   getCategoryByKey,
+  getProductById,
 } from "@/api/repositories/endpoints/product";
 import productRepository from "@/api/repositories/product-repository";
+
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+
+jest.mock("@/api/repositories/mapping-helpers", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/assets/svg/eye-password-hide.inline.svg", () => "mocked-svg");
+jest.mock("@/assets/svg/eye-password-show.inline.svg", () => "mocked-svg");
 
 describe("Product API endpoints", () => {
   it("should fetch raw categories", async () => {
@@ -65,6 +81,14 @@ describe("Product API endpoints", () => {
     expect(response).toBeDefined();
     if (!response) return;
     expect(response.key).toBe(testKeys.product);
+  });
+
+  it("should fetch product by id", async () => {
+    const response = await getProductById(testKeys.productId);
+
+    expect(response).toBeDefined();
+    if (!response) return;
+    expect(response.id).toBe(testKeys.productId);
   });
 
   it("should fetch product type by key", async () => {

@@ -4,14 +4,14 @@ import {
 } from "@commercetools/platform-sdk";
 
 import { handleApiError } from "@/api/handle-api-error";
-import { createAnonymousClient } from "@/api/repositories/build-client";
+import { createCredentialsClient } from "@/api/repositories/build-client";
 
 export default async function getCategories(): Promise<
   CategoryPagedQueryResponse | undefined
 > {
   try {
     // Create anonymous client (no auth needed for public categories)
-    const ctpClient = createAnonymousClient();
+    const ctpClient = createCredentialsClient();
 
     // Create API root with project key
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({

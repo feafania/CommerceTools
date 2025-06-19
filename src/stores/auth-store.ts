@@ -1,4 +1,4 @@
-import { deleteLocalState, getLocalState, saveState } from "@/utils/helpers";
+import { deleteState, getLocalState, saveState } from "@/utils/helpers";
 import { tokenStore } from "@/stores/token-store";
 import { InCustomer } from "@/types/interfaces";
 import { TokenType } from "@/types/api-types";
@@ -27,7 +27,7 @@ export class AuthStore {
       saveState({ key: "user", value: JSON.stringify(user) });
       if (token) tokenStore.setToken(token);
     } else {
-      deleteLocalState("user");
+      deleteState("user");
       tokenStore.clearToken();
     }
   }

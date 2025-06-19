@@ -5,20 +5,27 @@ import {
   createTokenRequestBody,
 } from "@/api/api-helpers";
 
-export default async function getAnonToken(): Promise<
-  TokenResponse | undefined
-> {
+export default async function getAnonToken(
+  anonymousId: string,
+): Promise<TokenResponse | undefined> {
   const projectKey = process.env.CTP_PROJECT_KEY!;
   const authUrl = process.env.CTP_AUTH_URL!;
   const basicAuth = createBasicAuth();
 
   const scope = buildScopes(projectKey, [
-    "view_products",
+    "manage_orders",
     "manage_my_orders",
+    "manage_my_shopping_lists",
+    "view_products",
     "create_anonymous_token",
+    "manage_my_shopping_lists",
+    "view_published_products",
+    "view_discount_codes",
+    "manage_my_profile",
   ]);
 
   const body = createTokenRequestBody("client_credentials", {
+    anonymousId,
     scope,
   });
 
