@@ -121,14 +121,16 @@ const pl: AppTranslation = {
     clear: "Wyczyść kosz",
     remove: "Usuń",
     totalItems: "Łączna liczba elementów",
-    total: "CAŁKOWITY",
+    total: "Razem",
+    discountedTotal: "Razem po rabacie",
+    appliedPromocode: "Zastosowane kody promocyjne",
     emptyText: "Twój koszyk jest pusty",
     promocodeInput: "Wprowadź kod promocyjny",
     applyPromocode: "Zastosuj",
-    applied: "Zastosowano",
     invalid: "Nieprawidłowy kod promocyjny",
     success: "Kod promocyjny został zastosowany pomyślnie",
     error: "Wprowadź kod promocyjny",
+    notMatched: "nie pasuje",
   },
   address: {
     headers: {
@@ -248,6 +250,9 @@ const pl: AppTranslation = {
     removeItemFromCart: "Nie można usunąć przedmiotu z koszyka",
     changeItemQuantity: "Nie można zmienić przedmiotu z koszyka",
     getPromoCodes: "Nie udało się uzyskać kodów promocyjnych",
+    removeDiscountCode: "Nie udało się usunąć kodu promocyjnego z koszyka",
+    getPromoCode: "Nie udało się uzyskać kodu promocyjnego",
+    clearCart: "Nie udało się wyczyścić koszyka.",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",

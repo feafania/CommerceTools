@@ -155,13 +155,12 @@ class BasketService {
   }
 
   /** @quantity
-   * If not set, the ShoppingListLineItem is removed from the ShoppingList.
    * If this value matches or exceeds the current quantity of the ShoppingListLineItem,
    * the ShoppingListLineItem is removed from the ShoppingList.
    */
   async removeItemFromCart(
     lineItemId: string,
-    quantity: number | undefined = undefined,
+    quantity: number,
   ): Promise<InCart | undefined> {
     try {
       let token = await authService.getToken();
@@ -258,7 +257,38 @@ class BasketService {
     }
   }
 
-  async deleteCart(): Promise<void> {
+  async removeDiscountCode(
+    discountCodeId: string,
+  ): Promise<InCart | undefined> {
+    try {
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
+      if (!token) {
+        throw new Error("Cannot remove promocode without token");
+      }
+
+      const cart = await this.getCart();
+      if (!cart || !cart.id || cart.version === undefined) {
+        throw new Error("Cart ID or version is missing");
+      }
+
+      const updatedCart = await basketRepository.removeDiscountCode(
+        cart.id,
+        discountCodeId,
+        cart.version,
+        token,
+      );
+
+      basketStore.setCart(updatedCart);
+      return updatedCart;
+    } catch (error) {
+      this.handleError(error, SETTINGS.label.errors.removeDiscountCode);
+    }
+  }
+
+  async deleteCart(): Promise<boolean> {
     try {
       let token = await authService.getToken();
       if (!token) {
@@ -273,8 +303,61 @@ class BasketService {
 
       await basketRepository.deleteCart(cart.id, cart.version, token);
       basketStore.clearCart();
+      return true;
     } catch (error) {
       this.handleError(error, SETTINGS.label.errors.deleteCart);
+      return false;
+    }
+  }
+
+  async clearCart(): Promise<InCart | undefined> {
+    try {
+      let token = await authService.getToken();
+      if (!token) {
+        token = await authService.getAnonToken();
+      }
+
+      const cart = await this.getCart();
+      if (!cart || !cart.id || cart.version === undefined) {
+        throw new Error("Cart ID or version is missing");
+      }
+
+      const lineItems = cart.lineItems.map((item) => ({
+        id: item.id,
+        quantity: item.quantity,
+      }));
+      const discountCodeIds = cart.discountCodes?.map((code) => code.id) || [];
+
+      let updatedCart: InCart | undefined = cart;
+
+      for (const { id, quantity } of lineItems) {
+        if (updatedCart && token) {
+          updatedCart = await basketRepository.removeItemFromCart(
+            updatedCart.id,
+            id,
+            quantity,
+            token,
+          );
+          basketStore.setCart(updatedCart);
+        }
+      }
+
+      for (const discountCodeId of discountCodeIds) {
+        if (updatedCart && token) {
+          updatedCart = await basketRepository.removeDiscountCode(
+            updatedCart.id,
+            discountCodeId,
+            updatedCart.version,
+            token,
+          );
+          basketStore.setCart(updatedCart);
+        }
+      }
+
+      basketStore.setCart(updatedCart);
+      return updatedCart;
+    } catch (error) {
+      this.handleError(error, SETTINGS.label.errors.clearCart);
     }
   }
 
@@ -285,6 +368,16 @@ class BasketService {
       );
     } catch (error) {
       this.handleError(error, SETTINGS.label.errors.getPromoCodes);
+    }
+  }
+
+  async getDiscountCodeById(
+    discountCodeId: string,
+  ): Promise<InDiscountCode | undefined> {
+    try {
+      return await basketRepository.getDiscountCodeById(discountCodeId);
+    } catch (error) {
+      this.handleError(error, SETTINGS.label.errors.getPromoCode);
     }
   }
 

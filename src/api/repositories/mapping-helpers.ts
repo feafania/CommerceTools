@@ -18,6 +18,7 @@ import {
   InAttributeDefinition,
   InCart,
   InCartDiscount,
+  InCartDiscountCode,
   InCategory,
   InCustomer,
   InDiscountCode,
@@ -40,6 +41,7 @@ import {
   AttributeKeys,
   CountryCode,
   CurrencyCode,
+  DiscountState,
   InAttributeTypeValues,
   SortName,
 } from "@/types/enum";
@@ -367,6 +369,7 @@ const MappingHelpers = {
   },
 
   toInternalCart(cart: Cart): InCart {
+    console.log("mapping", cart);
     return {
       id: cart.id,
       version: cart.version,
@@ -393,6 +396,12 @@ const MappingHelpers = {
       customerId: cart.customerId,
       anonymousId: cart.anonymousId,
       country: cart.country as CountryCode,
+      discountCodes: (cart.discountCodes ?? []).map(
+        (entry): InCartDiscountCode => ({
+          id: entry.discountCode.id,
+          matchesCart: entry.state === DiscountState.MatchesCart,
+        }),
+      ),
     };
   },
 

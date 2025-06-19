@@ -121,14 +121,16 @@ const en: AppTranslation = {
     clear: "Clear basket",
     remove: "Remove",
     totalItems: "Total items",
-    total: "TOTAL",
+    total: "Total cost",
+    discountedTotal: "Total after discount",
+    appliedPromocode: "Promocodes applied",
     emptyText: "Your basket is empty",
     promocodeInput: "Enter promocode",
     applyPromocode: "Apply",
-    applied: "Applied",
     invalid: "Invalid promocode",
     success: "Promocode applied successfully",
     error: "Please enter a promocode",
+    notMatched: "not matches",
   },
   address: {
     headers: {
@@ -243,6 +245,9 @@ const en: AppTranslation = {
     removeItemFromCart: "Couldn't remove an item from the shopping cart",
     changeItemQuantity: "Couldn't change an item from the shopping cart",
     getPromoCodes: "Failed to get promo-codes",
+    removeDiscountCode: "Failed to remove promo-code from cart",
+    getPromoCode: "Failed to get promo-code",
+    clearCart: "Failed to clear cart.",
   },
   messages: {
     onSignIn: "You have successfully signed in.",

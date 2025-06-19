@@ -263,7 +263,7 @@ export interface InLineItem {
   name: LanguageVariants;
   quantity: number;
   price: number; // for 1 piece
-  totalPrice: number;
+  totalPrice: number; // price * quantity
   variantId: number;
   sku?: string;
   image?: string;
@@ -276,10 +276,17 @@ export interface InCart {
   lineItems: InLineItem[];
   totalPrice: number; // Total price of the cart including all discounts, taxes, shipping, etc.
   subtotalPrice: number; // unitPrice * quantity
+  discountCodes?: InCartDiscountCode[];
+  discountTotal?: number;
   createdAt: string; // new Date(cart.createdAt);
   customerId?: string;
   anonymousId?: string;
   country?: CountryCode;
+}
+
+export interface InCartDiscountCode {
+  id: string;
+  matchesCart: boolean;
 }
 
 export interface InCartDiscount {

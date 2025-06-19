@@ -125,10 +125,12 @@ export interface AppTranslation {
     emptyText: string;
     promocodeInput: string;
     applyPromocode: string;
-    applied: string;
     invalid: string;
     success: string;
     error: string;
+    discountedTotal: string;
+    appliedPromocode: string;
+    notMatched: string;
   };
   address: {
     headers: AddressTypeMap;
@@ -213,6 +215,9 @@ export interface AppTranslation {
     removeItemFromCart: string;
     changeItemQuantity: string;
     getPromoCodes: string;
+    removeDiscountCode: string;
+    getPromoCode: string;
+    clearCart: string;
   };
   messages: {
     onSignIn: string;

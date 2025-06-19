@@ -104,10 +104,20 @@ class ProductService {
   }
 
   getVariantDescription(
-    variant: InVariant | InProduct,
+    variant: InVariant | InProduct | undefined,
     productType: InProductType | undefined,
   ): string {
+    if (!variant) return "";
     return productRepository.getVariantDescription(variant, productType);
+  }
+
+  getVariantById(variantId: number, product: InProduct): InVariant | InProduct {
+    if (!product || !product.variants) {
+      return product;
+    }
+
+    const variant = product.variants.find((v) => v.id === variantId);
+    return variant ?? product;
   }
 }
 

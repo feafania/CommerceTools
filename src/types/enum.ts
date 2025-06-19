@@ -66,3 +66,8 @@ export enum AttributeKeys {
   MinPrice = "minPrice",
   MaxPrice = "maxPrice",
 }
+
+export enum DiscountState {
+  "MatchesCart" = "MatchesCart",
+  "DoesNotMatchCart" = "DoesNotMatchCart",
+}

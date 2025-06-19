@@ -149,7 +149,7 @@ describe("BasketService", () => {
       (authService.getToken as jest.Mock).mockResolvedValue("token");
       (basketStore.getCart as jest.Mock).mockReturnValue(mockedInternalCart);
 
-      const result = await basketService.removeItemFromCart(lineItemId);
+      const result = await basketService.removeItemFromCart(lineItemId, 1);
       expect(showModalMessage).toHaveBeenCalled();
       expect(result).toBeUndefined();
     });

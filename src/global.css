@@ -12,6 +12,8 @@
   --dark-gray: #333333;
   --light-gray: #f0f0f0;
   --intut-border-color: #cccccc;
+  --danger-color: #d9534f;
+  --primary-color: #9f7750;
 }
 
 * {

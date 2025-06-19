@@ -15,6 +15,8 @@ import {
   recalculateCart,
   removeItemFromCart,
   getActiveDiscountCodes,
+  removeDiscountCodeFromCart,
+  getDiscountCodeById,
 } from "@/api/repositories/endpoints/basket";
 
 const basketRepository = {
@@ -129,7 +131,7 @@ const basketRepository = {
   async removeItemFromCart(
     cartId: string,
     lineItemId: string,
-    quantity: number | undefined = undefined,
+    quantity: number,
     token: string,
   ): Promise<InCart | undefined> {
     try {
@@ -188,6 +190,28 @@ const basketRepository = {
       }
     } catch (error) {
       console.error("Error applying discount code:", error);
+      throw error;
+    }
+  },
+
+  async removeDiscountCode(
+    cartId: string,
+    discountCodeId: string,
+    version: number,
+    token: string,
+  ): Promise<InCart | undefined> {
+    try {
+      const cart = await removeDiscountCodeFromCart(
+        cartId,
+        discountCodeId,
+        version,
+        token,
+      );
+      if (cart) {
+        return MappingHelpers.toInternalCart(cart);
+      }
+    } catch (error) {
+      console.error("Error removing discount code:", error);
       throw error;
     }
   },
@@ -268,6 +292,23 @@ const basketRepository = {
       return undefined;
     } catch (error) {
       console.error("Error creating cart:", error);
+      throw error;
+    }
+  },
+
+  async getDiscountCodeById(
+    discountCodeId: string,
+  ): Promise<InDiscountCode | undefined> {
+    try {
+      const code = await getDiscountCodeById(discountCodeId);
+
+      if (code) {
+        return MappingHelpers.toInternalDiscountCode(code);
+      }
+
+      return undefined;
+    } catch (error) {
+      console.error("Error fetching discount code:", error);
       throw error;
     }
   },

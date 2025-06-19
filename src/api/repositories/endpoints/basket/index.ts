@@ -10,3 +10,5 @@ export { default as deleteCustomerCart } from "./cart/delete-customer-cart";
 export { default as changeCartItemQuantity } from "./item/change-cart-item-quantity";
 export { default as recalculateCart } from "./cart/recalculate-cart";
 export { default as getActiveDiscountCodes } from "./promo/get-active-discount-codes";
+export { default as getDiscountCodeById } from "./promo/get-discount-code-by-id";
+export { default as removeDiscountCodeFromCart } from "./promo/remove-discount-code-from-cart";
