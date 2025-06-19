@@ -29,7 +29,7 @@ export default async function addItemToCart(
 
     return response.body;
   } catch (error) {
-    console.error("Adding item to cart failed:", error);
+    // console.error("Adding item to cart failed:", error);
     handleApiError(error);
   }
 }

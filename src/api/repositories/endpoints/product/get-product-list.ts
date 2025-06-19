@@ -97,7 +97,7 @@ export default async function getProductList({
 
     return response.body;
   } catch (error) {
-    console.error("Error fetching product list:", error);
+    // console.error("Error fetching product list:", error);
     handleApiError(error);
     return {
       limit: 0,

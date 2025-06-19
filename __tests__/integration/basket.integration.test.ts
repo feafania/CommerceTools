@@ -44,7 +44,6 @@ describe("Cart API endpoints", () => {
     const createdCart = await createCustomerCart(cartDraft, anonymousToken);
     if (!createdCart) throw new Error("Failed to create anonymous cart");
     anonymousCart = createdCart;
-    console.log(anonymousCart);
 
     const tokenResponse = await getCustomerToken(
       testLoginDraft.email,

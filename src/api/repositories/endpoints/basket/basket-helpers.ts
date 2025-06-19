@@ -39,7 +39,7 @@ export default async function getCartUpdateApi(
 
     return { cart, post };
   } catch (error) {
-    console.error("Getting update API failed:", error);
+    // console.error("Getting update API failed:", error);
     handleApiError(error);
     throw error;
   }

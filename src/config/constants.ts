@@ -22,7 +22,6 @@ export const CurrencySymbolMap: Record<CurrencyCode, string> = {
 export const COOKIE_LIFE: number = 7;
 export const SCROLL_HEIGHT: number = 300;
 export const MOBILE_WIDTH: number = 1000;
-export const CART_ID_STORAGE_KEY: string = "cartID";
 
 export const ANONYMOUS_ID_KEY = "anonymous_id";
 export const ANONYMOUS_TOKEN_KEY = "anonymous_token";

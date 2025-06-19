@@ -41,7 +41,7 @@ export default async function recalculateCart(
 
     return response.body;
   } catch (error) {
-    console.error("Recalculating cart failed:", error);
+    // console.error("Recalculating cart failed:", error);
     handleApiError(error);
   }
 }

@@ -36,7 +36,7 @@ export default async function applyDiscountCodeToCart(
       .execute()
       .then((response) => response.body);
   } catch (error) {
-    console.error("Applying discount code to cart failed:", error);
+    // console.error("Applying discount code to cart failed:", error);
     handleApiError(error);
   }
 }

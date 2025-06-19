@@ -43,6 +43,7 @@ const pl: AppTranslation = {
   main: {
     title: "Zapraszamy do naszego sklepu",
     promocodes: "Skorzystaj z naszych najnowszych promocji",
+    noPromocodes: "Nie ma dostępnych kodów promocyjnych.",
   },
   catalog: {
     search: "Szukaj...",

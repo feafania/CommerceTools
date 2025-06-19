@@ -262,7 +262,8 @@ export interface InLineItem {
   productId: string;
   name: LanguageVariants;
   quantity: number;
-  price: number; // for 1 piece
+  price: number; // actual price
+  originalPrice?: number; // before discount
   totalPrice: number; // price * quantity
   variantId: number;
   sku?: string;

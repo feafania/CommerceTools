@@ -21,7 +21,7 @@ export default async function deleteAnonymousCartById(
       .delete({ queryArgs: { version } })
       .execute();
   } catch (error) {
-    console.error("Deleting cart by id failed:", error);
+    // console.error("Deleting cart by id failed:", error);
     handleApiError(error);
   }
 }

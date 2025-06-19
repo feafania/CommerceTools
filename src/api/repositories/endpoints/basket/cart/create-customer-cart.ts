@@ -26,7 +26,7 @@ export default async function createCustomerCart(
 
     return response.body;
   } catch (error) {
-    console.error("Creating customer cart failed:", error);
+    // console.error("Creating customer cart failed:", error);
     handleApiError(error);
   }
 }

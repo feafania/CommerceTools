@@ -43,7 +43,7 @@ export default async function removeDiscountCodeFromCart(
 
     return response.body;
   } catch (error) {
-    console.error("Removing discount code from cart failed:", error);
+    // console.error("Removing discount code from cart failed:", error);
     handleApiError(error);
     return undefined;
   }

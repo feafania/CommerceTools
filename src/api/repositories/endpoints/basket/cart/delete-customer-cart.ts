@@ -22,7 +22,7 @@ export default async function deleteCustomerCart(
       .delete({ queryArgs: { version } })
       .execute();
   } catch (error) {
-    console.error("Deleting customer cart failed:", error);
+    // console.error("Deleting customer cart failed:", error);
     handleApiError(error);
   }
 }

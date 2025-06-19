@@ -43,6 +43,7 @@ export interface AppTranslation {
   main: {
     title: string;
     promocodes: string;
+    noPromocodes: string;
   };
   catalog: {
     search: string;

@@ -1,10 +1,15 @@
 import "./basket.css";
 import { InLineItem, InCart, InProduct } from "@/types/interfaces";
 import { SETTINGS } from "@/config/settings";
-import { localizeName, removeAllChildren } from "@/utils/helpers";
+import {
+  formatPriceWithCurrency,
+  localizeName,
+  removeAllChildren,
+} from "@/utils/helpers";
 import showModalMessage from "@/components/modal-window/modal-window";
 import basketService from "@/api/services/basket-service";
 import productService from "@/api/services/product-service";
+import { CurrencyCode } from "@/types/enum";
 
 const Basket = {
   products: [] as InLineItem[],
@@ -59,9 +64,7 @@ const Basket = {
 
   async initializeWithBasketService(): Promise<void> {
     try {
-      console.log("get cart");
       const cartResponse = await basketService.getCart();
-      console.log(cartResponse);
       this.cartData = cartResponse;
 
       this.products = [];
@@ -72,6 +75,7 @@ const Basket = {
             productId: lineItem.productId,
             name: lineItem.name,
             price: lineItem.price,
+            originalPrice: lineItem.originalPrice,
             totalPrice: lineItem.totalPrice,
             sku: lineItem.sku,
             variantId: lineItem.variantId,
@@ -81,8 +85,8 @@ const Basket = {
           this.products.push(basketProduct);
         }
       }
-    } catch (error) {
-      console.error("Failed to initialize basket from basketService:", error);
+    } catch {
+      // console.error("Failed to initialize basket from basketService:", error);
       this.products = [];
       this.cartData = undefined;
     }
@@ -98,11 +102,19 @@ const Basket = {
   },
 
   async createProductItemHTML(product: InLineItem): Promise<string> {
-    const effectivePrice = this.getEffectivePrice(product);
-    const itemTotal = effectivePrice * product.quantity;
+    const effectivePrice = product.price;
+    const originalPrice = product.originalPrice;
+    const itemTotal = product.totalPrice;
     const currentPriceHTML = `<span class="current-price">
-      ${this.formatPrice(effectivePrice)}
-    </span>`;
+    ${this.formatPrice(effectivePrice)}
+  </span>`;
+
+    const originalPriceHTML =
+      originalPrice && originalPrice !== effectivePrice
+        ? `<span class="original-price">
+        <span class="line-through">${this.formatPrice(originalPrice)}</span>
+      </span>`
+        : "";
 
     const parent = await productService.getProductById(product.productId);
     let image = product.image;
@@ -118,37 +130,38 @@ const Basket = {
       : `<div class="product-image placeholder"></div>`;
 
     return `
-      <div class="basket-item" data-product-id="${product.id}">
-        ${imageHTML}
-        <div class="item-details">
-          <h3>${productName}</h3>
-          <div class="sku-info">
-            <small>SKU: ${product.sku}</small>
-          </div>
-          <div class="variant-options">${options}</div>
-          <div class="price-info">
-            ${currentPriceHTML}
-          </div>
+    <div class="basket-item" data-product-id="${product.id}">
+      ${imageHTML}
+      <div class="item-details">
+        <h3>${productName}</h3>
+        <div class="sku-info">
+          <small>SKU: ${product.sku}</small>
         </div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" data-action="decrease">-</button>
-          <input 
-            type="number" 
-            class="quantity-input" 
-            value="${product.quantity}" 
-            min="0" 
-            data-product-id="${product.id}"
-          >
-          <button class="quantity-btn plus" data-action="increase">+</button>
+        <div class="variant-options">${options}</div>
+        <div class="price-info">
+          ${currentPriceHTML}
+          ${originalPriceHTML}
         </div>
-        <div class="item-total">
-          <span>${this.formatPrice(itemTotal)}</span>
-        </div>
-        <button class="remove-btn" data-product-id="${product.id}">
-          ${SETTINGS.label.basket.remove}
-        </button>
       </div>
-`;
+      <div class="quantity-controls">
+        <button class="quantity-btn minus" data-action="decrease">-</button>
+        <input 
+          type="number" 
+          class="quantity-input" 
+          value="${product.quantity}" 
+          min="0" 
+          data-product-id="${product.id}"
+        >
+        <button class="quantity-btn plus" data-action="increase">+</button>
+      </div>
+      <div class="item-total">
+        <span>${this.formatPrice(itemTotal)}</span>
+      </div>
+      <button class="remove-btn" data-product-id="${product.id}">
+        ${SETTINGS.label.basket.remove}
+      </button>
+    </div>
+  `;
   },
 
   async getOptions(
@@ -184,7 +197,6 @@ const Basket = {
   async createBasketSummaryHTML(): Promise<string> {
     const cart = await basketService.getCart(); // cart: InCart
     if (!cart) return "";
-
     const currency = cart.currency || SETTINGS.currentCurrency;
     const totalItems = cart.lineItems.reduce(
       (sum, item) => sum + item.quantity,
@@ -256,11 +268,12 @@ const Basket = {
       this.basketItemsContainer.innerHTML = this.createEmptyBasketHTML();
       return;
     }
-
-    for (const product of this.products) {
-      const itemElement = document.createElement("div");
-      itemElement.innerHTML = await this.createProductItemHTML(product);
-      this.basketItemsContainer.append(itemElement.firstElementChild!);
+    if (this.cartData) {
+      for (const product of this.cartData?.lineItems) {
+        const itemElement = document.createElement("div");
+        itemElement.innerHTML = await this.createProductItemHTML(product);
+        this.basketItemsContainer.append(itemElement.firstElementChild!);
+      }
     }
   },
 
@@ -372,8 +385,8 @@ const Basket = {
         showModalMessage(SETTINGS.label.basket.success);
         await this.updateBasketDisplay();
       }
-    } catch (error) {
-      console.error("Error applying promocode:", error);
+    } catch {
+      // console.error("Error applying promocode:", error);
     } finally {
       this.setLoadingState(false);
     }
@@ -501,12 +514,12 @@ const Basket = {
       const productIndex = this.products.findIndex((p) => p.id === productId);
 
       if (productIndex === -1) {
-        console.error(`Product with ID ${productId} not found in basket`);
+        // console.error(`Product with ID ${productId} not found in basket`);
         return false;
       }
 
       if (newQuantity < 0) {
-        console.error("Quantity cannot be negative");
+        // console.error("Quantity cannot be negative");
         return false;
       }
 
@@ -531,16 +544,16 @@ const Basket = {
 
         return true;
       } else {
-        console.error(
-          `Failed to update quantity for product with ID ${productId}`,
-        );
+        // console.error(
+        //   `Failed to update quantity for product with ID ${productId}`,
+        // );
         return false;
       }
-    } catch (error) {
-      console.error(
-        `Error updating quantity for product with ID ${productId}:`,
-        error,
-      );
+    } catch {
+      // console.error(
+      //   `Error updating quantity for product with ID ${productId}:`,
+      //   error,
+      // );
       return false;
     }
   },
@@ -550,7 +563,7 @@ const Basket = {
       const productIndex = this.products.findIndex((p) => p.id === productId);
 
       if (productIndex === -1) {
-        console.error(`Product with ID ${productId} not found in basket`);
+        // console.error(`Product with ID ${productId} not found in basket`);
         return false;
       }
 
@@ -563,13 +576,13 @@ const Basket = {
         this.products.splice(productIndex, 1);
         return true;
       } else {
-        console.error(
-          `Failed to remove product with ID ${productId} from cart via API`,
-        );
+        // console.error(
+        //   `Failed to remove product with ID ${productId} from cart via API`,
+        // );
         return false;
       }
-    } catch (error) {
-      console.error(`Error removing product with ID ${productId}:`, error);
+    } catch {
+      // console.error(`Error removing product with ID ${productId}:`, error);
       return false;
     }
   },
@@ -597,26 +610,23 @@ const Basket = {
 
       await this.updateBasketDisplay();
       return true;
-    } catch (error) {
-      console.error("Error clearing basket:", error);
+    } catch {
+      // console.error("Error clearing basket:", error);
       return false;
     } finally {
       this.setLoadingState(false);
     }
   },
 
-  formatPrice(priceInCents: number, currencyCode?: string): string {
+  formatPrice(priceInCents: number, currencyCode?: CurrencyCode): string {
     const currency =
       currencyCode || this.cartData?.currency || SETTINGS.currentCurrency;
-    const dollars = priceInCents / 100;
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency,
-    }).format(dollars);
-  },
-
-  getEffectivePrice(product: InLineItem): number {
-    return product.price;
+    return formatPriceWithCurrency(priceInCents, currency as CurrencyCode);
+    // const dollars = priceInCents / 100;
+    // return new Intl.NumberFormat("en-US", {
+    //   style: "currency",
+    //   currency,
+    // }).format(dollars);
   },
 };
 

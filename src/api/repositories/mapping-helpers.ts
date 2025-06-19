@@ -369,24 +369,28 @@ const MappingHelpers = {
   },
 
   toInternalCart(cart: Cart): InCart {
-    console.log("mapping", cart);
     return {
       id: cart.id,
       version: cart.version,
       currency: cart.totalPrice.currencyCode as CurrencyCode,
-      lineItems: cart.lineItems.map(
-        (item): InLineItem => ({
+      lineItems: cart.lineItems.map((item): InLineItem => {
+        const discounted = item.price.discounted?.value.centAmount;
+        const basePrice = item.price.value.centAmount;
+        const effectivePrice = discounted ?? basePrice;
+
+        return {
           id: item.id,
           productId: item.productId,
           name: item.name as LanguageVariants,
           quantity: item.quantity,
-          price: item.price.value.centAmount,
+          price: effectivePrice,
+          originalPrice: discounted ? basePrice : undefined,
           totalPrice: item.totalPrice.centAmount,
           variantId: item.variant.id,
           sku: item.variant.sku,
           image: item.variant.images?.[0]?.url,
-        }),
-      ),
+        };
+      }),
       totalPrice: cart.totalPrice.centAmount,
       subtotalPrice: cart.lineItems.reduce(
         (sum, item) => sum + item.price.value.centAmount * item.quantity,

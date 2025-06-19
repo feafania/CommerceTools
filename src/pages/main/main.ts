@@ -48,14 +48,14 @@ const MainView = {
       return promoContainer;
     }
     const promoTitle = document.createElement("h2");
-    promoTitle.textContent = SETTINGS.label.main.promocodes || "Прамакоды";
+    promoTitle.textContent = SETTINGS.label.main.promocodes;
 
     const promoList = document.createElement("ul");
     promoList.className = "promo-list";
 
     if (discountCodes.length === 0) {
       const empty = document.createElement("p");
-      empty.textContent = "Няма даступных прамакодаў.";
+      empty.textContent = SETTINGS.label.main.noPromocodes;
       promoContainer.append(promoTitle, empty);
     } else {
       for (const code of discountCodes) {

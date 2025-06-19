@@ -22,7 +22,7 @@ export default async function getCartById(
       .execute();
     return response.body;
   } catch (error) {
-    console.error("Getting cart by id failed:", error);
+    // console.error("Getting cart by id failed:", error);
     handleApiError(error);
   }
 }

@@ -1,6 +1,4 @@
 import { InCart } from "@/types/interfaces";
-import { saveLocalState } from "@/utils/helpers";
-import { CART_ID_STORAGE_KEY } from "@/config/constants";
 
 export class BasketStore {
   private cart: InCart | undefined = undefined;
@@ -12,13 +10,6 @@ export class BasketStore {
 
   setCart(cart: InCart | undefined): void {
     this.cart = cart;
-
-    if (cart?.id) {
-      saveLocalState({ key: CART_ID_STORAGE_KEY, value: cart.id });
-    } else {
-      saveLocalState({ key: CART_ID_STORAGE_KEY, value: "" });
-    }
-
     this.notify();
   }
 

@@ -196,15 +196,17 @@ describe("BasketService", () => {
       expect(basketStore.clearCart).toHaveBeenCalled();
     });
 
-    it("should show modal on error", async () => {
+    it("should to return false on error", async () => {
+      // "should show modal on error"
       (authService.getToken as jest.Mock).mockResolvedValue("token");
       (basketStore.getCart as jest.Mock).mockReturnValue(mockedInternalCart);
       (basketRepository.deleteCart as jest.Mock).mockRejectedValue(
         new Error("fail"),
       );
 
-      await basketService.deleteCart();
-      expect(showModalMessage).toHaveBeenCalled();
+      const result = await basketService.deleteCart();
+      // expect(showModalMessage).toHaveBeenCalled();
+      expect(result).toBe(false);
     });
   });
 

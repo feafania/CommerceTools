@@ -153,7 +153,7 @@ class AuthService {
 
       return tokenStore.accessToken;
     } catch (error) {
-      console.error("getting token failed:", error);
+      // console.error("getting token failed:", error);
       if (error instanceof ApiError) {
         showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
       }
@@ -171,7 +171,7 @@ class AuthService {
 
       return anonymousSessionStore.accessToken;
     } catch (error) {
-      console.error("getting anonymous token failed:", error);
+      // console.error("getting anonymous token failed:", error);
       if (error instanceof ApiError) {
         showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
       }
@@ -196,7 +196,7 @@ class AuthService {
         basketStore.setCart(cart);
       }
     } catch (error) {
-      console.error("Anonymous session init failed:", error);
+      // console.error("Anonymous session init failed:", error);
       if (error instanceof ApiError) {
         showModalMessage(`${SETTINGS.label.errors.token}\n${error.message}`);
       }

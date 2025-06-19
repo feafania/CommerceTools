@@ -304,8 +304,8 @@ class BasketService {
       await basketRepository.deleteCart(cart.id, cart.version, token);
       basketStore.clearCart();
       return true;
-    } catch (error) {
-      this.handleError(error, SETTINGS.label.errors.deleteCart);
+    } catch {
+      // this.handleError(error, SETTINGS.label.errors.deleteCart);
       return false;
     }
   }
@@ -354,10 +354,10 @@ class BasketService {
         }
       }
 
-      basketStore.setCart(updatedCart);
+      basketStore.setCart(undefined);
       return updatedCart;
-    } catch (error) {
-      this.handleError(error, SETTINGS.label.errors.clearCart);
+    } catch {
+      // this.handleError(error, SETTINGS.label.errors.clearCart);
     }
   }
 
@@ -386,7 +386,7 @@ class BasketService {
       showModalMessage(`${fallbackMessage}\n${error.message}`);
     } else {
       showModalMessage(fallbackMessage);
-      console.error("Unexpected error in basket service:", error);
+      // console.error("Unexpected error in basket service:", error);
     }
   }
 
@@ -417,10 +417,13 @@ class BasketService {
     }
 
     if (oldCart.id && oldCart.version !== undefined) {
-      await basketRepository.deleteCart(oldCart.id, oldCart.version, token);
+      try {
+        await basketRepository.deleteCart(oldCart.id, oldCart.version, token);
+      } catch {}
     }
 
     const mergedCart = await basketRepository.getCart(token);
+    basketStore.setCart(mergedCart);
     if (!mergedCart) throw new Error("Merged cart retrieval failed.");
 
     return mergedCart;

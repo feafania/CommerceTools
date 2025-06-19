@@ -81,7 +81,6 @@ describe("CatalogView", () => {
       total: productRepositoryResponse.total,
     });
     await CatalogView.render();
-    console.log(CatalogView.title);
 
     expect(CatalogView.container).toBeInstanceOf(HTMLElement);
     expect(CatalogView.title.textContent).toBe(SETTINGS.label.catalog.title);

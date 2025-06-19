@@ -77,8 +77,8 @@ export default class ProductCard {
         if (newCart) {
           this.#basket?.addedToCart();
         }
-      } catch (error) {
-        console.error("Error adding item:", error);
+      } catch {
+        // console.error("Error adding item:", error);
         this.#basket?.errorAddingToCart();
       } finally {
         setTimeout(() => {

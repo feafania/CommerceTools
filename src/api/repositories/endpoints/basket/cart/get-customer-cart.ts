@@ -17,7 +17,7 @@ export default async function getCustomerCart(
     const response = await apiRoot.me().activeCart().get().execute();
     return response.body;
   } catch (error) {
-    console.error("Getting customer cart failed:", error);
+    // console.error("Getting customer cart failed:", error);
     handleApiError(error);
   }
 }

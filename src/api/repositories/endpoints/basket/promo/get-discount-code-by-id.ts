@@ -24,7 +24,7 @@ export default async function getDiscountCodeById(
 
     return response.body;
   } catch (error) {
-    console.error("Fetching discount code by ID failed:", error);
+    // console.error("Fetching discount code by ID failed:", error);
     handleApiError(error);
     return undefined;
   }

@@ -281,8 +281,8 @@ export async function loadUser() {
           return;
         }
         return;
-      } catch (error) {
-        console.error("Couldn't get the user:", error);
+      } catch {
+        // console.error("Couldn't get the user:", error);
       }
     }
 
@@ -301,8 +301,8 @@ export async function loadUser() {
     anonymousSessionStore.clear();
     await authService.initAnonymousSession();
     await basketService.getCart();
-  } catch (error) {
-    console.error("loadUser failed:", error);
+  } catch {
+    // console.error("loadUser failed:", error);
   }
 }
 

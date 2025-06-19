@@ -277,8 +277,8 @@ const ProductView = {
 
       await this.renderProduct();
       showModalMessage(SETTINGS.label.product.addedToCart);
-    } catch (error) {
-      console.error("Error adding product to cart:", error);
+    } catch {
+      // console.error("Error adding product to cart:", error);
     } finally {
       globalOverlay.hide();
     }
@@ -303,8 +303,8 @@ const ProductView = {
 
       await this.renderProduct();
       showModalMessage(SETTINGS.label.product.removedFromCart);
-    } catch (error) {
-      console.error("Error removing product from cart:", error);
+    } catch {
+      // console.error("Error removing product from cart:", error);
     } finally {
       globalOverlay.hide();
     }

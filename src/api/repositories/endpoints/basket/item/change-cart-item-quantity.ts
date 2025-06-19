@@ -30,7 +30,7 @@ export default async function changeCartItemQuantity(
 
     return response.body;
   } catch (error) {
-    console.error("Changing cart line item quantity failed:", error);
+    // console.error("Changing cart line item quantity failed:", error);
     handleApiError(error);
   }
 }

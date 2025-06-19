@@ -33,7 +33,7 @@ const basketRepository = {
             currency: SETTINGS.currentCurrency,
           });
     } catch (error) {
-      console.error("Error getting cart:", error);
+      // console.error("Error getting cart:", error);
       throw error;
     }
   },
@@ -51,7 +51,7 @@ const basketRepository = {
             currency: SETTINGS.currentCurrency,
           });
     } catch (error) {
-      console.error("Error getting cart:", error);
+      // console.error("Error getting cart:", error);
       throw error;
     }
   },
@@ -77,7 +77,7 @@ const basketRepository = {
 
       return undefined;
     } catch (error) {
-      console.error("Error creating cart:", error);
+      // console.error("Error creating cart:", error);
       throw error;
     }
   },
@@ -99,7 +99,7 @@ const basketRepository = {
         return MappingHelpers.toInternalCart(cart);
       }
     } catch (error) {
-      console.error("Error recalculating cart:", error);
+      // console.error("Error recalculating cart:", error);
       throw error;
     }
   },
@@ -123,7 +123,7 @@ const basketRepository = {
         return MappingHelpers.toInternalCart(cart);
       }
     } catch (error) {
-      console.error("Error adding item to cart:", error);
+      // console.error("Error adding item to cart:", error);
       throw error;
     }
   },
@@ -145,7 +145,7 @@ const basketRepository = {
         return MappingHelpers.toInternalCart(cart);
       }
     } catch (error) {
-      console.error("Error removing item from cart:", error);
+      // console.error("Error removing item from cart:", error);
       throw error;
     }
   },
@@ -167,7 +167,7 @@ const basketRepository = {
         return MappingHelpers.toInternalCart(cart);
       }
     } catch (error) {
-      console.error("Error changing item quantity:", error);
+      // console.error("Error changing item quantity:", error);
       throw error;
     }
   },
@@ -189,7 +189,7 @@ const basketRepository = {
         return MappingHelpers.toInternalCart(cart);
       }
     } catch (error) {
-      console.error("Error applying discount code:", error);
+      // console.error("Error applying discount code:", error);
       throw error;
     }
   },
@@ -211,7 +211,7 @@ const basketRepository = {
         return MappingHelpers.toInternalCart(cart);
       }
     } catch (error) {
-      console.error("Error removing discount code:", error);
+      // console.error("Error removing discount code:", error);
       throw error;
     }
   },
@@ -224,7 +224,7 @@ const basketRepository = {
     try {
       await deleteCustomerCart(cartId, version, token);
     } catch (error) {
-      console.error("Error deleting cart:", error);
+      // console.error("Error deleting cart:", error);
       throw error;
     }
   },
@@ -237,7 +237,7 @@ const basketRepository = {
     try {
       await deleteAnonymousCartById(cartId, version, token);
     } catch (error) {
-      console.error("Error deleting cart:", error);
+      // console.error("Error deleting cart:", error);
       throw error;
     }
   },
@@ -291,7 +291,7 @@ const basketRepository = {
 
       return undefined;
     } catch (error) {
-      console.error("Error creating cart:", error);
+      // console.error("Error creating cart:", error);
       throw error;
     }
   },
@@ -308,7 +308,7 @@ const basketRepository = {
 
       return undefined;
     } catch (error) {
-      console.error("Error fetching discount code:", error);
+      // console.error("Error fetching discount code:", error);
       throw error;
     }
   },
