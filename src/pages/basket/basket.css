@@ -31,7 +31,6 @@
   margin-bottom: 20px;
 }
 
-
 .product-image {
   width: 100px;
   height: 100px;
@@ -116,7 +115,9 @@
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .remove-btn:hover,
@@ -209,7 +210,9 @@
   border-radius: 0.5rem;
   background-color: white;
   color: var(--text-color);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 .promocode-input:focus {
