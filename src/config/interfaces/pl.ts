@@ -261,6 +261,47 @@ const pl: AppTranslation = {
     onSignOut: "Zostałeś wylogowany.",
     nothingToUpdate: "Brak zmian. Twój profil jest już aktualny.",
   },
+  about: {
+    title: "O nas",
+    description: "Uczyniliśmy ten projekt możliwym",
+    name1: "Tatsiana Kashko",
+    photo1: "/assets/img/about/Tatsiana.jpg",
+    bio1:
+      "Rozwiązuję problemy o różnym zakresie i poziomie oraz posiadam umiejętności" +
+      " zarówno programisty, jak i analityka biznesowego. Potrafię samodzielnie eksplorować " +
+      "dziedzinę automatyzacji i budować logikę procesów produkcyjnych i biznesowych.",
+    role1: "Budowanie API, infrastruktury zaplecza, tworzenie testów",
+    tasks1: [
+      "Tworzenie usług do wykorzystania API dla SPA",
+      "Testowanie usług API",
+      "Tworzenie funkcjonalności adresów użytkowników",
+      "Tworzenie strony katalogu: lista produktów, filtrowanie, wyszukiwanie, sortowanie",
+      "Tworzenie strony szczegółów",
+      "Wdrażanie przycisków dodawania do koszyka w całym katalogu",
+    ],
+    github1: "https://github.com/feafania",
+    name2: "Anastasiia Zharkova Ozdemir",
+    photo2: "/assets/img/about/Anastasiia.jpg",
+    bio2:
+      "Pracuję jako programista Bitrix od 5 lat." +
+      "Specjalizuję się w pikselowej implementacji projektów UI." +
+      "W tym roku uzyskałem tytuł magistra informatyki stosowanej.",
+    role2:
+      "Kierowanie rozwojem front-endu, komponentami UI, zarządzanie Trello",
+    tasks2: [
+      "Zarządzanie naszym przepływem pracy w Trello",
+      "Tworzenie projektu dla SPA",
+      "Tworzenie formularza rejestracyjnego",
+      "Tworzenie profilu użytkownika i strony zmiany hasła",
+      "Tworzenie strony koszyka",
+      "Tworzenie strony O nas",
+    ],
+    github2: "https://github.com/WaterMemor",
+    projectDescription:
+      "Ten projekt został opracowany w celu zademonstrowania" +
+      "możliwości naszego zespołu w zakresie tworzenia SPA za pomocą TypeScript.",
+    githubBtn: "Profil GitHub",
+  },
 };
 
 export default pl;

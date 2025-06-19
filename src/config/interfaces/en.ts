@@ -256,6 +256,46 @@ const en: AppTranslation = {
     onSignOut: "You have been signed out.",
     nothingToUpdate: "No changes detected. Your profile is already up to date.",
   },
+  about: {
+    title: "About",
+    description: "We made this project possible",
+    name1: "Tatsiana Kashko",
+    photo1: "/assets/img/about/Tatsiana.jpg",
+    bio1:
+      "I solve problems of various scopes and levels and have the skills of" +
+      " both a programmer and a business analyst. I can independently explore the " +
+      "field of automation and build the logic of production and business processes.",
+    role1: "Built API, backend infrastructure, create tests",
+    tasks1: [
+      "Create services to use API for SPA",
+      "Test api services",
+      "Create users' addresses functionality",
+      "Create Catalog page: products' list, filtering, searching, sorting",
+      "Create Detail page",
+      "Implement add to basket buttons all over catalog",
+    ],
+    github1: "https://github.com/feafania",
+    name2: "Anastasiia Zharkova Ozdemir",
+    photo2: "/assets/img/about/Anastasiia.jpg",
+    bio2:
+      "I have been working as a Bitrix developer for 5 years. " +
+      "I'm specializing in pixel-perfect implementation of UI designs." +
+      "This year I earned my Master's degree in Applied Informatics.",
+    role2: "Led frontend development, UI components, manage Trello",
+    tasks2: [
+      "Manage our working flow in Trello",
+      "Create design for SPA",
+      "Create registration form",
+      "Create user profile and change password page",
+      "Create Basket page",
+      "Create About page",
+    ],
+    github2: "https://github.com/WaterMemor",
+    projectDescription:
+      "This project was developed to demonstrate our team's" +
+      "capabilities in creating SPA with typeScript.",
+    githubBtn: "GitHub Profile",
+  },
 };
 
 export default en;

@@ -226,4 +226,22 @@ export interface AppTranslation {
     onSignOut: string;
     nothingToUpdate: string;
   };
+  about: {
+    title: string;
+    description: string;
+    name1: string;
+    photo1: string;
+    bio1: string;
+    role1: string;
+    tasks1: string[];
+    github1: string;
+    name2: string;
+    photo2: string;
+    bio2: string;
+    role2: string;
+    tasks2: string[];
+    github2: string;
+    projectDescription: string;
+    githubBtn: string;
+  };
 }
