@@ -261,6 +261,62 @@ const pl: AppTranslation = {
     onSignOut: "Zostałeś wylogowany.",
     nothingToUpdate: "Brak zmian. Twój profil jest już aktualny.",
   },
+  about: {
+    title: "O nas",
+    description:
+      "Na początku każdego sprintu dzieliliśmy zadania i przypisywaliśmy " +
+      "obowiązki za pomocą Trello, co pomagało wizualizować terminy i śledzić postępy. " +
+      "Nasz zespół codziennie synchronizował się za pośrednictwem Discord, Google Meet lub " +
+      "Telegram, aby omówić ukończoną pracę, rozwiązać problemy i uzgodnić rozwiązania. " +
+      "Dzięki zachowaniu przejrzystości w Trello i pozostawaniu w kontakcie przez cały dzień " +
+      "mogliśmy wspólnie przeglądać wyniki pod koniec każdego sprintu. To zdyscyplinowane, " +
+      "ale elastyczne podejście do pracy zespołowej zapewniło terminową realizację projektu i " +
+      "osiągnięcie wszystkich celów",
+    role: "Rola",
+    tasksDone: "Zadania wykonane",
+    name1: "Tatsiana Kashko",
+    photo1: "/assets/img/about/Tatsiana.jpg",
+    bio1:
+      "Mam wykształcenie wyższe w zakresie cybernetyki ekonomicznej. Pracuję " +
+      "jako programista automatyki przedsiębiorstw od ponad 25 lat. Moje obowiązki funkcjonalne " +
+      "częściowo obejmowały wykonywanie prac związanych z administracją " +
+      "siecią komputerową firmy.",
+    role1:
+      "Lider zespołu, budowanie API, infrastruktury zaplecza, tworzenie testów",
+    tasks1: [
+      "Tworzenie usług do wykorzystania API dla SPA",
+      "Testowanie usług API",
+      "Utwórz trasę dla SPA",
+      "Tworzenie funkcjonalności adresów użytkowników",
+      "Tworzenie strony katalogu: lista produktów, filtrowanie, wyszukiwanie, sortowanie",
+      "Tworzenie strony szczegółów",
+      "Wdrażanie przycisków dodawania do koszyka w całym katalogu",
+    ],
+    github1: "https://github.com/feafania",
+    name2: "Anastasiia Zharkova Ozdemir",
+    photo2: "/assets/img/about/Anastasiia.jpg",
+    bio2:
+      "Pracuję jako programista Bitrix od 5 lat, " +
+      "specjalizuję się w pikselowej implementacji projektów UI i " +
+      "niestandardowych rozwiązaniach dla witryn”. " +
+      "W tym roku uzyskałem tytuł magistra informatyki stosowanej",
+    role2:
+      "Kierował rozwojem interfejsu, komponentów UI, projektowaniem, zarządzanie projektami",
+    tasks2: [
+      "Zarządzanie naszym przepływem pracy w Trello",
+      "Tworzenie projektu dla SPA",
+      "Tworzenie formularza rejestracyjnego",
+      "Tworzenie profilu użytkownika",
+      "Tworzenie strony zmiany hasła",
+      "Tworzenie strony koszyka",
+      "Tworzenie strony O nas",
+    ],
+    github2: "https://github.com/WaterMemor",
+    projectDescription:
+      "Ten projekt został opracowany w celu zademonstrowania" +
+      "możliwości naszego zespołu w zakresie tworzenia SPA za pomocą TypeScript.",
+    githubBtn: "Profil GitHub",
+  },
 };
 
 export default pl;

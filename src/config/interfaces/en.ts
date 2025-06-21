@@ -256,6 +256,60 @@ const en: AppTranslation = {
     onSignOut: "You have been signed out.",
     nothingToUpdate: "No changes detected. Your profile is already up to date.",
   },
+  about: {
+    title: "About us",
+    description:
+      "At the beginning of each sprint, we divided tasks and" +
+      " assigned responsibilities using Trello, which helped visualize deadlines " +
+      "and track progress. Our team held daily syncs via Discord, Google Meet, or " +
+      "Telegram to discuss completed work, address blockers, and align on solutions. " +
+      "By maintaining transparency in Trello and staying connected throughout the day, " +
+      "we could collaboratively review outcomes at the end of each sprint. This disciplined" +
+      " yet adaptable approach to teamwork ensured the project’s on-time delivery and" +
+      " achievement of all objectives.",
+    role: "Role",
+    tasksDone: "Tasks done",
+    name1: "Tatsiana Kashko",
+    photo1: "/assets/img/about/Tatsiana.jpg",
+    bio1:
+      "I have a university degree in Economic Cybernetics. I have been working " +
+      "as an enterprise automation programmer for over 25 years. My functional " +
+      "responsibilities partially included performing work on the administration " +
+      "of the company's computer network.",
+    role1: "Team-leader, built API, backend infrastructure, create tests",
+    tasks1: [
+      "Create services to use API for SPA",
+      "Test API services",
+      "Create Routing for SPA",
+      "Create users' addresses functionality",
+      "Create Catalog page: products' list, filtering, searching, sorting",
+      "Create Detail page",
+      "Implement add to basket buttons all over catalog",
+    ],
+    github1: "https://github.com/feafania",
+    name2: "Anastasiia Zharkova Ozdemir",
+    photo2: "/assets/img/about/Anastasiia.jpg",
+    bio2:
+      "I have been working as a Bitrix developer for 5 years, " +
+      "specializing in pixel-perfect implementation of UI designs and " +
+      "custom solutions for sites. " +
+      "This year I earned my Master's degree in Applied Informatics.",
+    role2: "Led frontend development, UI components, design, project managment",
+    tasks2: [
+      "Manage our workflow in Trello",
+      "Create design for SPA",
+      "Create registration form",
+      "Create User profile",
+      "Create Change password page",
+      "Create Basket page",
+      "Create About page",
+    ],
+    github2: "https://github.com/WaterMemor",
+    projectDescription:
+      "This project was developed to demonstrate our team's" +
+      "capabilities in creating SPA with typeScript.",
+    githubBtn: "GitHub Profile",
+  },
 };
 
 export default en;

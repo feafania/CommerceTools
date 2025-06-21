@@ -46,6 +46,7 @@
 
 .rsschool-logo {
   width: 70px;
+  transition: transform 0.3s ease;
 }
 
 .rsschool-logo:hover {
