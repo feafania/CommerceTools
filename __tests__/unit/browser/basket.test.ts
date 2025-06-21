@@ -19,6 +19,7 @@ jest.mock("@/stores/basket-store");
 jest.mock("@/components/modal-window/modal-window");
 jest.mock("@/assets/svg/eye-password-hide.inline.svg", () => "mocked-svg");
 jest.mock("@/assets/svg/eye-password-show.inline.svg", () => "mocked-svg");
+jest.mock("@/assets/svg/rs-school-logo.inline.svg", () => "mocked-svg");
 jest.mock("@/config/settings", () => ({
   SETTINGS: mockSETTINGS,
 }));

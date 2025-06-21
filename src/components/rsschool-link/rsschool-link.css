@@ -1,0 +1,35 @@
+.rsschool {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.rsschool-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  gap: 6px;
+}
+
+.rsschool-logo {
+  width: 70px;
+  transition: transform 0.3s ease;
+}
+
+.rsschool-logo:hover {
+  transform: scale(1.15);
+}
+
+.rsschool-name {
+  display: inline-block;
+  font-size: 0.7rem;
+}
+
+@media (max-width: 380px) {
+  .footer p {
+    margin: 0 auto;
+  }
+}

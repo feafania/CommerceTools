@@ -264,33 +264,35 @@ const pl: AppTranslation = {
   about: {
     title: "O nas",
     description:
-      "Na początku każdego sprintu dzieliliśmy zadania i przypisywaliśmy " +
-      "obowiązki za pomocą Trello, co pomagało wizualizować terminy i śledzić postępy. " +
-      "Nasz zespół codziennie synchronizował się za pośrednictwem Discord, Google Meet lub " +
-      "Telegram, aby omówić ukończoną pracę, rozwiązać problemy i uzgodnić rozwiązania. " +
-      "Dzięki zachowaniu przejrzystości w Trello i pozostawaniu w kontakcie przez cały dzień " +
-      "mogliśmy wspólnie przeglądać wyniki pod koniec każdego sprintu. To zdyscyplinowane, " +
-      "ale elastyczne podejście do pracy zespołowej zapewniło terminową realizację projektu i " +
-      "osiągnięcie wszystkich celów",
+      "Na początku każdego sprintu dzieliliśmy zadania i" +
+      "przypisane obowiązki za pomocą Trello, które pomogły w wizualizacji terminów" +
+      "i śledzić postępy. Nasz zespół organizował codzienne synchronizacje za pośrednictwem Discord, Google Meet lub" +
+      "Telegram, aby omówić zakończoną pracę, blokery adresów i wyrównać rozwiązania. " +
+      "Utrzymując przejrzystość w Trello i pozostając w kontakcie przez cały dzień" +
+      "moglibyśmy wspólnie przeglądać wyniki pod koniec każdego sprintu. Ten zdyscyplinowany" +
+      "jednak elastyczne podejście do pracy zespołowej zapewniło terminową realizację projektu i" +
+      "osiągnięcie wszystkich celów.",
     role: "Rola",
     tasksDone: "Zadania wykonane",
     name1: "Tatsiana Kashko",
     photo1: "/assets/img/about/Tatsiana.jpg",
     bio1:
-      "Mam wykształcenie wyższe w zakresie cybernetyki ekonomicznej. Pracuję " +
-      "jako programista automatyki przedsiębiorstw od ponad 25 lat. Moje obowiązki funkcjonalne " +
-      "częściowo obejmowały wykonywanie prac związanych z administracją " +
-      "siecią komputerową firmy.",
+      "Ukończyłem studia wyższe na kierunku Cybernetyka Ekonomiczna i od ponad 25 lat " +
+      "pracuję jako programista automatyzacji procesów w przedsiębiorstwach. Moje obowiązki " +
+      "częściowo obejmowały również administrację siecią komputerową firmy. " +
+      "Rozwiązuję problemy o różnym zakresie i poziomie trudności, posiadając umiejętności " +
+      "zarówno programisty, jak i analityka biznesowego. Potrafię samodzielnie analizować " +
+      "obszary do automatyzacji i projektować logikę procesów produkcyjnych oraz biznesowych.",
     role1:
       "Lider zespołu, budowanie API, infrastruktury zaplecza, tworzenie testów",
     tasks1: [
-      "Tworzenie usług do wykorzystania API dla SPA",
+      "Usługi korzystania z API dla SPA",
       "Testowanie usług API",
-      "Utwórz trasę dla SPA",
-      "Tworzenie funkcjonalności adresów użytkowników",
-      "Tworzenie strony katalogu: lista produktów, filtrowanie, wyszukiwanie, sortowanie",
-      "Tworzenie strony szczegółów",
-      "Wdrażanie przycisków dodawania do koszyka w całym katalogu",
+      "Routing dla SPA",
+      "Funkcjonalność adresów użytkowników",
+      "Katalog stron: lista produktów, filtrowanie, wyszukiwanie, sortowanie",
+      "Strona szczegółów",
+      "Przycisk Dodaj do koszyka w całym katalogu",
     ],
     github1: "https://github.com/feafania",
     name2: "Anastasiia Zharkova Ozdemir",
@@ -303,17 +305,17 @@ const pl: AppTranslation = {
     role2:
       "Kierował rozwojem interfejsu, komponentów UI, projektowaniem, zarządzanie projektami",
     tasks2: [
-      "Zarządzanie naszym przepływem pracy w Trello",
-      "Tworzenie projektu dla SPA",
-      "Tworzenie formularza rejestracyjnego",
-      "Tworzenie profilu użytkownika",
-      "Tworzenie strony zmiany hasła",
-      "Tworzenie strony koszyka",
-      "Tworzenie strony O nas",
+      "Zarządzaj naszym przepływem pracy w Trello",
+      "Projekt dla SPA",
+      "Formularz rejestracyjny",
+      "Profil użytkownika",
+      "Zmień stronę hasła",
+      "Strona koszyka",
+      "Strona o nas",
     ],
     github2: "https://github.com/WaterMemor",
     projectDescription:
-      "Ten projekt został opracowany w celu zademonstrowania" +
+      "Ten projekt został opracowany w celu zademonstrowania " +
       "możliwości naszego zespołu w zakresie tworzenia SPA za pomocą TypeScript.",
     githubBtn: "Profil GitHub",
   },

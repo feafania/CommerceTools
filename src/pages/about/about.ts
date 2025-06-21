@@ -1,35 +1,39 @@
 import "./about.css";
-import logoInline from "@/assets/svg/rs-school-logo.inline.svg";
 import { SETTINGS } from "@/config/settings";
-export const aboutData = {
-  title: SETTINGS.label.about.title,
-  description: SETTINGS.label.about.description,
-  members: [
-    {
-      id: 1,
-      name: SETTINGS.label.about.name1,
-      photo: SETTINGS.label.about.photo1,
-      bio: SETTINGS.label.about.bio1,
-      role: SETTINGS.label.about.role1,
-      tasks: SETTINGS.label.about.tasks1,
-      github: SETTINGS.label.about.github1,
-    },
-    {
-      id: 2,
-      name: SETTINGS.label.about.name2,
-      photo: SETTINGS.label.about.photo2,
-      bio: SETTINGS.label.about.bio2,
-      role: SETTINGS.label.about.role2,
-      tasks: SETTINGS.label.about.tasks2,
-      github: SETTINGS.label.about.github2,
-    },
-  ],
-  projectDescription: SETTINGS.label.about.projectDescription,
-};
+import { AboutData, AboutMember } from "@/types/types";
+import { createRSSchoolLink } from "@/components/rsschool-link/rsschool-link";
 
-function createMemberPhoto(
-  member: (typeof aboutData.members)[0],
-): HTMLImageElement {
+function getAboutData(): AboutData {
+  const label = SETTINGS.label.about;
+
+  return {
+    title: label.title,
+    description: label.description,
+    projectDescription: label.projectDescription,
+    members: [
+      {
+        id: 1,
+        name: label.name1,
+        photo: label.photo1,
+        bio: label.bio1,
+        role: label.role1,
+        tasks: label.tasks1,
+        github: label.github1,
+      },
+      {
+        id: 2,
+        name: label.name2,
+        photo: label.photo2,
+        bio: label.bio2,
+        role: label.role2,
+        tasks: label.tasks2,
+        github: label.github2,
+      },
+    ],
+  };
+}
+
+function createMemberPhoto(member: AboutMember): HTMLImageElement {
   const photo = new Image();
   photo.src = member.photo;
   photo.alt = `${member.name}'s profile`;
@@ -37,7 +41,7 @@ function createMemberPhoto(
   return photo;
 }
 
-function createMemberInfo(member: (typeof aboutData.members)[0]): HTMLElement {
+function createMemberInfo(member: AboutMember): HTMLElement {
   const infoContainer = document.createElement("div");
 
   const name = document.createElement("h3");
@@ -82,7 +86,7 @@ function createGitHubLink(githubUrl: string): HTMLAnchorElement {
   return github;
 }
 
-function createMemberCard(member: (typeof aboutData.members)[0]): HTMLElement {
+function createMemberCard(member: AboutMember): HTMLElement {
   const memberCard = document.createElement("div");
   memberCard.className = "member-card";
 
@@ -107,49 +111,27 @@ export default async function renderAboutView(): Promise<HTMLElement> {
 
   const title = document.createElement("h2");
   title.className = "about-title";
-  title.textContent = aboutData.title;
+  title.textContent = getAboutData().title;
   container.append(title);
 
-  const rsschoolElement = document.createElement("div");
-  rsschoolElement.className = "rsschool";
-
-  const rsschoolLink = document.createElement("a");
-  rsschoolLink.className = "rsschool-link";
-  rsschoolLink.target = "_blank";
-  rsschoolLink.href = "https://rs.school/courses/javascript";
-  rsschoolLink.rel = "noopener noreferrer";
-  rsschoolElement.append(rsschoolLink);
-
-  const parser = new DOMParser();
-  const rsschoolDocument = parser.parseFromString(logoInline, "image/svg+xml");
-
-  const rsschoolImg = rsschoolDocument.documentElement;
-  rsschoolImg.classList.add("rsschool-logo");
-  rsschoolImg.setAttribute("title", "RS School");
-
-  const rsschoolName = document.createElement("span");
-  rsschoolName.className = "rsschool-name";
-  rsschoolName.textContent = "Rolling Scopes School";
-  rsschoolLink.append(rsschoolImg, rsschoolName);
-  container.append(rsschoolLink);
-
-  const description = document.createElement("p");
-  description.className = "about-description";
-  description.textContent = aboutData.description;
-  container.append(description);
+  container.append(createRSSchoolLink());
 
   const teamContainer = document.createElement("div");
   teamContainer.className = "team-container";
 
-  for (const member of aboutData.members) {
+  for (const member of getAboutData().members) {
     teamContainer.append(createMemberCard(member));
   }
-
   container.append(teamContainer);
+
+  const description = document.createElement("p");
+  description.className = "about-description";
+  description.textContent = getAboutData().description;
+  container.append(description);
 
   const projectDesc = document.createElement("p");
   projectDesc.className = "project-description";
-  projectDesc.textContent = aboutData.projectDescription;
+  projectDesc.textContent = getAboutData().projectDescription;
   container.append(projectDesc);
 
   return container;

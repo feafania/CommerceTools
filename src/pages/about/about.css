@@ -52,7 +52,6 @@
   }
 }
 
-/* about.css */
 .about-view {
   padding: 2rem;
   max-width: 1200px;
@@ -162,7 +161,17 @@
   border-top: 1px solid #ecf0f1;
 }
 
-.rsschool-logo {
+#about .rsschool-link {
+  text-decoration: none;
+  color: var(--text-color);
+  transition: color 0.3s;
+}
+
+#about .rsschool-link:hover {
+  color: var(--main-color-hover);
+}
+
+#about .rsschool-logo {
   width: 120px !important;
 }
 

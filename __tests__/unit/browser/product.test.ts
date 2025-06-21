@@ -22,7 +22,7 @@ jest.mock("@/config/settings", () => ({
 
 jest.mock("@/assets/svg/eye-password-hide.inline.svg", () => "mocked-svg");
 jest.mock("@/assets/svg/eye-password-show.inline.svg", () => "mocked-svg");
-
+jest.mock("@/assets/svg/rs-school-logo.inline.svg", () => "mocked-svg");
 const mockedRepository = productRepository as jest.Mocked<
   typeof productRepository
 >;

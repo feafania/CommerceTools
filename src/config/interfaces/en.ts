@@ -272,19 +272,21 @@ const en: AppTranslation = {
     name1: "Tatsiana Kashko",
     photo1: "/assets/img/about/Tatsiana.jpg",
     bio1:
-      "I have a university degree in Economic Cybernetics. I have been working " +
-      "as an enterprise automation programmer for over 25 years. My functional " +
-      "responsibilities partially included performing work on the administration " +
-      "of the company's computer network.",
+      "My university degree is in Economic Cybernetics, and I have been working " +
+      "as an enterprise automation programmer for over 25 years. My responsibilities have " +
+      "also included aspects of computer network administration within the company. " +
+      "I am experienced in tackling challenges of varying complexity and possess the skill set " +
+      "of both a software developer and a business analyst. I am capable of independently " +
+      "researching automation domains and designing the logic behind production and business processes.",
     role1: "Team-leader, built API, backend infrastructure, create tests",
     tasks1: [
-      "Create services to use API for SPA",
-      "Test API services",
-      "Create Routing for SPA",
-      "Create users' addresses functionality",
-      "Create Catalog page: products' list, filtering, searching, sorting",
-      "Create Detail page",
-      "Implement add to basket buttons all over catalog",
+      "Services to use API for SPA",
+      "API services testing",
+      "Routing for SPA",
+      "Users' addresses functionality",
+      "Catalog page: products list, filtering, searching, sorting",
+      "Detail page",
+      "Add to basket button all over catalog",
     ],
     github1: "https://github.com/feafania",
     name2: "Anastasiia Zharkova Ozdemir",
@@ -297,16 +299,16 @@ const en: AppTranslation = {
     role2: "Led frontend development, UI components, design, project managment",
     tasks2: [
       "Manage our workflow in Trello",
-      "Create design for SPA",
-      "Create registration form",
-      "Create User profile",
-      "Create Change password page",
-      "Create Basket page",
-      "Create About page",
+      "Design for SPA",
+      "Registration form",
+      "User profile",
+      "Change password page",
+      "Basket page",
+      "About Us page",
     ],
     github2: "https://github.com/WaterMemor",
     projectDescription:
-      "This project was developed to demonstrate our team's" +
+      "This project was developed to demonstrate our team's " +
       "capabilities in creating SPA with typeScript.",
     githubBtn: "GitHub Profile",
   },
