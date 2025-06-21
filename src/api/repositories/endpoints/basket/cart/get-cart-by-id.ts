@@ -24,5 +24,6 @@ export default async function getCartById(
   } catch (error) {
     // console.error("Getting cart by id failed:", error);
     handleApiError(error);
+    return undefined;
   }
 }

@@ -31,5 +31,6 @@ export default async function addItemToCart(
   } catch (error) {
     // console.error("Adding item to cart failed:", error);
     handleApiError(error);
+    return undefined;
   }
 }

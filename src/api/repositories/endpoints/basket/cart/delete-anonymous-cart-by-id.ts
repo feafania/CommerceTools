@@ -23,5 +23,6 @@ export default async function deleteAnonymousCartById(
   } catch (error) {
     // console.error("Deleting cart by id failed:", error);
     handleApiError(error);
+    return undefined;
   }
 }

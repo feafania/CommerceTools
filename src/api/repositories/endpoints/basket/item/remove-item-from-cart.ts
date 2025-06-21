@@ -29,5 +29,6 @@ export default async function removeItemFromCart(
   } catch (error) {
     // console.error("Adding item to cart failed:", error);
     handleApiError(error);
+    return undefined;
   }
 }
