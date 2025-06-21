@@ -52,7 +52,7 @@ function createMemberInfo(member: (typeof aboutData.members)[0]): HTMLElement {
 
   const role = document.createElement("p");
   role.className = "member-role";
-  role.textContent = `Role: ${member.role}`;
+  role.textContent = `${SETTINGS.label.about.role}: ${member.role}`;
   infoContainer.append(role);
 
   return infoContainer;
@@ -91,7 +91,7 @@ function createMemberCard(member: (typeof aboutData.members)[0]): HTMLElement {
 
   const tasksTitle = document.createElement("h4");
   tasksTitle.className = "tasks-title";
-  tasksTitle.textContent = "Tasks done:";
+  tasksTitle.textContent = SETTINGS.label.about.tasksDone + ":";
   memberCard.append(tasksTitle);
 
   memberCard.append(createTasksList(member.tasks));

@@ -229,6 +229,8 @@ export interface AppTranslation {
   about: {
     title: string;
     description: string;
+    role: string;
+    tasksDone: string;
     name1: string;
     photo1: string;
     bio1: string;

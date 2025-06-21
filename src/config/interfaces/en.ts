@@ -257,7 +257,7 @@ const en: AppTranslation = {
     nothingToUpdate: "No changes detected. Your profile is already up to date.",
   },
   about: {
-    title: "About",
+    title: "About us",
     description:
       "At the beginning of each sprint, we divided tasks and" +
       " assigned responsibilities using Trello, which helped visualize deadlines " +
@@ -267,6 +267,8 @@ const en: AppTranslation = {
       "we could collaboratively review outcomes at the end of each sprint. This disciplined" +
       " yet adaptable approach to teamwork ensured the project’s on-time delivery and" +
       " achievement of all objectives.",
+    role: "Role",
+    tasksDone: "Tasks done",
     name1: "Tatsiana Kashko",
     photo1: "/assets/img/about/Tatsiana.jpg",
     bio1:

@@ -272,6 +272,8 @@ const pl: AppTranslation = {
       "mogliśmy wspólnie przeglądać wyniki pod koniec każdego sprintu. To zdyscyplinowane, " +
       "ale elastyczne podejście do pracy zespołowej zapewniło terminową realizację projektu i " +
       "osiągnięcie wszystkich celów",
+    role: "Rola",
+    tasksDone: "Zadania wykonane",
     name1: "Tatsiana Kashko",
     photo1: "/assets/img/about/Tatsiana.jpg",
     bio1:
