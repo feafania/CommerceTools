@@ -263,17 +263,28 @@ const pl: AppTranslation = {
   },
   about: {
     title: "O nas",
-    description: "Uczyniliśmy ten projekt możliwym",
+    description:
+      "Na początku każdego sprintu dzieliliśmy zadania i przypisywaliśmy " +
+      "obowiązki za pomocą Trello, co pomagało wizualizować terminy i śledzić postępy. " +
+      "Nasz zespół codziennie synchronizował się za pośrednictwem Discord, Google Meet lub " +
+      "Telegram, aby omówić ukończoną pracę, rozwiązać problemy i uzgodnić rozwiązania. " +
+      "Dzięki zachowaniu przejrzystości w Trello i pozostawaniu w kontakcie przez cały dzień " +
+      "mogliśmy wspólnie przeglądać wyniki pod koniec każdego sprintu. To zdyscyplinowane, " +
+      "ale elastyczne podejście do pracy zespołowej zapewniło terminową realizację projektu i " +
+      "osiągnięcie wszystkich celów",
     name1: "Tatsiana Kashko",
     photo1: "/assets/img/about/Tatsiana.jpg",
     bio1:
-      "Rozwiązuję problemy o różnym zakresie i poziomie oraz posiadam umiejętności" +
-      " zarówno programisty, jak i analityka biznesowego. Potrafię samodzielnie eksplorować " +
-      "dziedzinę automatyzacji i budować logikę procesów produkcyjnych i biznesowych.",
-    role1: "Budowanie API, infrastruktury zaplecza, tworzenie testów",
+      "Mam wykształcenie wyższe w zakresie cybernetyki ekonomicznej. Pracuję " +
+      "jako programista automatyki przedsiębiorstw od ponad 25 lat. Moje obowiązki funkcjonalne " +
+      "częściowo obejmowały wykonywanie prac związanych z administracją " +
+      "siecią komputerową firmy.",
+    role1:
+      "Lider zespołu, budowanie API, infrastruktury zaplecza, tworzenie testów",
     tasks1: [
       "Tworzenie usług do wykorzystania API dla SPA",
       "Testowanie usług API",
+      "Utwórz trasę dla SPA",
       "Tworzenie funkcjonalności adresów użytkowników",
       "Tworzenie strony katalogu: lista produktów, filtrowanie, wyszukiwanie, sortowanie",
       "Tworzenie strony szczegółów",
@@ -283,16 +294,18 @@ const pl: AppTranslation = {
     name2: "Anastasiia Zharkova Ozdemir",
     photo2: "/assets/img/about/Anastasiia.jpg",
     bio2:
-      "Pracuję jako programista Bitrix od 5 lat." +
-      "Specjalizuję się w pikselowej implementacji projektów UI." +
-      "W tym roku uzyskałem tytuł magistra informatyki stosowanej.",
+      "Pracuję jako programista Bitrix od 5 lat, " +
+      "specjalizuję się w pikselowej implementacji projektów UI i " +
+      "niestandardowych rozwiązaniach dla witryn”. " +
+      "W tym roku uzyskałem tytuł magistra informatyki stosowanej",
     role2:
-      "Kierowanie rozwojem front-endu, komponentami UI, zarządzanie Trello",
+      "Kierował rozwojem interfejsu, komponentów UI, projektowaniem, zarządzanie projektami",
     tasks2: [
       "Zarządzanie naszym przepływem pracy w Trello",
       "Tworzenie projektu dla SPA",
       "Tworzenie formularza rejestracyjnego",
-      "Tworzenie profilu użytkownika i strony zmiany hasła",
+      "Tworzenie profilu użytkownika",
+      "Tworzenie strony zmiany hasła",
       "Tworzenie strony koszyka",
       "Tworzenie strony O nas",
     ],
