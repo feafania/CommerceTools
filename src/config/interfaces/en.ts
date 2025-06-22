@@ -255,36 +255,34 @@ const en: AppTranslation = {
     onSignUp: "Your account has been created.",
     onSignOut: "You have been signed out.",
     nothingToUpdate: "No changes detected. Your profile is already up to date.",
+    onClearBasket: "Are you sure you want to clear the cart?",
   },
   about: {
     title: "About us",
-    description:
-      "At the beginning of each sprint, we divided tasks and" +
-      " assigned responsibilities using Trello, which helped visualize deadlines " +
-      "and track progress. Our team held daily syncs via Discord, Google Meet, or " +
-      "Telegram to discuss completed work, address blockers, and align on solutions. " +
-      "By maintaining transparency in Trello and staying connected throughout the day, " +
-      "we could collaboratively review outcomes at the end of each sprint. This disciplined" +
-      " yet adaptable approach to teamwork ensured the project’s on-time delivery and" +
-      " achievement of all objectives.",
+    introduction:
+      "We are a small but dedicated development team focused on delivering a polished project. " +
+      "Combining experience in UI development and API integration, we prioritized code quality, " +
+      "user experience, and effective collaboration. Clear communication helped us turn a complex idea " +
+      "into a functional Single Page Application (SPA).",
     role: "Role",
     tasksDone: "Tasks done",
     name1: "Tatsiana Kashko",
     photo1: "/assets/img/about/Tatsiana.jpg",
     bio1:
-      "I have a university degree in Economic Cybernetics. I have been working " +
-      "as an enterprise automation programmer for over 25 years. My functional " +
-      "responsibilities partially included performing work on the administration " +
-      "of the company's computer network.",
-    role1: "Team-leader, built API, backend infrastructure, create tests",
+      "My university degree is in Economic Cybernetics, and for over 25 years I have worked " +
+      "as an enterprise automation programmer. My responsibilities have included not only software development, " +
+      "but also aspects of computer network administration within the company. " +
+      "Experienced in tackling challenges of varying complexity, combining the skills of both a software developer and a business analyst. ",
+    role1:
+      "Team leader, API integration architect, frontend service layer, testing",
     tasks1: [
-      "Create services to use API for SPA",
-      "Test API services",
-      "Create Routing for SPA",
-      "Create users' addresses functionality",
-      "Create Catalog page: products' list, filtering, searching, sorting",
-      "Create Detail page",
-      "Implement add to basket buttons all over catalog",
+      "API integration layer for SPA (services and repositories)",
+      "Unit tests for API services",
+      "Routing and navigation setup for SPA",
+      "Product catalog page with filtering, sorting, and search",
+      "Product detail page with dynamic data loading",
+      "User addresses management (API and UI integration)",
+      "Promocode functionality (integration and validation)",
     ],
     github1: "https://github.com/feafania",
     name2: "Anastasiia Zharkova Ozdemir",
@@ -294,19 +292,26 @@ const en: AppTranslation = {
       "specializing in pixel-perfect implementation of UI designs and " +
       "custom solutions for sites. " +
       "This year I earned my Master's degree in Applied Informatics.",
-    role2: "Led frontend development, UI components, design, project managment",
+    role2: "Frontend developer, UI pages, design, Trello workflow support",
     tasks2: [
-      "Manage our workflow in Trello",
-      "Create design for SPA",
-      "Create registration form",
-      "Create User profile",
-      "Create Change password page",
-      "Create Basket page",
-      "Create About page",
+      "Manage project workflow and tasks in Trello",
+      "UI/UX design for SPA with focus on responsive and adaptive layouts",
+      "Implementation of Registration form",
+      "User profile page development",
+      "Change password functionality",
+      "Basket page implementation",
+      "About Us page creation",
     ],
     github2: "https://github.com/WaterMemor",
+    description:
+      "At the start of each sprint, we divided tasks and assigned responsibilities using Trello, " +
+      "which helped us clearly visualize deadlines and monitor progress. Our team held daily syncs " +
+      "via Discord, Google Meet, or Telegram to discuss completed work, resolve blockers, and " +
+      "align on next steps. By maintaining transparency in Trello and staying connected throughout the day, " +
+      "we collaboratively reviewed results at the end of each sprint. This disciplined yet flexible " +
+      "approach to teamwork ensured timely project delivery and the successful achievement of all goals.",
     projectDescription:
-      "This project was developed to demonstrate our team's" +
+      "This project was developed to demonstrate our team's " +
       "capabilities in creating SPA with typeScript.",
     githubBtn: "GitHub Profile",
   },

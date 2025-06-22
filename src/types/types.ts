@@ -85,3 +85,20 @@ export type CartContextType = {
   cart: InCart | undefined;
   setCart: (cart: InCart | undefined) => void;
 };
+
+export type AboutMember = {
+  id: number;
+  name: string;
+  photo: string;
+  bio: string;
+  role: string;
+  tasks: string[];
+  github: string;
+};
+
+export type AboutData = {
+  title: string;
+  description: string;
+  members: AboutMember[];
+  projectDescription: string;
+};

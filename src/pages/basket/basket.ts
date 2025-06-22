@@ -10,6 +10,7 @@ import showModalMessage from "@/components/modal-window/modal-window";
 import basketService from "@/api/services/basket-service";
 import productService from "@/api/services/product-service";
 import { CurrencyCode } from "@/types/enum";
+import globalOverlay from "@/components/global-overlay/global-overlay";
 
 const Basket = {
   products: [] as InLineItem[],
@@ -312,39 +313,39 @@ const Basket = {
   },
 
   async render(): Promise<HTMLElement | undefined> {
+    globalOverlay.show();
     await this.initializeWithBasketService();
+    removeAllChildren(this.container);
+    this.container.className = "basket-container";
 
-    if (!this.container.hasChildNodes()) {
-      this.container.className = "basket-container";
+    const header = document.createElement("div");
+    header.className = "basket-header";
+    header.innerHTML = "<h2>" + SETTINGS.label.basket.title + "</h2>";
 
-      const header = document.createElement("div");
-      header.className = "basket-header";
-      header.innerHTML = "<h2>" + SETTINGS.label.basket.title + "</h2>";
+    this.basketItemsContainer = document.createElement("div");
+    this.basketItemsContainer.className = "basket-items";
 
-      this.basketItemsContainer = document.createElement("div");
-      this.basketItemsContainer.className = "basket-items";
+    this.promocodeContainer = document.createElement("div");
+    this.promocodeContainer.className = "promocode-container";
 
-      this.promocodeContainer = document.createElement("div");
-      this.promocodeContainer.className = "promocode-container";
+    this.basketSummaryContainer = document.createElement("div");
 
-      this.basketSummaryContainer = document.createElement("div");
+    this.clearButton = document.createElement("button");
+    this.clearButton.className = "clear-basket-btn";
+    this.clearButton.textContent = SETTINGS.label.basket.clear;
+    this.clearButton.addEventListener("click", () => this.clearBasket());
 
-      this.clearButton = document.createElement("button");
-      this.clearButton.className = "clear-basket-btn";
-      this.clearButton.textContent = SETTINGS.label.basket.clear;
-      this.clearButton.addEventListener("click", () => this.clearBasket());
-
-      this.container.append(
-        header,
-        this.basketItemsContainer,
-        this.promocodeContainer,
-        this.basketSummaryContainer,
-        this.clearButton,
-      );
-    }
+    this.container.append(
+      header,
+      this.basketItemsContainer,
+      this.promocodeContainer,
+      this.basketSummaryContainer,
+      this.clearButton,
+    );
 
     // Always update the display with current data
     await this.updateBasketDisplay();
+    globalOverlay.hide();
 
     return this.container;
   },
@@ -591,31 +592,35 @@ const Basket = {
     return this.products.length === 0;
   },
 
-  async clearBasket(): Promise<boolean> {
+  clearBasket(): void {
     if (this.isLoading) {
-      return false;
+      return;
     }
+    showModalMessage(SETTINGS.label.messages.onClearBasket, {
+      showCancel: true,
+      onOk: async () => {
+        try {
+          if (this.products.length === 0) {
+            return true;
+          }
 
-    try {
-      if (this.products.length === 0) {
-        return true;
-      }
+          this.setLoadingState(true);
+          await basketService.clearCart();
 
-      this.setLoadingState(true);
-      await basketService.clearCart();
+          this.products = [];
+          this.cartData = undefined;
+          this.promocodeDiscount = 0;
 
-      this.products = [];
-      this.cartData = undefined;
-      this.promocodeDiscount = 0;
-
-      await this.updateBasketDisplay();
-      return true;
-    } catch {
-      // console.error("Error clearing basket:", error);
-      return false;
-    } finally {
-      this.setLoadingState(false);
-    }
+          await this.updateBasketDisplay();
+          return true;
+        } catch {
+          // console.error("Error clearing basket:", error);
+          return false;
+        } finally {
+          this.setLoadingState(false);
+        }
+      },
+    });
   },
 
   formatPrice(priceInCents: number, currencyCode?: CurrencyCode): string {

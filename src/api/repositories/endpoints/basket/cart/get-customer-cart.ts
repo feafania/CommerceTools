@@ -19,5 +19,6 @@ export default async function getCustomerCart(
   } catch (error) {
     // console.error("Getting customer cart failed:", error);
     handleApiError(error);
+    return undefined;
   }
 }

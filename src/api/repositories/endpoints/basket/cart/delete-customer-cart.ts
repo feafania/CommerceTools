@@ -24,5 +24,6 @@ export default async function deleteCustomerCart(
   } catch (error) {
     // console.error("Deleting customer cart failed:", error);
     handleApiError(error);
+    return undefined;
   }
 }

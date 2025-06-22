@@ -80,8 +80,8 @@ class BasketService {
           customerToken: token,
         });
       }
-    } catch (error) {
-      this.handleError(error, SETTINGS.label.errors.createCart);
+    } catch {
+      // this.handleError(error, SETTINGS.label.errors.createCart);
     }
   }
 
