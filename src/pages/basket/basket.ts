@@ -315,35 +315,33 @@ const Basket = {
   async render(): Promise<HTMLElement | undefined> {
     globalOverlay.show();
     await this.initializeWithBasketService();
+    removeAllChildren(this.container);
+    this.container.className = "basket-container";
 
-    if (!this.container.hasChildNodes()) {
-      this.container.className = "basket-container";
+    const header = document.createElement("div");
+    header.className = "basket-header";
+    header.innerHTML = "<h2>" + SETTINGS.label.basket.title + "</h2>";
 
-      const header = document.createElement("div");
-      header.className = "basket-header";
-      header.innerHTML = "<h2>" + SETTINGS.label.basket.title + "</h2>";
+    this.basketItemsContainer = document.createElement("div");
+    this.basketItemsContainer.className = "basket-items";
 
-      this.basketItemsContainer = document.createElement("div");
-      this.basketItemsContainer.className = "basket-items";
+    this.promocodeContainer = document.createElement("div");
+    this.promocodeContainer.className = "promocode-container";
 
-      this.promocodeContainer = document.createElement("div");
-      this.promocodeContainer.className = "promocode-container";
+    this.basketSummaryContainer = document.createElement("div");
 
-      this.basketSummaryContainer = document.createElement("div");
+    this.clearButton = document.createElement("button");
+    this.clearButton.className = "clear-basket-btn";
+    this.clearButton.textContent = SETTINGS.label.basket.clear;
+    this.clearButton.addEventListener("click", () => this.clearBasket());
 
-      this.clearButton = document.createElement("button");
-      this.clearButton.className = "clear-basket-btn";
-      this.clearButton.textContent = SETTINGS.label.basket.clear;
-      this.clearButton.addEventListener("click", () => this.clearBasket());
-
-      this.container.append(
-        header,
-        this.basketItemsContainer,
-        this.promocodeContainer,
-        this.basketSummaryContainer,
-        this.clearButton,
-      );
-    }
+    this.container.append(
+      header,
+      this.basketItemsContainer,
+      this.promocodeContainer,
+      this.basketSummaryContainer,
+      this.clearButton,
+    );
 
     // Always update the display with current data
     await this.updateBasketDisplay();
