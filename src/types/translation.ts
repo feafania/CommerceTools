@@ -225,10 +225,11 @@ export interface AppTranslation {
     onSignUp: string;
     onSignOut: string;
     nothingToUpdate: string;
+    onClearBasket: string;
   };
   about: {
     title: string;
-    description: string;
+    introduction: string;
     role: string;
     tasksDone: string;
     name1: string;
@@ -243,6 +244,7 @@ export interface AppTranslation {
     role2: string;
     tasks2: string[];
     github2: string;
+    description: string;
     projectDescription: string;
     githubBtn: string;
   };

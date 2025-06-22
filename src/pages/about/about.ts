@@ -114,7 +114,18 @@ export default async function renderAboutView(): Promise<HTMLElement> {
   title.textContent = getAboutData().title;
   container.append(title);
 
-  container.append(createRSSchoolLink());
+  const introContainer = document.createElement("div");
+  introContainer.className = "about-intro-container";
+
+  const rsschoolLink = createRSSchoolLink();
+  introContainer.append(rsschoolLink);
+
+  const introduction = document.createElement("p");
+  introduction.className = "about-introduction";
+  introduction.textContent = SETTINGS.label.about.introduction;
+  introContainer.append(introduction);
+
+  container.append(introContainer);
 
   const teamContainer = document.createElement("div");
   teamContainer.className = "team-container";

@@ -260,39 +260,37 @@ const pl: AppTranslation = {
     onSignUp: "Twoje konto zostało utworzone.",
     onSignOut: "Zostałeś wylogowany.",
     nothingToUpdate: "Brak zmian. Twój profil jest już aktualny.",
+    onClearBasket: "Czy na pewno chcesz wyczyścić koszyk?",
   },
   about: {
     title: "O nas",
-    description:
-      "Na początku każdego sprintu dzieliliśmy zadania i" +
-      "przypisane obowiązki za pomocą Trello, które pomogły w wizualizacji terminów" +
-      "i śledzić postępy. Nasz zespół organizował codzienne synchronizacje za pośrednictwem Discord, Google Meet lub" +
-      "Telegram, aby omówić zakończoną pracę, blokery adresów i wyrównać rozwiązania. " +
-      "Utrzymując przejrzystość w Trello i pozostając w kontakcie przez cały dzień" +
-      "moglibyśmy wspólnie przeglądać wyniki pod koniec każdego sprintu. Ten zdyscyplinowany" +
-      "jednak elastyczne podejście do pracy zespołowej zapewniło terminową realizację projektu i" +
-      "osiągnięcie wszystkich celów.",
+    introduction:
+      "Jesteśmy małym, ale zaangażowanym zespołem deweloperskim, " +
+      "który wspólnie dążył do dostarczenia dopracowanego projektu. " +
+      "Połączyliśmy doświadczenie w tworzeniu interfejsów oraz integracji z API, " +
+      "skupiając się na jakości kodu, wygodzie użytkownika i dobrej współpracy. " +
+      "Dzięki jasnej komunikacji udało nam się zrealizować złożony pomysł jako " +
+      "funkcjonalną aplikację jednostronicową (SPA).",
     role: "Rola",
     tasksDone: "Zadania wykonane",
-    name1: "Tatsiana Kashko",
+    name1: "Tatjana Kaszko",
     photo1: "/assets/img/about/Tatsiana.jpg",
     bio1:
-      "Ukończyłem studia wyższe na kierunku Cybernetyka Ekonomiczna i od ponad 25 lat " +
-      "pracuję jako programista automatyzacji procesów w przedsiębiorstwach. Moje obowiązki " +
-      "częściowo obejmowały również administrację siecią komputerową firmy. " +
-      "Rozwiązuję problemy o różnym zakresie i poziomie trudności, posiadając umiejętności " +
-      "zarówno programisty, jak i analityka biznesowego. Potrafię samodzielnie analizować " +
-      "obszary do automatyzacji i projektować logikę procesów produkcyjnych oraz biznesowych.",
+      "Ukończyłam studia na kierunku Cybernetyka Ekonomiczna, a od ponad 25 lat pracuję " +
+      "jako programistka automatyzacji procesów w przedsiębiorstwach. Moje obowiązki obejmowały " +
+      "nie tylko rozwój oprogramowania, ale także administrację siecią komputerową w firmie. " +
+      "Posiadam doświadczenie w rozwiązywaniu wyzwań o różnym stopniu skomplikowania, łącząc umiejętności " +
+      "programistki i analityczki biznesowej.",
     role1:
-      "Lider zespołu, budowanie API, infrastruktury zaplecza, tworzenie testów",
+      "Lider zespołu, architekt integracji API, warstwa usług frontendowa, testowanie.",
     tasks1: [
-      "Usługi korzystania z API dla SPA",
-      "Testowanie usług API",
-      "Routing dla SPA",
-      "Funkcjonalność adresów użytkowników",
-      "Katalog stron: lista produktów, filtrowanie, wyszukiwanie, sortowanie",
-      "Strona szczegółów",
-      "Przycisk Dodaj do koszyka w całym katalogu",
+      "Warstwa integracji API dla SPA (usługi i repozytoria)",
+      "Testy jednostkowe dla usług API",
+      "Konfiguracja routingu i nawigacji dla SPA",
+      "Strona katalogu produktów z filtrowaniem, sortowaniem i wyszukiwaniem",
+      "Strona szczegółów produktu z dynamicznym ładowaniem danych",
+      "Zarządzanie adresami użytkownika (integracja API i interfejsu użytkownika)",
+      "Funkcjonalność kodów promocyjnych (integracja i walidacja)",
     ],
     github1: "https://github.com/feafania",
     name2: "Anastasiia Zharkova Ozdemir",
@@ -303,17 +301,24 @@ const pl: AppTranslation = {
       "niestandardowych rozwiązaniach dla witryn”. " +
       "W tym roku uzyskałem tytuł magistra informatyki stosowanej",
     role2:
-      "Kierował rozwojem interfejsu, komponentów UI, projektowaniem, zarządzanie projektami",
+      "Frontend developer, strony interfejsu użytkownika, projektowanie graficzne, wsparcie przepływu pracy w Trello,",
     tasks2: [
-      "Zarządzaj naszym przepływem pracy w Trello",
-      "Projekt dla SPA",
-      "Formularz rejestracyjny",
-      "Profil użytkownika",
-      "Zmień stronę hasła",
-      "Strona koszyka",
-      "Strona o nas",
+      "Zarządzanie przepływem pracy i zadaniami w Trello",
+      "Projektowanie UI/UX dla SPA z naciskiem na responsywne i adaptacyjne układy",
+      "Implementacja formularza rejestracji",
+      "Tworzenie strony profilu użytkownika",
+      "Funkcjonalność zmiany hasła",
+      "Implementacja strony koszyka",
+      "Stworzenie strony 'O nas'",
     ],
     github2: "https://github.com/WaterMemor",
+    description:
+      "Na początku każdego sprintu dzieliliśmy zadania i przydzielaliśmy odpowiedzialności za pomocą Trello, " +
+      "co pomagało nam jasno wizualizować terminy i monitorować postępy. Nasz zespół codziennie synchronizował się " +
+      "przez Discord, Google Meet lub Telegram, aby omówić wykonane zadania, rozwiązać przeszkody " +
+      "i uzgodnić kolejne kroki. Dzięki przejrzystości w Trello i ciągłemu kontaktowi w ciągu dnia " +
+      "wspólnie przeglądaliśmy wyniki na koniec każdego sprintu. To zdyscyplinowane, ale elastyczne " +
+      "podejście do pracy zespołowej zapewniło terminowe dostarczenie projektu i pomyślne osiągnięcie wszystkich celów.",
     projectDescription:
       "Ten projekt został opracowany w celu zademonstrowania " +
       "możliwości naszego zespołu w zakresie tworzenia SPA za pomocą TypeScript.",
