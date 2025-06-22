@@ -117,7 +117,7 @@
 
 .tasks-list {
   margin: 0 0 1rem 0;
-  padding: 0px;
+  padding: 0;
   list-style: none;
 }
 
@@ -149,28 +149,34 @@
   text-align: center;
   color: #7f8c8d;
   font-style: italic;
-  margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid #ecf0f1;
   padding-left: 1rem;
   padding-right: 1rem;
 }
 
-@media (max-width: 768px) {
-  .about-view {
-    font-size: 1rem;
-  }
-
+@media (max-width: 991px) {
   .about-intro-container {
     flex-direction: column;
     width: 100%;
     max-width: 100%;
     padding: 0;
-    text-align: center;
   }
 
-  .member-card {
-    width: 100%;
+  .about-introduction,
+  .about-description,
+  .project-description {
+    text-align: justify;
+    padding: 0.5rem 0;
+  }
+  .project-description {
+    padding-top: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-view {
+    font-size: 1rem;
   }
 
   .tasks-title {
