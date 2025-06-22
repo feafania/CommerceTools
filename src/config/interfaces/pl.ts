@@ -22,6 +22,7 @@ const pl: AppTranslation = {
     },
     userProfile: "Profil Użytkownika",
     changePassword: "Zmień hasło",
+    basket: "Koszyk",
   },
   login: {
     email: "Adres e-mail",
@@ -41,6 +42,8 @@ const pl: AppTranslation = {
   },
   main: {
     title: "Zapraszamy do naszego sklepu",
+    promocodes: "Skorzystaj z naszych najnowszych promocji",
+    noPromocodes: "Nie ma dostępnych kodów promocyjnych.",
   },
   catalog: {
     search: "Szukaj...",
@@ -68,6 +71,16 @@ const pl: AppTranslation = {
   product: {
     title: "Szczegóły Produkta",
     backButton: "Powrót do katalogu",
+    selectVariant: "Wybierz wariant:",
+    defaultVariant: "Wariant domyślny",
+    addToCart: "Dodaj do koszyka",
+    removeFromCart: "Usuń z koszyka",
+    addedToCart: "Produkt został pomyślnie dodany do koszyka!",
+    removedFromCart: "Produkt został pomyślnie usunięty z koszyka!",
+    quantity: "Ilość",
+    variantID: "Identyfikator wariantu",
+    itemInCart: "Ten przedmiot znajduje się w Twoim koszyku",
+    itemsInCart: "Te przedmioty znajdują się w Twoim koszyku",
   },
   userProfile: {
     firstName: "Imię",
@@ -94,6 +107,31 @@ const pl: AppTranslation = {
     success: "Twoje hasło zostało pomyślnie zmienione",
     wrongOldPassword: "Błędne aktualne hasło",
     emptyPassword: "Pole hasła jest puste",
+    save: "Zapisz",
+    cancel: "Anuluj",
+  },
+  basketButton: {
+    title: "Koszyk",
+    addToCard: "Dodaj do koszyka",
+    alreadyInCard: "Już w Koszyku",
+    addedToCard: "Dodano do koszyka",
+    errorAddingToCart: "Błąd dodawania do koszyka",
+  },
+  basket: {
+    title: "Kosz",
+    clear: "Wyczyść kosz",
+    remove: "Usuń",
+    totalItems: "Łączna liczba elementów",
+    total: "Razem",
+    discountedTotal: "Razem po rabacie",
+    appliedPromocode: "Zastosowane kody promocyjne",
+    emptyText: "Twój koszyk jest pusty",
+    promocodeInput: "Wprowadź kod promocyjny",
+    applyPromocode: "Zastosuj",
+    invalid: "Nieprawidłowy kod promocyjny",
+    success: "Kod promocyjny został zastosowany pomyślnie",
+    error: "Wprowadź kod promocyjny",
+    notMatched: "nie pasuje",
   },
   address: {
     headers: {
@@ -122,7 +160,7 @@ const pl: AppTranslation = {
     },
     editAddress: "Edytuj",
     editAddressStop: "Zatrzymaj edycję",
-    addAdress: "+ Dodaj adres",
+    addAddress: "+ Dodaj adres",
     addressProfileTitle: "Adres",
     addressesList: "Adresy",
   },
@@ -188,6 +226,11 @@ const pl: AppTranslation = {
       "Ten konektor jest w trakcie procesu certyfikacji. Będzie dostępny po jego zakończeniu.",
     versionMismatch:
       "Błąd niezgodności wersji. Proszę odświeżyć i spróbować ponownie.",
+    lineItemNotFound: "Produkt nie został znaleziony w Koszyku",
+    insufficientStock: "Za mało towarów w magazynie",
+    anonymousIdConflict: "Błąd anonimowego użytkownika",
+    discountCodeInvalid: "Kod promocyjny nie jest odpowiedni",
+    invalidOperation: "It is impossible to perform the action.",
   },
   errors: {
     login: "Logowanie nie powiodło się.",
@@ -199,12 +242,87 @@ const pl: AppTranslation = {
     updatePassword: "Nie udało się zaktualizować hasła klienta.",
     token: "Nie udało się zdobyć tokena.",
     getCurrentUser: "Nie udało się pobrać bieżącego użytkownika",
+    getCart: "Nie można dostać koszyka",
+    createCart: "Nie można utworzyć koszyka",
+    applyDiscountCode: "Nie można zastosować kodu promocyjnego",
+    deleteCart: "Nie można usunąć koszyka",
+    recalculateCart: "Nie można przeliczyć koszyka",
+    addItemToCart: "Nie można dodać przedmiotu do koszyka",
+    removeItemFromCart: "Nie można usunąć przedmiotu z koszyka",
+    changeItemQuantity: "Nie można zmienić przedmiotu z koszyka",
+    getPromoCodes: "Nie udało się uzyskać kodów promocyjnych",
+    removeDiscountCode: "Nie udało się usunąć kodu promocyjnego z koszyka",
+    getPromoCode: "Nie udało się uzyskać kodu promocyjnego",
+    clearCart: "Nie udało się wyczyścić koszyka.",
   },
   messages: {
     onSignIn: "Zostałeś pomyślnie zalogowany.",
     onSignUp: "Twoje konto zostało utworzone.",
     onSignOut: "Zostałeś wylogowany.",
     nothingToUpdate: "Brak zmian. Twój profil jest już aktualny.",
+    onClearBasket: "Czy na pewno chcesz wyczyścić koszyk?",
+  },
+  about: {
+    title: "O nas",
+    introduction:
+      "Jesteśmy małym, ale zaangażowanym zespołem deweloperskim, " +
+      "który wspólnie dążył do dostarczenia dopracowanego projektu. " +
+      "Połączyliśmy doświadczenie w tworzeniu interfejsów oraz integracji z API, " +
+      "skupiając się na jakości kodu, wygodzie użytkownika i dobrej współpracy. " +
+      "Dzięki jasnej komunikacji udało nam się zrealizować złożony pomysł jako " +
+      "funkcjonalną aplikację jednostronicową (SPA).",
+    role: "Rola",
+    tasksDone: "Zadania wykonane",
+    name1: "Tatjana Kaszko",
+    photo1: "/assets/img/about/Tatsiana.jpg",
+    bio1:
+      "Ukończyłam studia na kierunku Cybernetyka Ekonomiczna, a od ponad 25 lat pracuję " +
+      "jako programistka automatyzacji procesów w przedsiębiorstwach. Moje obowiązki obejmowały " +
+      "nie tylko rozwój oprogramowania, ale także administrację siecią komputerową w firmie. " +
+      "Posiadam doświadczenie w rozwiązywaniu wyzwań o różnym stopniu skomplikowania, łącząc umiejętności " +
+      "programistki i analityczki biznesowej.",
+    role1:
+      "Lider zespołu, architekt integracji API, warstwa usług frontendowa, testowanie.",
+    tasks1: [
+      "Warstwa integracji API dla SPA (usługi i repozytoria)",
+      "Testy jednostkowe dla usług API",
+      "Konfiguracja routingu i nawigacji dla SPA",
+      "Strona katalogu produktów z filtrowaniem, sortowaniem i wyszukiwaniem",
+      "Strona szczegółów produktu z dynamicznym ładowaniem danych",
+      "Zarządzanie adresami użytkownika (integracja API i interfejsu użytkownika)",
+      "Funkcjonalność kodów promocyjnych (integracja i walidacja)",
+    ],
+    github1: "https://github.com/feafania",
+    name2: "Anastasiia Zharkova Ozdemir",
+    photo2: "/assets/img/about/Anastasiia.jpg",
+    bio2:
+      "Pracuję jako programista Bitrix od 5 lat, " +
+      "specjalizuję się w pikselowej implementacji projektów UI i " +
+      "niestandardowych rozwiązaniach dla witryn”. " +
+      "W tym roku uzyskałem tytuł magistra informatyki stosowanej",
+    role2:
+      "Frontend developer, strony interfejsu użytkownika, projektowanie graficzne, wsparcie przepływu pracy w Trello,",
+    tasks2: [
+      "Zarządzanie przepływem pracy i zadaniami w Trello",
+      "Projektowanie UI/UX dla SPA z naciskiem na responsywne i adaptacyjne układy",
+      "Implementacja formularza rejestracji",
+      "Tworzenie strony profilu użytkownika",
+      "Funkcjonalność zmiany hasła",
+      "Implementacja strony koszyka",
+      "Stworzenie strony 'O nas'",
+    ],
+    github2: "https://github.com/WaterMemor",
+    description:
+      "Na początku każdego sprintu dzieliliśmy zadania i przydzielaliśmy odpowiedzialności za pomocą Trello, " +
+      "co pomagało nam jasno wizualizować terminy i monitorować postępy. Nasz zespół codziennie synchronizował się " +
+      "przez Discord, Google Meet lub Telegram, aby omówić wykonane zadania, rozwiązać przeszkody " +
+      "i uzgodnić kolejne kroki. Dzięki przejrzystości w Trello i ciągłemu kontaktowi w ciągu dnia " +
+      "wspólnie przeglądaliśmy wyniki na koniec każdego sprintu. To zdyscyplinowane, ale elastyczne " +
+      "podejście do pracy zespołowej zapewniło terminowe dostarczenie projektu i pomyślne osiągnięcie wszystkich celów.",
+    projectDescription:
+      "Ten projekt został opracowany w celu zademonstrowania " +
+      "możliwości naszego zespołu w zakresie tworzenia SPA za pomocą TypeScript.",
+    githubBtn: "Profil GitHub",
   },
 };
 

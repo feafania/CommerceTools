@@ -6,10 +6,15 @@ import {
   InCategory,
   InProduct,
   InProductType,
+  InVariant,
   ProductSearchResult,
 } from "@/types/interfaces";
 import getProductList from "@/api/repositories/endpoints/product/get-product-list";
-import { GetProductListParameters, InAttributes } from "@/types/types";
+import {
+  GetProductListParameters,
+  InAttributes,
+  SimpleAttributes,
+} from "@/types/types";
 import getProductAttributes from "@/api/repositories/endpoints/product/get-product-attributes";
 import getProductTypes from "@/api/repositories/endpoints/product/get-product-types";
 import getProductByKey from "@/api/repositories/endpoints/product/get-product-by-key";
@@ -17,6 +22,7 @@ import getProductTypeByKey from "@/api/repositories/endpoints/product/get-produc
 import { SETTINGS } from "@/config/settings";
 import { CurrencyCode } from "@/types/enum";
 import MappingHelpers from "@/api/repositories/mapping-helpers";
+import getProductById from "@/api/repositories/endpoints/product/get-product-by-id";
 // import getProductListHttp from "@/api/repositories/endpoints/product/get-product-list-http";
 
 const productRepository = {
@@ -117,6 +123,21 @@ const productRepository = {
         : undefined;
     } catch (error) {
       // console.error("Error getting product by key:", error);
+      throw error;
+    }
+  },
+
+  async getProductById(
+    id: string,
+    currency: CurrencyCode = SETTINGS.currentCurrency,
+  ): Promise<InProduct | undefined> {
+    try {
+      const response = await getProductById(id);
+      return response
+        ? MappingHelpers.mapProductToInternal(response, currency)
+        : undefined;
+    } catch (error) {
+      // console.error("Error getting product by ID:", error);
       throw error;
     }
   },
@@ -258,6 +279,17 @@ const productRepository = {
       total: 0,
       results: [],
     };
+  },
+
+  mapFilters(filter: SimpleAttributes): string[] {
+    return MappingHelpers.mapFilters(filter);
+  },
+
+  getVariantDescription(
+    variant: InVariant | InProduct,
+    productType: InProductType | undefined,
+  ): string {
+    return MappingHelpers.getVariantDescription(variant, productType);
   },
 };
 

@@ -17,6 +17,7 @@ export function createTokenRequestBody(
     username?: string;
     password?: string;
     refresh_token?: string;
+    anonymousId?: string;
     scope: string;
   },
 ): URLSearchParams {
@@ -29,6 +30,10 @@ export function createTokenRequestBody(
 
   if (type === "refresh_token") {
     body.append("refresh_token", payload.refresh_token!);
+  }
+
+  if (type === "client_credentials") {
+    body.append("anonymous_id", payload.anonymousId!);
   }
 
   body.append("scope", payload.scope);

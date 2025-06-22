@@ -15,7 +15,7 @@
 
 #search-input {
   width: 100%;
-  border: 1px solid #cccccc;
+  border: 1px solid var(--intut-border-color);
   border-radius: 4px;
 }
 

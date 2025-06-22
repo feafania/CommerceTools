@@ -1,9 +1,10 @@
 class MobileFilterToggle {
-  private isMobile: boolean = window.innerWidth <= 768;
+  private isMobile: boolean;
   private showFilters: boolean = false;
   private toggleButton: HTMLButtonElement | undefined;
 
   constructor() {
+    this.isMobile = globalThis.window !== undefined && window.innerWidth <= 768;
     this.init();
   }
 
@@ -84,14 +85,18 @@ class MobileFilterToggle {
   }
 }
 
-const mobileFilterToggle = new MobileFilterToggle();
+let mobileFilterToggle: MobileFilterToggle | undefined;
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
+if (globalThis.window !== undefined && typeof document !== "undefined") {
+  mobileFilterToggle = new MobileFilterToggle();
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      mobileFilterToggle?.refresh();
+    });
+  } else {
     mobileFilterToggle.refresh();
-  });
-} else {
-  mobileFilterToggle.refresh();
+  }
 }
 
 export default mobileFilterToggle;

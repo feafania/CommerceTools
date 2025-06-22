@@ -61,3 +61,13 @@ export enum LabelPosition {
   Left = "left",
   Right = "right",
 }
+
+export enum AttributeKeys {
+  MinPrice = "minPrice",
+  MaxPrice = "maxPrice",
+}
+
+export enum DiscountState {
+  "MatchesCart" = "MatchesCart",
+  "DoesNotMatchCart" = "DoesNotMatchCart",
+}

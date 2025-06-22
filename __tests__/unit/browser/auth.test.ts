@@ -58,6 +58,13 @@ jest.mock("@/components/modal-window/modal-window", () => ({
   __esModule: true,
   default: jest.fn(), // mock showModalMessage as jest.fn()
 }));
+jest.spyOn(authService, "getToken").mockResolvedValue("mock-access-token");
+jest.mock("@/api/services/basket-service", () => ({
+  __esModule: true,
+  default: {
+    createCart: jest.fn().mockResolvedValue({ id: "mock-cart-id" }),
+  },
+}));
 
 describe("authServiceLogin", () => {
   beforeEach(() => {
@@ -209,33 +216,33 @@ describe("authService.getMe", () => {
     });
   });
 
-  it("should show modal error when ApiError thrown", async () => {
+  it("should reset user to undefined when ApiError is thrown", async () => {
     const mockError = new ApiError(500, "Server error");
     (authRepository.getMe as jest.Mock).mockRejectedValueOnce(mockError);
 
+    const setUserSpy = jest.spyOn(authStore, "setUser");
+
     const result = await authService.getMe();
 
-    expect(showModalMessage).toHaveBeenCalledWith(
-      expect.stringContaining("Server error"),
-    );
+    expect(setUserSpy).toHaveBeenCalledWith(undefined);
     expect(result).toBeUndefined();
   });
 
-  // it("should console.error on unknown error and return undefined", async () => {
-  //   const consoleErrorSpy = jest
-  //     .spyOn(console, "error")
-  //     .mockImplementation(() => {});
-  //   const unknownError = new Error("Unexpected error");
-  //   (authRepository.getMe as jest.Mock).mockRejectedValueOnce(unknownError);
-  //
-  //   const result = await authService.getMe();
-  //
-  //   expect(consoleErrorSpy).toHaveBeenCalledWith(
-  //     "Get current user failed:",
-  //     unknownError,
-  //   );
-  //   expect(result).toBeUndefined();
-  //
-  //   consoleErrorSpy.mockRestore();
-  // });
+  it("should console.error on unknown error and return undefined", async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const unknownError = new Error("Unexpected error");
+    (authRepository.getMe as jest.Mock).mockRejectedValueOnce(unknownError);
+
+    const result = await authService.getMe();
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Get current user failed:",
+      unknownError,
+    );
+    expect(result).toBeUndefined();
+
+    consoleErrorSpy.mockRestore();
+  });
 });

@@ -3,9 +3,11 @@ import { SETTINGS } from "@/config/settings";
 import CatalogView from "@/pages/catalog/catalog";
 import { AttributeMap, InAttributes, SortOptions } from "@/types/types";
 import { InAttributeTypeValues, LabelPosition, PageType } from "@/types/enum";
-import { localizeName } from "@/utils/helpers";
+import { isMobile, localizeName } from "@/utils/helpers";
 import createSelect from "@/components/select/select";
 import createCheckbox from "@/components/checkbox/checkbox";
+import searchBar from "@/components/search-button/search-button";
+import globalOverlay from "@/components/global-overlay/global-overlay";
 
 const CatalogViewFiltering = {
   tempFilters: {} as InAttributes,
@@ -22,10 +24,6 @@ const CatalogViewFiltering = {
     priceTitle.className = "filter-title";
     filtersSection.append(priceTitle);
     const priceFilter = this.renderPriceFilter();
-    const minPriceInput =
-      priceFilter.querySelector<HTMLInputElement>("#min-price-input");
-    const maxPriceInput =
-      priceFilter.querySelector<HTMLInputElement>("#max-price-input");
     filtersSection.append(priceFilter);
 
     const attributesWrapper = document.createElement("div");
@@ -40,15 +38,14 @@ const CatalogViewFiltering = {
     applyFiltersButton.className = "apply-filters-btn custom-filter-button";
 
     applyFiltersButton.addEventListener("click", async () => {
-      CatalogView.minPrice = CatalogViewFiltering.tempMinPrice;
-      CatalogView.maxPrice = CatalogViewFiltering.tempMaxPrice;
-      CatalogView.attributeFilters = { ...CatalogViewFiltering.tempFilters };
-      CatalogView.offset = 0;
-      CatalogViewFiltering.tempFilters = { ...CatalogView.attributeFilters };
-
-      await this.filterInform();
-      CatalogView.isSamePage = true;
-      this.buildPath();
+      filtersSection.style.pointerEvents = "none";
+      globalOverlay.show();
+      try {
+        await this.onApplyFiltersClick();
+      } finally {
+        filtersSection.style.pointerEvents = "";
+        globalOverlay.hide();
+      }
     });
 
     // Reset button
@@ -58,28 +55,55 @@ const CatalogViewFiltering = {
     resetFiltersButton.className = "reset-filters-btn custom-filter-button";
 
     resetFiltersButton.addEventListener("click", async () => {
-      if (minPriceInput && maxPriceInput) {
-        minPriceInput.value = "";
-        maxPriceInput.value = "";
+      filtersSection.style.pointerEvents = "none";
+      globalOverlay.show();
+      try {
+        await this.onResetFiltersClick(priceFilter);
+      } finally {
+        filtersSection.style.pointerEvents = "";
+        globalOverlay.hide();
       }
-
-      CatalogViewFiltering.tempMinPrice = undefined;
-      CatalogViewFiltering.tempMaxPrice = undefined;
-      CatalogViewFiltering.tempFilters = {};
-
-      CatalogView.minPrice = undefined;
-      CatalogView.maxPrice = undefined;
-      CatalogView.attributeFilters = {};
-      this.clearInputs();
-      await this.filterInform();
-      CatalogView.isSamePage = true;
-      this.buildPath();
     });
 
     this.setActiveFiltering();
 
     filtersSection.append(applyFiltersButton, resetFiltersButton);
     return filtersSection;
+  },
+
+  async onApplyFiltersClick() {
+    CatalogView.minPrice = CatalogViewFiltering.tempMinPrice;
+    CatalogView.maxPrice = CatalogViewFiltering.tempMaxPrice;
+    CatalogView.attributeFilters = { ...CatalogViewFiltering.tempFilters };
+    CatalogView.offset = 0;
+    CatalogViewFiltering.tempFilters = { ...CatalogView.attributeFilters };
+
+    await this.filterInform();
+    CatalogView.isSamePage = true;
+    this.buildPath();
+  },
+
+  async onResetFiltersClick(priceFilter: HTMLDivElement) {
+    const minPriceInput =
+      priceFilter.querySelector<HTMLInputElement>("#min-price-input");
+    const maxPriceInput =
+      priceFilter.querySelector<HTMLInputElement>("#max-price-input");
+    if (minPriceInput && maxPriceInput) {
+      minPriceInput.value = "";
+      maxPriceInput.value = "";
+    }
+
+    CatalogViewFiltering.tempMinPrice = undefined;
+    CatalogViewFiltering.tempMaxPrice = undefined;
+    CatalogViewFiltering.tempFilters = {};
+
+    CatalogView.minPrice = undefined;
+    CatalogView.maxPrice = undefined;
+    CatalogView.attributeFilters = {};
+    this.clearInputs();
+    await this.filterInform();
+    CatalogView.isSamePage = true;
+    this.buildPath();
   },
 
   clearInputs() {
@@ -441,6 +465,9 @@ const CatalogViewFiltering = {
   },
 
   buildQueryParams(): string {
+    if (isMobile()) {
+      CatalogView.offset = 0;
+    }
     const parameters = new URLSearchParams();
 
     if (CatalogView.minPrice !== undefined)
@@ -486,9 +513,10 @@ const CatalogViewFiltering = {
 
     CatalogView.currentQuery = parameters.get("q") || "";
     CatalogView.sortOption = parameters.get("sort") as SortOptions;
-    CatalogView.offset = parameters.has("offset")
-      ? Number(parameters.get("offset"))
-      : 0;
+    CatalogView.offset =
+      parameters.has("offset") && !isMobile()
+        ? Number(parameters.get("offset"))
+        : 0;
 
     const attributeFilters: InAttributes = {};
 
@@ -516,6 +544,14 @@ const CatalogViewFiltering = {
       document.querySelector<HTMLDivElement>(".attribute-filters");
     if (attributesWrapper) {
       await CatalogViewFiltering.renderAttributeFilters(attributesWrapper);
+    }
+    if (searchBar?.searchInput) {
+      searchBar.searchInput.value = CatalogView.currentQuery || "";
+    }
+    const sortDropdown =
+      CatalogView.container.querySelector<HTMLSelectElement>(".sort-dropdown");
+    if (sortDropdown) {
+      sortDropdown.value = CatalogView.sortOption || "";
     }
   },
 

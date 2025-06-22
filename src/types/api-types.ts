@@ -1,3 +1,5 @@
+import { ApiRequest, Cart, MyCartUpdate } from "@commercetools/platform-sdk";
+
 export enum CustomerActionType {
   ChangeEmail = "changeEmail",
   SetFirstName = "setFirstName",
@@ -93,4 +95,14 @@ export type QueryArguments = {
    * Example: "EUR", "USD", etc.
    */
   priceCurrency?: string;
+
+  /**
+   * Expands referenced resources, e.g. `productType`, `categories[*]`.
+   * Example: ["productType", "categories[*]"]
+   */
+  expand?: string | string[];
 };
+
+export type CartPostFunction = (arguments_: {
+  body: MyCartUpdate;
+}) => ApiRequest<Cart>;

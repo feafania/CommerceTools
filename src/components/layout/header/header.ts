@@ -9,6 +9,7 @@ import { LanguageCode, NavMenu } from "@/types/types";
 import showModalMessage from "@/components/modal-window/modal-window";
 import { renderPage } from "@/utils/page-render";
 import ProductView from "@/pages/product/product";
+import { Basket } from "@/components/basket/basket";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -93,9 +94,18 @@ const Header = {
 
       const li = document.createElement("li");
       const link = document.createElement("a");
-      link.textContent = label;
       link.href = "javascript:void(0)";
       link.className = "nav-link";
+
+      if (page === PageType.basket) {
+        const basket = new Basket();
+        basket.subscribeOnCount();
+        link.append(basket.element);
+        link.classList.add("nav-basket");
+      } else {
+        link.textContent = label;
+      }
+
       if (disabled) {
         link.classList.add("disabled");
       }
@@ -138,7 +148,6 @@ const Header = {
         visible: Boolean(ProductView.productKey),
         disabled: false,
       },
-      { label: t.about, page: PageType.about, visible: false, disabled: false },
       {
         label: t.signIn,
         page: PageType.login,
@@ -168,6 +177,13 @@ const Header = {
         page: PageType.notfound,
         visible: isLoggedIn,
         disabled: !isLoggedIn,
+      },
+      { label: t.about, page: PageType.about, visible: true, disabled: false },
+      {
+        label: t.basket,
+        page: PageType.basket,
+        visible: true,
+        disabled: false,
       },
     ];
   },

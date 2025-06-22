@@ -7,24 +7,35 @@ import productService from "@/api/services/product-service";
 import ProductCard from "@/components/product-card/product-card";
 import { SETTINGS } from "@/config/settings";
 import searchBar from "@/components/search-button/search-button";
-import { removeAllChildren } from "@/utils/helpers";
+import { isMobile, removeAllChildren, saveLocalState } from "@/utils/helpers";
 import { InCategory, ProductListParameters } from "@/types/interfaces";
 import PageRouter from "@/router/page-router";
-import { CurrencyCode, PageType, SortDirection, SortName } from "@/types/enum";
+import {
+  AttributeKeys,
+  CurrencyCode,
+  PageType,
+  SortDirection,
+  SortName,
+} from "@/types/enum";
 import { AttributeMap, InAttributes, SortOptions } from "@/types/types";
 import CatalogViewFiltering from "@/pages/catalog/filtering";
+import Filtering from "@/pages/catalog/filtering";
+import { SCROLL_HEIGHT } from "@/config/constants";
+import globalOverlay from "@/components/global-overlay/global-overlay";
+import basketService from "@/api/services/basket-service";
 
 const CatalogView = {
   container: document.createElement("section"),
   title: document.createElement("h1"),
   paginationWrapper: document.createElement("div"),
   productList: document.createElement("div"),
+  productWrapper: document.createElement("div"),
   filterInfo: document.createElement("div"),
   selectedCategoryKey: undefined as string | undefined,
   categories: [] as InCategory[],
   isSamePage: false,
   total: 0,
-  limit: 9,
+  limit: 6,
   offset: 0,
   currentQuery: "",
   sortOption: undefined as SortOptions,
@@ -32,14 +43,27 @@ const CatalogView = {
   maxPrice: undefined as number | undefined,
   attributeFilters: {} as InAttributes,
   availableAttributes: new Map() as AttributeMap,
+  scrollToTopButton: document.createElement("button"),
+  lazyLoaderElement: document.createElement("div"),
+  lazyObserver: undefined as IntersectionObserver | undefined,
+  wasMobile: false as boolean,
   // sliderWrapper: document.createElement("div"),
 
   async render(): Promise<HTMLElement | undefined> {
+    await this.removeLazyLoadingElement();
+    this.wasMobile = isMobile();
+    if (this.wasMobile) {
+      this.offset = 0;
+    }
     if (this.isSamePage) {
       this.isSamePage = false;
       await CatalogViewFiltering.applyFiltering();
       await this.renderProducts();
-      mobileFilterToggle.refresh();
+      if (this.wasMobile) {
+        this.appendLazyLoadingElement();
+        this.setupLazyLoading();
+      }
+      mobileFilterToggle!.refresh();
       return;
     }
     removeAllChildren(this.container);
@@ -58,39 +82,28 @@ const CatalogView = {
 
       const sidebar = await this.renderSideBar();
 
-      const contentWrapper = document.createElement("div");
-      contentWrapper.className = "catalog-content";
-
-      const headerWrapper = document.createElement("div");
-      headerWrapper.className = "catalog-header";
-      this.filterInfo.className = "filter-info";
-      this.filterInfo.textContent =
-        SETTINGS.label.catalog.filters.filtersApplied;
-
-      const currencySelect = this.createCurrencyDropdown();
-
-      headerWrapper.append(this.title, currencySelect);
-
       // this.sliderWrapper.className = "product-slider";
+      this.productWrapper = document.createElement("div");
+      this.productList.className = "product-wrapper";
       this.productList = document.createElement("div");
       this.productList.className = "product-list";
+      this.productWrapper.append(this.productList);
 
       this.paginationWrapper.className = "pagination";
-
-      contentWrapper.append(
-        headerWrapper,
-        this.filterInfo,
-        this.renderSearchSort(),
-        this.paginationWrapper,
-        this.productList,
-      ); // this.sliderWrapper,
+      const contentWrapper = this.createContentWrapper();
       this.container.append(sidebar, contentWrapper);
+      if (this.wasMobile) {
+        this.appendLazyLoadingElement();
+        this.setupLazyLoading();
+      }
 
       await CatalogViewFiltering.applyFiltering();
       await this.renderProducts();
+      this.setupResizeHandler();
+      this.setupScrollToTopButton();
 
       setTimeout(() => {
-        mobileFilterToggle.refresh();
+        mobileFilterToggle!.refresh();
       }, 0);
 
       return this.container;
@@ -100,8 +113,27 @@ const CatalogView = {
     }
   },
 
-  setSelectedCategoryKey(key: string | undefined): void {
-    this.selectedCategoryKey = key;
+  createContentWrapper(): HTMLDivElement {
+    const contentWrapper = document.createElement("div");
+    contentWrapper.className = "catalog-content";
+
+    const headerWrapper = document.createElement("div");
+    headerWrapper.className = "catalog-header";
+    this.filterInfo.className = "filter-info";
+
+    const currencySelect = this.createCurrencyDropdown();
+
+    headerWrapper.append(this.title, currencySelect);
+
+    contentWrapper.append(
+      headerWrapper,
+      this.filterInfo,
+      this.renderSearchSort(),
+      this.paginationWrapper,
+      this.productWrapper,
+    ); // this.sliderWrapper,
+
+    return contentWrapper;
   },
 
   renderSearchSort(): HTMLDivElement {
@@ -110,10 +142,13 @@ const CatalogView = {
     const searchComponent = searchBar.render();
 
     searchBar.searchInput.addEventListener("input", () => {
-      searchBar.setDebounce(() => {
-        this.currentQuery = searchBar.searchInput.value.trim();
-        this.offset = 0; // Reset offset when searching
-        this.renderProducts();
+      searchBar.setDebounce(async () => {
+        const newQuery = searchBar.searchInput.value.trim();
+        if (newQuery !== this.currentQuery) {
+          this.currentQuery = newQuery;
+          this.offset = 0;
+          await this.handleRenderProducts();
+        }
       }, 400);
     });
 
@@ -122,37 +157,48 @@ const CatalogView = {
     return wrapper;
   },
 
-  async renderProducts() {
-    if (!this.productList) {
-      this.productList = document.createElement("div");
-      this.productList.className = "product-list";
-      this.container.append(this.productList);
+  async renderProducts(append = false) {
+    globalOverlay.show();
+    try {
+      if (!this.productList) {
+        this.productList = document.createElement("div");
+        this.productList.className = "product-list";
+        this.container.append(this.productList);
+      }
+
+      if (!append || this.offset === 0) {
+        removeAllChildren(this.productList);
+        if (this.offset > this.total) {
+          this.offset = 0;
+        }
+      }
+      const requestParameters: ProductListParameters = this.createParameters();
+
+      const response = this.selectedCategoryKey
+        ? await productService.getProductsByCategoryKey(
+            this.selectedCategoryKey,
+            requestParameters,
+          )
+        : await productService.getProductList(requestParameters);
+
+      const products = response.results;
+      this.total = response.total ?? 0;
+
+      for (const product of products) {
+        const card = new ProductCard(product);
+        this.productList.append(card.create());
+      }
+
+      // removeAllChildren(this.sliderWrapper);
+      // const newSlider = new ProductSlider(products);
+      // newSlider.create();
+      // this.sliderWrapper.append(newSlider.container);
+      if (!isMobile()) {
+        this.renderPagination();
+      }
+    } finally {
+      globalOverlay.hide();
     }
-
-    removeAllChildren(this.productList);
-
-    const requestParameters: ProductListParameters = this.createParameters();
-
-    const response = this.selectedCategoryKey
-      ? await productService.getProductsByCategoryKey(
-          this.selectedCategoryKey,
-          requestParameters,
-        )
-      : await productService.getProductList(requestParameters);
-
-    const products = response.results;
-    this.total = response.total ?? 0;
-
-    for (const product of products) {
-      const card = new ProductCard(product);
-      this.productList.append(card.create());
-    }
-
-    // removeAllChildren(this.sliderWrapper);
-    // const newSlider = new ProductSlider(products);
-    // newSlider.create();
-    // this.sliderWrapper.append(newSlider.container);
-    this.renderPagination();
   },
 
   async renderSideBar() {
@@ -237,7 +283,7 @@ const CatalogView = {
     this.isSamePage = true;
     CatalogViewFiltering.buildPath();
     setTimeout(() => {
-      mobileFilterToggle.refresh();
+      mobileFilterToggle!.refresh();
     }, 0);
   },
 
@@ -292,10 +338,22 @@ const CatalogView = {
 
     const options: { value: string; label: string }[] = [
       { value: "", label: SETTINGS.label.catalog.sort.default },
-      { value: "price-asc", label: SETTINGS.label.catalog.sort.priceAsc },
-      { value: "price-desc", label: SETTINGS.label.catalog.sort.priceDesc },
-      { value: "name-asc", label: SETTINGS.label.catalog.sort.nameAsc },
-      { value: "name-desc", label: SETTINGS.label.catalog.sort.nameDesc },
+      {
+        value: `${SortName.PRICE}-${SortDirection.ASC}`,
+        label: SETTINGS.label.catalog.sort.priceAsc,
+      },
+      {
+        value: `${SortName.PRICE}-${SortDirection.DESC}`,
+        label: SETTINGS.label.catalog.sort.priceDesc,
+      },
+      {
+        value: `${SortName.NAME}-${SortDirection.ASC}`,
+        label: SETTINGS.label.catalog.sort.nameAsc,
+      },
+      {
+        value: `${SortName.NAME}-${SortDirection.DESC}`,
+        label: SETTINGS.label.catalog.sort.nameDesc,
+      },
     ];
 
     for (const opt of options) {
@@ -310,7 +368,8 @@ const CatalogView = {
     select.addEventListener("change", () => {
       this.sortOption = select.value as SortOptions;
       this.offset = 0;
-      this.renderProducts();
+      CatalogView.isSamePage = true;
+      Filtering.buildPath();
     });
 
     wrapper.append(select);
@@ -331,10 +390,14 @@ const CatalogView = {
       select.append(option);
     }
 
-    select.addEventListener("change", () => {
+    select.addEventListener("change", async () => {
       SETTINGS.currentCurrency = select.value as CurrencyCode;
+      saveLocalState({ key: "curr", value: SETTINGS.currentCurrency });
       this.offset = 0;
-      this.renderProducts();
+      globalOverlay.show();
+      await basketService.getCart();
+      globalOverlay.hide();
+      await this.handleRenderProducts();
     });
 
     return select;
@@ -396,23 +459,23 @@ const CatalogView = {
 
     if (this.minPrice !== undefined) {
       filters.push(
-        `variants.price.centAmount:range(${this.minPrice * 100} to*)`,
+        ...productService.mapFilters({
+          [AttributeKeys.MinPrice]: this.minPrice,
+        }),
       );
     }
     if (this.maxPrice !== undefined) {
       filters.push(
-        `variants.price.centAmount:range(* to ${this.maxPrice * 100})`,
+        ...productService.mapFilters({
+          [AttributeKeys.MaxPrice]: this.maxPrice,
+        }),
       );
     }
-
-    for (const [key, value] of Object.entries(this.attributeFilters)) {
-      if (Array.isArray(value)) {
-        const joined = value.map((v) => `"${v}"`).join(",");
-        filters.push(`variants.attributes.${key}.key:${joined}`);
-      } else {
-        filters.push(`variants.attributes.${key}.key:"${value}"`);
-      }
-    }
+    filters.push(
+      ...productService.mapFilters({
+        attributes: this.attributeFilters,
+      }),
+    );
 
     const { sortName, sortDirection } = this.getSortParameters();
     const requestParameters: ProductListParameters = {
@@ -427,32 +490,144 @@ const CatalogView = {
   },
 
   getSortParameters(): { sortName: SortName; sortDirection: SortDirection } {
-    switch (this.sortOption) {
-      case "price-asc": {
-        return {
-          sortName: SortName.PRICE,
-          sortDirection: SortDirection.ASC,
-        };
-      }
-      case "price-desc": {
-        return { sortName: SortName.PRICE, sortDirection: SortDirection.DESC };
-      }
-      case "name-asc": {
-        return {
-          sortName: SortName.NAME as SortName,
-          sortDirection: SortDirection.ASC,
-        };
-      }
-      case "name-desc": {
-        return {
-          sortName: SortName.NAME as SortName,
-          sortDirection: SortDirection.DESC,
-        };
-      }
-      default: {
-        return { sortName: SortName.PRICE, sortDirection: SortDirection.ASC };
-      }
+    const defaultSort = {
+      sortName: SortName.PRICE,
+      sortDirection: SortDirection.ASC,
+    };
+
+    if (!this.sortOption || typeof this.sortOption !== "string") {
+      return defaultSort;
     }
+
+    const parts = this.sortOption.split("-");
+    if (parts.length !== 2) {
+      return defaultSort;
+    }
+
+    const [sortName, sortDirection] = parts as [SortName, SortDirection];
+
+    return {
+      sortName: Object.values(SortName).includes(sortName)
+        ? sortName
+        : defaultSort.sortName,
+      sortDirection: Object.values(SortDirection).includes(sortDirection)
+        ? sortDirection
+        : defaultSort.sortDirection,
+    };
+  },
+
+  setSelectedCategoryKey(key: string | undefined): void {
+    this.selectedCategoryKey = key;
+  },
+
+  setupResizeHandler() {
+    window.addEventListener("resize", async () => {
+      const isCurrentlyMobile = isMobile();
+      if (this.wasMobile !== isCurrentlyMobile) {
+        this.wasMobile = isCurrentlyMobile;
+        this.handleRenderProducts();
+      }
+    });
+  },
+
+  async handleRenderProducts() {
+    await this.removeLazyLoadingElement();
+    removeAllChildren(this.productList);
+    removeAllChildren(this.paginationWrapper);
+    this.offset = 0;
+
+    await this.renderProducts();
+    if (isMobile() && this.offset + this.limit < this.total) {
+      this.appendLazyLoadingElement();
+    } else {
+      this.renderPagination();
+    }
+  },
+
+  async removeLazyLoadingElement() {
+    if (this.lazyObserver) {
+      this.lazyObserver.disconnect();
+      this.lazyObserver = undefined;
+    }
+    if (this.productWrapper.contains(this.lazyLoaderElement)) {
+      this.lazyLoaderElement.remove();
+    }
+  },
+
+  appendLazyLoadingElement() {
+    this.lazyLoaderElement = document.createElement("div");
+    this.lazyLoaderElement.className = "lazy-loader";
+    if (!this.productWrapper.contains(this.lazyLoaderElement)) {
+      this.productWrapper.append(this.lazyLoaderElement);
+    }
+    this.setupLazyLoading();
+  },
+
+  setupLazyLoading() {
+    if (this.lazyObserver) {
+      this.lazyObserver.disconnect();
+      this.lazyObserver = undefined;
+    }
+    this.lazyObserver = new IntersectionObserver(
+      async (entries) => {
+        if (entries[0].isIntersecting && isMobile()) {
+          await new Promise((resolve) => setTimeout(resolve, 200));
+
+          if (this.offset + this.limit >= this.total) {
+            this.lazyLoaderElement.remove();
+            return;
+          }
+
+          this.offset += this.limit;
+          await this.renderProducts(true);
+
+          if (this.offset + this.limit >= this.total) {
+            this.lazyLoaderElement.remove();
+            if (this.lazyObserver) {
+              this.lazyObserver.disconnect();
+            }
+          }
+        }
+      },
+      {
+        root: undefined,
+        rootMargin: "200px",
+        threshold: 0.1,
+      },
+    );
+
+    this.lazyObserver.observe(this.lazyLoaderElement);
+  },
+
+  setupScrollToTopButton() {
+    this.scrollToTopButton.className = "scroll-to-top";
+    this.scrollToTopButton.textContent = "↑";
+
+    this.scrollToTopButton.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    window.addEventListener("scroll", () => {
+      this.updateScrollToTopButtonVisibility();
+    });
+
+    window.addEventListener("resize", () => {
+      this.updateScrollToTopButtonVisibility();
+    });
+
+    this.updateScrollToTopButtonVisibility();
+
+    this.container.append(this.scrollToTopButton);
+  },
+
+  updateScrollToTopButtonVisibility() {
+    if (!isMobile()) {
+      this.scrollToTopButton.style.display = "none";
+      return;
+    }
+
+    this.scrollToTopButton.style.display =
+      window.scrollY > SCROLL_HEIGHT ? "block" : "none";
   },
 };
 

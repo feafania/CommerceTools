@@ -3,9 +3,14 @@ import {
   InCategory,
   InProduct,
   InProductType,
+  InVariant,
   ProductSearchResult,
 } from "@/types/interfaces";
-import { GetProductListParameters, InAttributes } from "@/types/types";
+import {
+  GetProductListParameters,
+  InAttributes,
+  SimpleAttributes,
+} from "@/types/types";
 
 class ProductService {
   async getCategories(): Promise<InCategory[]> {
@@ -45,6 +50,14 @@ class ProductService {
     }
   }
 
+  async getProductById(id: string): Promise<InProduct | undefined> {
+    try {
+      return await productRepository.getProductById(id);
+    } catch {
+      return undefined;
+    }
+  }
+
   async getProductsByCategoryKey(
     categoryKey: string,
     parameters: GetProductListParameters = {},
@@ -67,7 +80,10 @@ class ProductService {
     }
   }
 
-  async getProductTypeByKey(key: string): Promise<InProductType | undefined> {
+  async getProductTypeByKey(
+    key: string | undefined,
+  ): Promise<InProductType | undefined> {
+    if (!key) return undefined;
     try {
       return await productRepository.getProductTypeByKey(key);
     } catch {
@@ -81,6 +97,27 @@ class ProductService {
     } catch {
       return {};
     }
+  }
+
+  mapFilters(filter: SimpleAttributes): string[] {
+    return productRepository.mapFilters(filter);
+  }
+
+  getVariantDescription(
+    variant: InVariant | InProduct | undefined,
+    productType: InProductType | undefined,
+  ): string {
+    if (!variant) return "";
+    return productRepository.getVariantDescription(variant, productType);
+  }
+
+  getVariantById(variantId: number, product: InProduct): InVariant | InProduct {
+    if (!product || !product.variants) {
+      return product;
+    }
+
+    const variant = product.variants.find((v) => v.id === variantId);
+    return variant ?? product;
   }
 }
 

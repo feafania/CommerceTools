@@ -10,12 +10,13 @@ import {
   getCategoryByKey,
   getProductAttributes,
   getProductByKey,
+  getProductById,
   getProductList,
   getProductTypeByKey,
   getProductTypes,
 } from "@/api/repositories/endpoints/product";
 import { InProduct, ProductSearchResult } from "@/types/interfaces";
-import { InAttributes } from "@/types/types";
+import { InAttributes, SimpleAttributes } from "@/types/types";
 import MappingHelpers from "@/api/repositories/mapping-helpers";
 
 // mocked functions
@@ -30,6 +31,9 @@ export const mockedGetProductList = getProductList as jest.MockedFunction<
 >;
 export const mockedGetProductByKey = getProductByKey as jest.MockedFunction<
   typeof getProductByKey
+>;
+export const mockedGetProductById = getProductById as jest.MockedFunction<
+  typeof getProductById
 >;
 export const mockedGetProductTypes = getProductTypes as jest.MockedFunction<
   typeof getProductTypes
@@ -235,3 +239,27 @@ export const emptyProductResult = {
   total: 0,
   results: [],
 };
+
+export const mockAttributes: SimpleAttributes = { color: ["red"], size: ["M"] };
+export const mockAttributesExpected = [
+  "variants.attributes.color:red",
+  "variants.attributes.size:M",
+];
+
+export const mockCategories = [
+  {
+    id: "1",
+    key: "electronics",
+    name: { en: "Electronics" },
+    assets: [],
+    children: [
+      {
+        id: "2",
+        key: "phones",
+        name: { en: "Phones" },
+        assets: [],
+        children: [],
+      },
+    ],
+  },
+];

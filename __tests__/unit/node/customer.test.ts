@@ -1,3 +1,4 @@
+import { mockSETTINGS } from "../../common.mock";
 import {
   mockToken,
   newTestCustomer,
@@ -28,6 +29,40 @@ jest.mock("@/api/repositories/mapping-helpers", () => ({
 jest.mock("@/api/repositories/endpoints/customer/update-customer", () => ({
   updateCustomer: jest.fn().mockResolvedValue(updatedResponse),
 }));
+
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+jest.mock("@/pages/catalog/catalog", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/utils/page-render", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/config/routes", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/search-button/search-button", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
+jest.mock("@/components/layout/header/header", () => {
+  return {
+    __esModule: true,
+    default: () => ({}),
+  };
+});
 
 describe("customerRepository.update", () => {
   beforeEach(() => {

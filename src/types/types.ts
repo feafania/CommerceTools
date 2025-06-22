@@ -1,6 +1,7 @@
 import translations from "@/config/interfaces";
 import {
   InAttributeDefinition,
+  InCart,
   ProductListParameters,
   ValidationRule,
 } from "@/types/interfaces";
@@ -53,15 +54,15 @@ export type NavMenu = "header" | "main";
 
 export type GetProductListParameters = Partial<ProductListParameters>;
 
-export type InAttributes = Record<
-  string,
+type AttributeType =
   | string
   | number
   | boolean
   | null
   | Array<string | number | boolean>
-  | LanguageVariants
->;
+  | LanguageVariants;
+
+export type InAttributes = Record<string, AttributeType>;
 
 export type LanguageVariants = Record<LanguageCode, string>;
 
@@ -73,3 +74,31 @@ export type SortOptions =
   | undefined;
 
 export type AttributeMap = Map<string, InAttributeDefinition>;
+
+export type StringRecords = Record<string, string>;
+
+export type SimpleAttributes = {
+  [key: string]: AttributeType | InAttributes;
+};
+
+export type CartContextType = {
+  cart: InCart | undefined;
+  setCart: (cart: InCart | undefined) => void;
+};
+
+export type AboutMember = {
+  id: number;
+  name: string;
+  photo: string;
+  bio: string;
+  role: string;
+  tasks: string[];
+  github: string;
+};
+
+export type AboutData = {
+  title: string;
+  description: string;
+  members: AboutMember[];
+  projectDescription: string;
+};

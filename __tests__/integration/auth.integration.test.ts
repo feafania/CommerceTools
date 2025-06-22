@@ -1,3 +1,5 @@
+import { mockSETTINGS } from "../common.mock";
+
 import { getTestDraft, testLoginDraft } from "./__mocks__/integration.mock";
 
 import registerCustomer from "@/api/repositories/endpoints/customer/register-customer";
@@ -5,11 +7,16 @@ import loginCustomer from "@/api/repositories/endpoints/customer/login-customer"
 import getCustomerToken from "@/api/repositories/endpoints/token/get-customer-token";
 import getMe from "@/api/repositories/endpoints/customer/get-me";
 
+jest.mock("@/config/settings", () => ({
+  SETTINGS: mockSETTINGS,
+}));
+
 describe("Auth Integration", () => {
   const testDraft = getTestDraft();
 
   it("should register a new customer successfully", async () => {
     const testRegisterDraft = testDraft;
+
     const result = await registerCustomer(testRegisterDraft);
     expect(result).toBeDefined();
     expect(result?.customer.email).toBe(testRegisterDraft.email);
@@ -24,7 +31,9 @@ describe("Auth Integration", () => {
       testLoginDraft.password,
     );
     expect(result).toBeDefined();
-    expect(result.customer.email).toBe(testLoginDraft.email);
+    if (result) {
+      expect(result.customer.email).toBe(testLoginDraft.email);
+    }
   });
 
   it("should obtain a valid access token after login", async () => {

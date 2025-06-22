@@ -1,7 +1,13 @@
-import { CountryValueType, InAttributes, LanguageVariants } from "./types";
+import {
+  CountryValueType,
+  InAttributes,
+  LanguageVariants,
+  StringRecords,
+} from "./types";
 
 import {
   CountryCode,
+  CurrencyCode,
   InAttributeTypeValues,
   PageType,
   SortDirection,
@@ -139,6 +145,7 @@ export interface ProductListParameters {
   sortDirection: SortDirection;
   searchText?: string;
   filters?: string[];
+  expand?: string[];
 }
 
 export interface InProduct {
@@ -158,6 +165,7 @@ export interface InProduct {
   sku?: string;
   variantId?: number; // ID of main variant
   variants: InVariant[];
+  productTypeKey?: string;
 }
 
 export interface InVariant {
@@ -194,7 +202,7 @@ export interface InAttributeType {
   name: InAttributeTypeValues;
   values: {
     key: string;
-    label: string | Record<string, string>;
+    label: string | StringRecords;
   }[];
 }
 
@@ -247,4 +255,60 @@ export interface AddressItem {
   name: string;
   isDefaultShipping: boolean;
   isDefaultBilling: boolean;
+}
+
+export interface InLineItem {
+  id: string;
+  productId: string;
+  name: LanguageVariants;
+  quantity: number;
+  price: number; // actual price
+  originalPrice?: number; // before discount
+  totalPrice: number; // price * quantity
+  variantId: number;
+  sku?: string;
+  image?: string;
+}
+
+export interface InCart {
+  id: string;
+  version: number;
+  currency: CurrencyCode;
+  lineItems: InLineItem[];
+  totalPrice: number; // Total price of the cart including all discounts, taxes, shipping, etc.
+  subtotalPrice: number; // unitPrice * quantity
+  discountCodes?: InCartDiscountCode[];
+  discountTotal?: number;
+  createdAt: string; // new Date(cart.createdAt);
+  customerId?: string;
+  anonymousId?: string;
+  country?: CountryCode;
+}
+
+export interface InCartDiscountCode {
+  id: string;
+  matchesCart: boolean;
+}
+
+export interface InCartDiscount {
+  id: string;
+  name?: Record<string, string>;
+  description?: Record<string, string>;
+  validFrom?: string;
+  validUntil?: string;
+  isActive: boolean;
+}
+
+export interface InDiscountCode {
+  id: string;
+  code: string;
+  key?: string;
+  name?: LanguageVariants;
+  description?: LanguageVariants;
+  isActive: boolean;
+  maxApplications?: number;
+  maxApplicationsPerCustomer?: number;
+  cartPredicate?: string;
+  groups?: string[];
+  cartDiscounts?: InCartDiscount[];
 }

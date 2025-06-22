@@ -22,6 +22,7 @@ const en: AppTranslation = {
     },
     userProfile: "User Profile",
     changePassword: "Change password",
+    basket: "Basket",
   },
   login: {
     email: "Email address",
@@ -41,6 +42,8 @@ const en: AppTranslation = {
   },
   main: {
     title: "Welcome to our shop",
+    promocodes: "Take advantage of our latest promotions ",
+    noPromocodes: "There are no promo codes available.",
   },
   catalog: {
     search: "Search...",
@@ -68,6 +71,16 @@ const en: AppTranslation = {
   product: {
     title: "Detailed Product",
     backButton: "Back to Catalog",
+    selectVariant: "Select variant:",
+    defaultVariant: "Default variant",
+    addToCart: "Add to Cart",
+    removeFromCart: "Remove from Cart",
+    addedToCart: "Product was successfully added to cart!",
+    removedFromCart: "Product was successfully removed from cart!",
+    quantity: "Quantity",
+    variantID: "Variant ID",
+    itemInCart: "This item is in your cart",
+    itemsInCart: "These items are in your cart",
   },
   userProfile: {
     firstName: "First name",
@@ -94,6 +107,31 @@ const en: AppTranslation = {
     success: "Your password was successfully changed",
     wrongOldPassword: "Wrong current password",
     emptyPassword: "Password field is empty",
+    save: "Save",
+    cancel: "Cancel",
+  },
+  basketButton: {
+    title: "Basket",
+    addToCard: "Add to cart",
+    alreadyInCard: "Already in cart",
+    addedToCard: "Added to cart",
+    errorAddingToCart: "Error adding to cart",
+  },
+  basket: {
+    title: "Basket",
+    clear: "Clear basket",
+    remove: "Remove",
+    totalItems: "Total items",
+    total: "Total cost",
+    discountedTotal: "Total after discount",
+    appliedPromocode: "Promocodes applied",
+    emptyText: "Your basket is empty",
+    promocodeInput: "Enter promocode",
+    applyPromocode: "Apply",
+    invalid: "Invalid promocode",
+    success: "Promocode applied successfully",
+    error: "Please enter a promocode",
+    notMatched: "not matches",
   },
   address: {
     headers: {
@@ -121,7 +159,7 @@ const en: AppTranslation = {
     },
     editAddress: "Edit",
     editAddressStop: "Stop editing",
-    addAdress: "+ Add adress",
+    addAddress: "+ Add address",
     addressProfileTitle: "Address",
     addressesList: "Addresses",
   },
@@ -184,6 +222,11 @@ const en: AppTranslation = {
     connectorInCertification:
       "This connector is currently in certification. You’ll be able to use it once the process is complete.",
     versionMismatch: "Version mismatch error. Please reload and try again.",
+    lineItemNotFound: "The product was not found in the cart",
+    insufficientStock: "Not enough goods in stock",
+    anonymousIdConflict: "Anonymous user error",
+    discountCodeInvalid: "The promo code is not suitable",
+    invalidOperation: "It is impossible to perform the action.",
   },
   errors: {
     login: "Login failed.",
@@ -194,12 +237,83 @@ const en: AppTranslation = {
     updatePassword: "Failed to update customer password.",
     token: "Failed to get token.",
     getCurrentUser: "Failed to get current user",
+    getCart: "Couldn't get the shopping cart",
+    createCart: "Couldn't create a shopping cart",
+    applyDiscountCode: "Couldn't apply promo code",
+    deleteCart: "Couldn't delete the shopping cart",
+    recalculateCart: "Couldn't recalculate the shopping cart",
+    addItemToCart: "Couldn't add product to cart",
+    removeItemFromCart: "Couldn't remove an item from the shopping cart",
+    changeItemQuantity: "Couldn't change an item from the shopping cart",
+    getPromoCodes: "Failed to get promo-codes",
+    removeDiscountCode: "Failed to remove promo-code from cart",
+    getPromoCode: "Failed to get promo-code",
+    clearCart: "Failed to clear cart.",
   },
   messages: {
     onSignIn: "You have successfully signed in.",
     onSignUp: "Your account has been created.",
     onSignOut: "You have been signed out.",
     nothingToUpdate: "No changes detected. Your profile is already up to date.",
+    onClearBasket: "Are you sure you want to clear the cart?",
+  },
+  about: {
+    title: "About us",
+    introduction:
+      "We are a small but dedicated development team focused on delivering a polished project. " +
+      "Combining experience in UI development and API integration, we prioritized code quality, " +
+      "user experience, and effective collaboration. Clear communication helped us turn a complex idea " +
+      "into a functional Single Page Application (SPA).",
+    role: "Role",
+    tasksDone: "Tasks done",
+    name1: "Tatsiana Kashko",
+    photo1: "/assets/img/about/Tatsiana.jpg",
+    bio1:
+      "My university degree is in Economic Cybernetics, and for over 25 years I have worked " +
+      "as an enterprise automation programmer. My responsibilities have included not only software development, " +
+      "but also aspects of computer network administration within the company. " +
+      "Experienced in tackling challenges of varying complexity, combining the skills of both a software developer and a business analyst. ",
+    role1:
+      "Team leader, API integration architect, frontend service layer, testing",
+    tasks1: [
+      "API integration layer for SPA (services and repositories)",
+      "Unit tests for API services",
+      "Routing and navigation setup for SPA",
+      "Product catalog page with filtering, sorting, and search",
+      "Product detail page with dynamic data loading",
+      "User addresses management (API and UI integration)",
+      "Promocode functionality (integration and validation)",
+    ],
+    github1: "https://github.com/feafania",
+    name2: "Anastasiia Zharkova Ozdemir",
+    photo2: "/assets/img/about/Anastasiia.jpg",
+    bio2:
+      "I have been working as a Bitrix developer for 5 years, " +
+      "specializing in pixel-perfect implementation of UI designs and " +
+      "custom solutions for sites. " +
+      "This year I earned my Master's degree in Applied Informatics.",
+    role2: "Frontend developer, UI pages, design, Trello workflow support",
+    tasks2: [
+      "Manage project workflow and tasks in Trello",
+      "UI/UX design for SPA with focus on responsive and adaptive layouts",
+      "Implementation of Registration form",
+      "User profile page development",
+      "Change password functionality",
+      "Basket page implementation",
+      "About Us page creation",
+    ],
+    github2: "https://github.com/WaterMemor",
+    description:
+      "At the start of each sprint, we divided tasks and assigned responsibilities using Trello, " +
+      "which helped us clearly visualize deadlines and monitor progress. Our team held daily syncs " +
+      "via Discord, Google Meet, or Telegram to discuss completed work, resolve blockers, and " +
+      "align on next steps. By maintaining transparency in Trello and staying connected throughout the day, " +
+      "we collaboratively reviewed results at the end of each sprint. This disciplined yet flexible " +
+      "approach to teamwork ensured timely project delivery and the successful achievement of all goals.",
+    projectDescription:
+      "This project was developed to demonstrate our team's " +
+      "capabilities in creating SPA with typeScript.",
+    githubBtn: "GitHub Profile",
   },
 };
 

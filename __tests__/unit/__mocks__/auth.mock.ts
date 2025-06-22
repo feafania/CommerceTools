@@ -59,6 +59,8 @@ export const mockCustomer: Customer = {
   authenticationMode: "Password", // or "ExternalAuth"
 };
 
+export const mockPassword = "123456";
+
 // Fake register response
 export const registerResponse: CustomerSignInResult = {
   customer: mockCustomer,
@@ -89,3 +91,100 @@ export const token: TokenType = {
   ).toISOString(),
   ["refresh_token"]: tokenResponse.refresh_token,
 };
+
+export class MockFormData {
+  private data: Record<string, string>;
+
+  constructor() {
+    this.data = {
+      email: mockCustomer.email,
+      password: "test123",
+      firstname: mockCustomer.firstName!,
+      lastname: mockCustomer.lastName!,
+      birthday: mockCustomer.dateOfBirth!,
+      "show-billing-address": "on",
+    };
+  }
+
+  get(name: string) {
+    return this.data[name] ?? "";
+  }
+}
+
+export const mockedRegisterCall = {
+  email: mockCustomer.email,
+  password: "test123",
+  firstName: mockCustomer.firstName,
+  lastName: mockCustomer.lastName,
+  dateOfBirth: mockCustomer.dateOfBirth,
+  addresses: [
+    {
+      key: "shipping-address",
+      streetName: "",
+      streetNumber: "",
+      postalCode: "",
+      city: "",
+      country: "",
+      isDefaultShipping: false,
+      isDefaultBilling: false,
+    },
+    {
+      key: "billing-address",
+      streetName: "",
+      streetNumber: "",
+      postalCode: "",
+      city: "",
+      country: "",
+      isDefaultShipping: false,
+      isDefaultBilling: false,
+    },
+  ],
+};
+
+const PointerEventMock =
+  typeof MouseEvent === "undefined"
+    ? // Define a no-op fallback or mock for Node.js
+      (class {
+        constructor() {
+          throw new Error(
+            "PointerEventMock cannot be used in this environment",
+          );
+        }
+      } as unknown as typeof PointerEvent)
+    : class extends MouseEvent implements PointerEvent {
+        // Required PointerEvent properties
+        public readonly pointerId: number = 1;
+        public readonly width: number = 1;
+        public readonly height: number = 1;
+        public readonly pressure: number = 0;
+        public readonly tangentialPressure: number = 0;
+        public readonly tiltX: number = 0;
+        public readonly tiltY: number = 0;
+        public readonly twist: number = 0;
+        public readonly pointerType: string = "mouse";
+        public readonly isPrimary: boolean = false;
+        public readonly altitudeAngle: number = Math.PI / 2;
+        public readonly azimuthAngle: number = 0;
+
+        constructor(type: string, eventInitDict?: PointerEventInit) {
+          super(type, {
+            ...eventInitDict,
+            bubbles: eventInitDict?.bubbles ?? true,
+            cancelable: eventInitDict?.cancelable,
+            composed: eventInitDict?.composed,
+            button: eventInitDict?.button ?? 0,
+            buttons: eventInitDict?.buttons ?? 0,
+          });
+        }
+
+        // Required methods
+        getCoalescedEvents(): PointerEvent[] {
+          return [];
+        }
+
+        getPredictedEvents(): PointerEvent[] {
+          return [];
+        }
+      };
+
+export { PointerEventMock };

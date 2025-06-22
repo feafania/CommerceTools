@@ -22,6 +22,7 @@ export interface AppTranslation {
     };
     userProfile: string;
     changePassword: string;
+    basket: string;
   };
   login: {
     email: string;
@@ -41,6 +42,8 @@ export interface AppTranslation {
   };
   main: {
     title: string;
+    promocodes: string;
+    noPromocodes: string;
   };
   catalog: {
     search: string;
@@ -68,6 +71,16 @@ export interface AppTranslation {
   product: {
     title: string;
     backButton: string;
+    selectVariant: string;
+    defaultVariant: string;
+    addToCart: string;
+    removeFromCart: string;
+    addedToCart: string;
+    removedFromCart: string;
+    quantity: string;
+    variantID: string;
+    itemInCart: string;
+    itemsInCart: string;
   };
   userProfile: {
     firstName: string;
@@ -94,6 +107,31 @@ export interface AppTranslation {
     wrongConfirm: string;
     wrongOldPassword: string;
     emptyPassword: string;
+    save: string;
+    cancel: string;
+  };
+  basketButton: {
+    title: string;
+    addToCard: string;
+    alreadyInCard: string;
+    addedToCard: string;
+    errorAddingToCart: string;
+  };
+  basket: {
+    title: string;
+    clear: string;
+    remove: string;
+    totalItems: string;
+    total: string;
+    emptyText: string;
+    promocodeInput: string;
+    applyPromocode: string;
+    invalid: string;
+    success: string;
+    error: string;
+    discountedTotal: string;
+    appliedPromocode: string;
+    notMatched: string;
   };
   address: {
     headers: AddressTypeMap;
@@ -109,7 +147,7 @@ export interface AppTranslation {
     };
     editAddress: string;
     editAddressStop: string;
-    addAdress: string;
+    addAddress: string;
     addressProfileTitle: string;
     addressesList: string;
   };
@@ -154,6 +192,11 @@ export interface AppTranslation {
     connectorFileNotValid: string;
     connectorInCertification: string;
     versionMismatch: string;
+    lineItemNotFound: string;
+    insufficientStock: string;
+    anonymousIdConflict: string;
+    discountCodeInvalid: string;
+    invalidOperation: string;
   };
   errors: {
     login: string;
@@ -164,11 +207,45 @@ export interface AppTranslation {
     updatePassword: string;
     token: string;
     getCurrentUser: string;
+    getCart: string;
+    createCart: string;
+    applyDiscountCode: string;
+    deleteCart: string;
+    recalculateCart: string;
+    addItemToCart: string;
+    removeItemFromCart: string;
+    changeItemQuantity: string;
+    getPromoCodes: string;
+    removeDiscountCode: string;
+    getPromoCode: string;
+    clearCart: string;
   };
   messages: {
     onSignIn: string;
     onSignUp: string;
     onSignOut: string;
     nothingToUpdate: string;
+    onClearBasket: string;
+  };
+  about: {
+    title: string;
+    introduction: string;
+    role: string;
+    tasksDone: string;
+    name1: string;
+    photo1: string;
+    bio1: string;
+    role1: string;
+    tasks1: string[];
+    github1: string;
+    name2: string;
+    photo2: string;
+    bio2: string;
+    role2: string;
+    tasks2: string[];
+    github2: string;
+    description: string;
+    projectDescription: string;
+    githubBtn: string;
   };
 }
