@@ -255,7 +255,7 @@ const en: AppTranslation = {
     onSignUp: "Your account has been created.",
     onSignOut: "You have been signed out.",
     nothingToUpdate: "No changes detected. Your profile is already up to date.",
-    onClearBasket: "Are you sure you want to clear the cart?",
+    onClearBasket: "Are you sure you want to clear the basket?",
   },
   about: {
     title: "About us",

@@ -51,6 +51,7 @@ const CatalogView = {
 
   async render(): Promise<HTMLElement | undefined> {
     await this.removeLazyLoadingElement();
+
     this.wasMobile = isMobile();
     if (this.wasMobile) {
       this.offset = 0;
@@ -66,6 +67,7 @@ const CatalogView = {
       mobileFilterToggle!.refresh();
       return;
     }
+
     removeAllChildren(this.container);
     this.container.className = "view catalog-view";
 
@@ -166,11 +168,8 @@ const CatalogView = {
         this.container.append(this.productList);
       }
 
-      if (!append || this.offset === 0) {
-        removeAllChildren(this.productList);
-        if (this.offset > this.total) {
-          this.offset = 0;
-        }
+      if (!append && this.offset > this.total) {
+        this.offset = 0;
       }
       const requestParameters: ProductListParameters = this.createParameters();
 
@@ -183,6 +182,10 @@ const CatalogView = {
 
       const products = response.results;
       this.total = response.total ?? 0;
+
+      if (!append || this.offset === 0) {
+        removeAllChildren(this.productList);
+      }
 
       for (const product of products) {
         const card = new ProductCard(product);
@@ -532,10 +535,9 @@ const CatalogView = {
 
   async handleRenderProducts() {
     await this.removeLazyLoadingElement();
-    removeAllChildren(this.productList);
-    removeAllChildren(this.paginationWrapper);
     this.offset = 0;
-
+    removeAllChildren(this.paginationWrapper);
+    removeAllChildren(this.productList);
     await this.renderProducts();
     if (isMobile() && this.offset + this.limit < this.total) {
       this.appendLazyLoadingElement();
@@ -591,7 +593,7 @@ const CatalogView = {
       },
       {
         root: undefined,
-        rootMargin: "200px",
+        rootMargin: "300px",
         threshold: 0.1,
       },
     );

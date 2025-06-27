@@ -10,6 +10,7 @@ import showModalMessage from "@/components/modal-window/modal-window";
 import { renderPage } from "@/utils/page-render";
 import ProductView from "@/pages/product/product";
 import { Basket } from "@/components/basket/basket";
+import CatalogView from "@/pages/catalog/catalog";
 
 const Header = {
   nav: document.createElement("nav") as HTMLElement,
@@ -209,6 +210,9 @@ const Header = {
           }
         }
       } else {
+        if (label !== PageType.catalog) {
+          CatalogView.isSamePage = false;
+        }
         PageRouter.navigateTo(page);
       }
     };
