@@ -28,7 +28,7 @@
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^29.5.14",
     "@types/js-cookie": "^3.0.6",
-    "copy-webpack-plugin": "^13.0.0",
+    "copy-webpack-plugin": "^14.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
     "dotenv-webpack": "^8.1.0",
@@ -55,7 +55,7 @@
     "typescript-eslint": "^8.32.1",
     "webpack": "^5.105.2",
     "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.1"
+    "webpack-dev-server": "^6.1.0"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
@@ -69,8 +69,8 @@
     "@commercetools/sdk-client-v2": "^3.0.0",
     "cross-fetch": "^4.1.0",
     "dotenv": "^16.5.0",
-    "js-cookie": "^3.0.5",
+    "js-cookie": "^3.0.7",
     "process": "^0.11.10",
-    "uuid": "^11.1.0"
+    "uuid": "^14.0.3"
   }
 }
